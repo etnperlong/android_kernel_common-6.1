@@ -37,6 +37,7 @@
 #include <trace/hooks/syscall_check.h>
 #include <trace/hooks/sysrqcrash.h>
 #include <trace/hooks/timer.h>
+#include <trace/hooks/traps.h>
 #include <trace/hooks/ufshcd.h>
 #include <trace/hooks/vmscan.h>
 /* keep-sorted end */
@@ -47,6 +48,7 @@
  */
 
 /* keep-sorted start */
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_arm64_serror_panic);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_attach);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_online);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_die_kernel_fault);
