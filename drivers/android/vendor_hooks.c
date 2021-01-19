@@ -19,6 +19,7 @@
 #include <trace/hooks/cpuidle_psci.h>
 #include <trace/hooks/debug.h>
 #include <trace/hooks/epoch.h>
+#include <trace/hooks/fault.h>
 #include <trace/hooks/fpsimd.h>
 #include <trace/hooks/gic.h>
 #include <trace/hooks/gic_v3.h>
@@ -48,6 +49,8 @@
 /* keep-sorted start */
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_attach);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_online);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_die_kernel_fault);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_sp_pc_abort);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_hw_protection_shutdown);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_iommu_setup_dma_ops);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_logbuf);
