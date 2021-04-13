@@ -21,6 +21,7 @@
 #include <trace/hooks/gic.h>
 #include <trace/hooks/gic_v3.h>
 #include <trace/hooks/iommu.h>
+#include <trace/hooks/logbuf.h>
 #include <trace/hooks/mpam.h>
 #include <trace/hooks/net.h>
 #include <trace/hooks/pm_domain.h>
@@ -68,6 +69,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_gic_set_affinity);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_iommu_iovad_alloc_iova);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_iommu_iovad_free_iova);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_ipi_stop);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_logbuf);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mpam_set);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_caller);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_caller_id);
