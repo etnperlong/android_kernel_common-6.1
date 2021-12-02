@@ -94,16 +94,6 @@ static void fuse_advise_use_readdirplus(struct inode *dir)
 	set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
 }
 
-struct fuse_dentry {
-	u64 time;
-	u64 epoch;
-	union {
-		struct rcu_head rcu;
-		struct rb_node node;
-	};
-	struct dentry *dentry;
-};
-
 static void __fuse_dentry_tree_del_node(struct fuse_dentry *fd,
 					struct dentry_bucket *bucket)
 {
@@ -503,6 +493,15 @@ static void fuse_dentry_release(struct dentry *dentry)
 
 	if (!RB_EMPTY_NODE(&fd->node))
 		fuse_dentry_tree_del_node(dentry);
+
+#ifdef CONFIG_FUSE_BPF
+	if (fd->backing_path.dentry)
+		path_put(&fd->backing_path);
+
+	if (fd->bpf)
+		bpf_prog_put(fd->bpf);
+#endif
+
 	kfree_rcu(fd, rcu);
 }
 

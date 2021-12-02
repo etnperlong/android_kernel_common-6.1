@@ -12,6 +12,9 @@
 #endif
 
 #include "args.h"
+#include <linux/android_fuse.h>
+#include <linux/filter.h>
+#include <linux/pagemap.h>
 #include <linux/fuse.h>
 #include <linux/fs.h>
 #include <linux/mount.h>
@@ -96,12 +99,64 @@ struct fuse_backing {
 	struct rcu_head rcu;
 };
 
+/* FUSE specific dentry data */
+struct fuse_dentry {
+	u64 time;
+	u64 epoch;
+	union {
+		struct rcu_head rcu;
+		struct rb_node node;
+	};
+	struct dentry *dentry;
+#ifdef CONFIG_FUSE_BPF
+	struct path backing_path;
+
+	/* bpf program *only* set for negative dentries */
+	struct bpf_prog *bpf;
+#endif
+};
+
+static inline struct fuse_dentry *get_fuse_dentry(const struct dentry *entry)
+{
+	return entry->d_fsdata;
+}
+
+#ifdef CONFIG_FUSE_BPF
+static inline void get_fuse_backing_path(const struct dentry *d,
+					  struct path *path)
+{
+	struct fuse_dentry *di = get_fuse_dentry(d);
+
+	if (!di) {
+		*path = (struct path) {};
+		return;
+	}
+
+	*path = di->backing_path;
+	path_get(path);
+}
+#endif
+
 /**
  * struct fuse_inode - FUSE inode
  */
 struct fuse_inode {
 	/** @inode: Inode data */
 	struct inode inode;
+
+#ifdef CONFIG_FUSE_BPF
+	/**
+	 * @backing_inode: Backing inode, if this inode is from a backing
+	 * file system. If this is set, nodeid is 0.
+	 */
+	struct inode *backing_inode;
+
+	/**
+	 * @bpf: bpf_prog, run on all operations to determine whether to pass
+	 * through or handle in place
+	 */
+	struct bpf_prog *bpf;
+#endif
 
 	/**
 	 * @nodeid: Unique ID, which identifies the inode between userspace
@@ -947,7 +1002,6 @@ struct fuse_io_args {
 void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
 			 size_t count, int opcode);
 
-
 struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release);
 void fuse_file_free(struct fuse_file *ff);
 int fuse_finish_open(struct inode *inode, struct file *file);
@@ -1007,7 +1061,7 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
 u32 fuse_get_cache_mask(struct inode *inode);
 
 int fuse_ctl_init(void);
-void __exit fuse_ctl_cleanup(void);
+void fuse_ctl_cleanup(void);
 
 /*
  * Simple request sending that does request allocation and freeing
@@ -1339,5 +1393,175 @@ extern void fuse_sysctl_unregister(void);
 #define fuse_sysctl_register()		(0)
 #define fuse_sysctl_unregister()	do { } while (0)
 #endif /* CONFIG_SYSCTL */
+
+/* backing.c */
+
+/*
+ * Dummy io passed to fuse_bpf_backing when io operation needs no scratch space
+ */
+struct fuse_dummy_io {
+	int unused;
+};
+
+#ifdef CONFIG_FUSE_BPF
+struct fuse_err_ret {
+	void *result;
+	bool ret;
+};
+
+int __init fuse_bpf_init(void);
+void __exit fuse_bpf_cleanup(void);
+
+ssize_t fuse_bpf_simple_request(struct fuse_mount *fm, struct fuse_bpf_args *args);
+
+static inline int fuse_bpf_run(struct bpf_prog *prog, struct fuse_bpf_args *fba)
+{
+	int ret;
+
+	migrate_disable();
+	ret = bpf_prog_run(prog, fba);
+	migrate_enable();
+	return ret;
+}
+
+/*
+ * expression statement to wrap the backing filter logic
+ * struct inode *inode: inode with bpf and backing inode
+ * typedef io: (typically complex) type whose components fuse_args can point to.
+ *	An instance of this type is created locally and passed to initialize
+ * void initialize(struct fuse_bpf_args *fa, io *in_out, args...): function that sets
+ *	up fa and io based on args
+ * int backing(struct fuse_bpf_args *fa, args...): function that actually performs
+ *	the backing io operation
+ * void *finalize(struct fuse_bpf_args *, args...): function that performs any final
+ *	work needed to commit the backing io
+ */
+#define fuse_bpf_backing(inode, io, initialize, backing, finalize,	\
+			 args...)					\
+({									\
+	struct fuse_err_ret fer = {0};					\
+	int ext_flags;							\
+	struct fuse_inode *fuse_inode = get_fuse_inode(inode);		\
+	struct fuse_mount *fm = get_fuse_mount(inode);			\
+	io feo = {0};							\
+	struct fuse_bpf_args fa = {0}, fa_backup = {0};			\
+	bool locked;							\
+	ssize_t res;							\
+	void *err;							\
+	int i;								\
+	bool initialized = false;					\
+									\
+	do {								\
+		if (!fuse_inode || !fuse_inode->backing_inode)		\
+			break;						\
+									\
+		err = ERR_PTR(initialize(&fa, &feo, args));		\
+		if (err) {						\
+			fer = (struct fuse_err_ret) {			\
+				err,					\
+				true,					\
+			};						\
+			break;						\
+		}							\
+		initialized = true;					\
+									\
+		fa_backup = fa;						\
+		fa.opcode |= FUSE_PREFILTER;				\
+		for (i = 0; i < fa.in_numargs; ++i)			\
+			fa.out_args[i] = (struct fuse_bpf_arg) {	\
+				.size = fa.in_args[i].size,		\
+				.value = (void *)fa.in_args[i].value,	\
+			};						\
+		fa.out_numargs = fa.in_numargs;				\
+									\
+		ext_flags = fuse_inode->bpf ?				\
+			fuse_bpf_run(fuse_inode->bpf, &fa) :		\
+			FUSE_BPF_BACKING;				\
+		if (ext_flags < 0) {					\
+			fer = (struct fuse_err_ret) {			\
+				ERR_PTR(ext_flags),			\
+				true,					\
+			};						\
+			break;						\
+		}							\
+									\
+		if (ext_flags & FUSE_BPF_USER_FILTER) {			\
+			locked = fuse_lock_inode(inode);		\
+			res = fuse_bpf_simple_request(fm, &fa);		\
+			fuse_unlock_inode(inode, locked);		\
+			if (res < 0) {					\
+				fer = (struct fuse_err_ret) {		\
+					ERR_PTR(res),			\
+					true,				\
+				};					\
+				break;					\
+			}						\
+		}							\
+									\
+		if (!(ext_flags & FUSE_BPF_BACKING))			\
+			break;						\
+									\
+		fa.opcode &= ~FUSE_PREFILTER;				\
+		for (i = 0; i < fa.in_numargs; ++i)			\
+			fa.in_args[i] = (struct fuse_bpf_in_arg) {	\
+				.size = fa.out_args[i].size,		\
+				.value = fa.out_args[i].value,		\
+			};						\
+		for (i = 0; i < fa_backup.out_numargs; ++i)		\
+			fa.out_args[i] = (struct fuse_bpf_arg) {	\
+				.size = fa_backup.out_args[i].size,	\
+				.value = fa_backup.out_args[i].value,	\
+			};						\
+		fa.out_numargs = fa_backup.out_numargs;			\
+									\
+		fer = (struct fuse_err_ret) {				\
+			ERR_PTR(backing(&fa, args)),			\
+			true,						\
+		};							\
+		if (IS_ERR(fer.result))					\
+			fa.error_in = PTR_ERR(fer.result);		\
+		if (!(ext_flags & FUSE_BPF_POST_FILTER))		\
+			break;						\
+									\
+		fa.opcode |= FUSE_POSTFILTER;				\
+		for (i = 0; i < fa.out_numargs; ++i)			\
+			fa.in_args[fa.in_numargs++] =			\
+				(struct fuse_bpf_in_arg) {		\
+					.size = fa.out_args[i].size,	\
+					.value = fa.out_args[i].value,	\
+				};					\
+		ext_flags = fuse_bpf_run(fuse_inode->bpf, &fa);		\
+		if (ext_flags < 0) {					\
+			fer = (struct fuse_err_ret) {			\
+				ERR_PTR(ext_flags),			\
+				true,					\
+			};						\
+			break;						\
+		}							\
+		if (!(ext_flags & FUSE_BPF_USER_FILTER))		\
+			break;						\
+									\
+		fa.out_args[0].size = fa_backup.out_args[0].size;	\
+		fa.out_args[1].size = fa_backup.out_args[1].size;	\
+		fa.out_numargs = fa_backup.out_numargs;			\
+		locked = fuse_lock_inode(inode);			\
+		res = fuse_bpf_simple_request(fm, &fa);			\
+		fuse_unlock_inode(inode, locked);			\
+		if (res < 0) {						\
+			fer.result = ERR_PTR(res);			\
+			break;						\
+		}							\
+	} while (false);						\
+									\
+	if (initialized && fer.ret) {					\
+		err = finalize(&fa, args);				\
+		if (err)						\
+			fer.result = err;				\
+	}								\
+									\
+	fer;								\
+})
+
+#endif /* CONFIG_FUSE_BPF */
 
 #endif /* _FS_FUSE_I_H */

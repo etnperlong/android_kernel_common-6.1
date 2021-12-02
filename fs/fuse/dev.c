@@ -808,6 +808,7 @@ static void fuse_args_to_req(struct fuse_req *req, struct fuse_args *args)
 {
 	req->in.h.opcode = args->opcode;
 	req->in.h.nodeid = args->nodeid;
+	req->in.h.error_in = args->error_in;
 	req->in.h.uid = args->uid;
 	req->in.h.gid = args->gid;
 	req->in.h.pid = args->pid;
