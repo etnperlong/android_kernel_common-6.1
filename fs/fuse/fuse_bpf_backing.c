@@ -386,6 +386,129 @@ void *fuse_flush_finalize(struct fuse_bpf_args *fa, struct file *file, fl_owner_
 	return NULL;
 }
 
+int fuse_lseek_initialize(struct fuse_bpf_args *fa, struct fuse_lseek_io *flio,
+			  struct file *file, loff_t offset, int whence)
+{
+	struct fuse_file *fuse_file = file->private_data;
+
+	flio->fli = (struct fuse_lseek_in) {
+		.fh = fuse_file->fh,
+		.offset = offset,
+		.whence = whence,
+	};
+
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(file->f_inode),
+		.opcode = FUSE_LSEEK,
+		.in_numargs = 1,
+		.in_args[0].size = sizeof(flio->fli),
+		.in_args[0].value = &flio->fli,
+		.out_numargs = 1,
+		.out_args[0].size = sizeof(flio->flo),
+		.out_args[0].value = &flio->flo,
+	};
+
+	return 0;
+}
+
+int fuse_lseek_backing(struct fuse_bpf_args *fa, struct file *file, loff_t offset, int whence)
+{
+	const struct fuse_lseek_in *fli = fa->in_args[0].value;
+	struct fuse_lseek_out *flo = fa->out_args[0].value;
+	struct fuse_file *fuse_file = file->private_data;
+	struct file *backing_file = fuse_file->backing_file;
+	loff_t ret;
+
+	if (offset == 0) {
+		if (whence == SEEK_CUR) {
+			flo->offset = file->f_pos;
+			return 0;
+		}
+
+		if (whence == SEEK_SET) {
+			flo->offset = vfs_setpos(file, 0, 0);
+			return 0;
+		}
+	}
+
+	inode_lock(file->f_inode);
+	backing_file->f_pos = file->f_pos;
+	ret = vfs_llseek(backing_file, fli->offset, fli->whence);
+
+	if (!IS_ERR(ERR_PTR(ret))) {
+		flo->offset = ret;
+		ret = 0;
+	}
+	inode_unlock(file->f_inode);
+	return ret;
+}
+
+void *fuse_lseek_finalize(struct fuse_bpf_args *fa, struct file *file, loff_t offset, int whence)
+{
+	struct fuse_lseek_out *flo = fa->out_args[0].value;
+
+	if (!fa->error_in)
+		file->f_pos = flo->offset;
+	return ERR_PTR(flo->offset);
+}
+
+int fuse_copy_file_range_initialize(struct fuse_bpf_args *fa, struct fuse_copy_file_range_io *fcf,
+				   struct file *file_in, loff_t pos_in, struct file *file_out,
+				   loff_t pos_out, size_t len, unsigned int flags)
+{
+	struct fuse_file *fuse_file_in = file_in->private_data;
+	struct fuse_file *fuse_file_out = file_out->private_data;
+
+
+	fcf->fci = (struct fuse_copy_file_range_in) {
+		.fh_in = fuse_file_in->fh,
+		.off_in = pos_in,
+		.nodeid_out = fuse_file_out->nodeid,
+		.fh_out = fuse_file_out->fh,
+		.off_out = pos_out,
+		.len = len,
+		.flags = flags,
+	};
+
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(file_in->f_inode),
+		.opcode = FUSE_COPY_FILE_RANGE,
+		.in_numargs = 1,
+		.in_args[0].size = sizeof(fcf->fci),
+		.in_args[0].value = &fcf->fci,
+		.out_numargs = 1,
+		.out_args[0].size = sizeof(fcf->fwo),
+		.out_args[0].value = &fcf->fwo,
+	};
+
+	return 0;
+}
+
+int fuse_copy_file_range_backing(struct fuse_bpf_args *fa, struct file *file_in, loff_t pos_in,
+				 struct file *file_out, loff_t pos_out, size_t len,
+				 unsigned int flags)
+{
+	const struct fuse_copy_file_range_in *fci = fa->in_args[0].value;
+	struct fuse_file *fuse_file_in = file_in->private_data;
+	struct file *backing_file_in = fuse_file_in->backing_file;
+	struct fuse_file *fuse_file_out = file_out->private_data;
+	struct file *backing_file_out = fuse_file_out->backing_file;
+
+	/* TODO: Handle changing of in/out files */
+	if (backing_file_out)
+		return vfs_copy_file_range(backing_file_in, fci->off_in, backing_file_out,
+					   fci->off_out, fci->len, fci->flags);
+
+	return -EXDEV;
+}
+
+void *fuse_copy_file_range_finalize(struct fuse_bpf_args *fa, struct file *file_in, loff_t pos_in,
+				    struct file *file_out, loff_t pos_out, size_t len,
+				    unsigned int flags)
+{
+	return NULL;
+}
+
 int fuse_fsync_initialize(struct fuse_bpf_args *fa, struct fuse_fsync_in *ffi,
 		   struct file *file, loff_t start, loff_t end, int datasync)
 {
@@ -660,6 +783,148 @@ void *fuse_file_write_iter_finalize(struct fuse_bpf_args *fa,
 	struct fuse_write_iter_out *fwio = fa->out_args[0].value;
 
 	return ERR_PTR(fwio->ret);
+}
+
+ssize_t fuse_splice_read_backing(struct file *in, loff_t *ppos,
+		struct pipe_inode_info *pipe, size_t len, unsigned long flags)
+{
+	struct fuse_file *ff = in->private_data;
+	ssize_t ret;
+
+	ret = vfs_splice_read(ff->backing_file, ppos, pipe, len, flags);
+	fuse_file_accessed(in, ff->backing_file);
+
+	return ret;
+}
+
+ssize_t fuse_splice_write_backing(struct pipe_inode_info *pipe,
+		struct file *out, loff_t *ppos, size_t len, unsigned long flags)
+{
+	ssize_t ret;
+	struct fuse_file *ff = out->private_data;
+
+	inode_lock(file_inode(out));
+	file_start_write(ff->backing_file);
+	ret = iter_file_splice_write(pipe, ff->backing_file, ppos, len, flags);
+	file_end_write(ff->backing_file);
+	if (ret > 0)
+		fuse_copyattr(out, ff->backing_file);
+	inode_unlock(file_inode(out));
+	return ret;
+}
+
+long fuse_backing_ioctl(struct file *file, unsigned int command, unsigned long arg, int flags)
+{
+	struct fuse_file *ff = file->private_data;
+	struct file *filp = ff->backing_file;
+	int error;
+
+	if (flags & FUSE_IOCTL_COMPAT)
+		return -ENOTTY;
+
+	if (!filp->f_op->unlocked_ioctl)
+		return -ENOTTY;
+
+	error = filp->f_op->unlocked_ioctl(filp, command, arg);
+	if (error == -ENOIOCTLCMD)
+		return -ENOTTY;
+	return error;
+}
+
+int fuse_file_flock_backing(struct file *file, int cmd, struct file_lock *fl)
+{
+	struct fuse_file *ff = file->private_data;
+	struct file *backing_file = ff->backing_file;
+	int error;
+
+	fl->c.flc_file = backing_file;
+	if (backing_file->f_op->flock)
+		error = backing_file->f_op->flock(backing_file, cmd, fl);
+	else
+		error = locks_lock_file_wait(backing_file, fl);
+	return error;
+}
+
+ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma)
+{
+	int ret;
+	struct fuse_file *ff = file->private_data;
+	struct inode *fuse_inode = file_inode(file);
+	struct file *backing_file = ff->backing_file;
+	struct inode *backing_inode = file_inode(backing_file);
+	struct timespec64 fuse_inode_ctime, backing_inode_ctime;
+	struct timespec64 fuse_inode_mtime, backing_inode_mtime;
+
+	if (!backing_file->f_op->mmap && !backing_file->f_op->mmap_prepare)
+		return -ENODEV;
+
+	if (WARN_ON(file != vma->vm_file))
+		return -EIO;
+
+	vma->vm_file = get_file(backing_file);
+
+	ret = vfs_mmap(vma->vm_file, vma);
+
+	if (ret)
+		fput(backing_file);
+	else
+		fput(file);
+
+	if (file->f_flags & O_NOATIME)
+		return ret;
+
+	fuse_inode_ctime = inode_get_ctime(fuse_inode);
+	backing_inode_ctime = inode_get_ctime(backing_inode);
+	fuse_inode_mtime = inode_get_mtime(fuse_inode);
+	backing_inode_mtime = inode_get_mtime(backing_inode);
+	if ((!timespec64_equal(&fuse_inode_mtime, &backing_inode_mtime) ||
+	     !timespec64_equal(&fuse_inode_ctime, &backing_inode_ctime))) {
+		inode_set_mtime_to_ts(fuse_inode, backing_inode_mtime);
+		inode_set_ctime_to_ts(fuse_inode, backing_inode_ctime);
+	}
+	touch_atime(&file->f_path);
+
+	return ret;
+}
+
+int fuse_file_fallocate_initialize(struct fuse_bpf_args *fa,
+		struct fuse_fallocate_in *ffi,
+		struct file *file, int mode, loff_t offset, loff_t length)
+{
+	struct fuse_file *ff = file->private_data;
+
+	*ffi = (struct fuse_fallocate_in) {
+		.fh = ff->fh,
+		.offset = offset,
+		.length = length,
+		.mode = mode
+	};
+
+	*fa = (struct fuse_bpf_args) {
+		.opcode = FUSE_FALLOCATE,
+		.nodeid = ff->nodeid,
+		.in_numargs = 1,
+		.in_args[0].size = sizeof(*ffi),
+		.in_args[0].value = ffi,
+	};
+
+	return 0;
+}
+
+int fuse_file_fallocate_backing(struct fuse_bpf_args *fa,
+		struct file *file, int mode, loff_t offset, loff_t length)
+{
+	const struct fuse_fallocate_in *ffi = fa->in_args[0].value;
+	struct fuse_file *ff = file->private_data;
+
+	return vfs_fallocate(ff->backing_file, ffi->mode, ffi->offset,
+			     ffi->length);
+}
+
+void *fuse_file_fallocate_finalize(struct fuse_bpf_args *fa,
+		struct file *file, int mode, loff_t offset, loff_t length)
+{
+	return NULL;
 }
 
 /*******************************************************************************
