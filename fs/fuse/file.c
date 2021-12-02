@@ -1890,6 +1890,20 @@ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
 	if (FUSE_IS_DAX(inode))
 		return fuse_dax_read_iter(iocb, to);
 
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(inode, struct fuse_file_read_iter_io,
+				       fuse_file_read_iter_initialize,
+				       fuse_file_read_iter_backing,
+				       fuse_file_read_iter_finalize,
+				       iocb, to);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
+
 	/* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
 	if (ff->open_flags & FOPEN_DIRECT_IO)
 		return fuse_direct_read_iter(iocb, to);
@@ -1910,6 +1924,20 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
 
 	if (FUSE_IS_DAX(inode))
 		return fuse_dax_write_iter(iocb, from);
+
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(inode, struct fuse_file_write_iter_io,
+				       fuse_file_write_iter_initialize,
+				       fuse_file_write_iter_backing,
+				       fuse_file_write_iter_finalize,
+				       iocb, from);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
 
 	/* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
 	if (ff->open_flags & FOPEN_DIRECT_IO)

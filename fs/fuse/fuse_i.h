@@ -1480,6 +1480,39 @@ void *fuse_fsync_finalize(struct fuse_bpf_args *fa,
 int fuse_dir_fsync_initialize(struct fuse_bpf_args *fa, struct fuse_fsync_in *ffi,
 		   struct file *file, loff_t start, loff_t end, int datasync);
 
+struct fuse_read_iter_out {
+	uint64_t ret;
+};
+struct fuse_file_read_iter_io {
+	struct fuse_read_in fri;
+	struct fuse_read_iter_out frio;
+};
+
+int fuse_file_read_iter_initialize(
+		struct fuse_bpf_args *fa, struct fuse_file_read_iter_io *fri,
+		struct kiocb *iocb, struct iov_iter *to);
+int fuse_file_read_iter_backing(struct fuse_bpf_args *fa,
+		struct kiocb *iocb, struct iov_iter *to);
+void *fuse_file_read_iter_finalize(struct fuse_bpf_args *fa,
+		struct kiocb *iocb, struct iov_iter *to);
+
+struct fuse_write_iter_out {
+	uint64_t ret;
+};
+struct fuse_file_write_iter_io {
+	struct fuse_write_in fwi;
+	struct fuse_write_out fwo;
+	struct fuse_write_iter_out fwio;
+};
+
+int fuse_file_write_iter_initialize(
+		struct fuse_bpf_args *fa, struct fuse_file_write_iter_io *fwio,
+		struct kiocb *iocb, struct iov_iter *from);
+int fuse_file_write_iter_backing(struct fuse_bpf_args *fa,
+		struct kiocb *iocb, struct iov_iter *from);
+void *fuse_file_write_iter_finalize(struct fuse_bpf_args *fa,
+		struct kiocb *iocb, struct iov_iter *from);
+
 struct fuse_lookup_io {
 	struct fuse_entry_out feo;
 	struct fuse_entry_bpf feb;
