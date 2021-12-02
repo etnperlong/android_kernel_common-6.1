@@ -22,6 +22,102 @@ struct fuse_bpf_aio_req {
 
 static struct kmem_cache *fuse_bpf_aio_request_cachep;
 
+/*******************************************************************************
+ * Directory operations after here                                             *
+ ******************************************************************************/
+
+int fuse_handle_backing(struct fuse_entry_bpf *feb, struct inode **backing_inode,
+			struct path *backing_path)
+{
+	switch (feb->out.backing_action) {
+	case FUSE_ACTION_KEEP:
+		/* backing inode/path are added in fuse_lookup_backing */
+		break;
+
+	case FUSE_ACTION_REMOVE:
+		iput(*backing_inode);
+		*backing_inode = NULL;
+		path_put(backing_path);
+		*backing_path = (struct path) { };
+		break;
+
+	case FUSE_ACTION_REPLACE: {
+		struct file *backing_file = feb->backing_file;
+
+		if (!backing_file)
+			return -EINVAL;
+		if (IS_ERR(backing_file))
+			return PTR_ERR(backing_file);
+
+		if (backing_inode)
+			iput(*backing_inode);
+		*backing_inode = backing_file->f_inode;
+		ihold(*backing_inode);
+
+		path_put(backing_path);
+		*backing_path = backing_file->f_path;
+		path_get(backing_path);
+		break;
+	}
+
+	default:
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+int fuse_handle_bpf_prog(struct fuse_entry_bpf *feb, struct inode *parent,
+			 struct bpf_prog **bpf)
+{
+	struct bpf_prog *new_bpf = NULL;
+
+	switch (feb->out.bpf_action) {
+	case FUSE_ACTION_KEEP: {
+		/* Parent isn't presented, but we want to keep
+		 * Don't touch bpf program at all in this case
+		 */
+		if (!parent)
+			return 0;
+
+		new_bpf = get_fuse_inode(parent)->bpf;
+		if (new_bpf)
+			bpf_prog_inc(new_bpf);
+		break;
+	}
+
+	case FUSE_ACTION_REMOVE:
+		break;
+
+	case FUSE_ACTION_REPLACE: {
+		struct file *bpf_file = feb->bpf_file;
+
+		if (!bpf_file)
+			return -EINVAL;
+		if (IS_ERR(bpf_file))
+			return PTR_ERR(bpf_file);
+
+		new_bpf = fuse_get_bpf_prog(bpf_file);
+		if (IS_ERR(new_bpf))
+			return PTR_ERR(new_bpf);
+		break;
+	}
+
+	default:
+		return -EINVAL;
+	}
+
+	/* Cannot change existing program */
+	if (*bpf) {
+		if (new_bpf)
+			bpf_prog_put(new_bpf);
+		return new_bpf == *bpf ? 0 : -EINVAL;
+	}
+
+	*bpf = new_bpf;
+	return 0;
+}
+
 int __init fuse_bpf_init(void)
 {
 	fuse_bpf_aio_request_cachep = kmem_cache_create("fuse_bpf_aio_req",

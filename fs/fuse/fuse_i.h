@@ -986,7 +986,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
 			u64 evict_ctr);
 
 int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
-		     struct fuse_entry_out *outarg, struct inode **inode);
+		     struct fuse_entry_out *outarg,
+		     struct dentry *entry, struct inode **inode);
 
 /*
  * Initialize READ or READDIR request
@@ -1413,6 +1414,11 @@ extern void fuse_sysctl_unregister(void);
 struct fuse_dummy_io {
 	int unused;
 };
+
+int fuse_handle_backing(struct fuse_entry_bpf *feb, struct inode **backing_inode,
+			struct path *backing_path);
+int fuse_handle_bpf_prog(struct fuse_entry_bpf *feb, struct inode *parent,
+			 struct bpf_prog **bpf);
 
 #ifdef CONFIG_FUSE_BPF
 struct fuse_err_ret {
