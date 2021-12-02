@@ -1580,6 +1580,51 @@ void *fuse_fsync_finalize(struct fuse_bpf_args *fa,
 int fuse_dir_fsync_initialize(struct fuse_bpf_args *fa, struct fuse_fsync_in *ffi,
 		   struct file *file, loff_t start, loff_t end, int datasync);
 
+struct fuse_getxattr_io {
+	struct fuse_getxattr_in fgi;
+	struct fuse_getxattr_out fgo;
+};
+
+int fuse_getxattr_initialize(
+		struct fuse_bpf_args *fa, struct fuse_getxattr_io *fgio,
+		struct dentry *dentry, const char *name, void *value,
+		size_t size);
+int fuse_getxattr_backing(
+		struct fuse_bpf_args *fa,
+		struct dentry *dentry, const char *name, void *value,
+		size_t size);
+void *fuse_getxattr_finalize(
+		struct fuse_bpf_args *fa,
+		struct dentry *dentry, const char *name, void *value,
+		size_t size);
+
+int fuse_listxattr_initialize(struct fuse_bpf_args *fa,
+			       struct fuse_getxattr_io *fgio,
+			       struct dentry *dentry, char *list, size_t size);
+int fuse_listxattr_backing(struct fuse_bpf_args *fa, struct dentry *dentry,
+			   char *list, size_t size);
+void *fuse_listxattr_finalize(struct fuse_bpf_args *fa, struct dentry *dentry,
+			      char *list, size_t size);
+
+int fuse_setxattr_initialize(struct fuse_bpf_args *fa,
+			     struct fuse_setxattr_in *fsxi,
+			     struct dentry *dentry, const char *name,
+			     const void *value, size_t size, int flags);
+int fuse_setxattr_backing(struct fuse_bpf_args *fa, struct dentry *dentry,
+			  const char *name, const void *value, size_t size,
+			  int flags);
+void *fuse_setxattr_finalize(struct fuse_bpf_args *fa, struct dentry *dentry,
+			     const char *name, const void *value, size_t size,
+			     int flags);
+
+int fuse_removexattr_initialize(struct fuse_bpf_args *fa,
+				struct fuse_dummy_io *unused,
+				struct dentry *dentry, const char *name);
+int fuse_removexattr_backing(struct fuse_bpf_args *fa,
+			     struct dentry *dentry, const char *name);
+void *fuse_removexattr_finalize(struct fuse_bpf_args *fa,
+				struct dentry *dentry, const char *name);
+
 struct fuse_read_iter_out {
 	uint64_t ret;
 };

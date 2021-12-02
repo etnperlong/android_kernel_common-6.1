@@ -570,6 +570,205 @@ int fuse_dir_fsync_initialize(struct fuse_bpf_args *fa, struct fuse_fsync_in *ff
 	return 0;
 }
 
+int fuse_getxattr_initialize(struct fuse_bpf_args *fa,
+		struct fuse_getxattr_io *fgio,
+		struct dentry *dentry, const char *name, void *value,
+		size_t size)
+{
+	*fgio = (struct fuse_getxattr_io) {
+		.fgi.size = size,
+	};
+
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
+		.opcode = FUSE_GETXATTR,
+		.in_numargs = 2,
+		.out_numargs = 1,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(fgio->fgi),
+			.value = &fgio->fgi,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = strlen(name) + 1,
+			.value = name,
+		},
+		.flags = size ? FUSE_BPF_OUT_ARGVAR : 0,
+		.out_args[0].size = size ? size : sizeof(fgio->fgo),
+		.out_args[0].value = size ? value : &fgio->fgo,
+	};
+	return 0;
+}
+
+int fuse_getxattr_backing(struct fuse_bpf_args *fa,
+		struct dentry *dentry, const char *name, void *value,
+		size_t size)
+{
+	ssize_t ret = vfs_getxattr(&nop_mnt_idmap,
+		get_fuse_dentry(dentry)->backing_path.dentry,
+		fa->in_args[1].value, value, size);
+
+	if (fa->flags & FUSE_BPF_OUT_ARGVAR)
+		fa->out_args[0].size = ret;
+	else
+		((struct fuse_getxattr_out *)fa->out_args[0].value)->size = ret;
+
+	return 0;
+}
+
+void *fuse_getxattr_finalize(struct fuse_bpf_args *fa,
+		struct dentry *dentry, const char *name, void *value,
+		size_t size)
+{
+	struct fuse_getxattr_out *fgo;
+
+	if (fa->flags & FUSE_BPF_OUT_ARGVAR)
+		return ERR_PTR(fa->out_args[0].size);
+
+	fgo = fa->out_args[0].value;
+
+	return ERR_PTR(fgo->size);
+
+}
+
+int fuse_listxattr_initialize(struct fuse_bpf_args *fa,
+			      struct fuse_getxattr_io *fgio,
+			      struct dentry *dentry, char *list, size_t size)
+{
+	*fgio = (struct fuse_getxattr_io){
+		.fgi.size = size,
+	};
+
+	*fa = (struct fuse_bpf_args){
+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
+		.opcode = FUSE_LISTXATTR,
+		.in_numargs = 1,
+		.out_numargs = 1,
+		.in_args[0] =
+			(struct fuse_bpf_in_arg){
+				.size = sizeof(fgio->fgi),
+				.value = &fgio->fgi,
+			},
+		.flags = size ? FUSE_BPF_OUT_ARGVAR : 0,
+		.out_args[0].size = size ? size : sizeof(fgio->fgo),
+		.out_args[0].value = size ? (void *)list : &fgio->fgo,
+	};
+
+	return 0;
+}
+
+int fuse_listxattr_backing(struct fuse_bpf_args *fa, struct dentry *dentry,
+			   char *list, size_t size)
+{
+	ssize_t ret =
+		vfs_listxattr(get_fuse_dentry(dentry)->backing_path.dentry,
+			      list, size);
+
+	if (ret < 0)
+		return ret;
+
+	if (fa->flags & FUSE_BPF_OUT_ARGVAR)
+		fa->out_args[0].size = ret;
+	else
+		((struct fuse_getxattr_out *)fa->out_args[0].value)->size = ret;
+
+	return ret;
+}
+
+void *fuse_listxattr_finalize(struct fuse_bpf_args *fa, struct dentry *dentry,
+			      char *list, size_t size)
+{
+	struct fuse_getxattr_out *fgo;
+
+	if (fa->error_in)
+		return NULL;
+
+	if (fa->flags & FUSE_BPF_OUT_ARGVAR)
+		return ERR_PTR(fa->out_args[0].size);
+
+	fgo = fa->out_args[0].value;
+	return ERR_PTR(fgo->size);
+}
+
+int fuse_setxattr_initialize(struct fuse_bpf_args *fa,
+			     struct fuse_setxattr_in *fsxi,
+			     struct dentry *dentry, const char *name,
+			     const void *value, size_t size, int flags)
+{
+	*fsxi = (struct fuse_setxattr_in) {
+		.size = size,
+		.flags = flags,
+	};
+
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
+		.opcode = FUSE_SETXATTR,
+		.in_numargs = 3,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(*fsxi),
+			.value = fsxi,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = strlen(name) + 1,
+			.value = name,
+		},
+		.in_args[2] = (struct fuse_bpf_in_arg) {
+			.size = size,
+			.value = value,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_setxattr_backing(struct fuse_bpf_args *fa, struct dentry *dentry,
+			  const char *name, const void *value, size_t size,
+			  int flags)
+{
+	return vfs_setxattr(&nop_mnt_idmap,
+			    get_fuse_dentry(dentry)->backing_path.dentry, name,
+			    value, size, flags);
+}
+
+void *fuse_setxattr_finalize(struct fuse_bpf_args *fa, struct dentry *dentry,
+			     const char *name, const void *value, size_t size,
+			     int flags)
+{
+	return NULL;
+}
+
+int fuse_removexattr_initialize(struct fuse_bpf_args *fa,
+				struct fuse_dummy_io *unused,
+				struct dentry *dentry, const char *name)
+{
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
+		.opcode = FUSE_REMOVEXATTR,
+		.in_numargs = 1,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = strlen(name) + 1,
+			.value = name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_removexattr_backing(struct fuse_bpf_args *fa,
+			     struct dentry *dentry, const char *name)
+{
+	struct path *backing_path =
+		&get_fuse_dentry(dentry)->backing_path;
+
+	/* TODO account for changes of the name by prefilter */
+	return vfs_removexattr(&nop_mnt_idmap, backing_path->dentry, name);
+}
+
+void *fuse_removexattr_finalize(struct fuse_bpf_args *fa,
+				struct dentry *dentry, const char *name)
+{
+	return NULL;
+}
+
 static inline void fuse_bpf_aio_put(struct fuse_bpf_aio_req *aio_req)
 {
 	if (refcount_dec_and_test(&aio_req->ref))
