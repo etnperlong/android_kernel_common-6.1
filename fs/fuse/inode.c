@@ -2323,9 +2323,23 @@ static struct kobj_attribute fuse_passthrough_attr =
 		__ATTR_RO(fuse_passthrough);
 #endif
 
+#ifdef CONFIG_FUSE_BPF
+static ssize_t fuse_bpf_show(struct kobject *kobj,
+				       struct kobj_attribute *attr, char *buff)
+{
+	return sysfs_emit(buff, "supported\n");
+}
+
+static struct kobj_attribute fuse_bpf_attr =
+		__ATTR_RO(fuse_bpf);
+#endif
+
 static struct attribute *fuse_features[] = {
 #ifdef CONFIG_FUSE_PASSTHROUGH
 	&fuse_passthrough_attr.attr,
+#endif
+#ifdef CONFIG_FUSE_BPF
+	&fuse_bpf_attr.attr,
 #endif
 	NULL,
 };
@@ -2335,8 +2349,38 @@ static const struct attribute_group fuse_features_group = {
 	.attrs = fuse_features,
 };
 
+#ifdef CONFIG_FUSE_BPF
+/*
+ * TODO Remove this once fuse-bpf is upstreamed
+ *
+ * bpf_prog_type_fuse exports the bpf_prog_type_fuse 'constant', which cannot be
+ * constant until the code is upstreamed
+ */
+static ssize_t bpf_prog_type_fuse_show(struct kobject *kobj,
+				       struct kobj_attribute *attr, char *buff)
+{
+	return sysfs_emit(buff, "%d\n", BPF_PROG_TYPE_FUSE);
+}
+
+static struct kobj_attribute bpf_prog_type_fuse_attr =
+		__ATTR_RO(bpf_prog_type_fuse);
+#endif
+
+static struct attribute *bpf_attributes[] = {
+#ifdef CONFIG_FUSE_BPF
+	&bpf_prog_type_fuse_attr.attr,
+#endif
+	NULL,
+};
+
+static const struct attribute_group bpf_attr_group = {
+	.attrs = bpf_attributes,
+};
+/* TODO remove to here */
+
 static const struct attribute_group *attribute_groups[] = {
 	&fuse_features_group,
+	&bpf_attr_group,
 	NULL
 };
 
