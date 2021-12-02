@@ -1439,6 +1439,25 @@ int fuse_open_backing(struct fuse_bpf_args *fa,
 void *fuse_open_finalize(struct fuse_bpf_args *fa,
 		       struct inode *inode, struct file *file, bool isdir);
 
+struct fuse_create_open_io {
+	struct fuse_create_in fci;
+	struct fuse_entry_out feo;
+	struct fuse_open_out foo;
+};
+
+int fuse_create_open_initialize(
+		struct fuse_bpf_args *fa, struct fuse_create_open_io *fcoi,
+		struct inode *dir, struct dentry *entry,
+		struct file *file, unsigned int flags, umode_t mode);
+int fuse_create_open_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry,
+		struct file *file, unsigned int flags, umode_t mode);
+void *fuse_create_open_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry,
+		struct file *file, unsigned int flags, umode_t mode);
+
 int fuse_release_initialize(struct fuse_bpf_args *fa, struct fuse_release_in *fri,
 			    struct inode *inode, struct fuse_file *ff);
 int fuse_release_backing(struct fuse_bpf_args *fa,

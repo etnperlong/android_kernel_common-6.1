@@ -1048,7 +1048,21 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
 	/* Userspace expects S_IFREG in create mode */
 	BUG_ON((mode & S_IFMT) != S_IFREG);
 
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(dir, struct fuse_create_open_io,
+				       fuse_create_open_initialize,
+				       fuse_create_open_backing,
+				       fuse_create_open_finalize,
+				       dir, entry, file, flags, mode);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
 	epoch = atomic_read(&fm->fc->epoch);
+
 	forget = fuse_alloc_forget();
 	err = -ENOMEM;
 	if (!forget)
