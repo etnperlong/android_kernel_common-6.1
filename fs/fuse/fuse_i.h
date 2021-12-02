@@ -33,6 +33,8 @@
 #include <linux/pid_namespace.h>
 #include <linux/refcount.h>
 #include <linux/user_namespace.h>
+#include <linux/statfs.h>
+#include <uapi/linux/magic.h>
 
 /** Default max number of pages that can be used in a single read request */
 #define FUSE_DEFAULT_MAX_PAGES_PER_REQ 32
@@ -1125,6 +1127,8 @@ u64 fuse_time_to_jiffies(u64 sec, u32 nsec);
 #define ATTR_TIMEOUT(o) \
 	fuse_time_to_jiffies((o)->attr_valid, (o)->attr_valid_nsec)
 
+
+u64 entry_attr_timeout(struct fuse_entry_out *o);
 void fuse_init_dentry_root(struct dentry *root, struct file *backing_dir);
 
 void fuse_change_entry_timeout(struct dentry *entry, struct fuse_entry_out *o);
@@ -1443,6 +1447,86 @@ int fuse_canonical_path_backing(struct fuse_bpf_args *fa, const struct path *pat
 void *fuse_canonical_path_finalize(struct fuse_bpf_args *fa,
 				   const struct path *path,
 				   struct path *canonical_path);
+
+struct fuse_getattr_io {
+	struct fuse_getattr_in fgi;
+	struct fuse_attr_out fao;
+};
+int fuse_getattr_initialize(struct fuse_bpf_args *fa, struct fuse_getattr_io *fgio,
+			const struct dentry *entry, struct kstat *stat,
+			u32 request_mask, unsigned int flags);
+int fuse_getattr_backing(struct fuse_bpf_args *fa,
+			const struct dentry *entry, struct kstat *stat,
+			u32 request_mask, unsigned int flags);
+void *fuse_getattr_finalize(struct fuse_bpf_args *fa,
+			const struct dentry *entry, struct kstat *stat,
+			u32 request_mask, unsigned int flags);
+
+int fuse_statfs_initialize(struct fuse_bpf_args *fa, struct fuse_statfs_out *fso,
+		struct dentry *dentry, struct kstatfs *buf);
+int fuse_statfs_backing(struct fuse_bpf_args *fa,
+		struct dentry *dentry, struct kstatfs *buf);
+void *fuse_statfs_finalize(struct fuse_bpf_args *fa,
+		struct dentry *dentry, struct kstatfs *buf);
+
+int fuse_access_initialize(struct fuse_bpf_args *fa, struct fuse_access_in *fai,
+			   struct inode *inode, int mask);
+int fuse_access_backing(struct fuse_bpf_args *fa, struct inode *inode, int mask);
+void *fuse_access_finalize(struct fuse_bpf_args *fa, struct inode *inode, int mask);
+
+static inline u64 attr_timeout(struct fuse_attr_out *o)
+{
+	return fuse_time_to_jiffies(o->attr_valid, o->attr_valid_nsec);
+}
+
+void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode, struct fuse_attr *attr,
+			  struct kstat *stat);
+
+static inline int finalize_attr(struct inode *inode, struct fuse_attr_out *outarg,
+				u64 attr_version, struct kstat *stat)
+{
+	int err = 0;
+
+	if (fuse_invalid_attr(&outarg->attr) ||
+	    inode_wrong_type(inode, outarg->attr.mode)) {
+		fuse_make_bad(inode);
+		err = -EIO;
+	} else {
+		fuse_change_attributes(inode, &outarg->attr, NULL,
+				       ATTR_TIMEOUT(outarg),
+				       attr_version);
+		if (stat)
+			fuse_fillattr(&nop_mnt_idmap, inode, &outarg->attr, stat);
+	}
+	return err;
+}
+
+static inline void convert_statfs_to_fuse(struct fuse_kstatfs *attr, struct kstatfs *stbuf)
+{
+	attr->bsize   = stbuf->f_bsize;
+	attr->frsize  = stbuf->f_frsize;
+	attr->blocks  = stbuf->f_blocks;
+	attr->bfree   = stbuf->f_bfree;
+	attr->bavail  = stbuf->f_bavail;
+	attr->files   = stbuf->f_files;
+	attr->ffree   = stbuf->f_ffree;
+	attr->namelen = stbuf->f_namelen;
+	/* fsid is left zero */
+}
+
+static inline void convert_fuse_statfs(struct kstatfs *stbuf, struct fuse_kstatfs *attr)
+{
+	stbuf->f_type    = FUSE_SUPER_MAGIC;
+	stbuf->f_bsize   = attr->bsize;
+	stbuf->f_frsize  = attr->frsize;
+	stbuf->f_blocks  = attr->blocks;
+	stbuf->f_bfree   = attr->bfree;
+	stbuf->f_bavail  = attr->bavail;
+	stbuf->f_files   = attr->files;
+	stbuf->f_ffree   = attr->ffree;
+	stbuf->f_namelen = attr->namelen;
+	/* fsid is left zero */
+}
 
 #ifdef CONFIG_FUSE_BPF
 struct fuse_err_ret {

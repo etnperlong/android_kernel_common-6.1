@@ -1584,7 +1584,7 @@ out:
 	return err;
 }
 
-static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
+void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
 			  struct fuse_attr *attr, struct kstat *stat)
 {
 	unsigned int blkbits;
@@ -1729,24 +1729,13 @@ static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
 	args.out_args[0].size = sizeof(outarg);
 	args.out_args[0].value = &outarg;
 	err = fuse_simple_request(fm, &args);
-	if (!err) {
-		if (fuse_invalid_attr(&outarg.attr) ||
-		    inode_wrong_type(inode, outarg.attr.mode)) {
-			fuse_make_bad(inode);
-			err = -EIO;
-		} else {
-			fuse_change_attributes(inode, &outarg.attr, NULL,
-					       ATTR_TIMEOUT(&outarg),
-					       attr_version);
-			if (stat)
-				fuse_fillattr(idmap, inode, &outarg.attr, stat);
-		}
-	}
+	if (!err)
+		err = finalize_attr(inode, &outarg, attr_version, stat);
 	return err;
 }
 
 static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
-				struct file *file, struct kstat *stat,
+				struct file *file, const struct path *path, struct kstat *stat,
 				u32 request_mask, unsigned int flags)
 {
 	struct fuse_inode *fi = get_fuse_inode(inode);
@@ -1756,6 +1745,16 @@ static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
 	u32 inval_mask = READ_ONCE(fi->inval_mask);
 	u32 cache_mask = fuse_get_cache_mask(inode);
 
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(inode, struct fuse_getattr_io,
+			       fuse_getattr_initialize,	fuse_getattr_backing,
+			       fuse_getattr_finalize,
+			       path->dentry, stat, request_mask, flags);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
 
 	/* FUSE only supports basic stats and possibly btime */
 	request_mask &= STATX_BASIC_STATS | STATX_BTIME;
@@ -1803,7 +1802,9 @@ retry:
 
 int fuse_update_attributes(struct inode *inode, struct file *file, u32 mask)
 {
-	return fuse_update_get_attr(&nop_mnt_idmap, inode, file, NULL, mask, 0);
+	/* Do *not* need to get atime for internal purposes */
+	return fuse_update_get_attr(&nop_mnt_idmap, inode, file, &file->f_path, NULL,
+				    mask & ~STATX_ATIME, 0);
 }
 
 int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
@@ -1921,6 +1922,16 @@ static int fuse_access(struct inode *inode, int mask)
 	struct fuse_access_in inarg;
 	int err;
 
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(inode, struct fuse_access_in,
+			       fuse_access_initialize, fuse_access_backing,
+			       fuse_access_finalize, inode, mask);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
+
 	BUG_ON(mask & MAY_NOT_BLOCK);
 
 	/*
@@ -1977,6 +1988,10 @@ static int fuse_permission(struct mnt_idmap *idmap,
 	struct fuse_conn *fc = get_fuse_conn(inode);
 	bool refreshed = false;
 	int err = 0;
+	struct fuse_inode *fi = get_fuse_inode(inode);
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+#endif
 
 	if (fuse_is_bad(inode))
 		return -EIO;
@@ -1984,12 +1999,19 @@ static int fuse_permission(struct mnt_idmap *idmap,
 	if (!fuse_allow_current_process(fc))
 		return -EACCES;
 
+#ifdef CONFIG_FUSE_BPF
+	fer = fuse_bpf_backing(inode, struct fuse_access_in,
+			       fuse_access_initialize, fuse_access_backing,
+			       fuse_access_finalize, inode, mask);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
+
 	/*
 	 * If attributes are needed, refresh them before proceeding
 	 */
 	if (fc->default_permissions ||
 	    ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))) {
-		struct fuse_inode *fi = get_fuse_inode(inode);
 		u32 perm_mask = STATX_MODE | STATX_UID | STATX_GID;
 
 		if (perm_mask & READ_ONCE(fi->inval_mask) ||
@@ -2557,11 +2579,22 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
 		 * This should be done on write(), truncate() and chown().
 		 */
 		if (!fc->handle_killpriv && !fc->handle_killpriv_v2) {
+#ifdef CONFIG_FUSE_BPF
+			struct fuse_err_ret fer;
+
 			/*
 			 * ia_mode calculation may have used stale i_mode.
 			 * Refresh and recalculate.
 			 */
-			ret = fuse_do_getattr(idmap, inode, NULL, file);
+			fer = fuse_bpf_backing(inode, struct fuse_getattr_io,
+					       fuse_getattr_initialize,	fuse_getattr_backing,
+					       fuse_getattr_finalize,
+					       entry, NULL, 0, 0);
+			if (fer.ret)
+				ret = PTR_ERR(fer.result);
+			else
+#endif
+				ret = fuse_do_getattr(idmap, inode, NULL, file);
 			if (ret)
 				return ret;
 
@@ -2618,7 +2651,8 @@ static int fuse_getattr(struct mnt_idmap *idmap,
 		return -EACCES;
 	}
 
-	return fuse_update_get_attr(idmap, inode, NULL, stat, request_mask, flags);
+	return fuse_update_get_attr(idmap, inode, NULL, path, stat, request_mask,
+				    flags);
 }
 
 static const struct inode_operations fuse_dir_inode_operations = {
