@@ -2140,6 +2140,20 @@ static int fuse_dir_open(struct inode *inode, struct file *file)
 	if (err)
 		return err;
 
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(inode, struct fuse_open_io,
+				       fuse_open_initialize,
+				       fuse_open_backing,
+				       fuse_open_finalize,
+				       inode, file, true);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
+
 	err = fuse_do_open(fm, get_node_id(inode), file, true);
 	if (!err) {
 		struct fuse_file *ff = file->private_data;
@@ -2174,6 +2188,19 @@ static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
 
 	if (fuse_is_bad(inode))
 		return -EIO;
+
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(inode, struct fuse_fsync_in,
+				fuse_dir_fsync_initialize, fuse_fsync_backing,
+				fuse_fsync_finalize,
+				file, start, end, datasync);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
 
 	if (fc->no_fsyncdir)
 		return 0;

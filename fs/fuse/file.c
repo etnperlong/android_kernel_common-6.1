@@ -7,6 +7,7 @@
 #include "fuse_i.h"
 #include "dev.h"
 
+#include <linux/filter.h>
 #include <linux/pagemap.h>
 #include <linux/slab.h>
 #include <linux/kernel.h>
@@ -98,33 +99,48 @@ static void fuse_release_end(struct fuse_args *args, int error)
 	kfree(ra);
 }
 
-static void fuse_file_put(struct fuse_file *ff, bool sync)
+static void fuse_file_put(struct inode *inode, struct fuse_file *ff, bool sync)
 {
 	if (refcount_dec_and_test(&ff->count)) {
 		struct fuse_release_args *ra = &ff->args->release_args;
 		struct fuse_args *args = (ra ? &ra->args : NULL);
 
-		if (ra && ra->inode)
-			fuse_file_io_release(ff, ra->inode);
+#ifdef CONFIG_FUSE_BPF
+		struct fuse_err_ret fer = {0};
 
-		if (!args) {
-			/* Do nothing when server does not implement 'opendir' */
-		} else if (args->opcode == FUSE_RELEASE && ff->fm->fc->no_open) {
+		if (inode)
+			fer = fuse_bpf_backing(inode, struct fuse_release_in,
+					fuse_release_initialize,
+					fuse_release_backing,
+					fuse_release_finalize,
+					inode, ff);
+		if (fer.ret) {
 			fuse_release_end(args, 0);
-		} else if (sync) {
-			fuse_simple_request(ff->fm, args);
-			fuse_release_end(args, 0);
-		} else {
-			/*
-			 * DAX inodes may need to issue a number of synchronous
-			 * request for clearing the mappings.
-			 */
-			if (ra && ra->inode && FUSE_IS_DAX(ra->inode))
-				args->may_block = true;
-			args->end = fuse_release_end;
-			if (fuse_simple_background(ff->fm, args,
-						   GFP_KERNEL | __GFP_NOFAIL))
-				fuse_release_end(args, -ENOTCONN);
+		} else
+#endif
+		{
+			if (ra && ra->inode)
+				fuse_file_io_release(ff, ra->inode);
+
+			if (!args) {
+				/* Do nothing when server does not implement 'opendir' */
+			} else if (args->opcode == FUSE_RELEASE && ff->fm->fc->no_open) {
+				fuse_release_end(args, 0);
+			} else if (sync) {
+				fuse_simple_request(ff->fm, args);
+				fuse_release_end(args, 0);
+			} else {
+				/*
+				 * DAX inodes may need to issue a number of synchronous
+				 * request for clearing the mappings.
+				 */
+				if (ra && ra->inode && FUSE_IS_DAX(ra->inode))
+					args->may_block = true;
+				args->end = fuse_release_end;
+				if (fuse_simple_background(ff->fm, args,
+							   GFP_KERNEL | __GFP_NOFAIL))
+					fuse_release_end(args, -ENOTCONN);
+			}
 		}
 		kfree(ff);
 	}
@@ -265,6 +281,20 @@ static int fuse_open(struct inode *inode, struct file *file)
 	if (err)
 		return err;
 
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(inode, struct fuse_open_io,
+				       fuse_open_initialize,
+				       fuse_open_backing,
+				       fuse_open_finalize,
+				       inode, file, false);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
+
 	if (is_wb_truncate || dax_truncate)
 		inode_lock(inode);
 
@@ -385,7 +415,7 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
 	 * before commencing with fs shutdown doesn't work if submounts are
 	 * used.
 	 */
-	fuse_file_put(ff, ff->fm->fc->auto_submounts);
+	fuse_file_put(ra ? ra->inode : NULL, ff, ff->fm->fc->auto_submounts);
 }
 
 void fuse_release_common(struct file *file, bool isdir)
@@ -416,7 +446,7 @@ void fuse_sync_release(struct fuse_inode *fi, struct fuse_file *ff,
 {
 	WARN_ON(refcount_read(&ff->count) > 1);
 	fuse_prepare_release(fi, ff, flags, FUSE_RELEASE, true);
-	fuse_file_put(ff, true);
+	fuse_file_put(&fi->inode, ff, true);
 }
 EXPORT_SYMBOL_GPL(fuse_sync_release);
 
@@ -472,6 +502,17 @@ static int fuse_flush(struct file *file, fl_owner_t id)
 	struct fuse_flush_in inarg;
 	FUSE_ARGS(args);
 	int err;
+
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(file->f_inode, struct fuse_flush_in,
+			       fuse_flush_initialize, fuse_flush_backing,
+			       fuse_flush_finalize,
+			       file, id);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
 
 	if (fuse_is_bad(inode))
 		return -EIO;
@@ -543,6 +584,17 @@ static int fuse_fsync(struct file *file, loff_t start, loff_t end,
 	struct inode *inode = file->f_mapping->host;
 	struct fuse_conn *fc = get_fuse_conn(inode);
 	int err;
+
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(inode, struct fuse_fsync_in,
+			       fuse_fsync_initialize, fuse_fsync_backing,
+			       fuse_fsync_finalize,
+			       file, start, end, datasync);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
 
 	if (fuse_is_bad(inode))
 		return -EIO;
@@ -1049,7 +1101,7 @@ static void fuse_readpages_end(struct fuse_args *args, int err)
 		folio_put(ap->folios[i]);
 	}
 	if (ia->ff)
-		fuse_file_put(ia->ff, false);
+		fuse_file_put(mapping ? mapping->host : NULL, ia->ff, false);
 
 	fuse_io_free(ia);
 }
@@ -1900,7 +1952,7 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
 	if (wpa->bucket)
 		fuse_sync_bucket_dec(wpa->bucket);
 
-	fuse_file_put(wpa->ia.ff, false);
+	fuse_file_put(wpa->inode, wpa->ia.ff, false);
 
 	kfree(ap->folios);
 	kfree(wpa);
@@ -2053,7 +2105,7 @@ int fuse_write_inode(struct inode *inode, struct writeback_control *wbc)
 	ff = __fuse_write_file_get(fi);
 	err = fuse_flush_times(inode, ff);
 	if (ff)
-		fuse_file_put(ff, false);
+		fuse_file_put(inode, ff, false);
 
 	return err;
 }
@@ -2282,7 +2334,7 @@ static int fuse_iomap_writeback_submit(struct iomap_writepage_ctx *wpc,
 	}
 
 	if (data->ff)
-		fuse_file_put(data->ff, false);
+		fuse_file_put(wpc->inode, data->ff, false);
 
 	return error;
 }

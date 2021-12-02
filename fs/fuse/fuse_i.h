@@ -364,6 +364,14 @@ struct fuse_file {
 
 	} readdir;
 
+#ifdef CONFIG_FUSE_BPF
+	/**
+	 * @backing_file: TODO: Reconcile with passthrough file
+	 * backing file when in bpf mode
+	 */
+	struct file *backing_file;
+#endif
+
 	/** @polled_node: RB node to be linked on fuse_conn->polled_files */
 	struct rb_node polled_node;
 
@@ -1418,6 +1426,40 @@ extern void fuse_sysctl_unregister(void);
 struct fuse_dummy_io {
 	int unused;
 };
+
+struct fuse_open_io {
+	struct fuse_open_in foi;
+	struct fuse_open_out foo;
+};
+
+int fuse_open_initialize(struct fuse_bpf_args *fa, struct fuse_open_io *foi,
+			 struct inode *inode, struct file *file, bool isdir);
+int fuse_open_backing(struct fuse_bpf_args *fa,
+		      struct inode *inode, struct file *file, bool isdir);
+void *fuse_open_finalize(struct fuse_bpf_args *fa,
+		       struct inode *inode, struct file *file, bool isdir);
+
+int fuse_release_initialize(struct fuse_bpf_args *fa, struct fuse_release_in *fri,
+			    struct inode *inode, struct fuse_file *ff);
+int fuse_release_backing(struct fuse_bpf_args *fa,
+			 struct inode *inode, struct fuse_file *ff);
+void *fuse_release_finalize(struct fuse_bpf_args *fa,
+			    struct inode *inode, struct fuse_file *ff);
+
+int fuse_flush_initialize(struct fuse_bpf_args *fa, struct fuse_flush_in *ffi,
+			  struct file *file, fl_owner_t id);
+int fuse_flush_backing(struct fuse_bpf_args *fa, struct file *file, fl_owner_t id);
+void *fuse_flush_finalize(struct fuse_bpf_args *fa,
+			  struct file *file, fl_owner_t id);
+
+int fuse_fsync_initialize(struct fuse_bpf_args *fa, struct fuse_fsync_in *ffi,
+		   struct file *file, loff_t start, loff_t end, int datasync);
+int fuse_fsync_backing(struct fuse_bpf_args *fa,
+		   struct file *file, loff_t start, loff_t end, int datasync);
+void *fuse_fsync_finalize(struct fuse_bpf_args *fa,
+		   struct file *file, loff_t start, loff_t end, int datasync);
+int fuse_dir_fsync_initialize(struct fuse_bpf_args *fa, struct fuse_fsync_in *ffi,
+		   struct file *file, loff_t start, loff_t end, int datasync);
 
 struct fuse_lookup_io {
 	struct fuse_entry_out feo;
