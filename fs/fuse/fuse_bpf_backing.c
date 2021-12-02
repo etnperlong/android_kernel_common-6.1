@@ -1510,6 +1510,168 @@ void *fuse_rmdir_finalize(
 	return NULL;
 }
 
+static int fuse_rename_backing_common(
+			 struct inode *olddir, struct dentry *oldent,
+			 struct inode *newdir, struct dentry *newent,
+			 unsigned int flags)
+{
+	int err = 0;
+	struct path old_backing_path;
+	struct path new_backing_path;
+	struct dentry *old_backing_dir_dentry;
+	struct dentry *old_backing_dentry;
+	struct dentry *new_backing_dir_dentry;
+	struct dentry *new_backing_dentry;
+	struct inode *target_inode;
+	struct renamedata rd;
+
+	//TODO Actually deal with changing anything that isn't a flag
+	get_fuse_backing_path(oldent, &old_backing_path);
+	if (!old_backing_path.dentry)
+		return -EBADF;
+	get_fuse_backing_path(newent, &new_backing_path);
+	if (!new_backing_path.dentry) {
+		/*
+		 * TODO A file being moved from a backing path to another
+		 * backing path which is not yet instrumented with FUSE-BPF.
+		 * This may be slow and should be substituted with something
+		 * more clever.
+		 */
+		err = -EXDEV;
+		goto put_old_path;
+	}
+	if (new_backing_path.mnt != old_backing_path.mnt) {
+		err = -EXDEV;
+		goto put_new_path;
+	}
+	old_backing_dentry = old_backing_path.dentry;
+	new_backing_dentry = new_backing_path.dentry;
+	old_backing_dir_dentry = dget_parent(old_backing_dentry);
+	new_backing_dir_dentry = dget_parent(new_backing_dentry);
+	target_inode = d_inode(newent);
+
+	rd = (struct renamedata) {
+		.mnt_idmap = &nop_mnt_idmap,
+		.old_parent = old_backing_dir_dentry,
+		.new_parent = new_backing_dir_dentry,
+		.flags = flags,
+	};
+	err = start_renaming_dentry(&rd, 0, old_backing_dentry,
+				    &QSTR_LEN(newent->d_name.name,
+					      newent->d_name.len));
+	if (err)
+		goto put_parents;
+	err = vfs_rename(&rd);
+	if (err)
+		goto unlock;
+	if (target_inode)
+		fsstack_copy_attr_all(target_inode,
+				get_fuse_inode(target_inode)->backing_inode);
+	fsstack_copy_attr_all(d_inode(oldent), d_inode(old_backing_dentry));
+unlock:
+	end_renaming(&rd);
+put_parents:
+	dput(new_backing_dir_dentry);
+	dput(old_backing_dir_dentry);
+put_new_path:
+	path_put(&new_backing_path);
+put_old_path:
+	path_put(&old_backing_path);
+	return err;
+}
+
+int fuse_rename2_initialize(struct fuse_bpf_args *fa, struct fuse_rename2_in *fri,
+			    struct inode *olddir, struct dentry *oldent,
+			    struct inode *newdir, struct dentry *newent,
+			    unsigned int flags)
+{
+	*fri = (struct fuse_rename2_in) {
+		.newdir = get_node_id(newdir),
+		.flags = flags,
+	};
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(olddir),
+		.opcode = FUSE_RENAME2,
+		.in_numargs = 3,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(*fri),
+			.value = fri,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = oldent->d_name.len + 1,
+			.value = oldent->d_name.name,
+		},
+		.in_args[2] = (struct fuse_bpf_in_arg) {
+			.size = newent->d_name.len + 1,
+			.value = newent->d_name.name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_rename2_backing(struct fuse_bpf_args *fa,
+			 struct inode *olddir, struct dentry *oldent,
+			 struct inode *newdir, struct dentry *newent,
+			 unsigned int flags)
+{
+	const struct fuse_rename2_in *fri = fa->in_args[0].value;
+
+	/* TODO: deal with changing dirs/ents */
+	return fuse_rename_backing_common(olddir, oldent, newdir, newent, fri->flags);
+}
+
+void *fuse_rename2_finalize(struct fuse_bpf_args *fa,
+			    struct inode *olddir, struct dentry *oldent,
+			    struct inode *newdir, struct dentry *newent,
+			    unsigned int flags)
+{
+	return NULL;
+}
+
+int fuse_rename_initialize(struct fuse_bpf_args *fa, struct fuse_rename_in *fri,
+			   struct inode *olddir, struct dentry *oldent,
+			   struct inode *newdir, struct dentry *newent)
+{
+	*fri = (struct fuse_rename_in) {
+		.newdir = get_node_id(newdir),
+	};
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(olddir),
+		.opcode = FUSE_RENAME,
+		.in_numargs = 3,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(*fri),
+			.value = fri,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = oldent->d_name.len + 1,
+			.value = oldent->d_name.name,
+		},
+		.in_args[2] = (struct fuse_bpf_in_arg) {
+			.size = newent->d_name.len + 1,
+			.value = newent->d_name.name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_rename_backing(struct fuse_bpf_args *fa,
+			struct inode *olddir, struct dentry *oldent,
+			struct inode *newdir, struct dentry *newent)
+{
+	/* TODO: deal with changing dirs/ents */
+	return fuse_rename_backing_common(olddir, oldent, newdir, newent, 0);
+}
+
+void *fuse_rename_finalize(struct fuse_bpf_args *fa,
+			   struct inode *olddir, struct dentry *oldent,
+			   struct inode *newdir, struct dentry *newent)
+{
+	return NULL;
+}
+
 int fuse_unlink_initialize(
 		struct fuse_bpf_args *fa, struct fuse_dummy_io *dummy,
 		struct inode *dir, struct dentry *entry)

@@ -1488,6 +1488,29 @@ void *fuse_rmdir_finalize(
 		struct fuse_bpf_args *fa,
 		struct inode *dir, struct dentry *entry);
 
+int fuse_rename2_initialize(struct fuse_bpf_args *fa, struct fuse_rename2_in *fri,
+			    struct inode *olddir, struct dentry *oldent,
+			    struct inode *newdir, struct dentry *newent,
+			    unsigned int flags);
+int fuse_rename2_backing(struct fuse_bpf_args *fa,
+			 struct inode *olddir, struct dentry *oldent,
+			 struct inode *newdir, struct dentry *newent,
+			 unsigned int flags);
+void *fuse_rename2_finalize(struct fuse_bpf_args *fa,
+			    struct inode *olddir, struct dentry *oldent,
+			    struct inode *newdir, struct dentry *newent,
+			    unsigned int flags);
+
+int fuse_rename_initialize(struct fuse_bpf_args *fa, struct fuse_rename_in *fri,
+			   struct inode *olddir, struct dentry *oldent,
+			   struct inode *newdir, struct dentry *newent);
+int fuse_rename_backing(struct fuse_bpf_args *fa,
+			struct inode *olddir, struct dentry *oldent,
+			struct inode *newdir, struct dentry *newent);
+void *fuse_rename_finalize(struct fuse_bpf_args *fa,
+			   struct inode *olddir, struct dentry *oldent,
+			   struct inode *newdir, struct dentry *newent);
+
 int fuse_unlink_initialize(
 		struct fuse_bpf_args *fa, struct fuse_dummy_io *fmi,
 		struct inode *dir, struct dentry *entry);
