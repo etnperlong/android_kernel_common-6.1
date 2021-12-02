@@ -1458,6 +1458,26 @@ void *fuse_create_open_finalize(
 		struct inode *dir, struct dentry *entry,
 		struct file *file, unsigned int flags, umode_t mode);
 
+int fuse_mknod_initialize(
+		struct fuse_bpf_args *fa, struct fuse_mknod_in *fmi,
+		struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev);
+int fuse_mknod_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev);
+void *fuse_mknod_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev);
+
+int fuse_mkdir_initialize(
+		struct fuse_bpf_args *fa, struct fuse_mkdir_in *fmi,
+		struct inode *dir, struct dentry *entry, umode_t mode);
+int fuse_mkdir_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode);
+void *fuse_mkdir_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode);
+
 int fuse_release_initialize(struct fuse_bpf_args *fa, struct fuse_release_in *fri,
 			    struct inode *inode, struct fuse_file *ff);
 int fuse_release_backing(struct fuse_bpf_args *fa,

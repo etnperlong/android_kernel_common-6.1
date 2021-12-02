@@ -1299,6 +1299,17 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
 	struct fuse_mount *fm = get_fuse_mount(dir);
 	FUSE_ARGS(args);
 
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(dir, struct fuse_mknod_in,
+			fuse_mknod_initialize, fuse_mknod_backing,
+			fuse_mknod_finalize,
+			dir, entry, mode, rdev);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
+
 	if (!fm->fc->dont_mask)
 		mode &= ~current_umask();
 
@@ -1345,6 +1356,17 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
 	struct fuse_mkdir_in inarg;
 	struct fuse_mount *fm = get_fuse_mount(dir);
 	FUSE_ARGS(args);
+
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(dir, struct fuse_mkdir_in,
+			fuse_mkdir_initialize, fuse_mkdir_backing,
+			fuse_mkdir_finalize,
+			dir, entry, mode & ~S_IFDIR);
+	if (fer.ret)
+		return fer.result;
+#endif
 
 	if (!fm->fc->dont_mask)
 		mode &= ~current_umask();

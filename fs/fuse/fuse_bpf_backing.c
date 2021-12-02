@@ -1233,6 +1233,222 @@ void *fuse_canonical_path_finalize(struct fuse_bpf_args *fa,
 	return NULL;
 }
 
+/*
+ * Look up the backing name of @entry again with the backing parent locked,
+ * so that the lookup and the create that follows are atomic. Look it up by
+ * name: the cached negative dentry may have been unhashed (casefolded
+ * directories), so it may not be the dentry that is returned.
+ */
+static struct dentry *fuse_backing_start_creating(struct dentry *entry,
+						  struct dentry *backing)
+{
+	struct dentry *parent = dget_parent(backing);
+	struct dentry *d;
+
+	d = start_creating(&nop_mnt_idmap, parent,
+			   &QSTR_LEN(entry->d_name.name, entry->d_name.len));
+	dput(parent);
+	return d;
+}
+
+/* Point @entry's backing path, and the caller's copy in @path, at @d. */
+static void fuse_set_backing_dentry(struct dentry *entry, struct path *path,
+				    struct dentry *d)
+{
+	struct fuse_dentry *fd = get_fuse_dentry(entry);
+
+	if (path->dentry == d)
+		return;
+	dput(path->dentry);
+	path->dentry = dget(d);
+	path_put(&fd->backing_path);
+	fd->backing_path = *path;
+	path_get(&fd->backing_path);
+}
+
+int fuse_mknod_initialize(
+		struct fuse_bpf_args *fa, struct fuse_mknod_in *fmi,
+		struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
+{
+	*fmi = (struct fuse_mknod_in) {
+		.mode = mode,
+		.rdev = new_encode_dev(rdev),
+		.umask = current_umask(),
+	};
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(dir),
+		.opcode = FUSE_MKNOD,
+		.in_numargs = 2,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(*fmi),
+			.value = fmi,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = entry->d_name.len + 1,
+			.value = entry->d_name.name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_mknod_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
+{
+	int err = 0;
+	const struct fuse_mknod_in *fmi = fa->in_args[0].value;
+	struct fuse_inode *fuse_inode = get_fuse_inode(dir);
+	struct inode *backing_inode = fuse_inode->backing_inode;
+	struct path backing_path = {};
+	struct inode *inode = NULL;
+	struct dentry *backing_dentry;
+
+	//TODO Actually deal with changing the backing entry in mknod
+	get_fuse_backing_path(entry, &backing_path);
+	if (!backing_path.dentry)
+		return -EBADF;
+
+	backing_dentry = fuse_backing_start_creating(entry, backing_path.dentry);
+	if (IS_ERR(backing_dentry)) {
+		err = PTR_ERR(backing_dentry);
+		goto out;
+	}
+	mode = fmi->mode;
+	if (!IS_POSIXACL(backing_inode))
+		mode &= ~fmi->umask;
+	err = vfs_mknod(&nop_mnt_idmap, d_inode(backing_dentry->d_parent),
+			backing_dentry, mode, new_decode_dev(fmi->rdev), NULL);
+	if (!err)
+		fuse_set_backing_dentry(entry, &backing_path, backing_dentry);
+	end_creating(backing_dentry);
+	if (err)
+		goto out;
+	if (d_really_is_negative(backing_path.dentry) ||
+		unlikely(d_unhashed(backing_path.dentry))) {
+		err = -EINVAL;
+		/**
+		 * TODO: overlayfs responds to this situation with a
+		 * lookupOneLen. Should we do that too?
+		 */
+		goto out;
+	}
+	inode = fuse_iget_backing(dir->i_sb, fuse_inode->nodeid, backing_inode);
+	if (IS_ERR(inode)) {
+		err = PTR_ERR(inode);
+		goto out;
+	}
+	d_instantiate(entry, inode);
+out:
+	path_put(&backing_path);
+	return err;
+}
+
+void *fuse_mknod_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
+{
+	return NULL;
+}
+
+int fuse_mkdir_initialize(
+		struct fuse_bpf_args *fa, struct fuse_mkdir_in *fmi,
+		struct inode *dir, struct dentry *entry, umode_t mode)
+{
+	*fmi = (struct fuse_mkdir_in) {
+		.mode = mode,
+		.umask = current_umask(),
+	};
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(dir),
+		.opcode = FUSE_MKDIR,
+		.in_numargs = 2,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(*fmi),
+			.value = fmi,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = entry->d_name.len + 1,
+			.value = entry->d_name.name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_mkdir_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir_inode, struct dentry *entry, umode_t mode)
+{
+	int err = 0;
+	const struct fuse_mkdir_in *fmi = fa->in_args[0].value;
+	struct fuse_inode *dir_fuse_inode = get_fuse_inode(dir_inode);
+	struct inode *dir_backing_inode = dir_fuse_inode->backing_inode;
+	struct path backing_path = {};
+	struct inode *inode = NULL;
+	struct dentry *backing_dentry;
+
+	//TODO Actually deal with changing the backing entry in mkdir
+	get_fuse_backing_path(entry, &backing_path);
+	if (!backing_path.dentry)
+		return -EBADF;
+
+	backing_dentry = fuse_backing_start_creating(entry, backing_path.dentry);
+	if (IS_ERR(backing_dentry)) {
+		err = PTR_ERR(backing_dentry);
+		goto out;
+	}
+	mode = fmi->mode;
+	if (!IS_POSIXACL(dir_backing_inode))
+		mode &= ~fmi->umask;
+	/* On error, vfs_mkdir() unlocks the parent and puts the dentry */
+	backing_dentry = vfs_mkdir(&nop_mnt_idmap,
+				   d_inode(backing_dentry->d_parent),
+				   backing_dentry, mode, NULL);
+	if (IS_ERR(backing_dentry)) {
+		err = PTR_ERR(backing_dentry);
+		goto out;
+	}
+	fuse_set_backing_dentry(entry, &backing_path, backing_dentry);
+	if (d_really_is_negative(backing_path.dentry) ||
+		unlikely(d_unhashed(backing_path.dentry))) {
+		struct dentry *d = lookup_one(&nop_mnt_idmap,
+				&(struct qstr) QSTR_INIT(entry->d_name.name,
+					entry->d_name.len),
+				backing_path.dentry->d_parent);
+
+		if (IS_ERR(d)) {
+			err = PTR_ERR(d);
+			goto out_end_creating;
+		}
+		fuse_set_backing_dentry(entry, &backing_path, d);
+		dput(d);
+	}
+	inode = fuse_iget_backing(dir_inode->i_sb, 0,
+				  backing_path.dentry->d_inode);
+	if (IS_ERR(inode)) {
+		err = PTR_ERR(inode);
+		goto out_end_creating;
+	}
+	d_instantiate(entry, inode);
+	if (get_fuse_inode(inode)->bpf)
+		bpf_prog_put(get_fuse_inode(inode)->bpf);
+	get_fuse_inode(inode)->bpf = get_fuse_dentry(entry)->bpf;
+	get_fuse_dentry(entry)->bpf = NULL;
+out_end_creating:
+	end_creating(backing_dentry);
+out:
+	path_put(&backing_path);
+	return err;
+}
+
+void *fuse_mkdir_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, umode_t mode)
+{
+	return NULL;
+}
+
 int fuse_getattr_initialize(struct fuse_bpf_args *fa, struct fuse_getattr_io *fgio,
 			const struct dentry *entry, struct kstat *stat,
 			u32 request_mask, unsigned int flags)
