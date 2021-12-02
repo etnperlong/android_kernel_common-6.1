@@ -1462,6 +1462,20 @@ static int fuse_unlink(struct inode *dir, struct dentry *entry)
 	if (fuse_is_bad(dir))
 		return -EIO;
 
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(dir, struct fuse_dummy_io,
+					fuse_unlink_initialize,
+					fuse_unlink_backing,
+					fuse_unlink_finalize,
+					dir, entry);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
+
 	args.opcode = FUSE_UNLINK;
 	args.nodeid = get_node_id(dir);
 	args.in_numargs = 2;
@@ -1485,6 +1499,20 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
 
 	if (fuse_is_bad(dir))
 		return -EIO;
+
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+
+		fer = fuse_bpf_backing(dir, struct fuse_dummy_io,
+					fuse_rmdir_initialize,
+					fuse_rmdir_backing,
+					fuse_rmdir_finalize,
+					dir, entry);
+		if (fer.ret)
+			return PTR_ERR(fer.result);
+	}
+#endif
 
 	args.opcode = FUSE_RMDIR;
 	args.nodeid = get_node_id(dir);

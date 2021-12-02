@@ -1449,6 +1449,128 @@ void *fuse_mkdir_finalize(
 	return NULL;
 }
 
+int fuse_rmdir_initialize(
+		struct fuse_bpf_args *fa, struct fuse_dummy_io *dummy,
+		struct inode *dir, struct dentry *entry)
+{
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(dir),
+		.opcode = FUSE_RMDIR,
+		.in_numargs = 1,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = entry->d_name.len + 1,
+			.value = entry->d_name.name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_rmdir_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry)
+{
+	int err = 0;
+	struct path backing_path = {};
+	struct dentry *backing_parent_dentry;
+	struct inode *backing_inode;
+	struct dentry *backing_dentry;
+
+	/* TODO Actually deal with changing the backing entry in rmdir */
+	get_fuse_backing_path(entry, &backing_path);
+	if (!backing_path.dentry)
+		return -EBADF;
+
+	/* TODO Not sure if we should reverify like overlayfs, or get inode from d_parent */
+	backing_parent_dentry = dget_parent(backing_path.dentry);
+	backing_inode = d_inode(backing_parent_dentry);
+
+	backing_dentry = start_removing_dentry(backing_parent_dentry,
+					       backing_path.dentry);
+	err = PTR_ERR_OR_ZERO(backing_dentry);
+	if (!err) {
+		err = vfs_rmdir(&nop_mnt_idmap, backing_inode, backing_dentry, NULL);
+		end_removing(backing_dentry);
+	} else if (err == -EINVAL) {
+		/* Unhashed or moved: the backing entry is already gone */
+		err = -ENOENT;
+	}
+
+	dput(backing_parent_dentry);
+	if (!err)
+		d_drop(entry);
+	path_put(&backing_path);
+	return err;
+}
+
+void *fuse_rmdir_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry)
+{
+	return NULL;
+}
+
+int fuse_unlink_initialize(
+		struct fuse_bpf_args *fa, struct fuse_dummy_io *dummy,
+		struct inode *dir, struct dentry *entry)
+{
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(dir),
+		.opcode = FUSE_UNLINK,
+		.in_numargs = 1,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = entry->d_name.len + 1,
+			.value = entry->d_name.name,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_unlink_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry)
+{
+	int err = 0;
+	struct path backing_path = {};
+	struct dentry *backing_parent_dentry;
+	struct inode *backing_inode;
+	struct dentry *backing_dentry;
+
+	/* TODO Actually deal with changing the backing entry in unlink */
+	get_fuse_backing_path(entry, &backing_path);
+	if (!backing_path.dentry)
+		return -EBADF;
+
+	/* TODO Not sure if we should reverify like overlayfs, or get inode from d_parent */
+	backing_parent_dentry = dget_parent(backing_path.dentry);
+	backing_inode = d_inode(backing_parent_dentry);
+
+	backing_dentry = start_removing_dentry(backing_parent_dentry,
+					       backing_path.dentry);
+	err = PTR_ERR_OR_ZERO(backing_dentry);
+	if (!err) {
+		err = vfs_unlink(&nop_mnt_idmap, backing_inode, backing_dentry, NULL);
+		end_removing(backing_dentry);
+	} else if (err == -EINVAL) {
+		/* Unhashed or moved: the backing entry is already gone */
+		err = -ENOENT;
+	}
+
+	dput(backing_parent_dentry);
+	if (!err)
+		d_drop(entry);
+	path_put(&backing_path);
+	return err;
+}
+
+void *fuse_unlink_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry)
+{
+	return NULL;
+}
+
 int fuse_getattr_initialize(struct fuse_bpf_args *fa, struct fuse_getattr_io *fgio,
 			const struct dentry *entry, struct kstat *stat,
 			u32 request_mask, unsigned int flags)

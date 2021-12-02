@@ -1478,6 +1478,26 @@ void *fuse_mkdir_finalize(
 		struct fuse_bpf_args *fa,
 		struct inode *dir, struct dentry *entry, umode_t mode);
 
+int fuse_rmdir_initialize(
+		struct fuse_bpf_args *fa, struct fuse_dummy_io *fmi,
+		struct inode *dir, struct dentry *entry);
+int fuse_rmdir_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry);
+void *fuse_rmdir_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry);
+
+int fuse_unlink_initialize(
+		struct fuse_bpf_args *fa, struct fuse_dummy_io *fmi,
+		struct inode *dir, struct dentry *entry);
+int fuse_unlink_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry);
+void *fuse_unlink_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry);
+
 int fuse_release_initialize(struct fuse_bpf_args *fa, struct fuse_release_in *fri,
 			    struct inode *inode, struct fuse_file *ff);
 int fuse_release_backing(struct fuse_bpf_args *fa,
