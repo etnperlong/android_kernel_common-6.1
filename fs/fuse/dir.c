@@ -787,6 +787,17 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
 	bool outarg_valid = true;
 	bool locked;
 
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(dir, struct fuse_lookup_io,
+			       fuse_lookup_initialize, fuse_lookup_backing,
+			       fuse_lookup_finalize,
+			       dir, entry, flags);
+	if (fer.ret)
+		return fer.result;
+#endif
+
 	if (fuse_is_bad(dir))
 		return ERR_PTR(-EIO);
 
