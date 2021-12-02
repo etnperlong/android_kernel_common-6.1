@@ -2416,6 +2416,165 @@ void *fuse_symlink_finalize(
 	return NULL;
 }
 
+int fuse_readdir_initialize(struct fuse_bpf_args *fa, struct fuse_read_io *frio,
+			    struct file *file, struct dir_context *ctx,
+			    bool *force_again, bool *allow_force, bool is_continued)
+{
+	struct fuse_file *ff = file->private_data;
+	u8 *page = (u8 *)__get_free_page(GFP_KERNEL);
+
+	if (!page)
+		return -ENOMEM;
+
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = ff->nodeid,
+		.opcode = FUSE_READDIR,
+		.in_numargs = 1,
+		.flags = FUSE_BPF_OUT_ARGVAR,
+		.out_numargs = 2,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = sizeof(frio->fri),
+			.value = &frio->fri,
+		},
+		.out_args[0] = (struct fuse_bpf_arg) {
+			.size = sizeof(frio->fro),
+			.value = &frio->fro,
+		},
+		.out_args[1] = (struct fuse_bpf_arg) {
+			.size = PAGE_SIZE,
+			.value = page,
+		},
+	};
+
+	frio->fri = (struct fuse_read_in) {
+		.fh = ff->fh,
+		.offset = ctx->pos,
+		.size = PAGE_SIZE,
+	};
+	frio->fro = (struct fuse_read_out) {
+		.again = 0,
+		.offset = 0,
+	};
+	*force_again = false;
+	*allow_force = true;
+	return 0;
+}
+
+struct extfuse_ctx {
+	struct dir_context ctx;
+	u8 *addr;
+	size_t offset;
+};
+
+static bool filldir(struct dir_context *ctx, const char *name, int namelen,
+				   loff_t offset, u64 ino, unsigned int d_type)
+{
+	struct extfuse_ctx *ec = container_of(ctx, struct extfuse_ctx, ctx);
+	struct fuse_dirent *fd = (struct fuse_dirent *) (ec->addr + ec->offset);
+
+	if (ec->offset + sizeof(struct fuse_dirent) + namelen > PAGE_SIZE)
+		return false;
+
+	*fd = (struct fuse_dirent) {
+		.ino = ino,
+		.off = offset,
+		.namelen = namelen,
+		.type = d_type,
+	};
+
+	memcpy(fd->name, name, namelen);
+	ec->offset += FUSE_DIRENT_SIZE(fd);
+
+	return true;
+}
+
+static int parse_dirfile(char *buf, size_t nbytes, struct dir_context *ctx,
+		loff_t next_offset)
+{
+	char *buffstart = buf;
+
+	while (nbytes >= FUSE_NAME_OFFSET) {
+		struct fuse_dirent *dirent = (struct fuse_dirent *) buf;
+		size_t reclen = FUSE_DIRENT_SIZE(dirent);
+
+		if (!dirent->namelen || dirent->namelen > FUSE_NAME_MAX)
+			return -EIO;
+		if (reclen > nbytes)
+			break;
+		if (memchr(dirent->name, '/', dirent->namelen) != NULL)
+			return -EIO;
+
+		ctx->pos = dirent->off;
+		if (!dir_emit(ctx, dirent->name, dirent->namelen, dirent->ino,
+				dirent->type)) {
+			// If we can't make any progress, user buffer is too small
+			if (buf == buffstart)
+				return -EINVAL;
+			else
+				return 0;
+		}
+
+		buf += reclen;
+		nbytes -= reclen;
+	}
+	ctx->pos = next_offset;
+
+	return 0;
+}
+
+
+int fuse_readdir_backing(struct fuse_bpf_args *fa,
+			 struct file *file, struct dir_context *ctx,
+			 bool *force_again, bool *allow_force, bool is_continued)
+{
+	struct fuse_file *ff = file->private_data;
+	struct file *backing_dir = ff->backing_file;
+	struct fuse_read_out *fro = fa->out_args[0].value;
+	struct extfuse_ctx ec;
+	int err;
+
+	ec = (struct extfuse_ctx) {
+		.ctx.actor = filldir,
+		.ctx.pos = ctx->pos,
+		.addr = fa->out_args[1].value,
+	};
+
+	if (!ec.addr)
+		return -ENOMEM;
+
+	if (!is_continued)
+		backing_dir->f_pos = file->f_pos;
+
+	err = iterate_dir(backing_dir, &ec.ctx);
+	if (ec.offset == 0)
+		*allow_force = false;
+	fa->out_args[1].size = ec.offset;
+
+	fro->offset = ec.ctx.pos;
+	fro->again = false;
+	return err;
+}
+
+void *fuse_readdir_finalize(struct fuse_bpf_args *fa,
+			    struct file *file, struct dir_context *ctx,
+			    bool *force_again, bool *allow_force, bool is_continued)
+{
+	struct fuse_read_out *fro = fa->out_args[0].value;
+	struct fuse_file *ff = file->private_data;
+	struct file *backing_dir = ff->backing_file;
+	int err = 0;
+
+	err = parse_dirfile(fa->out_args[1].value, fa->out_args[1].size, ctx, fro->offset);
+	*force_again = !!fro->again;
+	if (*force_again && !*allow_force)
+		err = -EINVAL;
+
+	backing_dir->f_pos = ctx->pos;
+
+	free_page((unsigned long) fa->out_args[1].value);
+	return ERR_PTR(err);
+}
+
 int fuse_access_initialize(struct fuse_bpf_args *fa, struct fuse_access_in *fai,
 			    struct inode *inode, int mask)
 {

@@ -1758,6 +1758,21 @@ void *fuse_symlink_finalize(
 		struct fuse_bpf_args *fa,
 		struct inode *dir, struct dentry *entry, const char *link, int len);
 
+struct fuse_read_io {
+	struct fuse_read_in fri;
+	struct fuse_read_out fro;
+};
+
+int fuse_readdir_initialize(struct fuse_bpf_args *fa, struct fuse_read_io *frio,
+			    struct file *file, struct dir_context *ctx,
+			    bool *force_again, bool *allow_force, bool is_continued);
+int fuse_readdir_backing(struct fuse_bpf_args *fa,
+			 struct file *file, struct dir_context *ctx,
+			 bool *force_again, bool *allow_force, bool is_continued);
+void *fuse_readdir_finalize(struct fuse_bpf_args *fa,
+			    struct file *file, struct dir_context *ctx,
+			    bool *force_again, bool *allow_force, bool is_continued);
+
 int fuse_access_initialize(struct fuse_bpf_args *fa, struct fuse_access_in *fai,
 			   struct inode *inode, int mask);
 int fuse_access_backing(struct fuse_bpf_args *fa, struct inode *inode, int mask);
