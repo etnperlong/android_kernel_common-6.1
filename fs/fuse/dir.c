@@ -288,6 +288,18 @@ u64 fuse_time_to_jiffies(u64 sec, u32 nsec)
 		return 0;
 }
 
+void fuse_init_dentry_root(struct dentry *root, struct file *backing_dir)
+{
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_dentry *fuse_dentry = root->d_fsdata;
+
+	if (backing_dir) {
+		fuse_dentry->backing_path = backing_dir->f_path;
+		path_get(&fuse_dentry->backing_path);
+	}
+#endif
+}
+
 /*
  * Set dentry and possibly attribute timeouts from the lookup/mk*
  * replies

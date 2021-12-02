@@ -450,9 +450,12 @@ struct fuse_fs_context {
 	bool no_force_umount:1;
 	bool legacy_opts_show:1;
 	enum fuse_dax_mode dax_mode;
+	bool no_daemon:1;
 	unsigned int max_read;
 	unsigned int blksize;
 	const char *subtype;
+	struct bpf_prog *root_bpf;
+	struct file *root_dir;
 
 	/* DAX device, may be NULL */
 	struct dax_device *dax_dev;
@@ -775,6 +778,9 @@ struct fuse_conn {
 	/** @sync_init: Is synchronous FUSE_INIT allowed? */
 	unsigned int sync_init:1;
 
+	/** @no_daemon: BPF only, no daemon running */
+	unsigned int no_daemon:1;
+
 	/** @max_stack_depth: Maximum stack depth for passthrough backing files */
 	int max_stack_depth;
 
@@ -971,6 +977,9 @@ extern const struct dentry_operations fuse_dentry_operations;
 /*
  * Get a filled in inode
  */
+struct inode *fuse_iget_backing(struct super_block *sb,
+				u64 nodeid,
+				struct inode *backing_inode);
 struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
 			int generation, struct fuse_attr *attr,
 			u64 attr_valid, u64 attr_version,
@@ -1114,6 +1123,8 @@ void fuse_invalidate_atime(struct inode *inode);
 u64 fuse_time_to_jiffies(u64 sec, u32 nsec);
 #define ATTR_TIMEOUT(o) \
 	fuse_time_to_jiffies((o)->attr_valid, (o)->attr_valid_nsec)
+
+void fuse_init_dentry_root(struct dentry *root, struct file *backing_dir);
 
 void fuse_change_entry_timeout(struct dentry *entry, struct fuse_entry_out *o);
 
