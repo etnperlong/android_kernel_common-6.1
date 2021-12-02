@@ -4,7 +4,9 @@ CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES)
 
 TEST_GEN_PROGS := fusectl_test
 TEST_GEN_PROGS += write_extend_eof_test
+TEST_GEN_PROGS += fuse_test fuse_daemon
 TEST_GEN_FILES := fuse_mnt
+TEST_GEN_FILES += test_bpf.bpf fd_bpf.bpf fd.sh
 
 # fuse_acl_cache_test requires libfuse3; add it only when the library is present.
 ACL_CFLAGS := $(shell pkg-config fuse3 --cflags 2>/dev/null)
@@ -12,6 +14,14 @@ ACL_LDLIBS := $(shell pkg-config fuse3 --libs 2>/dev/null)
 ifneq ($(ACL_CFLAGS),)
 TEST_GEN_PROGS += fuse_acl_cache_test
 endif
+
+EXTRA_CLEAN := *.bpf
+BPF_FLAGS = -Wall -Werror -O2 -g -emit-llvm \
+	    -I ../../../../../include \
+	    -idirafter /usr/local/include \
+	    -idirafter /usr/include/x86_64-linux-gnu \
+	    -idirafter /usr/include \
+	    -idirafter ../../../../../arch/x86/include
 
 include ../../lib.mk
 
@@ -32,3 +42,19 @@ $(OUTPUT)/fuse_mnt: LDLIBS += $(VAR_LDLIBS)
 
 $(OUTPUT)/fuse_acl_cache_test: CFLAGS += $(ACL_CFLAGS)
 $(OUTPUT)/fuse_acl_cache_test: LDLIBS += $(ACL_LDLIBS)
+
+FUSE_BPF_PROGS := $(OUTPUT)/fuse_test $(OUTPUT)/fuse_daemon
+$(FUSE_BPF_PROGS): bpf_loader.c
+$(FUSE_BPF_PROGS): CFLAGS += -D_FILE_OFFSET_BITS=64 -I../.. -I../../../../.. \
+			     -I../../../../include
+$(FUSE_BPF_PROGS): LDLIBS += -lpthread -lelf
+
+$(OUTPUT)/%.ir: %.c
+	clang $(BPF_FLAGS) -c $< -o $@
+
+$(OUTPUT)/%.bpf: $(OUTPUT)/%.ir
+	llc -march=bpf -filetype=obj -o $@ $<
+
+$(OUTPUT)/fd.sh: fd.txt
+	cp $< $@
+	chmod 755 $@
