@@ -1431,6 +1431,19 @@ int fuse_lookup_backing(struct fuse_bpf_args *fa, struct inode *dir,
 			  struct dentry *entry, unsigned int flags);
 struct dentry *fuse_lookup_finalize(struct fuse_bpf_args *fa, struct inode *dir,
 			   struct dentry *entry, unsigned int flags);
+int fuse_revalidate_backing(struct inode *dir, const struct qstr *name,
+			    struct dentry *entry, unsigned int flags);
+
+int fuse_canonical_path_initialize(struct fuse_bpf_args *fa,
+				   struct fuse_dummy_io *fdi,
+				   const struct path *path,
+				   struct path *canonical_path);
+int fuse_canonical_path_backing(struct fuse_bpf_args *fa, const struct path *path,
+				struct path *canonical_path);
+void *fuse_canonical_path_finalize(struct fuse_bpf_args *fa,
+				   const struct path *path,
+				   struct path *canonical_path);
+
 #ifdef CONFIG_FUSE_BPF
 struct fuse_err_ret {
 	void *result;

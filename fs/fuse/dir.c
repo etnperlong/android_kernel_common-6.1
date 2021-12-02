@@ -458,7 +458,20 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
 	inode = d_inode_rcu(entry);
 	if (inode && fuse_is_bad(inode))
 		goto invalid;
-	else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
+
+#ifdef CONFIG_FUSE_BPF
+	/* TODO: Do we need bpf support for revalidate?
+	 * If the lower filesystem says the entry is invalid, FUSE probably shouldn't
+	 * try to fix that without going through the normal lookup path...
+	 */
+	if (fd->backing_path.dentry) {
+		ret = fuse_revalidate_backing(dir, name, entry, flags);
+		if (ret <= 0) {
+			goto out;
+		}
+	}
+#endif
+	if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
 		 (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET))) {
 		struct fuse_entry_out outarg;
 		struct fuse_entry_bpf bpf_arg;
@@ -476,6 +489,15 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
 
 		fm = get_fuse_mount(inode);
 
+#ifdef CONFIG_FUSE_BPF
+		/* TODO: Once we're handling timeouts for backing inodes, do a
+		 * bpf based lookup_revalidate here.
+		 */
+		if (get_fuse_inode(dir)->backing_inode) {
+			ret = 1;
+			goto out;
+		}
+#endif
 		forget = fuse_alloc_forget();
 		ret = -ENOMEM;
 		if (!forget)
@@ -618,6 +640,18 @@ static int fuse_dentry_canonical_path(const struct path *path,
 	FUSE_ARGS(args);
 	char *path_name;
 	int err;
+
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(inode, struct fuse_dummy_io,
+			       fuse_canonical_path_initialize,
+			       fuse_canonical_path_backing,
+			       fuse_canonical_path_finalize, path,
+			       canonical_path);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
 
 	if (fm->fc->no_dentry_canonical_path)
 		goto out;

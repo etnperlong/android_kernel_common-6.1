@@ -264,6 +264,73 @@ out:
 	return ret;
 }
 
+int fuse_revalidate_backing(struct inode *dir, const struct qstr *name,
+			    struct dentry *entry, unsigned int flags)
+{
+	struct fuse_dentry *fuse_dentry = get_fuse_dentry(entry);
+	struct dentry *backing_entry = fuse_dentry->backing_path.dentry;
+
+	spin_lock(&backing_entry->d_lock);
+	if (d_unhashed(backing_entry)) {
+		spin_unlock(&backing_entry->d_lock);
+			return 0;
+	}
+	spin_unlock(&backing_entry->d_lock);
+
+	if (unlikely(backing_entry->d_flags & DCACHE_OP_REVALIDATE)) {
+		struct dentry *backing_parent;
+		struct inode *backing_dir;
+		struct name_snapshot n;
+		int ret;
+
+		/*
+		 * As in ovl_revalidate_real(), pass the backing dentry's own
+		 * parent and name: the FUSE parent may have no backing inode
+		 * (when the daemon set the backing) or a different one.
+		 */
+		if (flags & LOOKUP_RCU) {
+			backing_parent = READ_ONCE(backing_entry->d_parent);
+			backing_dir = d_inode_rcu(backing_parent);
+			if (!backing_dir)
+				return -ECHILD;
+		} else {
+			backing_parent = dget_parent(backing_entry);
+			backing_dir = d_inode(backing_parent);
+		}
+		take_dentry_name_snapshot(&n, backing_entry);
+		ret = backing_entry->d_op->d_revalidate(backing_dir, &n.name,
+							backing_entry, flags);
+		release_dentry_name_snapshot(&n);
+		if (!(flags & LOOKUP_RCU))
+			dput(backing_parent);
+		return ret;
+	}
+	return 1;
+}
+
+int fuse_canonical_path_initialize(struct fuse_bpf_args *fa,
+				   struct fuse_dummy_io *fdi,
+				   const struct path *path,
+				   struct path *canonical_path)
+{
+	fa->opcode = FUSE_CANONICAL_PATH;
+	return 0;
+}
+
+int fuse_canonical_path_backing(struct fuse_bpf_args *fa, const struct path *path,
+				struct path *canonical_path)
+{
+	get_fuse_backing_path(path->dentry, canonical_path);
+	return 0;
+}
+
+void *fuse_canonical_path_finalize(struct fuse_bpf_args *fa,
+				   const struct path *path,
+				   struct path *canonical_path)
+{
+	return NULL;
+}
+
 static void fuse_stat_to_attr(struct fuse_conn *fc, struct inode *inode,
 		struct kstat *stat, struct fuse_attr *attr)
 {
