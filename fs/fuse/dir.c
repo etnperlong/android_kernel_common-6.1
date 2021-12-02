@@ -1398,6 +1398,17 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
 	unsigned len = strlen(link) + 1;
 	FUSE_ARGS(args);
 
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(dir, struct fuse_dummy_io,
+			fuse_symlink_initialize, fuse_symlink_backing,
+			fuse_symlink_finalize,
+			dir, entry, link, len);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
+
 	args.opcode = FUSE_SYMLINK;
 	args.in_numargs = 3;
 	fuse_set_zero_arg0(&args);
@@ -1644,6 +1655,16 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
 	struct inode *inode = d_inode(entry);
 	struct fuse_mount *fm = get_fuse_mount(inode);
 	FUSE_ARGS(args);
+
+#ifdef CONFIG_FUSE_BPF
+	struct fuse_err_ret fer;
+
+	fer = fuse_bpf_backing(inode, struct fuse_link_in, fuse_link_initialize,
+			       fuse_link_backing, fuse_link_finalize, entry,
+			       newdir, newent);
+	if (fer.ret)
+		return PTR_ERR(fer.result);
+#endif
 
 	if (fm->fc->no_link)
 		goto out;
@@ -2188,6 +2209,21 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
 	err = -EIO;
 	if (fuse_is_bad(inode))
 		goto out_err;
+
+#ifdef CONFIG_FUSE_BPF
+	{
+		struct fuse_err_ret fer;
+		const char *out = NULL;
+
+		fer = fuse_bpf_backing(inode, struct fuse_dummy_io,
+				       fuse_get_link_initialize,
+				       fuse_get_link_backing,
+				       fuse_get_link_finalize,
+				       inode, dentry, callback, &out);
+		if (fer.ret)
+			return fer.result ?: out;
+	}
+#endif
 
 	if (fc->cache_symlinks)
 		return page_get_link_raw(dentry, inode, callback);

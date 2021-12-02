@@ -1521,6 +1521,14 @@ void *fuse_unlink_finalize(
 		struct fuse_bpf_args *fa,
 		struct inode *dir, struct dentry *entry);
 
+int fuse_link_initialize(struct fuse_bpf_args *fa, struct fuse_link_in *fli,
+			  struct dentry *entry, struct inode *dir,
+			  struct dentry *newent);
+int fuse_link_backing(struct fuse_bpf_args *fa, struct dentry *entry,
+		      struct inode *dir, struct dentry *newent);
+void *fuse_link_finalize(struct fuse_bpf_args *fa, struct dentry *entry,
+			 struct inode *dir, struct dentry *newent);
+
 int fuse_release_initialize(struct fuse_bpf_args *fa, struct fuse_release_in *fri,
 			    struct inode *inode, struct fuse_file *ff);
 int fuse_release_backing(struct fuse_bpf_args *fa,
@@ -1684,6 +1692,26 @@ int fuse_statfs_backing(struct fuse_bpf_args *fa,
 		struct dentry *dentry, struct kstatfs *buf);
 void *fuse_statfs_finalize(struct fuse_bpf_args *fa,
 		struct dentry *dentry, struct kstatfs *buf);
+
+int fuse_get_link_initialize(struct fuse_bpf_args *fa, struct fuse_dummy_io *dummy,
+		struct inode *inode, struct dentry *dentry,
+		struct delayed_call *callback, const char **out);
+int fuse_get_link_backing(struct fuse_bpf_args *fa,
+		struct inode *inode, struct dentry *dentry,
+		struct delayed_call *callback, const char **out);
+void *fuse_get_link_finalize(struct fuse_bpf_args *fa,
+		struct inode *inode, struct dentry *dentry,
+		struct delayed_call *callback, const char **out);
+
+int fuse_symlink_initialize(
+		struct fuse_bpf_args *fa, struct fuse_dummy_io *unused,
+		struct inode *dir, struct dentry *entry, const char *link, int len);
+int fuse_symlink_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, const char *link, int len);
+void *fuse_symlink_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, const char *link, int len);
 
 int fuse_access_initialize(struct fuse_bpf_args *fa, struct fuse_access_in *fai,
 			   struct inode *inode, int mask);

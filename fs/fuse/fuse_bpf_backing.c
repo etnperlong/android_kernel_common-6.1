@@ -1733,6 +1733,97 @@ void *fuse_unlink_finalize(
 	return NULL;
 }
 
+int fuse_link_initialize(struct fuse_bpf_args *fa, struct fuse_link_in *fli,
+			 struct dentry *entry, struct inode *dir,
+			 struct dentry *newent)
+{
+	struct inode *src_inode = entry->d_inode;
+
+	*fli = (struct fuse_link_in){
+		.oldnodeid = get_node_id(src_inode),
+	};
+
+	fa->opcode = FUSE_LINK;
+	fa->in_numargs = 2;
+	fa->in_args[0].size = sizeof(*fli);
+	fa->in_args[0].value = fli;
+	fa->in_args[1].size = newent->d_name.len + 1;
+	fa->in_args[1].value = newent->d_name.name;
+
+	return 0;
+}
+
+int fuse_link_backing(struct fuse_bpf_args *fa, struct dentry *entry,
+		      struct inode *dir, struct dentry *newent)
+{
+	int err = 0;
+	struct path backing_old_path = {};
+	struct path backing_new_path = {};
+	struct dentry *backing_dir_dentry;
+	struct dentry *backing_new_dentry;
+	struct inode *fuse_new_inode = NULL;
+	struct fuse_inode *fuse_dir_inode = get_fuse_inode(dir);
+	struct inode *backing_dir_inode = fuse_dir_inode->backing_inode;
+
+	get_fuse_backing_path(entry, &backing_old_path);
+	if (!backing_old_path.dentry)
+		return -EBADF;
+
+	get_fuse_backing_path(newent, &backing_new_path);
+	if (!backing_new_path.dentry) {
+		err = -EBADF;
+		goto err_dst_path;
+	}
+
+	backing_dir_dentry = dget_parent(backing_new_path.dentry);
+	backing_dir_inode = d_inode(backing_dir_dentry);
+
+	backing_new_dentry = start_creating(&nop_mnt_idmap, backing_dir_dentry,
+					    &QSTR_LEN(newent->d_name.name,
+						      newent->d_name.len));
+	err = PTR_ERR_OR_ZERO(backing_new_dentry);
+	if (err)
+		goto out;
+	err = vfs_link(backing_old_path.dentry, &nop_mnt_idmap,
+		       backing_dir_inode, backing_new_dentry, NULL);
+	if (!err)
+		fuse_set_backing_dentry(newent, &backing_new_path,
+					backing_new_dentry);
+	end_creating(backing_new_dentry);
+	if (err)
+		goto out;
+
+	if (d_really_is_negative(backing_new_path.dentry) ||
+	    unlikely(d_unhashed(backing_new_path.dentry))) {
+		err = -EINVAL;
+		/**
+		 * TODO: overlayfs responds to this situation with a
+		 * lookupOneLen. Should we do that too?
+		 */
+		goto out;
+	}
+
+	fuse_new_inode = fuse_iget_backing(dir->i_sb, fuse_dir_inode->nodeid, backing_dir_inode);
+	if (IS_ERR(fuse_new_inode)) {
+		err = PTR_ERR(fuse_new_inode);
+		goto out;
+	}
+	d_instantiate(newent, fuse_new_inode);
+
+out:
+	dput(backing_dir_dentry);
+	path_put(&backing_new_path);
+err_dst_path:
+	path_put(&backing_old_path);
+	return err;
+}
+
+void *fuse_link_finalize(struct fuse_bpf_args *fa, struct dentry *entry,
+			 struct inode *dir, struct dentry *newent)
+{
+	return NULL;
+}
+
 int fuse_getattr_initialize(struct fuse_bpf_args *fa, struct fuse_getattr_io *fgio,
 			const struct dentry *entry, struct kstat *stat,
 			u32 request_mask, unsigned int flags)
@@ -1978,6 +2069,151 @@ void *fuse_statfs_finalize(
 
 	if (!fa->error_in)
 		convert_fuse_statfs(buf, &fso->st);
+	return NULL;
+}
+
+int fuse_get_link_initialize(struct fuse_bpf_args *fa, struct fuse_dummy_io *unused,
+		struct inode *inode, struct dentry *dentry,
+		struct delayed_call *callback, const char **out)
+{
+	/*
+	 * TODO
+	 * If we want to handle changing these things, we'll need to copy
+	 * the lower fs's data into our own buffer, and provide our own callback
+	 * to free that buffer.
+	 *
+	 * Pre could change the name we're looking at
+	 * postfilter can change the name we return
+	 *
+	 * We ought to only make that buffer if it's been requested, so leaving
+	 * this unimplemented for the moment
+	 */
+	*fa = (struct fuse_bpf_args) {
+		.opcode = FUSE_READLINK,
+		.nodeid = get_node_id(inode),
+		.in_numargs = 1,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = dentry->d_name.len + 1,
+			.value = dentry->d_name.name,
+		},
+		/*
+		 * .out_argvar = 1,
+		 * .out_numargs = 1,
+		 * .out_args[0].size = ,
+		 * .out_args[0].value = ,
+		 */
+	};
+
+	return 0;
+}
+
+int fuse_get_link_backing(struct fuse_bpf_args *fa,
+		struct inode *inode, struct dentry *dentry,
+		struct delayed_call *callback, const char **out)
+{
+	struct path backing_path;
+
+	if (!dentry) {
+		*out = ERR_PTR(-ECHILD);
+		return PTR_ERR(*out);
+	}
+
+	get_fuse_backing_path(dentry, &backing_path);
+	if (!backing_path.dentry) {
+		*out = ERR_PTR(-ECHILD);
+		return PTR_ERR(*out);
+	}
+
+	/*
+	 * TODO: If we want to do our own thing, copy the data and then call the
+	 * callback
+	 */
+	*out = vfs_get_link(backing_path.dentry, callback);
+
+	path_put(&backing_path);
+	return 0;
+}
+
+void *fuse_get_link_finalize(struct fuse_bpf_args *fa,
+		struct inode *inode, struct dentry *dentry,
+		struct delayed_call *callback,  const char **out)
+{
+	return NULL;
+}
+
+int fuse_symlink_initialize(
+		struct fuse_bpf_args *fa, struct fuse_dummy_io *unused,
+		struct inode *dir, struct dentry *entry, const char *link, int len)
+{
+	*fa = (struct fuse_bpf_args) {
+		.nodeid = get_node_id(dir),
+		.opcode = FUSE_SYMLINK,
+		.in_numargs = 2,
+		.in_args[0] = (struct fuse_bpf_in_arg) {
+			.size = entry->d_name.len + 1,
+			.value = entry->d_name.name,
+		},
+		.in_args[1] = (struct fuse_bpf_in_arg) {
+			.size = len,
+			.value = link,
+		},
+	};
+
+	return 0;
+}
+
+int fuse_symlink_backing(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, const char *link, int len)
+{
+	int err = 0;
+	struct fuse_inode *fuse_inode = get_fuse_inode(dir);
+	struct inode *backing_inode = fuse_inode->backing_inode;
+	struct path backing_path = {};
+	struct inode *inode = NULL;
+	struct dentry *backing_dentry;
+
+	//TODO Actually deal with changing the backing entry in symlink
+	get_fuse_backing_path(entry, &backing_path);
+	if (!backing_path.dentry)
+		return -EBADF;
+
+	backing_dentry = fuse_backing_start_creating(entry, backing_path.dentry);
+	if (IS_ERR(backing_dentry)) {
+		err = PTR_ERR(backing_dentry);
+		goto out;
+	}
+	err = vfs_symlink(&nop_mnt_idmap, d_inode(backing_dentry->d_parent),
+			  backing_dentry, link, NULL);
+	if (!err)
+		fuse_set_backing_dentry(entry, &backing_path, backing_dentry);
+	end_creating(backing_dentry);
+	if (err)
+		goto out;
+	if (d_really_is_negative(backing_path.dentry) ||
+		unlikely(d_unhashed(backing_path.dentry))) {
+		err = -EINVAL;
+		/**
+		 * TODO: overlayfs responds to this situation with a
+		 * lookupOneLen. Should we do that too?
+		 */
+		goto out;
+	}
+	inode = fuse_iget_backing(dir->i_sb, fuse_inode->nodeid, backing_inode);
+	if (IS_ERR(inode)) {
+		err = PTR_ERR(inode);
+		goto out;
+	}
+	d_instantiate(entry, inode);
+out:
+	path_put(&backing_path);
+	return err;
+}
+
+void *fuse_symlink_finalize(
+		struct fuse_bpf_args *fa,
+		struct inode *dir, struct dentry *entry, const char *link, int len)
+{
 	return NULL;
 }
 
