@@ -405,6 +405,7 @@ PWM
 
 REGULATOR
   devm_regulator_bulk_get()
+  devm_regulator_bulk_get_const()
   devm_regulator_get()
   devm_regulator_put()
   devm_regulator_register()
