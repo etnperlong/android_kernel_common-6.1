@@ -17,6 +17,7 @@
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_account_irq);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_after_dequeue_task);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_after_enqueue_task);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_before_do_sched_yield);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_build_perf_domains);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_can_migrate_task);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_check_preempt_tick);
