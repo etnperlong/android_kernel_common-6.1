@@ -43,6 +43,7 @@
 #include <linux/prctl.h>
 #include <linux/stacktrace.h>
 #include <trace/hooks/mpam.h>
+#include <trace/hooks/fpsimd.h>
 
 #include <asm/alternative.h>
 #include <asm/arch_timer.h>
@@ -778,6 +779,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
 	 * use prev's MPAM settings.
 	 */
 	mpam_thread_switch(next);
+	trace_android_vh_is_fpsimd_save(prev, next);
 
 	/* the actual thread switch */
 	last = cpu_switch_to(prev, next);
