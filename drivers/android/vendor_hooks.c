@@ -51,6 +51,7 @@
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_arm64_serror_panic);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_attach);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_online);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpufreq_transition);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_die_kernel_fault);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_bti);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_fpac);
