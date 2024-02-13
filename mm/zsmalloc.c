@@ -445,7 +445,7 @@ static void SetZsPageMovable(struct zs_pool *pool, struct zspage *zspage) {}
 
 static unsigned long cache_alloc_handle(gfp_t gfp)
 {
-	gfp = gfp & ~(__GFP_HIGHMEM | __GFP_MOVABLE);
+	gfp = gfp & ~(__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_CMA);
 
 	return (unsigned long)kmem_cache_alloc(handle_cachep, gfp);
 }
@@ -457,7 +457,7 @@ static void cache_free_handle(unsigned long handle)
 
 static struct zspage *cache_alloc_zspage(gfp_t gfp)
 {
-	gfp = gfp & ~(__GFP_HIGHMEM | __GFP_MOVABLE);
+	gfp = gfp & ~(__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_CMA);
 
 	return kmem_cache_zalloc(zspage_cachep, gfp);
 }
