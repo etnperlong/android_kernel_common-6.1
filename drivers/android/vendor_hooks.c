@@ -26,6 +26,7 @@
 #include <trace/hooks/pm_domain.h>
 #include <trace/hooks/printk.h>
 #include <trace/hooks/reboot.h>
+#include <trace/hooks/pci.h>
 #include <trace/hooks/remoteproc.h>
 #include <trace/hooks/selinux.h>
 #include <trace/hooks/signal.h>
@@ -68,6 +69,14 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_do_send_sig_info);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_gic_set_affinity);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_iommu_iovad_alloc_iova);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_iommu_iovad_free_iova);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_power_manageable);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_set_power_state);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_get_power_state);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_refresh_power_state);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_choose_state);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_set_wakeup);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_need_resume);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_platform_pci_bridge_d3);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_ipi_stop);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mpam_set);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_caller);
