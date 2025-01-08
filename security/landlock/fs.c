@@ -38,6 +38,7 @@
 #include <uapi/linux/fiemap.h>
 #include <uapi/linux/landlock.h>
 
+#include "access.h"
 #include "common.h"
 #include "cred.h"
 #include "fs.h"
@@ -395,7 +396,7 @@ get_handled_fs_accesses(const struct landlock_ruleset *const domain)
 {
 	/* Handles all initially denied by default access rights. */
 	return landlock_union_access_masks(domain).fs |
-	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+	       _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
 }
 
 static const struct access_masks any_fs = {
