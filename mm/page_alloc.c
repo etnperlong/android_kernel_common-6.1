@@ -706,6 +706,10 @@ static inline unsigned int order_to_pindex(int migratetype, int order)
 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
 		bool movable = migratetype == MIGRATE_MOVABLE;
 
+#ifdef CONFIG_CMA
+		movable |= migratetype == MIGRATE_CMA;
+#endif
+
 		if (order > PAGE_ALLOC_COSTLY_ORDER)
 			return NR_LOWORDER_PCP_LISTS + movable;
 	}
