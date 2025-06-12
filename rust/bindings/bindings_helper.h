@@ -13,6 +13,7 @@
 #include <linux/blk_types.h>
 #include <linux/blkdev.h>
 #include <linux/compat.h>
+#include <linux/completion.h>
 #include <linux/cred.h>
 #include <linux/dma-buf.h>
 #include <linux/errname.h>

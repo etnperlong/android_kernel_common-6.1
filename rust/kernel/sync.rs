@@ -6,6 +6,7 @@
 //! wrapped for usage by Rust code in the kernel.
 
 mod arc;
+pub mod completion;
 mod condvar;
 pub mod lock;
 pub mod lockdep;
@@ -14,6 +15,7 @@ pub mod poll;
 mod set_once;
 
 pub use arc::{Arc, ArcBorrow, UniqueArc};
+pub use completion::Completion;
 pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
 pub use lock::global::{global_lock, GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
 pub use lock::mutex::{new_mutex, Mutex};

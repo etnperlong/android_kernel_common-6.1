@@ -46,6 +46,7 @@
 #include "build_assert.c"
 #include "build_bug.c"
 #include "compat.c"
+#include "completion.c"
 #include "cred.c"
 #include "dma-buf.c"
 #include "err.c"
