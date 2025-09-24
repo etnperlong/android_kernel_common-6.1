@@ -4,6 +4,7 @@
 //!
 //! C header: [`include/linux/moduleparam.h`](srctree/include/linux/moduleparam.h)
 
+use crate::ffi::{c_char, c_int, c_void};
 use crate::prelude::*;
 use crate::str::BStr;
 use bindings;
