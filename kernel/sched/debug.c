@@ -347,8 +347,9 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
 				       size_t cnt, loff_t *ppos, enum dl_param param)
 {
 	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
+	u64 old_runtime, runtime, period;
 	struct rq *rq = cpu_rq(cpu);
-	u64 runtime, period;
+	struct sched_dl_entity *dl_se = &rq->fair_server;
 	int retval = 0;
 	size_t err;
 	u64 value;
@@ -358,10 +359,8 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
 		return err;
 
 	scoped_guard (rq_lock_irqsave, rq) {
-		bool is_active;
-
-		runtime  = rq->fair_server.dl_runtime;
-		period = rq->fair_server.dl_period;
+		old_runtime = runtime = dl_se->dl_runtime;
+		period = dl_se->dl_period;
 
 		switch (param) {
 		case DL_RUNTIME:
@@ -382,23 +381,21 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
 			return  -EINVAL;
 		}
 
-		is_active = dl_server_active(&rq->fair_server);
-		if (is_active) {
-			update_rq_clock(rq);
-			dl_server_stop(&rq->fair_server);
-		}
-
-		retval = dl_server_apply_params(&rq->fair_server, runtime, period, 0);
-
-		if (!runtime)
-			printk_deferred("Fair server disabled in CPU %d, system may crash due to starvation.\n",
-					cpu_of(rq));
-
-		if (is_active && runtime)
-			dl_server_start(&rq->fair_server);
+		update_rq_clock(rq);
+		dl_server_stop(dl_se);
+		retval = dl_server_apply_params(dl_se, runtime, period, 0);
+		dl_server_start(dl_se);
 
 		if (retval < 0)
 			return retval;
+	}
+
+	if (!!old_runtime ^ !!runtime) {
+		pr_info("%s server %sabled on CPU %d%s.\n",
+			dl_se == &rq->fair_server ? "Fair" : "Ext",
+			runtime ? "en" : "dis",
+			cpu_of(rq),
+			runtime ? "" : ", system may malfunction due to starvation");
 	}
 
 	*ppos += cnt;
