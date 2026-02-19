@@ -594,6 +594,12 @@ struct fuse_conn {
 	/** @no_bmap: Is bmap not implemented by fs? */
 	unsigned no_bmap:1;
 
+	/**
+	 * @no_dentry_canonical_path: Is dentry_canonical_path not implemented
+	 * by fs?
+	 */
+	unsigned no_dentry_canonical_path:1;
+
 	/** @no_poll: Is poll not implemented by fs? */
 	unsigned no_poll:1;
 
