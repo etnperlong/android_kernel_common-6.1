@@ -1679,6 +1679,7 @@ void *fuse_file_fallocate_finalize(struct fuse_bpf_args *fa,
 struct fuse_lookup_io {
 	struct fuse_entry_out feo;
 	struct fuse_entry_bpf feb;
+	int epoch;
 };
 
 int fuse_handle_backing(struct fuse_entry_bpf *feb, struct inode **backing_inode,

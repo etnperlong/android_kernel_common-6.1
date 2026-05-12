@@ -235,6 +235,7 @@ int fuse_create_open_backing(
 	const struct fuse_create_in *fci = fa->in_args[0].value;
 	struct inode *d_inode = entry->d_inode;
 	u64 target_nodeid = 0;
+	int epoch = atomic_read(&get_fuse_conn(dir)->epoch);
 
 	if (!dir_fuse_inode || !dir_fuse_dentry)
 		return -EIO;
@@ -286,6 +287,7 @@ int fuse_create_open_backing(
 
 	inode = NULL;
 	entry = newent ? newent : entry;
+	fuse_dentry_set_epoch(entry, epoch);
 	err = finish_open(file, entry, fuse_open_file_backing);
 
 out:
@@ -1150,6 +1152,7 @@ int fuse_lookup_initialize(struct fuse_bpf_args *fa, struct fuse_lookup_io *fli,
 			.value = &fli->feb.out,
 		},
 	};
+	fli->epoch = atomic_read(&get_fuse_conn(dir)->epoch);
 
 	return 0;
 }
@@ -1310,9 +1313,12 @@ struct dentry *fuse_lookup_finalize(struct fuse_bpf_args *fa, struct inode *dir,
 	struct fuse_entry_bpf_out *febo = fa->out_args[1].value;
 	struct fuse_entry_bpf *feb = container_of(febo, struct fuse_entry_bpf,
 						  out);
+	struct fuse_lookup_io *fli = container_of(feb, struct fuse_lookup_io,
+						  feb);
 	int error = -1;
 	u64 target_nodeid = 0;
 	struct dentry *ret = NULL;
+	int epoch = febo ? fli->epoch : 0;
 
 	fuse_entry = get_fuse_dentry(entry);
 	if (!fuse_entry) {
@@ -1353,9 +1359,13 @@ struct dentry *fuse_lookup_finalize(struct fuse_bpf_args *fa, struct inode *dir,
 
 		get_fuse_inode(inode)->nodeid = feo->nodeid;
 		ret = d_splice_alias(inode, entry);
-		if (!IS_ERR(ret))
+		if (!IS_ERR(ret)) {
+			struct dentry *d = ret ? ret : entry;
 			inode = NULL;
+			fuse_dentry_set_epoch(d, epoch);
+		}
 	}
+
 out:
 	iput(inode);
 	if (feb->backing_file)
@@ -1500,6 +1510,7 @@ int fuse_mknod_backing(
 	struct path backing_path = {};
 	struct inode *inode = NULL;
 	struct dentry *backing_dentry;
+	int epoch = atomic_read(&get_fuse_conn(dir)->epoch);
 
 	//TODO Actually deal with changing the backing entry in mknod
 	get_fuse_backing_path(entry, &backing_path);
@@ -1536,6 +1547,7 @@ int fuse_mknod_backing(
 		goto out;
 	}
 	d_instantiate(entry, inode);
+	fuse_dentry_set_epoch(entry, epoch);
 out:
 	path_put(&backing_path);
 	return err;
@@ -1584,6 +1596,7 @@ int fuse_mkdir_backing(
 	struct path backing_path = {};
 	struct inode *inode = NULL;
 	struct dentry *backing_dentry;
+	int epoch = atomic_read(&get_fuse_conn(dir_inode)->epoch);
 
 	//TODO Actually deal with changing the backing entry in mkdir
 	get_fuse_backing_path(entry, &backing_path);
@@ -1628,6 +1641,7 @@ int fuse_mkdir_backing(
 		goto out_end_creating;
 	}
 	d_instantiate(entry, inode);
+	fuse_dentry_set_epoch(entry, epoch);
 	if (get_fuse_inode(inode)->bpf)
 		bpf_prog_put(get_fuse_inode(inode)->bpf);
 	get_fuse_inode(inode)->bpf = get_fuse_dentry(entry)->bpf;
@@ -1961,6 +1975,7 @@ int fuse_link_backing(struct fuse_bpf_args *fa, struct dentry *entry,
 	struct inode *fuse_new_inode = NULL;
 	struct fuse_inode *fuse_dir_inode = get_fuse_inode(dir);
 	struct inode *backing_dir_inode = fuse_dir_inode->backing_inode;
+	int epoch = atomic_read(&get_fuse_conn(dir)->epoch);
 
 	get_fuse_backing_path(entry, &backing_old_path);
 	if (!backing_old_path.dentry)
@@ -2006,6 +2021,7 @@ int fuse_link_backing(struct fuse_bpf_args *fa, struct dentry *entry,
 		goto out;
 	}
 	d_instantiate(newent, fuse_new_inode);
+	fuse_dentry_set_epoch(newent, epoch);
 
 out:
 	dput(backing_dir_dentry);
@@ -2369,6 +2385,7 @@ int fuse_symlink_backing(
 	struct path backing_path = {};
 	struct inode *inode = NULL;
 	struct dentry *backing_dentry;
+	int epoch = atomic_read(&get_fuse_conn(dir)->epoch);
 
 	//TODO Actually deal with changing the backing entry in symlink
 	get_fuse_backing_path(entry, &backing_path);
@@ -2402,6 +2419,7 @@ int fuse_symlink_backing(
 		goto out;
 	}
 	d_instantiate(entry, inode);
+	fuse_dentry_set_epoch(entry, epoch);
 out:
 	path_put(&backing_path);
 	return err;
