@@ -561,15 +561,14 @@ struct inode *fuse_iget_backing(struct super_block *sb, u64 nodeid,
 		return NULL;
 
 	is_new_inode = inode_state_read_once(inode) & I_NEW;
+	fi = get_fuse_inode(inode);
 	if (is_new_inode) {
 		inode->i_flags |= S_NOATIME;
 		if (!fc->writeback_cache)
 			inode->i_flags |= S_NOCMTIME;
-		fuse_init_common(inode);
+		fuse_init_inode(inode, &attr, fc);
 	}
 
-	fi = get_fuse_inode(inode);
-	fuse_init_inode(inode, &attr, fc);
 	spin_lock(&fi->lock);
 	fi->nlookup++;
 	spin_unlock(&fi->lock);
