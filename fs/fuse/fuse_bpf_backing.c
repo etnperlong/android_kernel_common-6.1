@@ -1687,6 +1687,10 @@ int fuse_rmdir_backing(
 	struct inode *backing_inode;
 	struct dentry *backing_dentry;
 
+	struct dentry *revalidated;
+	const char *name = fa->in_args[0].value;
+	struct qstr qname = QSTR_INIT(name, strlen(name));
+
 	/* TODO Actually deal with changing the backing entry in rmdir */
 	get_fuse_backing_path(entry, &backing_path);
 	if (!backing_path.dentry)
@@ -1699,12 +1703,24 @@ int fuse_rmdir_backing(
 	backing_dentry = start_removing_dentry(backing_parent_dentry,
 					       backing_path.dentry);
 	err = PTR_ERR_OR_ZERO(backing_dentry);
-	if (!err) {
-		err = vfs_rmdir(&nop_mnt_idmap, backing_inode, backing_dentry, NULL);
-		end_removing(backing_dentry);
-	} else if (err == -EINVAL) {
+	if (err == -EINVAL) {
 		/* Unhashed or moved: the backing entry is already gone */
 		err = -ENOENT;
+	} else if (!err) {
+		/* Re-validate the backing entry under the parent lock to prevent races */
+		revalidated = lookup_one(&nop_mnt_idmap, &qname, backing_parent_dentry);
+		if (IS_ERR(revalidated)) {
+			err = PTR_ERR(revalidated);
+		} else {
+			/* If the backing entry has changed or was already deleted, abort safely */
+			if (revalidated != backing_dentry)
+				err = -ENOENT;
+			dput(revalidated);
+		}
+		if (!err)
+			err = vfs_rmdir(&nop_mnt_idmap, backing_inode, backing_dentry,
+					NULL);
+		end_removing(backing_dentry);
 	}
 
 	dput(backing_parent_dentry);
@@ -1910,6 +1926,10 @@ int fuse_unlink_backing(
 	struct inode *backing_inode;
 	struct dentry *backing_dentry;
 
+	struct dentry *revalidated;
+	const char *name = fa->in_args[0].value;
+	struct qstr qname = QSTR_INIT(name, strlen(name));
+
 	/* TODO Actually deal with changing the backing entry in unlink */
 	get_fuse_backing_path(entry, &backing_path);
 	if (!backing_path.dentry)
@@ -1922,12 +1942,24 @@ int fuse_unlink_backing(
 	backing_dentry = start_removing_dentry(backing_parent_dentry,
 					       backing_path.dentry);
 	err = PTR_ERR_OR_ZERO(backing_dentry);
-	if (!err) {
-		err = vfs_unlink(&nop_mnt_idmap, backing_inode, backing_dentry, NULL);
-		end_removing(backing_dentry);
-	} else if (err == -EINVAL) {
+	if (err == -EINVAL) {
 		/* Unhashed or moved: the backing entry is already gone */
 		err = -ENOENT;
+	} else if (!err) {
+		/* Re-validate the backing entry under the parent lock to prevent races */
+		revalidated = lookup_one(&nop_mnt_idmap, &qname, backing_parent_dentry);
+		if (IS_ERR(revalidated)) {
+			err = PTR_ERR(revalidated);
+		} else {
+			/* If the backing entry has changed or was already deleted, abort safely */
+			if (revalidated != backing_dentry)
+				err = -ENOENT;
+			dput(revalidated);
+		}
+		if (!err)
+			err = vfs_unlink(&nop_mnt_idmap, backing_inode, backing_dentry,
+					NULL);
+		end_removing(backing_dentry);
 	}
 
 	dput(backing_parent_dentry);
