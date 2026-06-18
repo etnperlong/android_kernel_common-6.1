@@ -272,6 +272,7 @@ struct bio {
 
 	unsigned short		bi_vcnt;	/* how many bio_vec's */
 
+	ANDROID_OEM_DATA(1);
 	/*
 	 * Everything starting with bi_max_vecs will be preserved by bio_reset()
 	 */
