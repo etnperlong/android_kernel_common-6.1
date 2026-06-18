@@ -272,6 +272,17 @@ struct bio {
 
 	unsigned short		bi_vcnt;	/* how many bio_vec's */
 
+<<<<<<< HEAD   (f10481be4b057d0d5c830ae6c352d780a27bf753 Revert "ANDROID: Kconfig.ext: delete placeholder file")
+||||||| BASE   (174213f10d6a03d8733e20dd841e1177fe2d5868 Merge branch 'android17-6.18' into android17-6.18-kminext)
+	ANDROID_KABI_RESERVE(1);
+	ANDROID_KABI_RESERVE(2);
+
+=======
+	ANDROID_OEM_DATA(1);
+	ANDROID_KABI_RESERVE(1);
+	ANDROID_KABI_RESERVE(2);
+
+>>>>>>> CHANGE (5f0eb26cb7246c8412f464078342992f756b7b74 ANDROID: GKI: add ANDROID_OEM_DATA in struct bio)
 	/*
 	 * Everything starting with bi_max_vecs will be preserved by bio_reset()
 	 */
