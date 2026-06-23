@@ -1259,6 +1259,7 @@ struct task_struct {
 
 	/* Protection of the PI data structures: */
 	raw_spinlock_t			pi_lock;
+	raw_spinlock_t			pi_futex_lock;
 
 	struct wake_q_node		wake_q;
 	int				wake_q_count;
