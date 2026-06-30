@@ -347410,6 +347410,12 @@ function {
   parameter_id: 0x14b9453b
 }
 function {
+  id: 0x823a7fd2
+  return_type_id: 0x3267a784
+  parameter_id: 0x3e10b518
+  parameter_id: 0x3fc3d195
+}
+function {
   id: 0x825faca7
   return_type_id: 0x31fa879c
   parameter_id: 0x4585663f
@@ -415432,6 +415438,15 @@ elf_symbol {
   full_name: "driver_create_file"
 }
 elf_symbol {
+  id: 0xf2cf40cf
+  name: "driver_find"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xfcc849ae
+  type_id: 0x823a7fd2
+  full_name: "driver_find"
+}
+elf_symbol {
   id: 0xa6a7d8d9
   name: "driver_find_device"
   is_defined: true
@@ -458443,6 +458458,7 @@ elf_symbol {
   full_name: "typec_altmode_vdm"
 }
 elf_symbol {
+<<<<<<< HEAD   (ad91d8c494f612786c23b24dd753cae0dae6ef73 ANDROID: GKI: Update lenovo symbol list)
   id: 0xbc617cb9
   name: "typec_cable_altmode_vdm"
   is_defined: true
@@ -458477,6 +458493,16 @@ elf_symbol {
   crc: 0xfff2cce3
   type_id: 0x1612eb26
   full_name: "typec_cable_set_svdm_version"
+||||||| BASE   (fb1be638d23c6ea1ed8b2f19e0e6990de4db9d17 UPSTREAM: ipv6: rpl: reserve mac_len headroom when recompres)
+=======
+  id: 0x81132d96
+  name: "typec_bus"
+  is_defined: true
+  symbol_type: OBJECT
+  crc: 0x83986a53
+  type_id: 0xd54fa0c8
+  full_name: "typec_bus"
+>>>>>>> CHANGE (47db252e734715d9ff3a34ba81c9de34cf5a86c4 ANDROID: update symbol for unisoc whitelist)
 }
 elf_symbol {
   id: 0x0d23e13a
@@ -471169,6 +471195,7 @@ interface {
   symbol_id: 0x472f65cb
   symbol_id: 0x8fbdd27e
   symbol_id: 0xbde576b8
+  symbol_id: 0xf2cf40cf
   symbol_id: 0xa6a7d8d9
   symbol_id: 0x1f0cd029
   symbol_id: 0xd90c83a1
@@ -475942,10 +475969,15 @@ interface {
   symbol_id: 0x0d2420a7
   symbol_id: 0xe7fb597f
   symbol_id: 0xe6cbb47e
+<<<<<<< HEAD   (ad91d8c494f612786c23b24dd753cae0dae6ef73 ANDROID: GKI: Update lenovo symbol list)
   symbol_id: 0xbc617cb9
   symbol_id: 0xd73b87cf
   symbol_id: 0x811bc858
   symbol_id: 0x03699bb1
+||||||| BASE   (fb1be638d23c6ea1ed8b2f19e0e6990de4db9d17 UPSTREAM: ipv6: rpl: reserve mac_len headroom when recompres)
+=======
+  symbol_id: 0x81132d96
+>>>>>>> CHANGE (47db252e734715d9ff3a34ba81c9de34cf5a86c4 ANDROID: update symbol for unisoc whitelist)
   symbol_id: 0x0d23e13a
   symbol_id: 0xd02d0c21
   symbol_id: 0xe9d634b5
