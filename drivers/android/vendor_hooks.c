@@ -25,6 +25,7 @@
 #include <trace/hooks/preemptirq.h>
 #include <trace/hooks/fips140.h>
 #include <trace/hooks/ufshcd.h>
+#include <trace/hooks/mmc.h>
 #include <trace/hooks/cgroup.h>
 #include <trace/hooks/sys.h>
 #include <trace/hooks/iommu.h>
@@ -806,3 +807,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_io_schedule_prepare);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_rq_qos_wait);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_wbt_track);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_wbt_wait);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mmc_blk_reset);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mmc_attach_sd);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_sdhci_get_cd);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mmc_gpio_cd_irqt);
