@@ -25,6 +25,7 @@
 #include <trace/hooks/preemptirq.h>
 #include <trace/hooks/fips140.h>
 #include <trace/hooks/ufshcd.h>
+#include <trace/hooks/mmc.h>
 #include <trace/hooks/cgroup.h>
 #include <trace/hooks/sys.h>
 #include <trace/hooks/iommu.h>
@@ -795,6 +796,13 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_override_exec_folio_order);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_swap_page_relax);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_swap_page_start);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_do_swap_page_done);
+<<<<<<< PATCH SET (82c3622d95b5f02774dc1ac80f6c96ff51d12ad6 ANDROID: mmc: Add vendor hooks for sdcard failure diagnostic)
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mmc_blk_reset);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mmc_attach_sd);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_sdhci_get_cd);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_mmc_gpio_cd_irqt);
+||||||| BASE      (390b7edeb81f88e84084ff2e63d8db892e9f2414 ANDROID: Fix ABI issues related to changed hid_report_raw_ev)
+=======
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_netlink_alloc_skb);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_skb_free_head);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_submit_bio_post);
@@ -806,3 +814,4 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_io_schedule_prepare);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_rq_qos_wait);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_wbt_track);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_wbt_wait);
+>>>>>>> BASE      (e3b9efd5b5a07408d0637603b86739ac0a0d338b UPSTREAM: usb: gadget: u_audio: Fix use-after-free on sound )
