@@ -60,3 +60,4 @@ guard-regions
 merge
 prctl_thp_disable
 rmap
+anon_vma_name_p3s
