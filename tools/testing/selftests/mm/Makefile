@@ -73,6 +73,7 @@ TEST_GEN_FILES += map_fixed_noreplace
 TEST_GEN_FILES += map_hugetlb
 TEST_GEN_FILES += map_populate
 TEST_GEN_FILES += anon_vma_name_p3s
+TEST_GEN_FILES += madvise_remove_p3s
 ifneq (,$(filter $(ARCH),arm64 riscv riscv64 x86 x86_64))
 TEST_GEN_FILES += memfd_secret
 endif
@@ -163,6 +164,8 @@ include ../lib.mk
 
 $(OUTPUT)/anon_vma_name_p3s: CFLAGS += -I..
 $(OUTPUT)/anon_vma_name_p3s: ../kselftest_p3s.h
+$(OUTPUT)/madvise_remove_p3s: CFLAGS += -I..
+$(OUTPUT)/madvise_remove_p3s: ../kselftest_p3s.h
 
 $(TEST_GEN_PROGS): vm_util.c thp_settings.c
 $(TEST_GEN_FILES): vm_util.c thp_settings.c
