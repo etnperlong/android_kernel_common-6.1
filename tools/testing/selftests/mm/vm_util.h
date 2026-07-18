@@ -1,4 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0 */
+#ifndef _SELFTESTS_VM_UTIL_H
+#define _SELFTESTS_VM_UTIL_H
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <sys/mman.h>
@@ -17,6 +20,7 @@
 #define PM_FILE                       BIT_ULL(61)
 #define PM_SWAP                       BIT_ULL(62)
 #define PM_PRESENT                    BIT_ULL(63)
+#define PM_PFRAME_MASK                (BIT_ULL(55) - 1)
 
 #define KPF_COMPOUND_HEAD             BIT_ULL(15)
 #define KPF_COMPOUND_TAIL             BIT_ULL(16)
@@ -73,6 +77,9 @@ static inline void skip_test_dodgy_fs(const char *op_name)
 	ksft_test_result_skip("%s failed with ENOENT. Filesystem might be buggy (9pfs?)\n", op_name);
 }
 
+/* @page_size belongs to the process whose pagemap fd is open. */
+bool pagemap_read_entry(int fd, uintptr_t address, unsigned long page_size,
+			uint64_t *entry);
 uint64_t pagemap_get_entry(int fd, char *start);
 bool pagemap_is_softdirty(int fd, char *start);
 bool pagemap_is_swapped(int fd, char *start);
@@ -155,3 +162,5 @@ int ksm_stop(void);
 
 #define PAGEMAP_PRESENT(ent)	(((ent) & (1ull << 63)) != 0)
 #define PAGEMAP_PFN(ent)	((ent) & ((1ull << 55) - 1))
+
+#endif /* _SELFTESTS_VM_UTIL_H */
