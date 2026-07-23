@@ -1978,28 +1978,7 @@ unlock_mutex:
 }
 EXPORT_SYMBOL(rproc_boot);
 
-/**
- * rproc_shutdown() - power off the remote processor
- * @rproc: the remote processor
- *
- * Power off a remote processor (previously booted with rproc_boot()).
- *
- * In case @rproc is still being used by an additional user(s), then
- * this function will just decrement the power refcount and exit,
- * without really powering off the device.
- *
- * Every call to rproc_boot() must (eventually) be accompanied by a call
- * to rproc_shutdown(). Calling rproc_shutdown() redundantly is a bug.
- *
- * Notes:
- * - we're not decrementing the rproc's refcount, only the power refcount.
- *   which means that the @rproc handle stays valid even after rproc_shutdown()
- *   returns, and users can still use it with a subsequent rproc_boot(), if
- *   needed.
- *
- * Return: 0 on success, and an appropriate error value otherwise
- */
-int rproc_shutdown(struct rproc *rproc)
+static int __rproc_shutdown(struct rproc *rproc, bool force)
 {
 	struct device *dev = &rproc->dev;
 	bool crashed;
@@ -2019,9 +1998,10 @@ int rproc_shutdown(struct rproc *rproc)
 	}
 	crashed = rproc->state == RPROC_CRASHED;
 
-	/* if the remote proc is still needed, bail out */
-	if (!atomic_dec_and_test(&rproc->power))
+	if (!atomic_dec_and_test(&rproc->power) && !force) {
+		/* The remote processor is still needed by another user. */
 		goto out;
+	}
 
 	ret = rproc_stop(rproc, crashed);
 	if (ret) {
@@ -2045,6 +2025,32 @@ int rproc_shutdown(struct rproc *rproc)
 out:
 	mutex_unlock(&rproc->lock);
 	return ret;
+}
+
+/**
+ * rproc_shutdown() - power off the remote processor
+ * @rproc: the remote processor
+ *
+ * Power off a remote processor (previously booted with rproc_boot()).
+ *
+ * In case @rproc is still being used by an additional user(s), then
+ * this function will just decrement the power refcount and exit,
+ * without really powering off the device.
+ *
+ * Every call to rproc_boot() must (eventually) be accompanied by a call
+ * to rproc_shutdown(). Calling rproc_shutdown() redundantly is a bug.
+ *
+ * Notes:
+ * - we're not decrementing the rproc's refcount, only the power refcount.
+ *   which means that the @rproc handle stays valid even after rproc_shutdown()
+ *   returns, and users can still use it with a subsequent rproc_boot(), if
+ *   needed.
+ *
+ * Return: 0 on success, and an appropriate error value otherwise
+ */
+int rproc_shutdown(struct rproc *rproc)
+{
+	return __rproc_shutdown(rproc, false);
 }
 EXPORT_SYMBOL(rproc_shutdown);
 
@@ -2610,8 +2616,7 @@ int rproc_del(struct rproc *rproc)
 	if (cancel_work_sync(&rproc->crash_handler))
 		pm_relax(rproc->dev.parent);
 
-	/* TODO: make sure this works with rproc->power > 1 */
-	rproc_shutdown(rproc);
+	__rproc_shutdown(rproc, true);
 
 	rproc_delete_debug_dir(rproc);
 
