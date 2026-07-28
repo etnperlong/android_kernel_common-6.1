@@ -535,7 +535,7 @@ FOLIO_MATCH(compound_head, _head_3);
  * @pt_index:         Used for s390 gmap.
  * @pt_mm:            Used for x86 pgds.
  * @pt_frag_refcount: For fragmented page table tracking. Powerpc only.
- * @pt_share_count:   Used for HugeTLB PMD page table share count.
+ * @pt_share_count:   HugeTLB PMD or PTSHARE PTE table share count.
  * @_pt_pad_2:        Padding to ensure proper alignment.
  * @ptl:              Lock for the page table.
  * @__page_type:      Same as page->page_type. Unused for page tables.
@@ -562,7 +562,7 @@ struct ptdesc {
 		pgoff_t pt_index;
 		struct mm_struct *pt_mm;
 		atomic_t pt_frag_refcount;
-#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
+#if defined(CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING) || defined(CONFIG_PTSHARE)
 		atomic_t pt_share_count;
 #endif
 	};
@@ -610,7 +610,7 @@ static_assert(sizeof(struct ptdesc) <= sizeof(struct page));
 	const struct page *:		(const struct ptdesc *)(p),	\
 	struct page *:			(struct ptdesc *)(p)))
 
-#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
+#if defined(CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING) || defined(CONFIG_PTSHARE)
 static inline void ptdesc_pmd_pts_init(struct ptdesc *ptdesc)
 {
 	atomic_set(&ptdesc->pt_share_count, 0);
