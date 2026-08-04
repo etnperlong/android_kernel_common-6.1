@@ -141,6 +141,8 @@ static inline int ptdesc_ptshare_count(struct ptdesc *pt)
 {
 	return ptdesc_pmd_pts_count(pt);
 }
+
+int ptshare_unshare_vma_locked(struct vm_area_struct *vma);
 /* dup_mm() copies the parent's mm_struct: start outside any domain. */
 static inline void ptshare_mm_init(struct mm_struct *mm)
 {
@@ -199,6 +201,11 @@ static inline bool ptdesc_ptshare_dec(struct ptdesc *pt)
 }
 
 static inline int ptdesc_ptshare_count(struct ptdesc *pt)
+{
+	return 0;
+}
+
+static inline int ptshare_unshare_vma_locked(struct vm_area_struct *vma)
 {
 	return 0;
 }
