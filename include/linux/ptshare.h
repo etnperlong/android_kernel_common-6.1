@@ -178,6 +178,10 @@ static inline int ptdesc_ptshare_count(struct ptdesc *pt)
 int ptshare_unshare_vma_locked(struct vm_area_struct *vma);
 int ptshare_unshare_vma_on_gup(struct mm_struct *mm, unsigned long addr,
 			       int *locked, bool unlockable);
+int ptshare_validate_mmap(struct file *file, unsigned long addr,
+			  unsigned long len, unsigned long prot,
+			  unsigned long flags, vm_flags_t *vm_flags,
+			  unsigned long pgoff);
 
 static inline struct page *ptshare_get_user_page_vma_remote(struct mm_struct *mm,
 						    unsigned long addr,
@@ -371,6 +375,14 @@ static inline struct page *ptshare_get_user_page_vma_remote(struct mm_struct *mm
 						    struct vm_area_struct **vmap)
 {
 	return get_user_page_vma_remote(mm, addr, gup_flags, vmap);
+}
+
+static inline int ptshare_validate_mmap(struct file *file, unsigned long addr,
+					unsigned long len, unsigned long prot,
+					unsigned long flags, vm_flags_t *vm_flags,
+					unsigned long pgoff)
+{
+	return 0;
 }
 
 static inline bool ptshare_behavior_needs_unshare(int behavior)
