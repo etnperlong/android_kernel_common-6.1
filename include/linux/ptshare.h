@@ -5,6 +5,7 @@
 #ifndef __ASSEMBLY__
 
 #include <linux/mm.h>
+#include <uapi/asm-generic/mman-common.h>
 #include <linux/refcount.h>
 #include <linux/mmu_notifier.h>
 #include <linux/android_kabi.h>
@@ -143,6 +144,19 @@ static inline int ptdesc_ptshare_count(struct ptdesc *pt)
 }
 
 int ptshare_unshare_vma_locked(struct vm_area_struct *vma);
+
+/*
+ * madvise() behaviors that zap the PTEs of a range and must therefore
+ * unshare a client VMA first. MADV_FREE is not listed: it only supports
+ * anonymous VMAs, so it fails with -EINVAL on client VMAs, which are
+ * always file-backed, before it touches any page table.
+ */
+static inline bool ptshare_behavior_needs_unshare(int behavior)
+{
+	return behavior == MADV_DONTNEED ||
+	       behavior == MADV_DONTNEED_LOCKED;
+}
+
 /* dup_mm() copies the parent's mm_struct: start outside any domain. */
 static inline void ptshare_mm_init(struct mm_struct *mm)
 {
@@ -209,6 +223,12 @@ static inline int ptshare_unshare_vma_locked(struct vm_area_struct *vma)
 {
 	return 0;
 }
+
+static inline bool ptshare_behavior_needs_unshare(int behavior)
+{
+	return false;
+}
+
 static inline void ptshare_mm_init(struct mm_struct *mm)
 {
 }
