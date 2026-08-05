@@ -113,6 +113,26 @@ static inline void vma_set_ptshare_desc(struct vm_area_struct *vma,
 }
 
 /**
+ * ptshare_attach_desc - Attach the domain descriptor to a new client VMA.
+ * @vma: The new VMA, not yet visible in the VMA tree or the file's i_mmap.
+ *
+ * Called from mmap before the VMA is published, so that no page table
+ * walker or fault can observe VM_PT_SHARED without a descriptor.
+ * ptshare_install_vma() creates the shadow VMA afterwards, or rolls the
+ * mapping back if installation fails.
+ */
+static inline void ptshare_attach_desc(struct vm_area_struct *vma)
+{
+	struct mm_struct *mm = vma->vm_mm;
+
+	if (!vma_is_ptshare_client(vma))
+		return;
+
+	vma_set_ptshare_desc(vma, rcu_dereference_protected(mm->ptshare_desc,
+				lockdep_is_held(&mm->mmap_lock)));
+}
+
+/**
  * vma_ptshare_refcount - Get the client count of a shadow VMA
  * @vma: A shadow VMA.
  *
@@ -138,6 +158,11 @@ static inline void ptshare_vma_init_from(struct vm_area_struct *dest,
 				  READ_ONCE(src->__vm_ptshare_desc) : NULL;
 }
 
+void ptshare_get_vma(struct vm_area_struct *vma, struct ptshare_desc *desc);
+void ptshare_put_vma(struct vm_area_struct *vma, struct ptshare_desc *desc);
+
+unsigned long ptshare_install_vma(struct mm_struct *mm, unsigned long addr,
+				  unsigned long len, unsigned long vm_flags);
 /**
  * ptdesc_ptshare_inc - Count a client PMD that points at a shared PTE table
  * @pt: The PTE table, owned by the shadow MM.
@@ -224,6 +249,10 @@ static inline void vma_set_ptshare_desc(struct vm_area_struct *vma,
 {
 }
 
+static inline void ptshare_attach_desc(struct vm_area_struct *vma)
+{
+}
+
 static inline refcount_t *vma_ptshare_refcount(struct vm_area_struct *vma)
 {
 	return NULL;
@@ -232,6 +261,24 @@ static inline refcount_t *vma_ptshare_refcount(struct vm_area_struct *vma)
 static inline void ptshare_vma_init_from(struct vm_area_struct *dest,
 					 const struct vm_area_struct *src)
 {
+}
+
+static inline void ptshare_get_vma(struct vm_area_struct *vma,
+					struct ptshare_desc *desc)
+{
+}
+
+static inline void ptshare_put_vma(struct vm_area_struct *vma,
+					struct ptshare_desc *desc)
+{
+}
+
+static inline unsigned long ptshare_install_vma(struct mm_struct *mm,
+						unsigned long addr,
+						unsigned long len,
+						unsigned long vm_flags)
+{
+	return addr;
 }
 
 static inline void ptdesc_ptshare_inc(struct ptdesc *pt)
