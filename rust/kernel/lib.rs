@@ -48,6 +48,7 @@ pub mod id_pool;
 #[doc(hidden)]
 pub mod impl_flags;
 pub mod init;
+pub mod interrupt;
 pub mod ioctl;
 pub mod jump_label;
 #[cfg(CONFIG_KUNIT)]
