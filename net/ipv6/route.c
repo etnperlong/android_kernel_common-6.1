@@ -3916,7 +3916,8 @@ int ip6_route_add(struct fib6_config *cfg, gfp_t gfp_flags,
 	return err;
 }
 
-static int __ip6_del_rt(struct fib6_info *rt, struct nl_info *info)
+static int __ip6_del_rt(struct fib6_info *rt, struct nl_info *info,
+			enum rt_del_reason del_reason)
 {
 	struct net *net = info->nl_net;
 	struct fib6_table *table;
@@ -3929,7 +3930,7 @@ static int __ip6_del_rt(struct fib6_info *rt, struct nl_info *info)
 
 	table = rt->fib6_table;
 	spin_lock_bh(&table->tb6_lock);
-	err = fib6_del(rt, info);
+	err = fib6_del(rt, info, del_reason);
 	spin_unlock_bh(&table->tb6_lock);
 
 out:
@@ -3944,7 +3945,7 @@ int ip6_del_rt(struct net *net, struct fib6_info *rt, bool skip_notify)
 		.skip_notify = skip_notify
 	};
 
-	return __ip6_del_rt(rt, &info);
+	return __ip6_del_rt(rt, &info, RT_DEL_REASON_UNSPEC);
 }
 
 int ip6_del_rt_reason(struct net *net, struct fib6_info *rt,
@@ -3952,7 +3953,7 @@ int ip6_del_rt_reason(struct net *net, struct fib6_info *rt,
 {
 	struct nl_info info = { .nl_net = net };
 
-	return __ip6_del_rt(rt, &info);
+	return __ip6_del_rt(rt, &info, del_reason);
 }
 
 static int __ip6_del_rt_siblings(struct fib6_info *rt, struct fib6_config *cfg)
@@ -4015,13 +4016,13 @@ static int __ip6_del_rt_siblings(struct fib6_info *rt, struct fib6_config *cfg)
 		list_for_each_entry_safe(sibling, next_sibling,
 					 &rt->fib6_siblings,
 					 fib6_siblings) {
-			err = fib6_del(sibling, info);
+			err = fib6_del(sibling, info, RT_DEL_REASON_UNSPEC);
 			if (err)
 				goto out_unlock;
 		}
 	}
 
-	err = fib6_del(rt, info);
+	err = fib6_del(rt, info, RT_DEL_REASON_UNSPEC);
 out_unlock:
 	spin_unlock_bh(&table->tb6_lock);
 out_put:
@@ -4148,7 +4149,8 @@ static int ip6_route_del(struct fib6_config *cfg,
 					continue;
 				rcu_read_unlock();
 
-				return __ip6_del_rt(rt, &cfg->fc_nlinfo);
+				return __ip6_del_rt(rt, &cfg->fc_nlinfo,
+						    RT_DEL_REASON_UNSPEC);
 			}
 			if (cfg->fc_nh_id)
 				continue;
@@ -4167,7 +4169,8 @@ static int ip6_route_del(struct fib6_config *cfg,
 
 			/* if gateway was specified only delete the one hop */
 			if (cfg->fc_flags & RTF_GATEWAY)
-				return __ip6_del_rt(rt, &cfg->fc_nlinfo);
+				return __ip6_del_rt(rt, &cfg->fc_nlinfo,
+						    RT_DEL_REASON_UNSPEC);
 
 			return __ip6_del_rt_siblings(rt, cfg);
 		}
