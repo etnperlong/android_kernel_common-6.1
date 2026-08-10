@@ -27,6 +27,11 @@ struct ptshare_desc {
 	ANDROID_BACKPORT_RESERVE(2);
 };
 
+static inline bool has_map_hugetlb_flag(unsigned long flags)
+{
+	return (flags & MAP_HUGETLB) && !IS_ENABLED(CONFIG_PTSHARE);
+}
+
 #ifdef CONFIG_PTSHARE
 /*
  * Three predicates classify VMAs for page table sharing:
