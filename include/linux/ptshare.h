@@ -131,11 +131,18 @@ static inline void ptshare_vma_init_from(struct vm_area_struct *dest,
 				  READ_ONCE(src->__vm_ptshare_desc) : NULL;
 }
 
-void ptshare_get_vma(struct vm_area_struct *vma, struct ptshare_desc *desc);
+int ptshare_get_vma(struct vm_area_struct *vma, struct ptshare_desc *desc);
 void ptshare_put_vma(struct vm_area_struct *vma, struct ptshare_desc *desc);
 
 unsigned long ptshare_install_vma(struct mm_struct *mm, unsigned long addr,
 				  unsigned long len, unsigned long vm_flags);
+
+struct ptshare_desc *ptshare_alloc_desc(void);
+void ptshare_put_desc(struct ptshare_desc *desc);
+void ptshare_get_desc(struct ptshare_desc *desc);
+void ptshare_free_desc_rcu(struct ptshare_desc *desc);
+void ptshare_exit(struct mm_struct *mm);
+int ptshare_fork_vma(struct mm_struct *mm, struct vm_area_struct *vma);
 /**
  * ptdesc_ptshare_inc - Count a client PMD that points at a shared PTE table
  * @pt: The PTE table, owned by the shadow MM.
@@ -234,9 +241,10 @@ static inline void ptshare_vma_init_from(struct vm_area_struct *dest,
 {
 }
 
-static inline void ptshare_get_vma(struct vm_area_struct *vma,
+static inline int ptshare_get_vma(struct vm_area_struct *vma,
 					struct ptshare_desc *desc)
 {
+	return 0;
 }
 
 static inline void ptshare_put_vma(struct vm_area_struct *vma,
@@ -250,6 +258,32 @@ static inline unsigned long ptshare_install_vma(struct mm_struct *mm,
 						unsigned long vm_flags)
 {
 	return addr;
+}
+
+static inline struct ptshare_desc *ptshare_alloc_desc(void)
+{
+	return NULL;
+}
+
+static inline void ptshare_put_desc(struct ptshare_desc *desc)
+{
+}
+
+static inline void ptshare_get_desc(struct ptshare_desc *desc)
+{
+}
+
+static inline void ptshare_free_desc_rcu(struct ptshare_desc *desc)
+{
+}
+
+static inline void ptshare_exit(struct mm_struct *mm)
+{
+}
+
+static inline int ptshare_fork_vma(struct mm_struct *mm, struct vm_area_struct *vma)
+{
+	return 0;
 }
 
 static inline void ptdesc_ptshare_inc(struct ptdesc *pt)
