@@ -486,6 +486,8 @@ void remove_vma(struct vm_area_struct *vma)
 		fput(vma->vm_file);
 	}
 	mpol_put(vma_policy(vma));
+	if (vma_is_ptshare_client(vma))
+		ptshare_put_vma(vma, vma_ptshare_desc(vma));
 	vm_area_free(vma);
 }
 
