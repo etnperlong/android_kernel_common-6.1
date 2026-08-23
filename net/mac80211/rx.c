@@ -2670,6 +2670,32 @@ static void ieee80211_deliver_skb_to_local_stack(struct sk_buff *skb,
 	}
 }
 
+#if IS_ENABLED(CONFIG_NET_APF)
+/* Runs the driver's APF filter. Frees the skb and returns false on drop. */
+static bool ieee80211_rx_apf_pass(struct ieee80211_sub_if_data *sdata,
+				  struct sk_buff *skb, struct net_device *dev)
+{
+	struct ieee80211_local *local = sdata->local;
+
+	/* AP_VLAN interfaces are never added to the driver */
+	if (!local->ops->apf_run_filter ||
+	    !(sdata->flags & IEEE80211_SDATA_IN_DRIVER) ||
+	    local->ops->apf_run_filter(&local->hw, &sdata->vif, skb, dev))
+		return true;
+
+	dev_core_stats_rx_dropped_inc(dev);
+	dev_kfree_skb(skb);
+	return false;
+}
+#else
+static inline bool ieee80211_rx_apf_pass(struct ieee80211_sub_if_data *sdata,
+					 struct sk_buff *skb,
+					 struct net_device *dev)
+{
+	return true;
+}
+#endif
+
 /*
  * requires that rx->skb is a frame with ethernet header
  */
@@ -2754,6 +2780,9 @@ ieee80211_deliver_skb(struct ieee80211_rx_data *rx)
 		}
 	}
 #endif
+
+	if (skb && !ieee80211_rx_apf_pass(sdata, skb, dev))
+		skb = NULL;
 
 	if (skb) {
 		skb->protocol = eth_type_trans(skb, dev);
@@ -4864,6 +4893,9 @@ static void ieee80211_rx_8023(struct ieee80211_rx_data *rx,
 		if (!skb)
 			return;
 	}
+
+	if (!ieee80211_rx_apf_pass(rx->sdata, skb, fast_rx->dev))
+		return;
 
 	/* deliver to local stack */
 	skb->protocol = eth_type_trans(skb, fast_rx->dev);
