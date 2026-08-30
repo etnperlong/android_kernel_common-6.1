@@ -2852,7 +2852,7 @@ static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
 		 * (pushable to cpu0). All we care about here is general
 		 * pushability.
 		 */
-		if (task_is_pushable(rq, i, 0)) {
+		if (task_is_pushable(rq, i, 0) && && !is_migration_disabled(i)) {
 			p = i;
 			break;
 		}
