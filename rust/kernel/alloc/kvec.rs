@@ -5,12 +5,12 @@
 // May not be needed in Rust 1.87.0 (pending beta backport).
 #![allow(clippy::ptr_eq)]
 
-use crate::page::PAGE_SIZE;
 use super::{
     allocator::{KVmalloc, Kmalloc, Vmalloc},
     layout::ArrayLayout,
     AllocError, Allocator, Box, Flags,
 };
+use crate::page::PAGE_SIZE;
 use core::{
     fmt,
     marker::PhantomData,
