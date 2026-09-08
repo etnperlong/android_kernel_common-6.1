@@ -2599,6 +2599,15 @@ long get_user_pages_remote(struct mm_struct *mm,
 			   unsigned long start, unsigned long nr_pages,
 			   unsigned int gup_flags, struct page **pages,
 			   int *locked);
+long pin_user_pages_range(struct mm_struct *mm, unsigned long start,
+			  size_t length, unsigned long capacity,
+			  unsigned int gup_flags, struct page **pages,
+			  struct page_span *spans);
+long get_user_pages_range(struct mm_struct *mm, unsigned long start,
+			  size_t length, unsigned long capacity,
+			  unsigned int gup_flags, struct page **pages,
+			  struct page_span *spans);
+
 long pin_user_pages_remote(struct mm_struct *mm,
 			   unsigned long start, unsigned long nr_pages,
 			   unsigned int gup_flags, struct page **pages,
