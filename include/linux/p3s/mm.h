@@ -235,6 +235,21 @@ static inline unsigned long mm_offset_in_page(const struct mm_struct *mm,
 	return addr & (mm_pte_size(mm) - 1);
 }
 
+/* Array capacity needed for a byte range, without rounding overflow. */
+static inline unsigned long
+mm_user_range_pages(struct mm_struct *mm, unsigned long start, size_t length)
+{
+	unsigned long page_size = mm_pte_size(mm);
+	unsigned long tail;
+
+	if (!length)
+		return 0;
+	tail = mm_offset_in_page(mm, start) +
+	       mm_offset_in_page(mm, length);
+	return (length >> mm_pte_shift(mm)) +
+	       DIV_ROUND_UP(tail, page_size);
+}
+
 static inline bool mm_pte_aligned(const struct mm_struct *mm,
 				  unsigned long addr)
 {
