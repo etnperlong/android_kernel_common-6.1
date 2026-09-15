@@ -1302,7 +1302,9 @@ int zram_writeback_slots(struct zram *zram,
 	struct zram_pp_slot *pps;
 	int ret = 0, err = 0;
 	u32 index = 0;
+	struct blk_plug plug;
 
+	blk_start_plug(&plug);
 	while ((pps = select_pp_slot(ctl))) {
 		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
 			ret = -EIO;
@@ -1314,8 +1316,10 @@ int zram_writeback_slots(struct zram *zram,
 			if (req)
 				break;
 
+			blk_finish_plug(&plug);
 			wait_event(wb_ctl->done_wait,
 				   !list_empty(&wb_ctl->done_reqs));
+			blk_start_plug(&plug);
 
 			err = zram_complete_done_reqs(zram, wb_ctl);
 			/*
@@ -1391,6 +1395,8 @@ next:
 	 */
 	if (req)
 		release_wb_req(req);
+
+	blk_finish_plug(&plug);
 
 	while (atomic_read(&wb_ctl->num_inflight) > 0) {
 		wait_event(wb_ctl->done_wait, !list_empty(&wb_ctl->done_reqs));
