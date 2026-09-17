@@ -1,0 +1,35 @@
+# ============================================================================
+# TPE GKI 16KB Release - Known Failures & Non-Kernel Waive List (Exclude List)
+# Umbrella Strategy Bug: b/559889030
+# Tracking Hotlist: https://b.corp.google.com/hotlists/8973411
+#
+# Policy:
+# Every entry MUST include a comment with:
+#   # [Buganizer ID] [Category: Kernel | Non-Kernel] Reason
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# PART A: Known Kernel / Architectural Limitations (Assignee: jyescas@)
+# ----------------------------------------------------------------------------
+
+# [b/562752028] [Kernel] KeyMint AIDL target tests shared memory 16KB alignment / attestation (ref b/520042674)
+--exclude-filter VtsAidlKeyMintTargetTest
+
+
+# ----------------------------------------------------------------------------
+# PART B: Non-Kernel Userspace / Framework Noise (Excluded from GKI Gating)
+# Routed to 16KB Userspace/Platform Leads (Assignee: kaleshsingh@)
+# ----------------------------------------------------------------------------
+
+# [b/562751263] [Non-Kernel] Heavy Framework suites hitting OOM/Timeouts under 16K RAM overhead
+--exclude-filter CtsAutoFillServiceTestCases
+--exclude-filter CtsAutoFillServiceTestCases[instant]
+--exclude-filter CtsHealthFitnessDeviceTestCases
+--exclude-filter CtsAppFunctionTestCases
+--exclude-filter CtsCompanionDeviceManagerCoreTestCases
+--exclude-filter CtsPersonalContextTestCases
+
+# [b/562752306] [Non-Kernel] dEQP / Graphics 4KB buffer alignment assumptions (ref b/489255903)
+--exclude-filter CtsDeqpTestCases
+--exclude-filter CtsGraphicsTestCases
+--exclude-filter CtsUiRenderingTestCases
