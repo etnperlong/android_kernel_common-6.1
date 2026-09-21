@@ -372,6 +372,84 @@ vma_pgoff_to_address(const struct vm_area_struct *vma, pgoff_t pgoff)
 }
 
 /*
+ * vma_anon_slice_window - First address of the slices of a page in @vma
+ * @vma: Anonymous VMA
+ * @pgoff: Index of a small anonymous folio
+ *
+ * In a 4KB anonymous VMA, @pgoff counts 4KB pages and the slices of the
+ * folio are mapped within one 16KB-aligned window of addresses. A VMA split
+ * or a 4KB mremap() can leave some of them in a VMA whose page range does
+ * not contain @pgoff; unsigned wrap-around then gives the address of the
+ * window below vm_start. Returns the first address of the window within
+ * @vma, or -EFAULT if @vma holds no part of the window.
+ */
+static inline unsigned long vma_anon_slice_window(const struct vm_area_struct *vma,
+						  pgoff_t pgoff)
+{
+	unsigned long win = (vma->vm_start +
+			     ((pgoff - vma->vm_pgoff) << PAGE_SHIFT_4KB)) &
+			    PAGE_MASK_KERNEL;
+
+	if (win >= vma->vm_end || win + PAGE_SIZE_KERNEL <= vma->vm_start)
+		return -EFAULT;
+	return max(win, vma->vm_start);
+}
+
+/*
+ * vma_folio_slice_bounds - 4KB pages around @addr that map the same 16KB page
+ * @vma: Pointer to struct vm_area_struct
+ * @addr: Virtual address within @vma
+ * @nr_slices: Output number of contiguous slices (1..4)
+ * @start_addr: Output starting virtual address of the slice span
+ *
+ * In a 4KB VMA, finds the 4KB pages around @addr that map slices of the
+ * 16KB page backing @addr, without crossing the VMA or the PTE table that
+ * maps @addr. Sets @start_addr to the first of them and @nr_slices to
+ * their number.
+ *
+ * For example, with vm_slice_off = 1 and @addr = vm_start + 0x2000, @addr
+ * is at slice 1 + (0x2000 >> PAGE_SHIFT_4KB) = 3 of file page vm_pgoff.
+ * Slices 1 to 3 of that page are in the VMA, but slice 0 is before
+ * vm_start, so @start_addr is vm_start and @nr_slices is 3:
+ *
+ *                vm_start         @addr
+ *                    ▼              ▼
+ *                    ┌─────┬─────┬─────┬─────┬─────┐
+ *  VMA pages         │  0  │  1  │  2  │  3  │  4  │
+ *                    └─────┴─────┴─────┴─────┴─────┘
+ *                    │◄───────────────►│ @nr_slices = 3
+ *              ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+ *  slices      │  0  │  1  │  2  │  3  │  0  │  1  │  2  │  3  │
+ *              ├─────┴─────┴─────┴─────┼─────┴─────┴─────┴─────┤
+ *  file pages  │        vm_pgoff       │      vm_pgoff + 1     │
+ *              └───────────────────────┴───────────────────────┘
+ *
+ * For a native VMA, @nr_slices is 1 and @start_addr is @addr.
+ */
+static inline void vma_folio_slice_bounds(const struct vm_area_struct *vma,
+					  unsigned long addr,
+					  unsigned int *nr_slices,
+					  unsigned long *start_addr)
+{
+	unsigned long start, end, pt;
+
+	if (!vma_is_p3s_4k(vma)) {
+		*nr_slices = 1;
+		*start_addr = addr;
+		return;
+	}
+
+	addr &= PAGE_MASK_4KB;
+	start = addr - (vma_slice_offset(vma, addr) << PAGE_SHIFT_4KB);
+	pt = addr & ~(PMD_SIZE_4KB - 1);
+	end = min3(start + PAGE_SIZE_KERNEL, vma->vm_end, pt + PMD_SIZE_4KB);
+	start = max3(start, vma->vm_start, pt);
+
+	*start_addr = start;
+	*nr_slices = (end - start) >> PAGE_SHIFT_4KB;
+}
+
+/*
  * vma_set_split_offset - Update pgoff and slice offset after VMA split
  * @target: Newly created or adjusted VMA
  * @src: Source VMA being split
