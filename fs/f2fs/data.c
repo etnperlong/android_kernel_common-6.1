@@ -2909,7 +2909,8 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
 	if (!f2fs_encrypted_file(inode))
 		return 0;
 
-	page = fio->compressed_page ? fio->compressed_page : fio->page;
+	page = fio->compressed_page ? fio->compressed_page :
+					folio_page(fio->folio, 0);
 
 	if (fscrypt_inode_uses_inline_crypto(inode))
 		return 0;
@@ -3012,7 +3013,7 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
 		return true;
 
 	if (fio) {
-		if (page_private_gcing(fio->page))
+		if (folio_test_f2fs_gcing(fio->folio))
 			return true;
 		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
 			f2fs_is_checkpointed_data(sbi, fio->old_blkaddr)))
