@@ -1553,4 +1553,7 @@ enum {
 	/* See also internal only FOLL flags in mm/internal.h */
 };
 
+/* Keep at the end to ensure struct mm_struct and vm_area_struct are defined. */
+#include <linux/p3s.h>
+
 #endif /* _LINUX_MM_TYPES_H */
