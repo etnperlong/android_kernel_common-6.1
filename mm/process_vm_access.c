@@ -14,6 +14,7 @@
 #include <linux/ptrace.h>
 #include <linux/slab.h>
 #include <linux/syscalls.h>
+#include <linux/p3s/iov_iter.h>
 
 /**
  * process_vm_rw_pages - read/write pages from task specified
@@ -58,6 +59,53 @@ static int process_vm_rw_pages(struct page **pages,
 /* Maximum number of pages that can be stored at a time */
 #define PVM_MAX_USER_PAGES (PVM_MAX_KMALLOC_PAGES * PAGE_SIZE / sizeof(struct page *))
 
+/*
+ * Maximum number of entries for process pages array
+ * which lives on stack
+ */
+#define PVM_MAX_PP_ARRAY_COUNT 16
+
+/*
+ * process_vm_rw_slices - process_vm_rw_single_vec() for a 4KB compat target
+ *
+ * Pins the target pages as host pages in user range order with
+ * p3s_get_user_slice_pages(), so that each copy starts at the 4KB slice the
+ * target address maps rather than at slice 0 of the host page.
+ */
+static int process_vm_rw_slices(unsigned long addr, unsigned long len,
+				unsigned long nr_pages, struct iov_iter *iter,
+				struct page **process_pages,
+				struct mm_struct *mm, unsigned int flags,
+				int vm_write)
+{
+	unsigned int max_pages = min_t(unsigned long,
+				       max_t(unsigned long, nr_pages,
+					     PVM_MAX_PP_ARRAY_COUNT),
+				       PVM_MAX_USER_PAGES);
+	int rc = 0;
+
+	while (!rc && len && iov_iter_count(iter)) {
+		size_t offset;
+		ssize_t bytes;
+
+		bytes = p3s_get_user_slice_pages(mm, addr, len, max_pages,
+						 flags, true, process_pages,
+						 &offset);
+		if (bytes <= 0)
+			return -EFAULT;
+
+		rc = process_vm_rw_pages(process_pages, offset, bytes, iter,
+					 vm_write);
+		unpin_user_pages_dirty_lock(process_pages,
+					    DIV_ROUND_UP(offset + bytes,
+							 PAGE_SIZE),
+					    vm_write);
+		addr += bytes;
+		len -= bytes;
+	}
+	return rc;
+}
+
 /**
  * process_vm_rw_single_vec - read/write pages from task specified
  * @addr: start memory address of target process
@@ -91,6 +139,10 @@ static int process_vm_rw_single_vec(unsigned long addr,
 
 	if (vm_write)
 		flags |= FOLL_WRITE;
+
+	if (mm_is_p3s_4k(mm))
+		return process_vm_rw_slices(addr, len, nr_pages, iter,
+					    process_pages, mm, flags, vm_write);
 
 	while (!rc && nr_pages && iov_iter_count(iter)) {
 		int pinned_pages = min_t(unsigned long, nr_pages, PVM_MAX_USER_PAGES);
@@ -130,10 +182,6 @@ static int process_vm_rw_single_vec(unsigned long addr,
 
 	return rc;
 }
-
-/* Maximum number of entries for process pages array
-   which lives on stack */
-#define PVM_MAX_PP_ARRAY_COUNT 16
 
 /**
  * process_vm_rw_core - core of reading/writing pages from task specified
