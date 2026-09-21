@@ -80,6 +80,7 @@
 
 #include <trace/events/sched.h>
 #include <trace/hooks/sched.h>
+#include <linux/p3s_user_pages.h>
 
 static int bprm_creds_from_file(struct linux_binprm *bprm);
 
@@ -255,9 +256,10 @@ static void flush_arg_page(struct linux_binprm *bprm, unsigned long pos,
 
 static int __bprm_mm_init(struct linux_binprm *bprm)
 {
+	struct mm_struct *mm = bprm->mm;
+	P3S_CONTEXT_REMOTE_MM(mm);
 	int err;
 	struct vm_area_struct *vma = NULL;
-	struct mm_struct *mm = bprm->mm;
 
 	bprm->vma = vma = vm_area_alloc(mm);
 	if (!vma)
