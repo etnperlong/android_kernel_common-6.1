@@ -17,6 +17,7 @@ use macros::pin_data;
 
 pub mod mutex;
 pub mod spinlock;
+pub mod spinlock_irq;
 
 pub(super) mod global;
 pub use global::{GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
