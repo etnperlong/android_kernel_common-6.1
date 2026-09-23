@@ -1261,10 +1261,12 @@ int zram_prefetch_slots(struct zram *zram, struct zram_pp_ctl *ctl)
 	u32 index = 0;
 	unsigned long blk_idx;
 	struct page *page = NULL;
+	struct blk_plug plug;
 
 	atomic_set(&pf_ctl.num_inflight, 0);
 	init_waitqueue_head(&pf_ctl.done_wait);
 
+	blk_start_plug(&plug);
 	while ((pps = select_pp_slot(ctl))) {
 		index = pps->index;
 		slot_lock(zram, index);
@@ -1300,6 +1302,8 @@ unlock_next:
 		slot_unlock(zram, index);
 		release_pp_slot(zram, pps);
 	}
+
+	blk_finish_plug(&plug);
 
 	if (page)
 		__free_page(page);
