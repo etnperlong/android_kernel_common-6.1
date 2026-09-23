@@ -5,6 +5,11 @@
 #ifndef __ASM_SECTIONS_H
 #define __ASM_SECTIONS_H
 
+#define __is_kernel_text(addr)	\
+	(((addr) >= (unsigned long)_stext && (addr) < (unsigned long)_etext) || \
+	 ((addr) >= (unsigned long)__hyp_idmap_text_start && \
+	  (addr) < (unsigned long)__hyp_text_end))
+
 #include <asm-generic/sections.h>
 
 extern char __alt_instructions[], __alt_instructions_end[];

@@ -95,15 +95,17 @@ ENTRY(_text)
 jiffies = jiffies_64;
 
 #define HYPERVISOR_TEXT					\
-	. = ALIGN(PAGE_SIZE);				\
-	__hyp_idmap_text_start = .;			\
-	*(.hyp.idmap.text)				\
-	__hyp_idmap_text_end = .;			\
-	__hyp_text_start = .;				\
-	*(.hyp.text)					\
-	HYPERVISOR_EXTABLE				\
-	. = ALIGN(PAGE_SIZE);				\
-	__hyp_text_end = .;
+	HYP_SECTION_NAME(.text) : {			\
+		. = ALIGN(PAGE_SIZE);			\
+		__hyp_idmap_text_start = .;		\
+		*(HYP_SECTION_NAME(.idmap.text))	\
+		__hyp_idmap_text_end = .;		\
+		__hyp_text_start = .;			\
+		*(HYP_SECTION_NAME(.text))		\
+		HYPERVISOR_EXTABLE			\
+		. = ALIGN(PAGE_SIZE);			\
+		__hyp_text_end = .;			\
+	}
 
 #define IDMAP_TEXT					\
 	. = ALIGN(SZ_4K);				\
@@ -200,7 +202,6 @@ SECTIONS
 			SCHED_TEXT
 			LOCK_TEXT
 			KPROBES_TEXT
-			HYPERVISOR_TEXT
 			*(.gnu.warning)
 	}
 
@@ -209,8 +210,6 @@ SECTIONS
 
 	/* everything from this point to __init_begin will be marked RO NX */
 	RO_DATA(PAGE_SIZE)
-
-	HYPERVISOR_RODATA_SECTIONS
 
 	.got : { *(.got) }
 	/*
@@ -300,9 +299,6 @@ SECTIONS
 	RUNTIME_CONST_VARIABLES
 
 	PERCPU_SECTION(L1_CACHE_BYTES)
-	HYPERVISOR_PERCPU_SECTION
-
-	HYPERVISOR_RELOC_SECTION
 
 	.rela.dyn : ALIGN(8) {
 		__pi_rela_start = .;
@@ -327,8 +323,6 @@ SECTIONS
 	_sdata = .;
 	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE, THREAD_ALIGN)
 
-	HYPERVISOR_DATA_SECTION
-
 	/*
 	 * Data written with the MMU off but read with the MMU on requires
 	 * cache lines to be invalidated, discarding up to a Cache Writeback
@@ -347,11 +341,16 @@ SECTIONS
 		__mmuoff_data_end = .;
 	}
 
+	HYPERVISOR_TEXT
+	HYPERVISOR_RODATA_SECTIONS
+	HYPERVISOR_PERCPU_SECTION
+	HYPERVISOR_RELOC_SECTION
+	HYPERVISOR_DATA_SECTION
+	HYPERVISOR_BSS_SECTION
+
 	PECOFF_EDATA_PADDING
 	__pecoff_data_rawsize = ABSOLUTE(. - __initdata_begin);
 	_edata = .;
-
-	HYPERVISOR_BSS_SECTION
 
 	/* start of zero-init region */
 	BSS_SECTION(0, 0, 0)

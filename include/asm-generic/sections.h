@@ -208,11 +208,13 @@ static inline bool is_kernel_inittext(unsigned long addr)
  * Returns: true if the address is located in .text, false otherwise.
  * Note: an internal helper, only check the range of _stext to _etext.
  */
+#ifndef __is_kernel_text
 static inline bool __is_kernel_text(unsigned long addr)
 {
 	return addr >= (unsigned long)_stext &&
 	       addr < (unsigned long)_etext;
 }
+#endif
 
 /**
  * __is_kernel - checks if the pointer address is located in the kernel range
