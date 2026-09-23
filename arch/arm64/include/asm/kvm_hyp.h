@@ -156,6 +156,7 @@ extern unsigned int kvm_nvhe_sym(kvm_arm_vmid_bits);
 extern unsigned int kvm_nvhe_sym(kvm_sve_max_vl);
 extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_vl);
 extern bool kvm_nvhe_sym(smccc_trng_available);
+extern unsigned long kvm_nvhe_sym(hyp_nr_cpus);
 
 #ifdef __KVM_NVHE_HYPERVISOR__
 #undef __init

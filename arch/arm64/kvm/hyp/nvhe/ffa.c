@@ -115,7 +115,7 @@ static struct kvm_ffa_buffers *ffa_get_buffers(struct pkvm_hyp_vcpu *hyp_vcpu)
 	return &pkvm_hyp_vcpu_to_hyp_vm(hyp_vcpu)->ffa_buf;
 }
 
-int __pkvm_ffa_unmap_on_lend;
+int __ro_after_init __pkvm_ffa_unmap_on_lend;
 
 static struct ffa_handle *ffa_host_alloc_handle(void)
 {

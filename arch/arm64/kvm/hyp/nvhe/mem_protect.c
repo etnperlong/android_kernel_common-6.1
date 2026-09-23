@@ -29,8 +29,8 @@
 
 struct host_mmu host_mmu;
 
-struct pkvm_moveable_reg pkvm_moveable_regs[PKVM_NR_MOVEABLE_REGS];
-unsigned int pkvm_moveable_regs_nr;
+struct pkvm_moveable_reg __ro_after_init pkvm_moveable_regs[PKVM_NR_MOVEABLE_REGS];
+unsigned int __ro_after_init pkvm_moveable_regs_nr;
 
 static struct hyp_pool host_s2_pool;
 static struct hyp_pool host_s2_mmio_pool;

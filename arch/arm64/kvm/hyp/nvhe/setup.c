@@ -23,18 +23,18 @@
 #include <nvhe/trace.h>
 #include <nvhe/trap_handler.h>
 
-unsigned long hyp_nr_cpus;
+unsigned long __ro_after_init hyp_nr_cpus;
 
-phys_addr_t pvmfw_base;
-phys_addr_t pvmfw_size;
+phys_addr_t __ro_after_init pvmfw_base;
+phys_addr_t __ro_after_init pvmfw_size;
 /* See kvm_iommu_pages() */
 #ifdef CONFIG_IOMMU_POOL_PAGES
-size_t hyp_kvm_iommu_pages = CONFIG_IOMMU_POOL_PAGES;
+size_t __ro_after_init hyp_kvm_iommu_pages = CONFIG_IOMMU_POOL_PAGES;
 #else
-size_t hyp_kvm_iommu_pages;
+size_t __ro_after_init hyp_kvm_iommu_pages;
 #endif
 
-u64 hyp_lm_size_mb;
+u64 __ro_after_init hyp_lm_size_mb;
 
 static void *vmemmap_base;
 static void *vm_table_base;
@@ -494,7 +494,6 @@ int __pkvm_init(phys_addr_t phys, unsigned long size, unsigned long nr_cpus,
 		return -EINVAL;
 
 	hyp_spin_lock_init(&pkvm_pgd_lock);
-	hyp_nr_cpus = nr_cpus;
 
 	ret = divide_memory_pool(virt, size);
 	if (ret)

@@ -24,8 +24,8 @@
 struct kvm_pgtable pkvm_pgtable;
 hyp_spinlock_t pkvm_pgd_lock;
 
-struct memblock_region hyp_memory[HYP_MEMBLOCK_REGIONS];
-unsigned int hyp_memblock_nr;
+struct memblock_region __ro_after_init hyp_memory[HYP_MEMBLOCK_REGIONS];
+unsigned int __ro_after_init hyp_memblock_nr;
 
 static u64 __io_map_base;
 static u64 __io_map_next;
@@ -36,8 +36,8 @@ struct hyp_fixmap_slot {
 };
 static DEFINE_PER_CPU(struct hyp_fixmap_slot, fixmap_slots);
 
-phys_addr_t host_s2_cma_base;
-phys_addr_t host_s2_cma_size;
+phys_addr_t __ro_after_init host_s2_cma_base;
+phys_addr_t __ro_after_init host_s2_cma_size;
 
 static int __pkvm_create_mappings(unsigned long start, unsigned long size,
 				  unsigned long phys, enum kvm_pgtable_prot prot)
