@@ -60,26 +60,21 @@
 		__hyp_reloc_end = .;				\
 	}
 
-#define BSS_FIRST_SECTIONS					\
-	__hyp_bss_start = .;					\
-	*(HYP_SECTION_NAME(.bss))				\
+#define HYPERVISOR_BSS_SECTION					\
 	. = ALIGN(PAGE_SIZE);					\
-	__hyp_bss_end = .;
-
-/*
- * We require that __hyp_bss_start and __bss_start are aligned, and enforce it
- * with an assertion. But the BSS_SECTION macro places an empty .sbss section
- * between them, which can in some cases cause the linker to misalign them. To
- * work around the issue, force a page alignment for __bss_start.
- */
-#define SBSS_ALIGN			PAGE_SIZE
+	HYP_SECTION_NAME(.bss) : {				\
+		__hyp_bss_start = .;				\
+		*(HYP_SECTION_NAME(.bss))			\
+		. = ALIGN(PAGE_SIZE);				\
+		__hyp_bss_end = .;				\
+	}
 #else /* CONFIG_KVM */
 #define HYPERVISOR_EXTABLE
 #define HYPERVISOR_RODATA_SECTIONS
 #define HYPERVISOR_DATA_SECTION
 #define HYPERVISOR_PERCPU_SECTION
 #define HYPERVISOR_RELOC_SECTION
-#define SBSS_ALIGN			0
+#define HYPERVISOR_BSS_SECTION
 #endif
 
 #define RO_EXCEPTION_TABLE_ALIGN	4
@@ -356,8 +351,10 @@ SECTIONS
 	__pecoff_data_rawsize = ABSOLUTE(. - __initdata_begin);
 	_edata = .;
 
+	HYPERVISOR_BSS_SECTION
+
 	/* start of zero-init region */
-	BSS_SECTION(SBSS_ALIGN, 0, 0)
+	BSS_SECTION(0, 0, 0)
 	__pi___bss_start = __bss_start;
 
 	. = ALIGN(PAGE_SIZE);
@@ -412,9 +409,6 @@ ASSERT(__hibernate_exit_text_start == swsusp_arch_suspend_exit,
 #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 ASSERT((__entry_tramp_text_end - __entry_tramp_text_start) <= 3*PAGE_SIZE,
 	"Entry trampoline text too big")
-#endif
-#ifdef CONFIG_KVM
-ASSERT(__hyp_bss_start == __bss_start, "HYP and Host BSS are misaligned")
 #endif
 /*
  * If padding is applied before .head.text, virt<->phys conversions will fail.

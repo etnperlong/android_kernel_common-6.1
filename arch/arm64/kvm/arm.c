@@ -2795,6 +2795,9 @@ static int __init init_hyp_mode(void)
 		kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] = addr;
 	}
 
+	memset(kvm_ksym_ref(__hyp_bss_start), 0,
+	       kvm_ksym_ref(__hyp_bss_end) - kvm_ksym_ref(__hyp_bss_start));
+
 	kvm_nvhe_sym(hyp_nr_cpus) = num_possible_cpus();
 
 	/*
@@ -2828,11 +2831,6 @@ static int __init init_hyp_mode(void)
 		goto out_err;
 	}
 
-	/*
-	 * .hyp.bss is guaranteed to be placed at the beginning of the .bss
-	 * section thanks to an assertion in the linker script. Map it RW and
-	 * the rest of .bss RO.
-	 */
 	err = create_hyp_mappings(kvm_ksym_ref(__hyp_bss_start),
 				  kvm_ksym_ref(__hyp_bss_end), PAGE_HYP);
 	if (err) {
@@ -2840,7 +2838,7 @@ static int __init init_hyp_mode(void)
 		goto out_err;
 	}
 
-	err = create_hyp_mappings(kvm_ksym_ref(__hyp_bss_end),
+	err = create_hyp_mappings(kvm_ksym_ref(__bss_start),
 				  kvm_ksym_ref(__bss_stop), PAGE_HYP_RO);
 	if (err) {
 		kvm_err("Cannot map bss section\n");
