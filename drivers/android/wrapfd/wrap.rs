@@ -956,7 +956,15 @@ unsafe extern "C" fn wrapfd_add_listener(
             return Err(ENODEV);
         }
 
-        if handlep.is_null() {
+        if ops.is_null() || handlep.is_null() {
+            return Err(EINVAL);
+        }
+
+        // SAFETY: We've previously verified that `ops` is a non-null pointer, the contract for
+        // `wrapfd_add_listener` requires `ops` to point to a valid `struct
+        // wrapfd_listener_operation` and remain valid for as long as the listener is
+        // registered.
+        if unsafe { (*ops).on_content_release }.is_none() {
             return Err(EINVAL);
         }
 
@@ -1013,6 +1021,80 @@ unsafe extern "C" fn wrapfd_del_listener(
         };
 
         content.remove_listener(handle)
+    });
+
+    match result {
+        Ok(()) => 0,
+        Err(err) => err.to_errno(),
+    }
+}
+
+#[export]
+unsafe extern "C" fn wrapfd_acquire_ownership(
+    file: *mut bindings::file,
+    dev: *mut bindings::device,
+) -> ffi::c_int {
+    let result = with_wrap_helper(file, "wrapfd_get_ownership", |wrap| {
+        if dev.is_null() {
+            return Err(ENODEV);
+        }
+
+        let mut guard = wrap.inner.lock();
+
+        // SAFETY: `dev` is verified non-null and points to a valid C `struct device`. `get_device`
+        // safely increments its reference count.
+        let device = unsafe { device::Device::get_device(dev) };
+
+        if guard.has_owner() {
+            if guard.owned_by_device(&device) {
+                return Ok(());
+            } else {
+                return Err(EBUSY);
+            }
+        }
+
+        if guard.content.is_none() {
+            return Err(ENOENT);
+        }
+
+        if guard.is_mapped() {
+            return Err(EINVAL);
+        }
+
+        guard.owner = WrapOwner::Device(device);
+
+        Ok(())
+    });
+
+    match result {
+        Ok(()) => 0,
+        Err(err) => err.to_errno(),
+    }
+}
+
+#[export]
+unsafe extern "C" fn wrapfd_release_ownership(
+    file: *mut bindings::file,
+    dev: *mut bindings::device,
+) -> ffi::c_int {
+    let result = with_wrap_helper(file, "wrapfd_put_ownership", |wrap| {
+        if dev.is_null() {
+            return Err(ENODEV);
+        }
+
+        let mut guard = wrap.inner.lock();
+
+        // SAFETY: `dev` is verified non-null and points to a valid C `struct device`. `get_device`
+        // safely increments its reference count.
+        let device = unsafe { device::Device::get_device(dev) };
+
+        if !guard.owned_by_device(&device) {
+            return Err(EBUSY);
+        }
+
+        guard.owner = WrapOwner::None;
+
+        Ok(())
     });
 
     match result {

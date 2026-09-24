@@ -124,7 +124,9 @@ impl DmaBufContent {
             })?;
 
         if clear_content {
-            _ = guard.content.as_mut().unwrap().clear();
+            let content = guard.content.as_mut().unwrap();
+            content.notify_listeners();
+            _ = content.clear();
         }
 
         drop(guard);
