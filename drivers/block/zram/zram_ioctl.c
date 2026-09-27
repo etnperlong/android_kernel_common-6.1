@@ -30,6 +30,8 @@ struct zram_process_walk_private {
 	unsigned int cmd;
 	u64 nr_remaining_pages;
 	unsigned long next_addr;
+	swp_entry_t last_entry;
+	bool have_last_entry;
 };
 
 static inline bool can_do_file_pageout(struct vm_area_struct *vma)
@@ -69,12 +71,7 @@ static int zram_process_walker(pmd_t *pmd, unsigned long start,
 	unsigned long index;
 	u64 nr_pages = zram->disksize >> PAGE_SHIFT;
 
-	for (addr = start; addr < end; addr += PAGE_SIZE) {
-		if (private->nr_remaining_pages == 0) {
-			private->next_addr = addr;
-			return 1;
-		}
-
+	for (addr = start; addr < end; addr += mm_pte_size(walk->mm)) {
 		ptep = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
 		if (!ptep)
 			break;
@@ -126,6 +123,17 @@ static int zram_process_walker(pmd_t *pmd, unsigned long start,
 		index = swp_offset(entry);
 		if (unlikely(index >= nr_pages))
 			goto unlock_swap_device;
+
+		/* Several 4KB PTEs can refer to the same native swap slot. */
+		if (private->have_last_entry && private->last_entry.val == entry.val)
+			goto unlock_swap_device;
+		if (private->nr_remaining_pages == 0) {
+			private->next_addr = addr;
+			put_swap_device(sis);
+			return 1;
+		}
+		private->last_entry = entry;
+		private->have_last_entry = true;
 
 		if (cmd == ZRAM_ANDROID_IOC_PROCESS_RANGE_WRITEBACK) {
 			/* Use PAGE_WRITEBACK for single index */
@@ -194,7 +202,7 @@ static int zram_ioctl_process_scan(struct zram *zram, unsigned int cmd,
 		goto release_mm;
 	}
 
-	if (!IS_ALIGNED(start_addr, PAGE_SIZE)) {
+	if (!IS_ALIGNED(start_addr, mm_pte_size(mm))) {
 		ret = -EINVAL;
 		goto release_mm;
 	}
