@@ -160,6 +160,8 @@ TEST_FILES += test_page_frag.sh
 # required by charge_reserved_hugetlb.sh
 TEST_FILES += write_hugetlb_memory.sh
 
+TEST_GEN_PROGS += smaps_page_size_p3s
+
 include ../lib.mk
 
 $(OUTPUT)/anon_vma_name_p3s: CFLAGS += -I..
