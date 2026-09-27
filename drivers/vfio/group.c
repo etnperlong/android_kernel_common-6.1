@@ -11,6 +11,7 @@
  */
 
 #include <linux/vfio.h>
+#include <linux/mm.h>
 #include <linux/iommufd.h>
 #include <linux/anon_inodes.h>
 #include "vfio.h"
@@ -426,6 +427,9 @@ static int vfio_group_fops_open(struct inode *inode, struct file *filep)
 	struct vfio_group *group =
 		container_of(inode->i_cdev, struct vfio_group, cdev);
 	int ret;
+
+	if (p3s_4k_unsupported(current->mm))
+		return -EPERM;
 
 	mutex_lock(&group->group_lock);
 
