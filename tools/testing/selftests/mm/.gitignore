@@ -62,3 +62,4 @@ prctl_thp_disable
 rmap
 anon_vma_name_p3s
 madvise_remove_p3s
+smaps_page_size_p3s
