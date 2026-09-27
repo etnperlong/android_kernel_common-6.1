@@ -160,7 +160,13 @@ TEST_FILES += test_page_frag.sh
 # required by charge_reserved_hugetlb.sh
 TEST_FILES += write_hugetlb_memory.sh
 
+TEST_GEN_FILES += smaps_page_size_p3s
+
 include ../lib.mk
+
+$(OUTPUT)/smaps_page_size_p3s: CFLAGS += -I..
+$(OUTPUT)/smaps_page_size_p3s: LOCAL_HDRS += ../kselftest_p3s.h
+$(OUTPUT)/smaps_page_size_p3s: ../kselftest_p3s.h
 
 $(OUTPUT)/anon_vma_name_p3s: CFLAGS += -I..
 $(OUTPUT)/anon_vma_name_p3s: LOCAL_HDRS += ../kselftest_p3s.h
