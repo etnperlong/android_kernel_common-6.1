@@ -101,11 +101,6 @@ static inline unsigned long mm_reader_pages(const struct mm_struct *mm,
 
 #else /* !CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */
 
-static inline bool personality_4kb_pages(unsigned long pers)
-{
-	return false;
-}
-
 static inline unsigned int mm_pte_shift(const struct mm_struct *mm)
 {
 	return PAGE_SHIFT_KERNEL;
@@ -145,6 +140,12 @@ static inline unsigned long mm_pte_mask(const struct mm_struct *mm)
 static inline bool mm_is_p3s_4k(const struct mm_struct *mm)
 {
 	return mm_pte_shift(mm) != PAGE_SHIFT_KERNEL;
+}
+
+/* Limit 4KB mmap randomization to one eighth of its user VA window. */
+static inline unsigned long mm_mmap_rnd_mask(const struct mm_struct *mm)
+{
+	return mm_is_p3s_4k(mm) ? (1UL << MMAP_RND_BITS_4KB) - 1 : ~0UL;
 }
 
 /*
