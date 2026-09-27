@@ -884,6 +884,9 @@ static int ublk_open(struct gendisk *disk, blk_mode_t mode)
 {
 	struct ublk_device *ub = disk->private_data;
 
+	if (p3s_4k_unsupported(current->mm))
+		return -EOPNOTSUPP;
+
 	if (capable(CAP_SYS_ADMIN))
 		return 0;
 
@@ -1610,6 +1613,9 @@ static int ublk_ch_open(struct inode *inode, struct file *filp)
 	struct ublk_device *ub = container_of(inode->i_cdev,
 			struct ublk_device, cdev);
 
+	if (p3s_4k_unsupported(current->mm))
+		return -EOPNOTSUPP;
+
 	if (test_and_set_bit(UB_STATE_OPEN, &ub->state))
 		return -EBUSY;
 	filp->private_data = ub;
@@ -1847,6 +1853,9 @@ static int ublk_ch_mmap(struct file *filp, struct vm_area_struct *vma)
 	unsigned max_sz = ublk_max_cmd_buf_size();
 	unsigned long pfn, end, phys_off = vma->vm_pgoff << PAGE_SHIFT;
 	int q_id, ret = 0;
+
+	if (p3s_4k_unsupported(vma->vm_mm))
+		return -EOPNOTSUPP;
 
 	spin_lock(&ub->lock);
 	if (!ub->mm)
@@ -2648,6 +2657,9 @@ static struct request *ublk_check_and_get_req(struct kiocb *iocb,
 	struct request *req;
 	size_t buf_off;
 	u16 tag, q_id;
+
+	if (p3s_4k_unsupported(current->mm))
+		return ERR_PTR(-EOPNOTSUPP);
 
 	if (!ub)
 		return ERR_PTR(-EACCES);
@@ -3929,8 +3941,15 @@ static int ublk_ctrl_uring_cmd(struct io_uring_cmd *cmd,
 	return ret;
 }
 
+static int ublk_ctrl_open(struct inode *inode, struct file *file)
+{
+	if (p3s_4k_unsupported(current->mm))
+		return -EOPNOTSUPP;
+	return nonseekable_open(inode, file);
+}
+
 static const struct file_operations ublk_ctl_fops = {
-	.open		= nonseekable_open,
+	.open		= ublk_ctrl_open,
 	.uring_cmd      = ublk_ctrl_uring_cmd,
 	.owner		= THIS_MODULE,
 	.llseek		= noop_llseek,
