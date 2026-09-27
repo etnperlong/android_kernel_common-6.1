@@ -7,6 +7,7 @@
  */
 
 #include <linux/anon_inodes.h>
+#include <linux/mm.h>
 #include <linux/errno.h>
 #include <linux/file.h>
 #include <linux/kvm_host.h>
@@ -410,6 +411,9 @@ static long pviommufd_ioctl(struct file *filp, unsigned int ioctl,
 {
 	struct kvm_vfio_iommu_config config;
 	__u32 usize;
+
+	if (p3s_4k_unsupported(current->mm))
+		return -EOPNOTSUPP;
 
 	switch (ioctl) {
 	case KVM_PVIOMMU_SET_CONFIG:
