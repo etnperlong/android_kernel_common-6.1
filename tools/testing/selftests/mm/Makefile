@@ -162,6 +162,7 @@ TEST_FILES += write_hugetlb_memory.sh
 
 TEST_GEN_PROGS += smaps_page_size_p3s
 
+TEST_GEN_PROGS += devzero_slice_p3s
 
 include ../lib.mk
 
