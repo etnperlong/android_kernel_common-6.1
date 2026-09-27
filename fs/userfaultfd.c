@@ -1605,7 +1605,8 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
 			   sizeof(uffdio_copy)-sizeof(__s64)))
 		goto out;
 
-	ret = validate_unaligned_range(ctx->mm, uffdio_copy.src,
+	/* COPY reads the ioctl caller; ctx->mm owns only the destination. */
+	ret = validate_unaligned_range(current->mm, uffdio_copy.src,
 				       uffdio_copy.len);
 	if (ret)
 		goto out;
