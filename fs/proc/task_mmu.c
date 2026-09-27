@@ -1517,7 +1517,9 @@ static int show_smap(struct seq_file *m, void *v)
 
 	SEQ_PUT_DEC("Size:           ", VMA_PAD_START(vma) - vma->vm_start);
 	SEQ_PUT_DEC(" kB\nKernelPageSize: ", vma_kernel_pagesize(vma));
-	SEQ_PUT_DEC(" kB\nMMUPageSize:    ", vma_mmu_pagesize(vma));
+	SEQ_PUT_DEC(" kB\nMMUPageSize:    ",
+		    is_vm_hugetlb_page(vma) ? vma_mmu_pagesize(vma) :
+		    vma_page_size(vma));
 	seq_puts(m, " kB\n");
 
 	__show_smap(m, &mss, false);
