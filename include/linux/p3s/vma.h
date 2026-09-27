@@ -143,9 +143,8 @@ static inline unsigned int vma_slice_offset(const struct vm_area_struct *vma,
 		return 0;
 
 	/*
-	 * An anonymous folio covers a 16KB-aligned window of virtual
-	 * addresses, so the index of @addr's 4KB page in that window is its
-	 * slice.
+	 * Anonymous folios cover 16KB-aligned virtual windows. /dev/zero can
+	 * retain vm_file without vm_ops, and follows the file slice offset.
 	 */
 	if (!vma->vm_ops && !vma->vm_file)
 		return (addr >> PAGE_SHIFT_4KB) & P3S_SLICE_MASK;
