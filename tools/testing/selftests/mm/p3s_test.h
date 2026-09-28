@@ -3,6 +3,7 @@
 #define _P3S_TEST_H
 
 #include "../kselftest_p3s.h"
+#include "vm_util.h"
 
 /* Path of a /proc file of @pid; 0 means this process. */
 static inline void p3s_proc_path(char *path, size_t size, pid_t pid,
@@ -12,6 +13,27 @@ static inline void p3s_proc_path(char *path, size_t size, pid_t pid,
 		snprintf(path, size, "/proc/%d/%s", (int)pid, file);
 	else
 		snprintf(path, size, "/proc/self/%s", file);
+}
+
+/* The pagemap entry of @address in this process. */
+static inline bool p3s_pagemap_entry(const void *address, uint64_t *entry)
+{
+	int fd = open("/proc/self/pagemap", O_RDONLY | O_CLOEXEC);
+	bool ok;
+
+	if (fd < 0)
+		return false;
+	ok = pagemap_read_entry(fd, (uintptr_t)address, getpagesize(), entry);
+	close(fd);
+	return ok;
+}
+
+static inline bool p3s_page_swapped(const void *address)
+{
+	uint64_t entry;
+
+	return p3s_pagemap_entry(address, &entry) &&
+	       !(entry & PM_PRESENT) && (entry & PM_SWAP);
 }
 
 /*
