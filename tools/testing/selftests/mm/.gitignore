@@ -72,3 +72,4 @@ shmem_swap_usage_p3s
 bpf_stack_build_id_p3s
 elf_core_p3s
 bpf_map_mmap_p3s
+perf_page_size_p3s

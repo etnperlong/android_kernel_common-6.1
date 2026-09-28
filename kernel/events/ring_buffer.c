@@ -802,8 +802,8 @@ void rb_free_aux(struct perf_buffer *rb)
  * Back perf_mmap() with regular GFP_KERNEL-0 pages.
  */
 
-static struct page *
-__perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+struct page *
+perf_mmap_main_page(struct perf_buffer *rb, unsigned long pgoff)
 {
 	int metadata_pages = __PAGE_SIZE / PAGE_SIZE;
 
@@ -915,8 +915,8 @@ void rb_free(struct perf_buffer *rb)
 }
 
 #else
-static struct page *
-__perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+struct page *
+perf_mmap_main_page(struct perf_buffer *rb, unsigned long pgoff)
 {
 	int metadata_pages = __PAGE_SIZE / PAGE_SIZE;
 
@@ -999,5 +999,5 @@ perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
 		}
 	}
 
-	return __perf_mmap_to_page(rb, pgoff);
+	return perf_mmap_main_page(rb, pgoff);
 }
