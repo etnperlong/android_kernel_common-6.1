@@ -111,7 +111,7 @@ static inline void vma_set_slice_off(struct vm_area_struct *vma,
  * so the slice is the index of @addr's 4KB page within its window.
  */
 static inline unsigned int vma_slice_offset(const struct vm_area_struct *vma,
-					    unsigned long addr)
+					     unsigned long addr)
 {
 	/* Native VMAs map whole kernel pages, so there is no slice. */
 	if (!vma_is_p3s_4k(vma))
@@ -134,6 +134,14 @@ static inline unsigned int vma_slice_offset(const struct vm_area_struct *vma,
 	 */
 	return (vma_slice_off(vma) + ((addr - vma->vm_start) >> PAGE_SHIFT_4KB)) &
 	       P3S_SLICE_MASK;
+}
+
+/* Object offsets survive mremap; anonymous slices follow their address. */
+static inline unsigned short vma_mremap_slice_off(const struct vm_area_struct *vma,
+		unsigned long old_addr, unsigned long new_addr)
+{
+	return vma_slice_offset(vma, vma->vm_file || vma->vm_ops ?
+				    old_addr : new_addr);
 }
 
 /*
