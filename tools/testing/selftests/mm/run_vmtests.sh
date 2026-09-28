@@ -559,4 +559,6 @@ echo "1..${count_total}" | tap_output
 CATEGORY="mmap" run_test ./bpf_remote_access_p3s
 CATEGORY="mmap" run_test ./bpf_remote_access_p3s --native
 
+CATEGORY="mmap" run_test ./shmem_swap_usage_p3s
+
 exit $exitcode
