@@ -1098,6 +1098,14 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 
 			mss->swap += PAGE_SIZE;
 			mapcount = swp_swapcount(swpent);
+			/*
+			 * Estimate window sharers from the actual local swap
+			 * PTEs, including partially unmapped windows. Different
+			 * slice subsets in other mappings remain approximate.
+			 */
+			if (vma_is_p3s_4k(vma))
+				mapcount = DIV_ROUND_UP(mapcount,
+					vma_slice_swap_ptes(vma, pte, addr, swpent));
 			if (mapcount >= 2) {
 				u64 pss_delta = (u64)PAGE_SIZE << PSS_SHIFT;
 

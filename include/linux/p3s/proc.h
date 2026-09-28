@@ -3,6 +3,7 @@
 #define _LINUX_P3S_PROC_H
 
 #include <linux/mm.h>
+#include <linux/swapops.h>
 
 /*
  * vma_slice_ptes - Count the PTEs around @ptep that map @page
@@ -37,6 +38,35 @@ static inline int vma_slice_ptes(struct vm_area_struct *vma, pte_t *ptep,
 			continue;
 		pte = ptep_get(ptep + d);
 		if (pte_present(pte) && pte_page(pte) == page)
+			nr++;
+	}
+	return nr;
+}
+
+/*
+ * Count the local window's PTE references to @entry under the PTE lock.
+ * Stay in the current page table, as vma_slice_ptes() does. The matching
+ * PTE passed by the caller is included, so the result is at least one.
+ */
+static inline int vma_slice_swap_ptes(struct vm_area_struct *vma, pte_t *ptep,
+				      unsigned long addr, swp_entry_t entry)
+{
+	unsigned int s, i;
+	int nr = 0;
+
+	if (!vma_is_p3s_4k(vma))
+		return 1;
+
+	s = vma_slice_offset(vma, addr);
+	for (i = 0; i < P3S_SLICES_PER_PAGE; i++) {
+		long d = (long)i - (long)s;
+		unsigned long a = addr + d * (long)PAGE_SIZE_4KB;
+		pte_t pte;
+
+		if ((a ^ addr) & ~(PMD_SIZE_4KB - 1))
+			continue;
+		pte = ptep_get(ptep + d);
+		if (is_swap_pte(pte) && pte_to_swp_entry(pte).val == entry.val)
 			nr++;
 	}
 	return nr;
