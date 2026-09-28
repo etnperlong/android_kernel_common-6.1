@@ -240,6 +240,7 @@ static int system_heap_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 	struct system_heap_buffer *buffer = dmabuf->priv;
 	struct sg_table *table = &buffer->sg_table;
 	unsigned long addr = vma->vm_start;
+	unsigned long off = (unsigned long)vma_slice_off(vma) << PAGE_SHIFT_4KB;
 	struct sg_page_iter piter;
 	int ret;
 
@@ -248,12 +249,14 @@ static int system_heap_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 
 	for_each_sgtable_page(table, &piter, vma->vm_pgoff) {
 		struct page *page = sg_page_iter_page(&piter);
+		unsigned long size = min(PAGE_SIZE - off, vma->vm_end - addr);
 
-		ret = remap_pfn_range(vma, addr, page_to_pfn(page), PAGE_SIZE,
+		ret = remap_pfn_range(vma, addr, page_to_pfn(page), size,
 				      vma->vm_page_prot);
 		if (ret)
 			return ret;
-		addr += PAGE_SIZE;
+		addr += size;
+		off = 0;
 		if (addr >= vma->vm_end)
 			return 0;
 	}
