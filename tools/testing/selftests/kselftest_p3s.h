@@ -44,6 +44,13 @@
 /* Mode flag the standard main passes to its 4K compat re-exec. */
 #define P3S_RUN_FLAG			"--run"
 
+/*
+ * argv[0] of the running test, recorded by p3s_compat_main() and
+ * p3s_run_mode() so helpers that fork and re-exec deep inside the test do
+ * not need argv threaded through to them.
+ */
+static const char *p3s_argv0 __maybe_unused = "/proc/self/exe";
+
 #define P3S_MAX_EXEC_ARGS 15
 
 static inline bool p3s_is_compat_process(void)
@@ -82,7 +89,7 @@ static inline void p3s_build_argv(const char *argv[P3S_MAX_EXEC_ARGS + 1],
 {
 	unsigned int i = 1;
 
-	argv[0] = argv0;
+	argv[0] = argv0 ? argv0 : p3s_argv0;
 	while (i < P3S_MAX_EXEC_ARGS &&
 	       (argv[i] = va_arg(ap, const char *)))
 		i++;
@@ -92,6 +99,7 @@ static inline void p3s_build_argv(const char *argv[P3S_MAX_EXEC_ARGS + 1],
 /*
  * execl()-style re-exec that returns -1 (with errno) on failure, for forked
  * helpers that must fail quietly rather than bail out of the TAP stream.
+ * @argv0 may be NULL to reuse the recorded argv[0].
  */
 static inline int __attribute__((sentinel))
 p3s_execl(bool compat, const char *argv0, ...)
@@ -108,6 +116,7 @@ p3s_execl(bool compat, const char *argv0, ...)
 /* Re-exec once; unsupported kernels and architectures are SKIP, not FAIL. */
 static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 {
+	p3s_argv0 = argv[0];
 #ifndef __aarch64__
 	ksft_print_header();
 	ksft_exit_skip("requires arm64 16K native / P3S 4K geometry\n");
@@ -136,6 +145,21 @@ static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 }
 
 /*
+ * The mode of a multi-role test: the first "--flag" argument, or, when
+ * @envvar is given and no flag is present, the value of that environment
+ * variable.  NULL means a top-level invocation.  Records argv[0].
+ */
+static inline const char *p3s_run_mode(int argc, char **argv,
+				       const char *envvar)
+{
+	if (argc > 0 && argv)
+		p3s_argv0 = argv[0];
+	if (argc >= 2 && !strncmp(argv[1], "--", 2))
+		return argv[1];
+	return envvar ? getenv(envvar) : NULL;
+}
+
+/*
  * Opt-in entry point for tests with the same assertions in both geometries.
  * Default to compat; --native selects the 16K control.  Always prove native
  * 16K exec first: getpagesize() == 4096 alone also matches a native 4K kernel.
@@ -157,6 +181,7 @@ p3s_geometry_exec(bool compat, const char *stage, const char *mode)
 
 static inline int p3s_geometry_main(int argc, char **argv, int (*run)(void))
 {
+	p3s_argv0 = argv[0];
 #ifndef __aarch64__
 	ksft_print_header();
 	ksft_exit_skip("requires arm64 16K native / 4K compat geometry\n");
