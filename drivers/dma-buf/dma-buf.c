@@ -29,6 +29,7 @@
 #include <linux/dma-resv.h>
 #include <linux/mm.h>
 #include <linux/mount.h>
+#include <linux/overflow.h>
 #include <linux/pseudo_fs.h>
 #include <linux/fdtable.h>
 
@@ -808,8 +809,9 @@ static int dma_buf_mmap_internal(struct file *file, struct vm_area_struct *vma)
 		return -EINVAL;
 
 	/* check for overflowing the buffer's size */
-	if (vma->vm_pgoff + vma_pages(vma) >
-	    dmabuf->size >> PAGE_SHIFT)
+	if (vma->vm_pgoff > dmabuf->size >> PAGE_SHIFT ||
+	    vma_kernel_pages(vma) >
+	    (dmabuf->size >> PAGE_SHIFT) - vma->vm_pgoff)
 		return -EINVAL;
 
 	ret = dmabuf->ops->mmap(dmabuf, vma);
@@ -2142,13 +2144,9 @@ int dma_buf_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma,
 	if (!dmabuf->ops->mmap)
 		return -EINVAL;
 
-	/* check for offset overflow */
-	if (pgoff + vma_pages(vma) < pgoff)
-		return -EOVERFLOW;
-
 	/* check for overflowing the buffer's size */
-	if (pgoff + vma_pages(vma) >
-	    dmabuf->size >> PAGE_SHIFT)
+	if (pgoff > dmabuf->size >> PAGE_SHIFT ||
+	    vma_kernel_pages(vma) > (dmabuf->size >> PAGE_SHIFT) - pgoff)
 		return -EINVAL;
 
 	/* readjust the vma */
