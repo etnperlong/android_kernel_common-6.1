@@ -280,7 +280,14 @@ impl MiscDevice for Ashmem {
                 me.get_file_id(UserSlice::new(UserPtr::from_addr(arg), size).writer())
             }
             ASHMEM_PIN | ASHMEM_UNPIN | ASHMEM_GET_PIN_STATUS => {
-                me.pin_unpin(cmd, UserSlice::new(UserPtr::from_addr(arg), size).reader())
+                me.pin_unpin(
+                    cmd,
+                    UserSlice::new(
+                        UserPtr::from_addr(arg),
+                        core::mem::size_of::<bindings::ashmem_pin>(),
+                    )
+                    .reader(),
+                )
             }
             bindings::ASHMEM_PURGE_ALL_CACHES => me.purge_all_caches(),
             _ => Err(ENOTTY),
