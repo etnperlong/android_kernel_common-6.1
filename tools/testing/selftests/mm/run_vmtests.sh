@@ -556,4 +556,8 @@ CATEGORY="mmap" run_test ./devzero_slice_p3s
 echo "SUMMARY: PASS=${count_pass} SKIP=${count_skip} FAIL=${count_fail}" | tap_prefix
 echo "1..${count_total}" | tap_output
 
+CATEGORY="mmap" run_test ./bpf_map_mmap_p3s
+CATEGORY="mmap" run_test ./bpf_map_mmap_p3s --native
+CATEGORY="mmap" run_test ./bpf_remote_access_p3s --native
+
 exit $exitcode
