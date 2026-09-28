@@ -170,7 +170,15 @@ TEST_GEN_PROGS += shmem_swap_usage_p3s
 
 TEST_GEN_FILES += bpf_stack_build_id_p3s
 
+TEST_GEN_FILES += elf_core_p3s
+
 include ../lib.mk
+
+$(OUTPUT)/elf_core_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
+
+$(OUTPUT)/elf_core_p3s: CFLAGS += -I..
+$(OUTPUT)/elf_core_p3s: LOCAL_HDRS += ../kselftest_p3s.h iov_iter_p3s.h
+$(OUTPUT)/elf_core_p3s: ../kselftest_p3s.h iov_iter_p3s.h
 
 $(OUTPUT)/bpf_stack_build_id_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
 
