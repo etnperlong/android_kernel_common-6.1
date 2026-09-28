@@ -168,7 +168,15 @@ TEST_GEN_PROGS += bpf_remote_access_p3s
 
 TEST_GEN_PROGS += shmem_swap_usage_p3s
 
+TEST_GEN_FILES += bpf_stack_build_id_p3s
+
 include ../lib.mk
+
+$(OUTPUT)/bpf_stack_build_id_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
+
+$(OUTPUT)/bpf_stack_build_id_p3s: CFLAGS += -I..
+$(OUTPUT)/bpf_stack_build_id_p3s: LOCAL_HDRS += ../kselftest_p3s.h
+$(OUTPUT)/bpf_stack_build_id_p3s: ../kselftest_p3s.h
 
 $(OUTPUT)/devzero_slice_p3s: CFLAGS += -I..
 $(OUTPUT)/devzero_slice_p3s: LOCAL_HDRS += ../kselftest_p3s.h
