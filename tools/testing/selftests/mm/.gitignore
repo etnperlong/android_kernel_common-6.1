@@ -67,6 +67,7 @@ madvise_remove_p3s
 pagemap_exclusive_p3s
 smaps_page_size_p3s
 smaps_pss_p3s
+swap_slice_mremap_p3s
 uffd_move_retry_p3s
 bpf_remote_access_p3s
 shmem_swap_usage_p3s
