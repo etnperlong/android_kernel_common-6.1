@@ -142,6 +142,16 @@ exec_compat(const char *argv0, ...)
 	p3s_vexec_or_die(true, argv0, ap);
 }
 
+/* Re-exec ourselves as a native (16K) process.  Never returns. */
+static inline void __noreturn __attribute__((sentinel))
+exec_native(const char *argv0, ...)
+{
+	va_list ap;
+
+	va_start(ap, argv0);
+	p3s_vexec_or_die(false, argv0, ap);
+}
+
 /* Re-exec once; unsupported kernels and architectures are SKIP, not FAIL. */
 static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 {
