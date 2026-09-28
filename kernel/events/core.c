@@ -8130,6 +8130,7 @@ static u64 perf_virt_to_phys(u64 virt)
  */
 static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
 {
+	P3S_CONTEXT_REMOTE_MM(mm);
 	u64 size = 0;
 
 #ifdef CONFIG_HAVE_GUP_FAST
@@ -8144,8 +8145,10 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
 	if (pgd_none(pgd))
 		return 0;
 
-	if (pgd_leaf(pgd))
-		return pgd_leaf_size(pgd);
+	if (pgd_leaf(pgd)) {
+		size = pgd_leaf_size(pgd);
+		return size == PGDIR_SIZE ? mm_pgdir_size(mm) : size;
+	}
 
 	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
 	p4d = READ_ONCE(*p4dp);
@@ -8163,22 +8166,27 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
 	if (pud_leaf(pud))
 		return pud_leaf_size(pud);
 
-	pmdp = pmd_offset_lockless(pudp, pud, addr);
+	pmdp = mm_pmd_offset(mm, &pud, addr);
 again:
 	pmd = pmdp_get_lockless(pmdp);
 	if (!pmd_present(pmd))
 		return 0;
 
-	if (pmd_leaf(pmd))
-		return pmd_leaf_size(pmd);
+	if (pmd_leaf(pmd)) {
+		size = pmd_leaf_size(pmd);
+		return size == PMD_SIZE ? mm_pmd_size(mm) : size;
+	}
 
 	ptep = pte_offset_map(&pmd, addr);
 	if (!ptep)
 		goto again;
 
 	pte = ptep_get_lockless(ptep);
-	if (pte_present(pte))
+	if (pte_present(pte)) {
 		size = __pte_leaf_size(pmd, pte);
+		if (size == PAGE_SIZE_KERNEL)
+			size = mm_pte_size(mm);
+	}
 	pte_unmap(ptep);
 #endif /* CONFIG_HAVE_GUP_FAST */
 
@@ -9527,7 +9535,7 @@ static bool perf_addr_filter_vma_adjust(struct perf_addr_filter *filter,
 					struct perf_addr_filter_range *fr)
 {
 	unsigned long vma_size = vma->vm_end - vma->vm_start;
-	unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
+	unsigned long off = vma_file_offset(vma);
 	struct file *file = vma->vm_file;
 
 	if (!perf_addr_filter_match(filter, file, off, vma_size))
@@ -9617,7 +9625,8 @@ void perf_event_mmap(struct vm_area_struct *vma)
 			/* .tid */
 			.start  = vma->vm_start,
 			.len    = vma->vm_end - vma->vm_start,
-			.pgoff  = (u64)vma->vm_pgoff << PAGE_SHIFT,
+			.pgoff  = vma->vm_file ? vma_file_offset(vma) :
+			  (u64)vma->vm_pgoff << mm_pte_shift(vma->vm_mm),
 		},
 		/* .maj (attr_mmap2 only) */
 		/* .min (attr_mmap2 only) */
