@@ -720,13 +720,13 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
 		if (madvise_free_huge_pmd(tlb, vma, pmd, addr, next))
 			return 0;
 
-	tlb_change_page_size(tlb, PAGE_SIZE);
+	tlb_change_page_size(tlb, mm_pte_size(mm));
 	start_pte = pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 	if (!start_pte)
 		return 0;
 	flush_tlb_batched_pending(mm);
 	arch_enter_lazy_mmu_mode();
-	for (; addr != end; pte += nr, addr += PAGE_SIZE * nr) {
+	for (; addr != end; pte += nr, addr += mm_pte_size(mm) * nr) {
 		nr = 1;
 		ptent = ptep_get(pte);
 
@@ -742,7 +742,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
 
 			entry = pte_to_swp_entry(ptent);
 			if (!non_swap_entry(entry)) {
-				max_nr = (end - addr) / PAGE_SIZE;
+				max_nr = (end - addr) / mm_pte_size(mm);
 				nr = swap_pte_batch(pte, max_nr, ptent);
 				nr_swap -= nr;
 				free_swap_and_cache_nr(entry, nr);
@@ -767,7 +767,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
 		 */
 		if (folio_test_large(folio)) {
 			nr = madvise_folio_pte_batch(vma, addr, end, folio,
-					     pte, &ptent);
+						     pte, &ptent);
 			if (nr < folio_nr_pages(folio)) {
 				int err;
 
