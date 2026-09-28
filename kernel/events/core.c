@@ -6844,7 +6844,7 @@ again:
 	 * undo the VM accounting.
 	 */
 
-	atomic_long_sub((size >> PAGE_SHIFT) + 1 - mmap_locked,
+	atomic_long_sub((size >> PAGE_SHIFT) + __PAGE_SIZE / PAGE_SIZE - mmap_locked,
 			&mmap_user->locked_vm);
 	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
 	free_uid(mmap_user);
