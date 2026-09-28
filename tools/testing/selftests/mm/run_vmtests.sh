@@ -560,4 +560,6 @@ CATEGORY="mmap" run_test ./bpf_map_mmap_p3s
 CATEGORY="mmap" run_test ./bpf_map_mmap_p3s --native
 CATEGORY="mmap" run_test ./bpf_remote_access_p3s --native
 
+CATEGORY="mmap" run_test ./shmem_swap_usage_p3s
+
 exit $exitcode

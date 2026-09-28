@@ -983,26 +983,52 @@ static long shmem_free_swap(struct address_space *mapping,
 
 /*
  * Determine (in bytes) how many of the shmem object's pages mapped by the
- * given offsets are swapped out.
+ * given VMA address range are swapped out.
  *
  * This is safe to call without i_rwsem or the i_pages lock thanks to RCU,
  * as long as the inode doesn't go away and racy results are not a problem.
  */
-unsigned long shmem_partial_swap_usage(struct address_space *mapping,
-						pgoff_t start, pgoff_t end)
+unsigned long shmem_partial_swap_usage(struct vm_area_struct *vma,
+				      unsigned long addr, unsigned long end)
 {
-	XA_STATE(xas, &mapping->i_pages, start);
+	pgoff_t first = linear_page_index(vma, addr);
+	pgoff_t last = linear_page_index(vma, end) - 1;
+	u64 start_byte = 0, end_byte = 0;
+	XA_STATE(xas, &vma->vm_file->f_mapping->i_pages, 0);
 	struct folio *folio;
 	unsigned long swapped = 0;
-	unsigned long max = end - 1;
+	bool p3s = vma_is_p3s_4k(vma);
+
+	if (p3s) {
+		start_byte = vma_file_offset_at(vma, addr);
+		end_byte = vma_file_offset_at(vma, end);
+		if (end_byte <= start_byte)
+			return 0;
+		first = start_byte >> PAGE_SHIFT_KERNEL;
+		last = (end_byte - 1) >> PAGE_SHIFT_KERNEL;
+	}
+	xas_set(&xas, first);
 
 	rcu_read_lock();
-	xas_for_each(&xas, folio, max) {
+	xas_for_each(&xas, folio, last) {
 		if (xas_retry(&xas, folio))
 			continue;
-		if (xa_is_value(folio))
-			swapped += 1 << xas_get_order(&xas);
-		if (xas.xa_index == max)
+		if (xa_is_value(folio)) {
+			unsigned long nr_pages = 1UL << xas_get_order(&xas);
+
+			if (p3s) {
+				pgoff_t base = round_down(xas.xa_index, nr_pages);
+				u64 entry_start = (u64)base << PAGE_SHIFT_KERNEL;
+				u64 entry_end = (u64)(base + nr_pages) << PAGE_SHIFT_KERNEL;
+
+				swapped += min(end_byte, entry_end) -
+					   max(start_byte, entry_start);
+			} else {
+				/* Keep native accounting of whole multi-index entries. */
+				swapped += nr_pages << PAGE_SHIFT;
+			}
+		}
+		if (xas.xa_index == last)
 			break;
 		if (need_resched()) {
 			xas_pause(&xas);
@@ -1011,7 +1037,7 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
 	}
 	rcu_read_unlock();
 
-	return swapped << PAGE_SHIFT;
+	return swapped;
 }
 
 /*
@@ -1025,7 +1051,6 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
 {
 	struct inode *inode = file_inode(vma->vm_file);
 	struct shmem_inode_info *info = SHMEM_I(inode);
-	struct address_space *mapping = inode->i_mapping;
 	unsigned long swapped;
 
 	/* Be careful as we don't hold info->lock */
@@ -1039,12 +1064,12 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
 	if (!swapped)
 		return 0;
 
-	if (!vma->vm_pgoff && vma->vm_end - vma->vm_start >= inode->i_size)
+	if (!vma_is_p3s_4k(vma) && !vma->vm_pgoff &&
+	    vma->vm_end - vma->vm_start >= inode->i_size)
 		return swapped << PAGE_SHIFT;
 
 	/* Here comes the more involved part */
-	return shmem_partial_swap_usage(mapping, vma->vm_pgoff,
-					vma->vm_pgoff + vma_pages(vma));
+	return shmem_partial_swap_usage(vma, vma->vm_start, vma->vm_end);
 }
 
 /*
