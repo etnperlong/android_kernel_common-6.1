@@ -13,6 +13,8 @@
 #include <uapi/linux/btf.h>
 #include <linux/rcupdate_trace.h>
 #include <linux/btf_ids.h>
+#include <linux/p3s/vma.h>
+#include <linux/vmalloc.h>
 #include <crypto/sha2.h>
 
 #include "map_in_map.h"
@@ -566,19 +568,20 @@ static int array_map_check_btf(const struct bpf_map *map,
 
 	return 0;
 }
-
 static int array_map_mmap(struct bpf_map *map, struct vm_area_struct *vma)
 {
 	struct bpf_array *array = container_of(map, struct bpf_array, map);
+	unsigned long size = vma->vm_end - vma->vm_start;
+	unsigned long offset = vma_file_offset(vma);
+	u64 data_size = (u64)array->map.max_entries * array->elem_size;
 	pgoff_t pgoff = PAGE_ALIGN(sizeof(*array)) >> PAGE_SHIFT;
 
 	if (!(map->map_flags & BPF_F_MMAPABLE))
 		return -EINVAL;
-
-	if (vma->vm_pgoff * PAGE_SIZE + (vma->vm_end - vma->vm_start) >
-	    __PAGE_ALIGN((u64)array->map.max_entries * array->elem_size))
+	data_size = vma_is_p3s_4k(vma) ? PAGE_ALIGN_4KB(data_size) :
+					 __PAGE_ALIGN(data_size);
+	if (offset > data_size || size > data_size - offset)
 		return -EINVAL;
-
 	return remap_vmalloc_range(vma, array_map_vmalloc_addr(array),
 				   vma->vm_pgoff + pgoff);
 }
