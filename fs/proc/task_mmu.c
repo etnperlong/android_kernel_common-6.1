@@ -1055,9 +1055,7 @@ static int smaps_pte_hole(unsigned long addr, unsigned long end,
 	struct mem_size_stats *mss = walk->private;
 	struct vm_area_struct *vma = walk->vma;
 
-	mss->swap += shmem_partial_swap_usage(walk->vma->vm_file->f_mapping,
-					      linear_page_index(vma, addr),
-					      linear_page_index(vma, end));
+	mss->swap += shmem_partial_swap_usage(vma, addr, end);
 
 	return 0;
 }
