@@ -3,6 +3,7 @@
 #define _KERNEL_EVENTS_INTERNAL_H
 
 #include <linux/hardirq.h>
+#include <linux/page_size_compat_defs.h>
 #include <linux/uaccess.h>
 #include <linux/refcount.h>
 
@@ -18,6 +19,9 @@ struct perf_buffer {
 	int				page_order;	/* allocation order  */
 #endif
 	int				nr_pages;	/* nr of data pages  */
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+	unsigned long			data_size;	/* logical data size */
+#endif
 	int				overwrite;	/* can overwrite itself */
 	int				paused;		/* can write into ring buffer */
 
@@ -37,6 +41,9 @@ struct perf_buffer {
 
 	refcount_t			mmap_count;
 	unsigned long			mmap_locked;
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+	unsigned long			mmap_page_size;
+#endif
 	struct user_struct		*mmap_user;
 
 	/* AUX area */
@@ -79,7 +86,8 @@ static inline void rb_toggle_paused(struct perf_buffer *rb, bool pause)
 }
 
 extern struct perf_buffer *
-rb_alloc(int nr_pages, long watermark, int cpu, int flags);
+rb_alloc(int nr_pages, unsigned long data_size, long watermark, int cpu,
+	 int flags);
 extern void perf_event_wakeup(struct perf_event *event);
 extern int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
 			pgoff_t pgoff, int nr_pages, long watermark, int flags);
@@ -97,6 +105,8 @@ void perf_event_aux_event(struct perf_event *event, unsigned long head,
 
 extern struct page *
 perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff);
+struct page *
+perf_mmap_main_page(struct perf_buffer *rb, unsigned long pgoff);
 
 #ifdef CONFIG_PERF_USE_VMALLOC
 /*
@@ -123,10 +133,7 @@ static inline int data_page_nr(struct perf_buffer *rb)
 	return rb->nr_pages << page_order(rb);
 }
 
-static inline unsigned long perf_data_size(struct perf_buffer *rb)
-{
-	return rb->nr_pages << (PAGE_SHIFT + page_order(rb));
-}
+#include <linux/p3s/perf.h>
 
 static inline unsigned long perf_aux_size(struct perf_buffer *rb)
 {
@@ -153,7 +160,9 @@ static inline unsigned long perf_aux_size(struct perf_buffer *rb)
 			handle->page++;					\
 			handle->page &= rb->nr_pages - 1;		\
 			handle->addr = rb->data_pages[handle->page];	\
-			handle->size = PAGE_SIZE << page_order(rb);	\
+			handle->size = min_t(unsigned long,		\
+					     PAGE_SIZE << page_order(rb),	\
+					     perf_data_size(rb));	\
 		}							\
 	} while (len && written == size);				\
 									\
