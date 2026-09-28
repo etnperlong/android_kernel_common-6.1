@@ -43,6 +43,7 @@
 #include <linux/unicode.h>
 #include <linux/mm_inline.h>
 #include <linux/page_size_compat.h>
+#include <linux/p3s/shmem.h>
 #include "swap.h"
 
 #undef CREATE_TRACE_POINTS
@@ -989,7 +990,7 @@ static long shmem_free_swap(struct address_space *mapping,
  * as long as the inode doesn't go away and racy results are not a problem.
  */
 unsigned long shmem_partial_swap_usage(struct address_space *mapping,
-						pgoff_t start, pgoff_t end)
+				       pgoff_t start, pgoff_t end)
 {
 	XA_STATE(xas, &mapping->i_pages, start);
 	struct folio *folio;
@@ -1039,7 +1040,11 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
 	if (!swapped)
 		return 0;
 
-	if (!vma->vm_pgoff && vma->vm_end - vma->vm_start >= inode->i_size)
+	if (vma_is_p3s_4k(vma))
+		return vma_shmem_swap_usage(vma, vma->vm_start, vma->vm_end);
+
+	if (!vma->vm_pgoff &&
+	    vma->vm_end - vma->vm_start >= inode->i_size)
 		return swapped << PAGE_SHIFT;
 
 	/* Here comes the more involved part */
