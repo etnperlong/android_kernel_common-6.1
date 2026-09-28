@@ -4559,7 +4559,7 @@ finished:
  * remap_vmalloc_range_partial - map vmalloc pages to userspace
  * @vma:		vma to cover
  * @uaddr:		target user address to start at
- * @kaddr:		virtual address of vmalloc kernel memory
+ * @kaddr:		process-page-aligned address of vmalloc kernel memory
  * @pgoff:		offset from @kaddr to start at
  * @size:		size of map area
  *
@@ -4568,7 +4568,8 @@ finished:
  * This function checks that @kaddr is a valid vmalloc'ed area,
  * and that it is big enough to cover the range starting at
  * @uaddr in @vma. Will return failure if that criteria isn't
- * met.
+ * met. P3S mappings must cover the whole VMA and follow its slice
+ * offsets, because vm_insert_page() also fills the sibling slices.
  *
  * Similar to remap_pfn_range() (see mm/memory.c)
  */
@@ -4577,50 +4578,49 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
 				unsigned long size)
 {
 	struct vm_struct *area;
-	unsigned long off;
-	unsigned long end_index;
-	unsigned long uoff;
+	unsigned long off, end_index;
+	u64 aligned_size;
 
-	if (check_shl_overflow(pgoff, PAGE_SHIFT, &off))
+	if (check_shl_overflow(pgoff, PAGE_SHIFT_KERNEL, &off))
 		return -EINVAL;
-
-	if (!mm_pte_aligned(vma->vm_mm, uaddr) || !PAGE_ALIGNED(kaddr))
+	if (vma_aligned_size(vma, size, &aligned_size) ||
+	    aligned_size > ULONG_MAX || !aligned_size)
 		return -EINVAL;
+	size = aligned_size;
 
-	uoff = (unsigned long)vma_slice_offset(vma, uaddr) << PAGE_SHIFT_4KB;
-	if (check_add_overflow(size, uoff, &size))
+	if (!mm_pte_aligned(vma->vm_mm, uaddr) ||
+	    !mm_pte_aligned(vma->vm_mm, (unsigned long)kaddr))
 		return -EINVAL;
-	size = PAGE_ALIGN(size);
-
 	area = find_vm_area(kaddr);
-	if (!area)
+	if (!area || !(area->flags & (VM_USERMAP | VM_DMA_COHERENT)))
 		return -EINVAL;
-
-	if (!(area->flags & (VM_USERMAP | VM_DMA_COHERENT)))
-		return -EINVAL;
-
 	if (check_add_overflow(off, (unsigned long)(kaddr - area->addr), &off) ||
 	    check_add_overflow(size, off, &end_index) ||
 	    end_index > get_vm_area_size(area))
 		return -EINVAL;
 	kaddr = area->addr + off;
 
+	/* vm_insert_page() fills the VMA's entire native-page window. */
+	if (vma_is_p3s_4k(vma) &&
+	    (uaddr != vma->vm_start || size != vma->vm_end - uaddr ||
+	     (offset_in_page(kaddr) >> PAGE_SHIFT_4KB) !=
+	     vma_slice_offset(vma, uaddr)))
+		return -EOPNOTSUPP;
+
 	do {
 		struct page *page = vmalloc_to_page(kaddr);
+		unsigned long step = min(size, PAGE_SIZE_KERNEL - offset_in_page(kaddr));
 		int ret;
 
 		ret = vm_insert_page(vma, uaddr, page);
 		if (ret)
 			return ret;
-
-		uaddr += PAGE_SIZE - uoff;
-		kaddr += PAGE_SIZE;
-		size -= PAGE_SIZE;
-		uoff = 0;
-	} while (size > 0);
+		uaddr += step;
+		kaddr += step;
+		size -= step;
+	} while (size);
 
 	vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
-
 	return 0;
 }
 
@@ -4641,8 +4641,12 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
 int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
 						unsigned long pgoff)
 {
-	return remap_vmalloc_range_partial(vma, vma->vm_start,
-					   addr, pgoff,
+	/* The whole-VMA wrapper takes a native-page-aligned backing base. */
+	if (!PAGE_ALIGNED_KERNEL(addr))
+		return -EINVAL;
+	if (vma_is_p3s_4k(vma))
+		addr += (unsigned long)vma_slice_off(vma) << PAGE_SHIFT_4KB;
+	return remap_vmalloc_range_partial(vma, vma->vm_start, addr, pgoff,
 					   vma->vm_end - vma->vm_start);
 }
 EXPORT_SYMBOL(remap_vmalloc_range);
