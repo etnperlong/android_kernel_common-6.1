@@ -5157,7 +5157,12 @@ check_folio:
 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
 	add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
 	pte = mk_pte(page, vma->vm_page_prot);
-	pte = vma_pte_add_slice(vma, address, pte);
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+	if (vma_is_p3s_4k(vma))
+		pte = pte_advance_phys(pte,
+			(unsigned long)pte_swp_slice(vmf->orig_pte) <<
+			PAGE_SHIFT_4KB);
+#endif
 	if (pte_swp_soft_dirty(vmf->orig_pte))
 		pte = pte_mksoft_dirty(pte);
 	if (pte_swp_uffd_wp(vmf->orig_pte))
