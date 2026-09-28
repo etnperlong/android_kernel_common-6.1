@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: GPL-2.0
+# Kernel-side fixtures for the mm P3S selftests, one misc device each.
+obj-m += gup_retry_p3s_module.o
+obj-m += iov_iter_p3s_module.o
+obj-m += fault_in_p3s_module.o
+obj-m += mremap_pgoff_p3s_module.o
+obj-m += vm_iomap_memory_p3s_module.o
+obj-m += vm_iomap_unaligned_p3s_module.o
+obj-m += remap_pfn_cow_p3s_module.o
+obj-m += dma_mmap_attrs_p3s_module.o
+obj-m += dma_mmap_pages_p3s_module.o
+obj-m += vm_map_pages_p3s_module.o
+obj-m += iommu_dma_mmap_p3s_module.o
+obj-m += folio_within_range_p3s_module.o
+ifneq ($(CONFIG_MAPPING_DIRTY_HELPERS),)
+obj-m += pagewalk_p3s_module.o
+endif
+ifneq ($(CONFIG_MMU_NOTIFIER),)
+obj-m += mmu_notifier_p3s_module.o
+endif
+ifneq ($(CONFIG_VIDEOBUF2_VMALLOC),)
+obj-m += vb2_mmap_p3s_module.o
+endif
+obj-m += anon_exclusive_probe_p3s_module.o
+obj-m += vmalloc_align_p3s_module.o
+obj-m += xdp_pin_probe_p3s_module.o
