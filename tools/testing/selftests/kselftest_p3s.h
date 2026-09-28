@@ -182,6 +182,62 @@ static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 }
 
 /*
+ * Opt-in entry point for tests with the same assertions in both geometries.
+ * Default to compat; --native selects the 16K control.  Always prove native
+ * 16K exec first: getpagesize() == 4096 alone also matches a native 4K kernel.
+ * Existing single-mode tests keep their current entry point.
+ */
+static inline void __noreturn
+p3s_geometry_exec(bool compat, const char *stage, const char *mode)
+{
+	int error;
+
+	p3s_execl(compat, NULL, stage, mode, NULL);
+	error = errno;
+	ksft_print_header();
+	if (error == EINVAL || error == EPERM)
+		ksft_exit_skip("P3S personality/exec unavailable: %s\n",
+			       strerror(error));
+	ksft_exit_fail_msg("P3S re-exec failed: %s\n", strerror(error));
+}
+
+
+static inline int p3s_geometry_main(int argc, char **argv, int (*run)(void))
+{
+	p3s_argv0 = argv[0];
+#ifndef __aarch64__
+	ksft_print_header();
+	ksft_exit_skip("requires arm64 16K native / 4K compat geometry\n");
+#else
+	if (argc == 1 || (argc == 2 && !strcmp(argv[1], "--native")))
+		p3s_geometry_exec(false, "--p3s-native",
+				   argc == 1 ? "compat" : "native");
+	if (argc == 3 && !strcmp(argv[1], "--p3s-native")) {
+		if (getpagesize() != NATIVE_PAGE_SIZE) {
+			ksft_print_header();
+			ksft_exit_skip("native exec does not use 16K pages\n");
+		}
+		if (!strcmp(argv[2], "native"))
+			return run();
+		if (!strcmp(argv[2], "compat"))
+			p3s_geometry_exec(true, "--p3s-compat", NULL);
+	}
+	if (argc == 2 && !strcmp(argv[1], "--p3s-compat")) {
+		int persona = personality(0xffffffffUL);
+
+		if (getpagesize() != PROCESS_PAGE_SIZE || persona < 0 ||
+		    !(persona & ADDR_4KB_COMPAT_PAGE_SIZE)) {
+			ksft_print_header();
+			ksft_exit_skip("4K compat exec is unavailable\n");
+		}
+		return run();
+	}
+	ksft_print_header();
+	ksft_exit_fail_msg("usage: %s [--native]\n", argv[0]);
+#endif
+}
+
+/*
  * The mode of a multi-role test: the first "--flag" argument, or, when
  * @envvar is given and no flag is present, the value of that environment
  * variable.  NULL means a top-level invocation.  Records argv[0].
@@ -194,6 +250,63 @@ static inline const char *p3s_run_mode(int argc, char **argv,
 	if (argc >= 2 && !strncmp(argv[1], "--", 2))
 		return argv[1];
 	return envvar ? getenv(envvar) : NULL;
+}
+
+/* Whole-buffer I/O, retrying short transfers and EINTR. */
+
+static inline bool read_full(int fd, void *buffer, size_t size)
+{
+	unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = read(fd, position, size);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		size -= bytes;
+	}
+	return true;
+}
+
+
+static inline bool write_full(int fd, const void *buffer, size_t size)
+{
+	const unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = write(fd, position, size);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		size -= bytes;
+	}
+	return true;
+}
+
+
+static inline bool pwrite_full(int fd, const void *buffer, size_t size,
+			       off_t offset)
+{
+	const unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = pwrite(fd, position, size, offset);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		offset += bytes;
+		size -= bytes;
+	}
+	return true;
 }
 
 #define P3S_COMPAT_MAIN(run_fn)				\
