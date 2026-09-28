@@ -234,6 +234,8 @@ else
 PAGE_FRAG_WARNING = "missing Module.symvers, please have the kernel built first"
 endif
 
+TEST_GEN_FILES += drm_gem_slice_p3s
+
 TEST_GEN_PROGS += bpf_remote_access_p3s
 
 TEST_GEN_FILES += uprobe_p3s
@@ -259,7 +261,7 @@ P3S_16K_LINK_TARGETS := \
 	vb2_userptr_reject_p3s anon_vma_name_p3s iov_iter_p3s \
 	mremap_pgoff_p3s pagemap_ioctl pagemap_ioctl_p3s pagemap_scan_p3s \
 	process_madvise_p3s exec_aslr_p3s fork_filemap_p3s io_uring_mmap_p3s \
-	munmap_p3s ashmem_p3s
+	munmap_p3s ashmem_p3s drm_gem_slice_p3s
 $(addprefix $(OUTPUT)/,$(P3S_16K_LINK_TARGETS)): LDFLAGS += -Wl,-z,max-page-size=16384
 
 $(OUTPUT)/brk_aslr_p3s_sample: brk_aslr_p3s_sample.S
@@ -417,3 +419,5 @@ clean_page_frag_module:
 	+$(MAKE) -C page_frag KDIR=$(KDIR) clean
 clean: clean_page_frag_module
 endif
+
+$(eval $(call p3s_test_hdrs,drm_gem_slice_p3s,../kselftest_p3s.h))
