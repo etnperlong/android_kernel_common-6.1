@@ -7282,7 +7282,8 @@ static int __rb_inc_dec_mapped(struct ring_buffer_per_cpu *cpu_buffer,
 static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
 			struct vm_area_struct *vma)
 {
-	unsigned long nr_subbufs, nr_pages, nr_vma_pages, pgoff = vma->vm_pgoff;
+	unsigned long nr_subbufs, nr_pages, nr_vma_pages;
+	unsigned long pgoff = vma->vm_pgoff;
 	unsigned int subbuf_pages, subbuf_order;
 	struct page **pages __free(kfree) = NULL;
 	int p = 0, s = 0;
@@ -7292,6 +7293,9 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
 	if (vma->vm_flags & VM_WRITE || vma->vm_flags & VM_EXEC ||
 	    !(vma->vm_flags & VM_MAYSHARE))
 		return -EPERM;
+	/* The ring uses native pages; a partial-page file offset has no backing. */
+	if (!IS_ALIGNED(vma_file_offset(vma), PAGE_SIZE_KERNEL))
+		return -EINVAL;
 
 	subbuf_order = cpu_buffer->buffer->subbuf_order;
 	subbuf_pages = 1 << subbuf_order;
@@ -7315,7 +7319,7 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
 
 	nr_pages -= pgoff;
 
-	nr_vma_pages = vma_pages(vma);
+	nr_vma_pages = vma_pgoff_pages(vma);
 	if (!nr_vma_pages || nr_vma_pages > nr_pages)
 		return -EINVAL;
 
