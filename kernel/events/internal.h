@@ -37,6 +37,9 @@ struct perf_buffer {
 
 	refcount_t			mmap_count;
 	unsigned long			mmap_locked;
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+	unsigned long			mmap_page_size;
+#endif
 	struct user_struct		*mmap_user;
 
 	/* AUX area */
@@ -127,6 +130,8 @@ static inline unsigned long perf_data_size(struct perf_buffer *rb)
 {
 	return rb->nr_pages << (PAGE_SHIFT + page_order(rb));
 }
+
+#include <linux/p3s/perf.h>
 
 static inline unsigned long perf_aux_size(struct perf_buffer *rb)
 {
