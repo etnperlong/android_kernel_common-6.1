@@ -3,6 +3,7 @@
 #define _KERNEL_EVENTS_INTERNAL_H
 
 #include <linux/hardirq.h>
+#include <linux/page_size_compat_defs.h>
 #include <linux/uaccess.h>
 #include <linux/refcount.h>
 
@@ -37,6 +38,9 @@ struct perf_buffer {
 
 	refcount_t			mmap_count;
 	unsigned long			mmap_locked;
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+	unsigned long			mmap_page_size;
+#endif
 	struct user_struct		*mmap_user;
 
 	/* AUX area */
@@ -97,6 +101,8 @@ void perf_event_aux_event(struct perf_event *event, unsigned long head,
 
 extern struct page *
 perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff);
+struct page *
+perf_mmap_main_page(struct perf_buffer *rb, unsigned long pgoff);
 
 #ifdef CONFIG_PERF_USE_VMALLOC
 /*
@@ -123,10 +129,7 @@ static inline int data_page_nr(struct perf_buffer *rb)
 	return rb->nr_pages << page_order(rb);
 }
 
-static inline unsigned long perf_data_size(struct perf_buffer *rb)
-{
-	return rb->nr_pages << (PAGE_SHIFT + page_order(rb));
-}
+#include <linux/p3s/perf.h>
 
 static inline unsigned long perf_aux_size(struct perf_buffer *rb)
 {
