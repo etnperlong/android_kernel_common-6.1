@@ -29,6 +29,32 @@ static inline bool p3s_pagemap_entry(const void *address, uint64_t *entry)
 }
 
 
+/* P3S pagemap reports compat PFNs in 4K units; compare native folios. */
+static inline uint64_t p3s_native_pfn(uint64_t pfn)
+{
+	return getpagesize() == PROCESS_PAGE_SIZE ? pfn / P3S_SLICES : pfn;
+}
+
+/* The native PFN of a present page; false when absent or hidden. */
+static inline bool p3s_pfn(const void *address, uint64_t *pfn)
+{
+	uint64_t entry;
+
+	if (!p3s_pagemap_entry(address, &entry) || !(entry & PM_PRESENT))
+		return false;
+	*pfn = p3s_native_pfn(entry & PM_PFRAME_MASK);
+	return *pfn != 0;
+}
+
+
+static inline bool p3s_page_present(const void *address)
+{
+	uint64_t entry;
+
+	return p3s_pagemap_entry(address, &entry) &&
+	       (entry & PM_PRESENT);
+}
+
 
 static inline bool p3s_page_swapped(const void *address)
 {
@@ -81,6 +107,61 @@ static inline bool p3s_smaps_bytes(const void *address, size_t length,
 				   const char *field, unsigned long *bytes)
 {
 	return p3s_smaps_sum(0, (uintptr_t)address, length, field, bytes);
+}
+
+/* /proc/<pid>/status */
+
+/* The "@field:" line of @pid's status (0 = self) in kB, or -1. */
+static inline long p3s_status_kb(pid_t pid, const char *field)
+{
+	char path[64], line[256];
+	size_t name_len = strlen(field);
+	long value = -1;
+	FILE *status;
+
+	p3s_proc_path(path, sizeof(path), pid, "status");
+	status = fopen(path, "re");
+	if (!status)
+		return -1;
+	while (fgets(line, sizeof(line), status)) {
+		if (!strncmp(line, field, name_len) && line[name_len] == ':') {
+			if (sscanf(line + name_len + 1, " %ld kB", &value) != 1)
+				value = -1;
+			break;
+		}
+	}
+	fclose(status);
+	return value;
+}
+
+/* Test fixtures (device nodes, debugfs files, ...) */
+
+/* An error from opening a fixture that means "not on this system". */
+static inline bool p3s_fixture_unavailable(int error)
+{
+	return error == ENOENT || error == ENXIO || error == ENODEV ||
+	       error == ENOTDIR || error == EACCES || error == EPERM;
+}
+
+/* open(2) a fixture with O_CLOEXEC; -1 with errno preserved on failure. */
+static inline int p3s_open_fixture(const char *path, int flags)
+{
+	return open(path, flags | O_CLOEXEC);
+}
+
+/*
+ * open(2) a fixture the test cannot run without.  A missing or inaccessible
+ * fixture skips the test; any other failure fails it.
+ */
+static inline int p3s_open_fixture_or_skip(const char *path, int flags)
+{
+	int fd = p3s_open_fixture(path, flags);
+
+	if (fd >= 0)
+		return fd;
+	if (p3s_fixture_unavailable(errno))
+		ksft_exit_skip("%s is unavailable: %s\n", path, strerror(errno));
+	ksft_exit_fail_msg("open %s failed: %s\n", path, strerror(errno));
 }
 
 #endif /* _P3S_TEST_H */
