@@ -886,6 +886,10 @@ static int madvise_free_single_vma(struct madvise_behavior *madv_behavior)
 			&walk_ops, tlb);
 	tlb_end_vma(tlb, vma);
 	mmu_notifier_invalidate_range_end(&range);
+
+	/* Publish lazy-free folios before a 4KB process reads LazyFree. */
+	if (mm_is_p3s_4k(mm))
+		lru_add_drain();
 	return 0;
 }
 
