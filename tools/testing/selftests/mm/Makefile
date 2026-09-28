@@ -233,6 +233,8 @@ else
 PAGE_FRAG_WARNING = "missing Module.symvers, please have the kernel built first"
 endif
 
+TEST_GEN_PROGS += drm_gem_slice_ppps
+
 include ../lib.mk
 
 $(OUTPUT)/brk_aslr_ppps_sample: brk_aslr_ppps_sample.S
@@ -400,3 +402,6 @@ clean_page_frag_module:
 	+$(MAKE) -C page_frag KDIR=$(KDIR) clean
 clean: clean_page_frag_module
 endif
+
+$(OUTPUT)/drm_gem_slice_ppps: LDFLAGS += -Wl,-z,max-page-size=16384
+$(eval $(call ppps_test_hdrs,drm_gem_slice_ppps,../kselftest_ppps.h))
