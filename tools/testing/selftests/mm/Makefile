@@ -69,6 +69,7 @@ TEST_GEN_FILES += hugepage-shm
 TEST_GEN_FILES += hugepage-vmemmap
 TEST_GEN_FILES += khugepaged
 TEST_GEN_FILES += madv_populate
+TEST_GEN_FILES +=
 TEST_GEN_FILES += map_fixed_noreplace
 TEST_GEN_FILES += map_hugetlb
 TEST_GEN_FILES += map_populate
@@ -87,6 +88,7 @@ TEST_GEN_FILES += mremap_test
 TEST_GEN_FILES += mseal_test
 TEST_GEN_FILES += on-fault-limit
 TEST_GEN_FILES += pagemap_ioctl
+TEST_GEN_FILES +=
 TEST_GEN_FILES += pfnmap
 TEST_GEN_FILES += process_madv
 TEST_GEN_FILES += prctl_thp_disable
@@ -173,6 +175,10 @@ TEST_GEN_FILES += bpf_stack_build_id_p3s
 TEST_GEN_FILES += elf_core_p3s
 
 TEST_GEN_FILES += ashmem_p3s
+
+TEST_GEN_FILES += pagemap_exclusive_p3s
+
+TEST_GEN_FILES += smaps_pss_p3s
 
 include ../lib.mk
 
