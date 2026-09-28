@@ -64,3 +64,5 @@ anon_vma_name_p3s
 devzero_slice_p3s
 madvise_remove_p3s
 smaps_page_size_p3s
+bpf_remote_access_p3s
+bpf_map_mmap_p3s
