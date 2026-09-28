@@ -41,6 +41,9 @@
 #define PROCESS_PAGE_SIZE		4096UL
 #define NATIVE_PAGE_SIZE		16384UL
 
+/* Number of 4K process pages ("slices") backed by one native page. */
+#define P3S_SLICES			(NATIVE_PAGE_SIZE / PROCESS_PAGE_SIZE)
+
 /* Mode flag the standard main passes to its 4K compat re-exec. */
 #define P3S_RUN_FLAG			"--run"
 
