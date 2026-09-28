@@ -123,6 +123,42 @@ impl Mm {
         self.mm.get()
     }
 
+    /// Returns the page shift used by this address space.
+    ///
+    /// Uses the C `mm_pte_shift()` helper, including its native fallback.
+    #[inline]
+    pub fn page_shift(&self) -> usize {
+        // SAFETY: The pointer is valid by the type invariant of `Mm`.
+        unsafe { bindings::mm_pte_shift(self.as_raw()) as usize }
+    }
+
+    /// Returns the page size used by this address space.
+    ///
+    /// This is the Rust equivalent of `mm_pte_size(mm)`.
+    #[inline]
+    pub fn page_size(&self) -> usize {
+        1usize << self.page_shift()
+    }
+
+    /// Returns the page mask used by this address space.
+    ///
+    /// This is the Rust equivalent of `mm_pte_mask(mm)`.
+    #[inline]
+    pub fn page_mask(&self) -> usize {
+        !(self.page_size() - 1)
+    }
+
+    /// Rounds `addr` up to this address space's page size.
+    ///
+    /// It is incorrect to pass an address for which the aligned result does not fit in a
+    /// [`usize`].
+    #[inline]
+    pub fn page_align(&self, addr: usize) -> usize {
+        let page_size = self.page_size();
+
+        (addr + (page_size - 1)) & !(page_size - 1)
+    }
+
     /// Obtain a reference from a raw pointer.
     ///
     /// # Safety
