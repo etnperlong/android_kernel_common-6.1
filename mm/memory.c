@@ -2299,7 +2299,8 @@ static int validate_page_before_insert(struct vm_area_struct *vma,
 
 static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
 				unsigned long addr, struct page *page,
-				pgprot_t prot, bool mkwrite)
+				pgprot_t prot, bool mkwrite,
+				unsigned int slice_idx)
 {
 	struct folio *folio = page_folio(page);
 	pte_t pteval = ptep_get(pte);
@@ -2335,7 +2336,9 @@ static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
 		folio_add_file_rmap_pte(folio, page, vma);
 	}
 
-	pteval = vma_pte_add_slice(vma, addr, pteval);
+	if (vma_is_p3s_4k(vma))
+		pteval = pte_advance_phys(pteval,
+				(unsigned long)slice_idx << PAGE_SHIFT_4KB);
 	set_pte_at(vma->vm_mm, addr, pte, pteval);
 	return 0;
 }
@@ -2357,7 +2360,7 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
 	if (!pte)
 		goto out;
 	retval = insert_page_into_pte_locked(vma, pte, addr, page, prot,
-					mkwrite);
+					mkwrite, vma_slice_offset(vma, addr));
 	pte_unmap_unlock(pte, ptl);
 out:
 	return retval;
@@ -2371,7 +2374,8 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
 	err = validate_page_before_insert(vma, page);
 	if (err)
 		return err;
-	return insert_page_into_pte_locked(vma, pte, addr, page, prot, false);
+	return insert_page_into_pte_locked(vma, pte, addr, page, prot,
+					   false, vma_slice_offset(vma, addr));
 }
 
 /* insert_pages() amortizes the cost of spinlock operations
@@ -2438,6 +2442,15 @@ out:
 	return ret;
 }
 
+static void prepare_vm_insert_page(struct vm_area_struct *vma)
+{
+	if (!(vma->vm_flags & VM_MIXEDMAP)) {
+		BUG_ON(mmap_read_trylock(vma->vm_mm));
+		BUG_ON(vma->vm_flags & VM_PFNMAP);
+		vm_flags_set(vma, VM_MIXEDMAP);
+	}
+}
+
 /**
  * vm_insert_pages - insert multiple pages into user vma, batching the pmd lock.
  * @vma: user vma to map to
@@ -2465,11 +2478,7 @@ int vm_insert_pages(struct vm_area_struct *vma, unsigned long addr,
 				    ((vma->vm_end - addr) >> mm_pte_shift(vma->vm_mm)));
 	if (*num > max_pages)
 		return -EFAULT;
-	if (!(vma->vm_flags & VM_MIXEDMAP)) {
-		BUG_ON(mmap_read_trylock(vma->vm_mm));
-		BUG_ON(vma->vm_flags & VM_PFNMAP);
-		vm_flags_set(vma, VM_MIXEDMAP);
-	}
+	prepare_vm_insert_page(vma);
 	/* Defer page refcount checking till we're about to map that page. */
 	return insert_pages(vma, addr, pages, num, vma->vm_page_prot);
 }
@@ -2512,14 +2521,40 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
 
 	if (addr < vma->vm_start || addr >= vma->vm_end)
 		return -EFAULT;
-	if (!(vma->vm_flags & VM_MIXEDMAP)) {
-		BUG_ON(mmap_read_trylock(vma->vm_mm));
-		BUG_ON(vma->vm_flags & VM_PFNMAP);
-		vm_flags_set(vma, VM_MIXEDMAP);
-	}
+	prepare_vm_insert_page(vma);
 	return insert_page(vma, addr, page, vma->vm_page_prot, false);
 }
 EXPORT_SYMBOL(vm_insert_page);
+
+/**
+ * vm_insert_page_slice - insert one explicit 4KB slice of a kernel page
+ * @vma: target 4KB compatibility VMA
+ * @addr: target process-page-aligned user address
+ * @page: source native page
+ * @slice_idx: 4KB slice index within @page
+ *
+ * The usual vm_insert_page() allocation and VM_MIXEDMAP rules apply.
+ * Native VMAs and out-of-range slice indices are rejected with -EINVAL.
+ *
+ * Return: 0 on success, negative errno on failure.
+ */
+int vm_insert_page_slice(struct vm_area_struct *vma, unsigned long addr,
+			 struct page *page, unsigned int slice_idx)
+{
+	P3S_CONTEXT_REMOTE_MM(vma->vm_mm);
+	int ret;
+
+	if (!vma_is_p3s_4k(vma) || slice_idx >= P3S_SLICES_PER_PAGE)
+		return -EINVAL;
+	if (addr < vma->vm_start || addr >= vma->vm_end)
+		return -EFAULT;
+	prepare_vm_insert_page(vma);
+	ret = validate_page_before_insert(vma, page);
+	if (ret)
+		return ret;
+	return vma_insert_page_slice(vma, addr, page, vma->vm_page_prot,
+				     slice_idx);
+}
 
 /*
  * __vm_map_pages - maps range of kernel pages into user vma
