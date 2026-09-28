@@ -27,7 +27,26 @@ static inline pte_t vma_pte_add_slice(const struct vm_area_struct *vma,
 int validate_page_before_insert(struct vm_area_struct *vma, struct page *page);
 int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
 				unsigned long addr, struct page *page,
-				pgprot_t prot, bool mkwrite);
+				pgprot_t prot, bool mkwrite,
+				unsigned int slice_idx);
+
+/* Insert exactly one validated native-page slice under its PTE lock. */
+static inline int vma_insert_page_slice(struct vm_area_struct *vma,
+					unsigned long addr, struct page *page,
+					pgprot_t prot, unsigned int slice_idx)
+{
+	spinlock_t *ptl;
+	pte_t *pte;
+	int ret;
+
+	pte = get_locked_pte(vma->vm_mm, addr, &ptl);
+	if (!pte)
+		return -ENOMEM;
+	ret = insert_page_into_pte_locked(vma, pte, addr, page, prot, false,
+					  slice_idx);
+	pte_unmap_unlock(pte, ptl);
+	return ret;
+}
 
 /*
  * vma_insert_page_slices - insert_page() for a 4KB compatibility VMA
@@ -64,7 +83,7 @@ static inline int vma_insert_page_slices(struct vm_area_struct *vma,
 		if (!pte)
 			return -ENOMEM;
 		ret = insert_page_into_pte_locked(vma, pte, addr, page, prot,
-						  false);
+						  false, vma_slice_offset(vma, addr));
 		if (ret == -EBUSY && addr != target)
 			ret = 0;
 		pte_unmap_unlock(pte, ptl);
@@ -80,7 +99,7 @@ static inline int vma_insert_page_slices(struct vm_area_struct *vma,
  * @num: Number of pages; returns the number of pages not mapped
  * @prot: Protection of the PTEs
  *
- * Maps one kernel page at a time with vma_insert_page_slices().
+ * vm_insert_pages() counts process PTEs, even for 4KB compatibility VMAs.
  */
 static inline int vma_insert_pages_slices(struct vm_area_struct *vma,
 					  unsigned long addr,
@@ -89,10 +108,19 @@ static inline int vma_insert_pages_slices(struct vm_area_struct *vma,
 {
 	int ret;
 
-	for (; *num; (*num)--, pages++, addr += PAGE_SIZE_KERNEL) {
+	for (; *num; (*num)--, pages++, addr += PAGE_SIZE_4KB) {
+		spinlock_t *ptl;
+		pte_t *pte;
+
 		ret = validate_page_before_insert(vma, *pages);
-		if (!ret)
-			ret = vma_insert_page_slices(vma, addr, *pages, prot);
+		if (ret)
+			return ret;
+		pte = get_locked_pte(vma->vm_mm, addr, &ptl);
+		if (!pte)
+			return -ENOMEM;
+		ret = insert_page_into_pte_locked(vma, pte, addr, *pages, prot,
+						  false, vma_slice_offset(vma, addr));
+		pte_unmap_unlock(pte, ptl);
 		if (ret)
 			return ret;
 	}
