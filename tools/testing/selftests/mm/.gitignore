@@ -63,6 +63,7 @@ rmap
 anon_vma_name_p3s
 ashmem_p3s
 devzero_slice_p3s
+fadvise_dontneed_p3s
 madvise_remove_p3s
 pagemap_exclusive_p3s
 smaps_page_size_p3s
