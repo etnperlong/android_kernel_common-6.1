@@ -117,6 +117,41 @@ p3s_execl(bool compat, const char *argv0, ...)
 }
 
 
+static inline void __noreturn p3s_vexec_or_die(bool compat, const char *argv0,
+					       va_list ap)
+{
+	const char *argv[P3S_MAX_EXEC_ARGS + 1];
+
+	p3s_build_argv(argv, argv0, ap);
+	p3s_execv(compat, (char *const *)argv);
+	ksft_exit_fail_msg("re-exec as a %s process failed: %s\n",
+			   compat ? "4K compat" : "native", strerror(errno));
+}
+
+/*
+ * Re-exec ourselves as a 4K compat process.  The NULL-terminated argument
+ * list follows @argv0, as for execl(); @argv0 may be NULL to reuse the
+ * recorded argv[0].  Never returns.
+ */
+static inline void __noreturn __attribute__((sentinel))
+exec_compat(const char *argv0, ...)
+{
+	va_list ap;
+
+	va_start(ap, argv0);
+	p3s_vexec_or_die(true, argv0, ap);
+}
+
+/* Re-exec ourselves as a native (16K) process.  Never returns. */
+static inline void __noreturn __attribute__((sentinel))
+exec_native(const char *argv0, ...)
+{
+	va_list ap;
+
+	va_start(ap, argv0);
+	p3s_vexec_or_die(false, argv0, ap);
+}
+
 /* Re-exec once; unsupported kernels and architectures are SKIP, not FAIL. */
 static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 {
