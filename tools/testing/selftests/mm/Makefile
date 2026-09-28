@@ -164,7 +164,11 @@ TEST_GEN_FILES += smaps_page_size_p3s
 
 TEST_GEN_FILES += devzero_slice_p3s
 
+TEST_GEN_PROGS += bpf_remote_access_p3s
+
 include ../lib.mk
+
+$(OUTPUT)/bpf_map_mmap_p3s: ../kselftest_p3s.h
 
 $(OUTPUT)/devzero_slice_p3s: CFLAGS += -I..
 $(OUTPUT)/devzero_slice_p3s: LOCAL_HDRS += ../kselftest_p3s.h

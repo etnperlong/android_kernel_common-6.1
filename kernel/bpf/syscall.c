@@ -14,6 +14,7 @@
 #include <linux/sched/signal.h>
 #include <linux/vmalloc.h>
 #include <linux/mmzone.h>
+#include <linux/p3s/mm.h>
 #include <linux/anon_inodes.h>
 #include <linux/fdtable.h>
 #include <linux/file.h>
@@ -1092,6 +1093,9 @@ static int bpf_map_mmap(struct file *filp, struct vm_area_struct *vma)
 {
 	struct bpf_map *map = filp->private_data;
 	int err = 0;
+
+	if (p3s_4k_unsupported(vma->vm_mm))
+		return -EOPNOTSUPP;
 
 	if (!map->ops->map_mmap || !IS_ERR_OR_NULL(map->record))
 		return -ENOTSUPP;
