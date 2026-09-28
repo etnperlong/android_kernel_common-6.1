@@ -15,6 +15,7 @@
 #include "rmap.h"
 
 #ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+#include <asm/mte.h>
 #include <asm/p3s/mte.h>
 
 /*
@@ -410,17 +411,27 @@ static inline bool p3s_uffd_install_anon_folio(struct vm_area_struct *dst_vma,
 	struct folio *existing_folio =
 		p3s_anon_folio_lookaround_pte(dst_vma, dst_pte, dst_addr);
 	unsigned long offset;
+	void *to, *from;
 
 	if (!existing_folio)
 		return false;
 
 	offset = (unsigned long)vma_slice_offset(dst_vma, dst_addr) << PAGE_SHIFT_4KB;
+	to = folio_address(existing_folio) + offset;
+	from = folio_address(folio) + offset;
 
-	/* The data is replaced below; the old allocation tags must go too */
-	if (dst_vma->vm_flags & VM_MTE)
-		mte_zero_clear_slice_tags(folio_address(existing_folio) + offset);
-	memcpy(folio_address(existing_folio) + offset,
-	       folio_address(folio) + offset, PAGE_SIZE_4KB);
+	/* A source without tags must not retain stale destination tags. */
+	if ((dst_vma->vm_flags & VM_MTE) &&
+	    !(page_mte_tagged(&existing_folio->page) &&
+	      page_mte_tagged(&folio->page)))
+		mte_zero_clear_slice_tags(to);
+	memcpy(to, from, PAGE_SIZE_4KB);
+#ifdef CONFIG_ARM64_MTE
+	if (system_supports_mte() && (dst_vma->vm_flags & VM_MTE) &&
+	    page_mte_tagged(&existing_folio->page) &&
+	    page_mte_tagged(&folio->page))
+		mte_copy_tags_range(to, from, PAGE_SIZE_4KB);
+#endif
 	flush_dcache_folio(existing_folio);
 
 	/* Order the copy before the PTE, as __folio_mark_uptodate() does */
