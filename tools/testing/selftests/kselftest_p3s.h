@@ -116,6 +116,7 @@ p3s_execl(bool compat, const char *argv0, ...)
 	return p3s_execv(compat, (char *const *)argv);
 }
 
+
 /* Re-exec once; unsupported kernels and architectures are SKIP, not FAIL. */
 static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 {
@@ -143,6 +144,21 @@ static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 	}
 	ksft_exit_fail_msg("P3S re-exec failed: %s\n", strerror(errno));
 #endif
+}
+
+/*
+ * The mode of a multi-role test: the first "--flag" argument, or, when
+ * @envvar is given and no flag is present, the value of that environment
+ * variable.  NULL means a top-level invocation.  Records argv[0].
+ */
+static inline const char *p3s_run_mode(int argc, char **argv,
+				       const char *envvar)
+{
+	if (argc > 0 && argv)
+		p3s_argv0 = argv[0];
+	if (argc >= 2 && !strncmp(argv[1], "--", 2))
+		return argv[1];
+	return envvar ? getenv(envvar) : NULL;
 }
 
 /*

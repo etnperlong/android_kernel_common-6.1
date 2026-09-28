@@ -172,7 +172,15 @@ TEST_GEN_FILES += bpf_stack_build_id_p3s
 
 TEST_GEN_FILES += elf_core_p3s
 
+TEST_GEN_FILES += ashmem_p3s
+
 include ../lib.mk
+
+$(OUTPUT)/ashmem_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
+
+$(OUTPUT)/ashmem_p3s: CFLAGS += -I..
+$(OUTPUT)/ashmem_p3s: LOCAL_HDRS += ../kselftest_p3s.h
+$(OUTPUT)/ashmem_p3s: ../kselftest_p3s.h
 
 $(OUTPUT)/elf_core_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
 
