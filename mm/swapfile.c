@@ -2250,6 +2250,14 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
 		if (pte_swp_exclusive(old_pte))
 			rmap_flags |= RMAP_EXCLUSIVE;
 		/*
+		 * A native swap entry can still belong to other 4K PTEs of
+		 * this folio, which do_swap_page() requires to stay
+		 * !PageAnonExclusive while they are swap PTEs.
+		 */
+		if (vma_is_p3s_4k(vma) &&
+		    (__swap_count(entry) > 1 || folio_mapped(folio)))
+			rmap_flags &= ~RMAP_EXCLUSIVE;
+		/*
 		 * We currently only expect small !anon folios, which are either
 		 * fully exclusive or fully shared. If we ever get large folios
 		 * here, we have to be careful.
