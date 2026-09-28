@@ -29,6 +29,15 @@ static inline bool p3s_pagemap_entry(const void *address, uint64_t *entry)
 }
 
 
+
+static inline bool p3s_page_swapped(const void *address)
+{
+	uint64_t entry;
+
+	return p3s_pagemap_entry(address, &entry) &&
+	       !(entry & PM_PRESENT) && (entry & PM_SWAP);
+}
+
 /*
  * Sum of the "@field:" line, in bytes, over every VMA of @pid (0 = self)
  * that overlaps [@address, @address + @length).  False when no VMA matched.
