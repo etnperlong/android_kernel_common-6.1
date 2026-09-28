@@ -27,7 +27,26 @@ static inline pte_t vma_pte_add_slice(const struct vm_area_struct *vma,
 int validate_page_before_insert(struct vm_area_struct *vma, struct page *page);
 int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
 				unsigned long addr, struct page *page,
-				pgprot_t prot, bool mkwrite);
+				pgprot_t prot, bool mkwrite,
+				unsigned int slice_idx);
+
+/* Insert exactly one validated native-page slice under its PTE lock. */
+static inline int vma_insert_page_slice(struct vm_area_struct *vma,
+					unsigned long addr, struct page *page,
+					pgprot_t prot, unsigned int slice_idx)
+{
+	spinlock_t *ptl;
+	pte_t *pte;
+	int ret;
+
+	pte = get_locked_pte(vma->vm_mm, addr, &ptl);
+	if (!pte)
+		return -ENOMEM;
+	ret = insert_page_into_pte_locked(vma, pte, addr, page, prot, false,
+					  slice_idx);
+	pte_unmap_unlock(pte, ptl);
+	return ret;
+}
 
 /*
  * vma_insert_page_slices - insert_page() for a 4KB compatibility VMA
@@ -64,7 +83,7 @@ static inline int vma_insert_page_slices(struct vm_area_struct *vma,
 		if (!pte)
 			return -ENOMEM;
 		ret = insert_page_into_pte_locked(vma, pte, addr, page, prot,
-						  false);
+						  false, vma_slice_offset(vma, addr));
 		if (ret == -EBUSY && addr != target)
 			ret = 0;
 		pte_unmap_unlock(pte, ptl);
