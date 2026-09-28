@@ -7,6 +7,7 @@
  * in this corpus starts as whatever the runner is, re-execs itself as a 4K
  * compat process and only then runs its checks; a few also spawn a native
  * (16K) helper.  This header holds the one copy of that dance.
+ * MM-specific readers live in mm/p3s_test.h.
  *
  * The 4K compat interface is deliberately minimal: whatever a test observes
  * that is not part of that interface is expected to behave as it does for a
