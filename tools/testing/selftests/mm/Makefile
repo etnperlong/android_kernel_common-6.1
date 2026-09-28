@@ -234,6 +234,8 @@ else
 PAGE_FRAG_WARNING = "missing Module.symvers, please have the kernel built first"
 endif
 
+TEST_GEN_PROGS += drm_gem_slice_p3s
+
 include ../lib.mk
 
 $(OUTPUT)/brk_aslr_p3s_sample: brk_aslr_p3s_sample.S
@@ -401,3 +403,6 @@ clean_page_frag_module:
 	+$(MAKE) -C page_frag KDIR=$(KDIR) clean
 clean: clean_page_frag_module
 endif
+
+$(OUTPUT)/drm_gem_slice_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
+$(eval $(call p3s_test_hdrs,drm_gem_slice_p3s,../kselftest_p3s.h))
