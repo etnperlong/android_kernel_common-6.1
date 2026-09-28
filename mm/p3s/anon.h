@@ -410,17 +410,21 @@ static inline bool p3s_uffd_install_anon_folio(struct vm_area_struct *dst_vma,
 	struct folio *existing_folio =
 		p3s_anon_folio_lookaround_pte(dst_vma, dst_pte, dst_addr);
 	unsigned long offset;
+	void *to, *from;
 
 	if (!existing_folio)
 		return false;
 
 	offset = (unsigned long)vma_slice_offset(dst_vma, dst_addr) << PAGE_SHIFT_4KB;
+	to = folio_address(existing_folio) + offset;
+	from = folio_address(folio) + offset;
 
-	/* The data is replaced below; the old allocation tags must go too */
-	if (dst_vma->vm_flags & VM_MTE)
-		mte_zero_clear_slice_tags(folio_address(existing_folio) + offset);
-	memcpy(folio_address(existing_folio) + offset,
-	       folio_address(folio) + offset, PAGE_SIZE_4KB);
+	/* A source without tags must not retain stale destination tags. */
+	if ((dst_vma->vm_flags & VM_MTE) &&
+	    !(page_mte_tagged(&existing_folio->page) &&
+	      page_mte_tagged(&folio->page)))
+		mte_zero_clear_slice_tags(to);
+	memcpy(to, from, PAGE_SIZE_4KB);
 	flush_dcache_folio(existing_folio);
 
 	/* Order the copy before the PTE, as __folio_mark_uptodate() does */
@@ -826,5 +830,52 @@ static inline void p3s_wp_widen_range(struct folio *old_folio,
 }
 
 #endif /* CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */
+
+#ifdef CONFIG_USERFAULTFD
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+/*
+ * Select the PTEs of a non-exclusive swap entry while both PTLs are held.
+ * Keep the existing full-window contract: partial windows still fall back
+ * to UFFDIO_COPY. The generic move path owns cache lookup, locking and retry.
+ */
+static inline int p3s_uffd_swap_nr(struct vm_area_struct *src_vma,
+				   unsigned long src_addr, unsigned long dst_addr,
+				   unsigned long len, pte_t *src_pte, pte_t *dst_pte,
+				   pte_t orig_pte, struct folio *folio,
+				   swp_entry_t entry)
+{
+	unsigned int i;
+
+	if (pte_swp_exclusive(orig_pte))
+		return 1;
+	if (!IS_ALIGNED(src_addr, PAGE_SIZE_KERNEL) ||
+	    !IS_ALIGNED(dst_addr, PAGE_SIZE_KERNEL) || len < PAGE_SIZE_KERNEL)
+		return -EBUSY;
+	for (i = 0; i < P3S_SLICES_PER_PAGE; i++) {
+		pte_t pte = ptep_get(src_pte + i);
+
+		if (!is_swap_pte(pte) || pte_to_swp_entry(pte).val != entry.val)
+			return -EBUSY;
+		if (!pte_none(ptep_get(dst_pte + i)))
+			return -EEXIST;
+	}
+	if (swp_swapcount(entry) != P3S_SLICES_PER_PAGE ||
+	    (folio && (folio_mapped(folio) || folio_maybe_dma_pinned(folio))))
+		return -EBUSY;
+	return P3S_SLICES_PER_PAGE;
+}
+
+#else
+static inline int p3s_uffd_swap_nr(struct vm_area_struct *src_vma,
+				   unsigned long src_addr, unsigned long dst_addr,
+				   unsigned long len, pte_t *src_pte, pte_t *dst_pte,
+				   pte_t orig_pte, struct folio *folio,
+				   swp_entry_t entry)
+{
+	return 1;
+}
+
+#endif
+#endif
 
 #endif /* __MM_P3S_ANON_H */
