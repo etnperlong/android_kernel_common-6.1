@@ -47,6 +47,7 @@
 #include <linux/namei.h>
 #include <linux/parser.h>
 #include <linux/page_size_compat.h>
+#include <linux/p3s/mm.h>
 #include <linux/sched/clock.h>
 #include <linux/sched/mm.h>
 #include <linux/proc_ns.h>
@@ -6531,7 +6532,7 @@ static void perf_event_init_userpage(struct perf_event *event)
 	/* Allow new userspace to detect that bit 0 is deprecated */
 	userpg->cap_bit0_is_deprecated = 1;
 	userpg->size = offsetof(struct perf_event_mmap_page, __reserved);
-	userpg->data_offset = __PAGE_SIZE;
+	userpg->data_offset = perf_mmap_page_size(rb);
 	userpg->data_size = perf_data_size(rb);
 
 unlock:
@@ -6716,6 +6717,7 @@ typedef void (*mapped_f)(struct perf_event *event, struct mm_struct *mm);
 	f;					\
 })
 
+
 static void perf_mmap_open(struct vm_area_struct *vma)
 {
 	struct perf_event *event = vma->vm_file->private_data;
@@ -6724,7 +6726,7 @@ static void perf_mmap_open(struct vm_area_struct *vma)
 	refcount_inc(&event->mmap_count);
 	refcount_inc(&event->rb->mmap_count);
 
-	if (vma->vm_pgoff)
+	if (rb_has_aux(event->rb) && vma->vm_pgoff == event->rb->aux_pgoff)
 		refcount_inc(&event->rb->aux_mmap_count);
 
 	if (mapped)
@@ -6748,7 +6750,6 @@ static void perf_mmap_close(struct vm_area_struct *vma)
 	struct perf_buffer *rb = ring_buffer_get(event);
 	struct user_struct *mmap_user = rb->mmap_user;
 	int mmap_locked = rb->mmap_locked;
-	unsigned long size = perf_data_size(rb);
 	bool detach_rest = false;
 
 	/* FIXIES vs perf_pmu_unregister() */
@@ -6844,7 +6845,7 @@ again:
 	 * undo the VM accounting.
 	 */
 
-	atomic_long_sub((size >> PAGE_SHIFT) + __PAGE_SIZE / PAGE_SIZE - mmap_locked,
+	atomic_long_sub(data_page_nr(rb) + __PAGE_SIZE / PAGE_SIZE - mmap_locked,
 			&mmap_user->locked_vm);
 	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
 	free_uid(mmap_user);
@@ -6855,8 +6856,12 @@ out_put:
 
 static vm_fault_t perf_mmap_pfn_mkwrite(struct vm_fault *vmf)
 {
-	/* The first page is the user control page, others are read-only. */
-	return vmf->pgoff == 0 ? 0 : VM_FAULT_SIGBUS;
+	/* The process-page metadata area is writable; data and AUX are not. */
+	if (vma_file_offset(vmf->vma) ||
+	    vmf->address >= vmf->vma->vm_start +
+	    mm_pte_size(vmf->vma->vm_mm))
+		return VM_FAULT_SIGBUS;
+	return 0;
 }
 
 static int perf_mmap_may_split(struct vm_area_struct *vma, unsigned long addr)
@@ -6875,11 +6880,15 @@ static const struct vm_operations_struct perf_mmap_vmops = {
 	.may_split	= perf_mmap_may_split,
 };
 
+
 static int map_range(struct perf_buffer *rb, struct vm_area_struct *vma)
 {
 	unsigned long nr_pages = vma_kernel_pages(vma);
 	int err = 0;
 	unsigned long pagenum;
+
+	if (mm_is_p3s_4k(vma->vm_mm) && !vma->vm_pgoff)
+		return perf_map_main_p3s(rb, vma);
 
 	/*
 	 * We map this as a VM_PFNMAP VMA.
@@ -6990,11 +6999,9 @@ static void perf_mmap_account(struct vm_area_struct *vma, long user_extra, long 
 static int perf_mmap_rb(struct vm_area_struct *vma, struct perf_event *event,
 			unsigned long nr_pages)
 {
-	long extra = 0, user_extra = nr_pages;
+	long extra = 0, user_extra = nr_pages + __PAGE_SIZE / PAGE_SIZE;
 	struct perf_buffer *rb;
 	int rb_flags = 0;
-
-	nr_pages -= (__PAGE_SIZE / PAGE_SIZE);
 
 	/*
 	 * If we have rb pages ensure they're a power-of-two number, so we
@@ -7006,7 +7013,8 @@ static int perf_mmap_rb(struct vm_area_struct *vma, struct perf_event *event,
 	WARN_ON_ONCE(event->ctx->parent_ctx);
 
 	if (event->rb) {
-		if (data_page_nr(event->rb) != nr_pages)
+		if (data_page_nr(event->rb) != nr_pages ||
+		    perf_mmap_page_size(event->rb) != perf_mm_page_size(vma->vm_mm))
 			return -EINVAL;
 
 		/*
@@ -7052,6 +7060,7 @@ static int perf_mmap_rb(struct vm_area_struct *vma, struct perf_event *event,
 	refcount_set(&rb->mmap_count, 1);
 	rb->mmap_user = get_current_user();
 	rb->mmap_locked = extra;
+	perf_set_mmap_page_size(rb, perf_mm_page_size(vma->vm_mm));
 
 	ring_buffer_attach(event, rb);
 
@@ -7069,12 +7078,15 @@ static int perf_mmap_aux(struct vm_area_struct *vma, struct perf_event *event,
 			 unsigned long nr_pages)
 {
 	long extra = 0, user_extra = nr_pages;
+	u64 mmap_offset = (u64)vma->vm_pgoff << PAGE_SHIFT;
 	u64 aux_offset, aux_size;
 	struct perf_buffer *rb;
 	int ret, rb_flags = 0;
 
 	rb = event->rb;
 	if (!rb)
+		return -EINVAL;
+	if (perf_mmap_page_size(rb) != perf_mm_page_size(vma->vm_mm))
 		return -EINVAL;
 
 	guard(mutex)(&rb->aux_mutex);
@@ -7087,14 +7099,14 @@ static int perf_mmap_aux(struct vm_area_struct *vma, struct perf_event *event,
 	aux_offset = READ_ONCE(rb->user_page->aux_offset);
 	aux_size = READ_ONCE(rb->user_page->aux_size);
 
-	if (aux_offset < perf_data_size(rb) + PAGE_SIZE)
+	if (aux_offset < perf_data_size(rb) + perf_mmap_page_size(rb))
 		return -EINVAL;
 
-	if (aux_offset != vma->vm_pgoff << PAGE_SHIFT)
+	if (aux_offset != mmap_offset)
 		return -EINVAL;
 
 	/* already mapped with a different offset */
-	if (rb_has_aux(rb) && rb->aux_pgoff != vma->vm_pgoff)
+	if (rb_has_aux(rb) && ((u64)rb->aux_pgoff << PAGE_SHIFT) != aux_offset)
 		return -EINVAL;
 
 	if (aux_size != nr_pages * PAGE_SIZE)
@@ -7145,6 +7157,8 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 {
 	struct perf_event *event = file->private_data;
 	unsigned long vma_size, nr_pages;
+	unsigned long data_size = 0;
+	u64 mmap_offset;
 	mapped_f mapped;
 	int ret;
 
@@ -7167,13 +7181,25 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 		return ret;
 
 	vma_size = vma->vm_end - vma->vm_start;
-	nr_pages = vma_size / PAGE_SIZE;
+	mmap_offset = vma_file_offset(vma);
+	if (!mmap_offset) {
+		unsigned long metadata_size = perf_mm_page_size(vma->vm_mm);
+
+		if (vma_size < metadata_size)
+			return -EINVAL;
+		data_size = vma_size - metadata_size;
+		if (data_size &&
+		    (data_size < PAGE_SIZE || !is_power_of_2(data_size)))
+			return -EINVAL;
+		nr_pages = data_size / PAGE_SIZE;
+	} else {
+		nr_pages = vma_size / PAGE_SIZE;
+		if (!nr_pages || vma_size != PAGE_SIZE * nr_pages)
+			return -EINVAL;
+	}
 
 	if (nr_pages > INT_MAX)
 		return -ENOMEM;
-
-	if (vma_size != PAGE_SIZE * nr_pages)
-		return -EINVAL;
 
 	scoped_guard (mutex, &event->mmap_mutex) {
 		/*
@@ -7184,7 +7210,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 		if (event->state <= PERF_EVENT_STATE_REVOKED)
 			return -ENODEV;
 
-		if (vma->vm_pgoff == 0)
+		if (!mmap_offset)
 			ret = perf_mmap_rb(vma, event, nr_pages);
 		else
 			ret = perf_mmap_aux(vma, event, nr_pages);
