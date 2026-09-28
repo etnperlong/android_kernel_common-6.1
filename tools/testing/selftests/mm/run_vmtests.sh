@@ -567,6 +567,8 @@ CATEGORY="pagemap" run_test ./pagemap_exclusive_p3s
 
 CATEGORY="smaps" run_test ./smaps_pss_p3s
 
+CATEGORY="userfaultfd" run_test ./uffd_move_swap_window_p3s
+
 echo "SUMMARY: PASS=${count_pass} SKIP=${count_skip} FAIL=${count_fail}" | tap_prefix
 echo "1..${count_total}" | tap_output
 
