@@ -15,6 +15,20 @@ static inline void p3s_proc_path(char *path, size_t size, pid_t pid,
 		snprintf(path, size, "/proc/self/%s", file);
 }
 
+/* The pagemap entry of @address in this process. */
+static inline bool p3s_pagemap_entry(const void *address, uint64_t *entry)
+{
+	int fd = open("/proc/self/pagemap", O_RDONLY | O_CLOEXEC);
+	bool ok;
+
+	if (fd < 0)
+		return false;
+	ok = pagemap_read_entry(fd, (uintptr_t)address, getpagesize(), entry);
+	close(fd);
+	return ok;
+}
+
+
 /*
  * Sum of the "@field:" line, in bytes, over every VMA of @pid (0 = self)
  * that overlaps [@address, @address + @length).  False when no VMA matched.
