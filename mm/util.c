@@ -346,16 +346,25 @@ EXPORT_SYMBOL(vma_set_file);
 unsigned long randomize_stack_top(unsigned long stack_top)
 {
 	unsigned long random_variable = 0;
+	unsigned int shift = __PAGE_SHIFT;
+	unsigned long mask = STACK_RND_MASK;
+
+	if (mm_is_p3s_4k(current->mm)) {
+		shift = mm_pte_shift(current->mm);
+		mask = ((mask + 1) << (PAGE_SHIFT_KERNEL - shift)) - 1;
+	}
+	stack_top = mm_is_p3s_4k(current->mm) ?
+		ALIGN(stack_top, mm_pte_size(current->mm)) : __PAGE_ALIGN(stack_top);
 
 	if (current->flags & PF_RANDOMIZE) {
 		random_variable = get_random_long();
-		random_variable &= STACK_RND_MASK;
-		random_variable <<= __PAGE_SHIFT;
+		random_variable &= mask;
+		random_variable <<= shift;
 	}
 #ifdef CONFIG_STACK_GROWSUP
-	return __PAGE_ALIGN(stack_top) + random_variable;
+	return stack_top + random_variable;
 #else
-	return __PAGE_ALIGN(stack_top) - random_variable;
+	return stack_top - random_variable;
 #endif
 }
 
