@@ -116,6 +116,41 @@ p3s_execl(bool compat, const char *argv0, ...)
 	return p3s_execv(compat, (char *const *)argv);
 }
 
+static inline void __noreturn p3s_vexec_or_die(bool compat, const char *argv0,
+					       va_list ap)
+{
+	const char *argv[P3S_MAX_EXEC_ARGS + 1];
+
+	p3s_build_argv(argv, argv0, ap);
+	p3s_execv(compat, (char *const *)argv);
+	ksft_exit_fail_msg("re-exec as a %s process failed: %s\n",
+			   compat ? "4K compat" : "native", strerror(errno));
+}
+
+/*
+ * Re-exec ourselves as a 4K compat process.  The NULL-terminated argument
+ * list follows @argv0, as for execl(); @argv0 may be NULL to reuse the
+ * recorded argv[0].  Never returns.
+ */
+static inline void __noreturn __attribute__((sentinel))
+exec_compat(const char *argv0, ...)
+{
+	va_list ap;
+
+	va_start(ap, argv0);
+	p3s_vexec_or_die(true, argv0, ap);
+}
+
+/* Re-exec ourselves as a native (16K) process.  Never returns. */
+static inline void __noreturn __attribute__((sentinel))
+exec_native(const char *argv0, ...)
+{
+	va_list ap;
+
+	va_start(ap, argv0);
+	p3s_vexec_or_die(false, argv0, ap);
+}
+
 /* Re-exec once; unsupported kernels and architectures are SKIP, not FAIL. */
 static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 {
@@ -145,21 +180,6 @@ static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 	}
 	ksft_exit_fail_msg("P3S re-exec failed: %s\n", strerror(errno));
 #endif
-}
-
-/*
- * The mode of a multi-role test: the first "--flag" argument, or, when
- * @envvar is given and no flag is present, the value of that environment
- * variable.  NULL means a top-level invocation.  Records argv[0].
- */
-static inline const char *p3s_run_mode(int argc, char **argv,
-				       const char *envvar)
-{
-	if (argc > 0 && argv)
-		p3s_argv0 = argv[0];
-	if (argc >= 2 && !strncmp(argv[1], "--", 2))
-		return argv[1];
-	return envvar ? getenv(envvar) : NULL;
 }
 
 /*
@@ -215,6 +235,76 @@ static inline int p3s_geometry_main(int argc, char **argv, int (*run)(void))
 	ksft_print_header();
 	ksft_exit_fail_msg("usage: %s [--native]\n", argv[0]);
 #endif
+}
+
+/*
+ * The mode of a multi-role test: the first "--flag" argument, or, when
+ * @envvar is given and no flag is present, the value of that environment
+ * variable.  NULL means a top-level invocation.  Records argv[0].
+ */
+static inline const char *p3s_run_mode(int argc, char **argv,
+				       const char *envvar)
+{
+	if (argc > 0 && argv)
+		p3s_argv0 = argv[0];
+	if (argc >= 2 && !strncmp(argv[1], "--", 2))
+		return argv[1];
+	return envvar ? getenv(envvar) : NULL;
+}
+
+/* Whole-buffer I/O, retrying short transfers and EINTR. */
+
+static inline bool read_full(int fd, void *buffer, size_t size)
+{
+	unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = read(fd, position, size);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		size -= bytes;
+	}
+	return true;
+}
+
+static inline bool write_full(int fd, const void *buffer, size_t size)
+{
+	const unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = write(fd, position, size);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		size -= bytes;
+	}
+	return true;
+}
+
+static inline bool pwrite_full(int fd, const void *buffer, size_t size,
+			       off_t offset)
+{
+	const unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = pwrite(fd, position, size, offset);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		offset += bytes;
+		size -= bytes;
+	}
+	return true;
 }
 
 #define P3S_COMPAT_MAIN(run_fn)				\
