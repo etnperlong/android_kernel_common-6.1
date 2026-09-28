@@ -17,6 +17,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -41,6 +42,8 @@
 
 /* Mode flag the standard main passes to its 4K compat re-exec. */
 #define P3S_RUN_FLAG			"--run"
+
+#define P3S_MAX_EXEC_ARGS 15
 
 static inline bool p3s_is_compat_process(void)
 {
@@ -72,6 +75,35 @@ static inline int p3s_execv(bool compat, char *const argv[])
 	return execv("/proc/self/exe", argv);
 }
 
+/* Collect the NULL-terminated list after @argv0 into @argv. */
+static inline void p3s_build_argv(const char *argv[P3S_MAX_EXEC_ARGS + 1],
+				  const char *argv0, va_list ap)
+{
+	unsigned int i = 1;
+
+	argv[0] = argv0;
+	while (i < P3S_MAX_EXEC_ARGS &&
+	       (argv[i] = va_arg(ap, const char *)))
+		i++;
+	argv[i] = NULL;
+}
+
+/*
+ * execl()-style re-exec that returns -1 (with errno) on failure, for forked
+ * helpers that must fail quietly rather than bail out of the TAP stream.
+ */
+static inline int __attribute__((sentinel))
+p3s_execl(bool compat, const char *argv0, ...)
+{
+	const char *argv[P3S_MAX_EXEC_ARGS + 1];
+	va_list ap;
+
+	va_start(ap, argv0);
+	p3s_build_argv(argv, argv0, ap);
+	va_end(ap);
+	return p3s_execv(compat, (char *const *)argv);
+}
+
 /* Re-exec once; unsupported kernels and architectures are SKIP, not FAIL. */
 static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 {
@@ -99,6 +131,60 @@ static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 		ksft_exit_skip("P3S personality unavailable: %s\n", strerror(errno));
 	}
 	ksft_exit_fail_msg("P3S re-exec failed: %s\n", strerror(errno));
+#endif
+}
+
+/*
+ * Opt-in entry point for tests with the same assertions in both geometries.
+ * Default to compat; --native selects the 16K control.  Always prove native
+ * 16K exec first: getpagesize() == 4096 alone also matches a native 4K kernel.
+ * Existing single-mode tests keep their current entry point.
+ */
+static inline void __noreturn
+p3s_geometry_exec(bool compat, const char *stage, const char *mode)
+{
+	int error;
+
+	p3s_execl(compat, "/proc/self/exe", stage, mode, NULL);
+	error = errno;
+	ksft_print_header();
+	if (error == EINVAL || error == EPERM)
+		ksft_exit_skip("P3S personality/exec unavailable: %s\n",
+			       strerror(error));
+	ksft_exit_fail_msg("P3S re-exec failed: %s\n", strerror(error));
+}
+
+static inline int p3s_geometry_main(int argc, char **argv, int (*run)(void))
+{
+#ifndef __aarch64__
+	ksft_print_header();
+	ksft_exit_skip("requires arm64 16K native / 4K compat geometry\n");
+#else
+	if (argc == 1 || (argc == 2 && !strcmp(argv[1], "--native")))
+		p3s_geometry_exec(false, "--p3s-native",
+				  argc == 1 ? "compat" : "native");
+	if (argc == 3 && !strcmp(argv[1], "--p3s-native")) {
+		if (getpagesize() != NATIVE_PAGE_SIZE) {
+			ksft_print_header();
+			ksft_exit_skip("native exec does not use 16K pages\n");
+		}
+		if (!strcmp(argv[2], "native"))
+			return run();
+		if (!strcmp(argv[2], "compat"))
+			p3s_geometry_exec(true, "--p3s-compat", NULL);
+	}
+	if (argc == 2 && !strcmp(argv[1], "--p3s-compat")) {
+		int persona = personality(0xffffffffUL);
+
+		if (getpagesize() != PROCESS_PAGE_SIZE || persona < 0 ||
+		    !(persona & ADDR_PAGE_SIZE_4KB)) {
+			ksft_print_header();
+			ksft_exit_skip("4K compat exec is unavailable\n");
+		}
+		return run();
+	}
+	ksft_print_header();
+	ksft_exit_fail_msg("usage: %s [--native]\n", argv[0]);
 #endif
 }
 
