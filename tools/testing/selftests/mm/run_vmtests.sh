@@ -372,6 +372,9 @@ CATEGORY="mmap" run_test ./iommu_dma_mmap_p3s.sh
 CATEGORY="mmap" run_test ./v9fs_mmap_close_p3s.sh
 CATEGORY="mmap" run_p3s_module_test vm_map_pages ./vm_map_pages_p3s
 CATEGORY="mmap" run_p3s_module_test vb2_mmap sh -c './vb2_mmap_p3s --native && exec ./vb2_mmap_p3s'
+CATEGORY="mmap" run_test ./drm_gem_slice_p3s --native
+CATEGORY="mmap" run_test ./drm_gem_slice_p3s
+
 CATEGORY="mmap" run_test ./mmap_hint_p3s
 CATEGORY="mmap" run_test ./brk_aslr_p3s
 CATEGORY="mmap" run_test ./mmap_aslr_p3s
