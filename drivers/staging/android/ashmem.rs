@@ -278,7 +278,15 @@ impl MiscDevice for AshmemMisc {
             bindings::ASHMEM_GET_PROT_MASK => me.get_prot_mask(),
             bindings::ASHMEM_GET_FILE_ID => me.get_file_id(UserSlice::new(arg, size).writer()),
             ASHMEM_PIN | ASHMEM_UNPIN | ASHMEM_GET_PIN_STATUS => {
+<<<<<<< HEAD   (a4d6e7fe12181ef223334da3ce08897a9e74f310 UPSTREAM: landlock: Fix formatting in tsync.c)
                 me.pin_unpin(cmd, UserSlice::new(arg, size).reader())
+||||||| BASE   (cd996fb10878e10b4d68f85d7f4a8178a52df5d7 FROMGIT: usb: gadget: f_midi: fix UAF race during IN request)
+                me.pin_unpin(cmd, UserSlice::new(UserPtr::from_addr(arg), size).reader())
+=======
+                // ASHMEM_GET_PIN_STATUS is _IO(), so _IOC_SIZE(cmd) is 0.
+                let size = core::mem::size_of::<bindings::ashmem_pin>();
+                me.pin_unpin(cmd, UserSlice::new(UserPtr::from_addr(arg), size).reader())
+>>>>>>> CHANGE (cc1c7ff323bdef240dc430508616414a9d65a91a ANDROID: ashmem: Read the pin argument for GET_PIN_STATUS)
             }
             bindings::ASHMEM_PURGE_ALL_CACHES => me.purge_all_caches(),
             _ => Err(ENOTTY),
