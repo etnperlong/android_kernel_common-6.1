@@ -182,21 +182,6 @@ static inline int p3s_compat_main(int argc, char **argv, int (*run)(void))
 }
 
 /*
- * The mode of a multi-role test: the first "--flag" argument, or, when
- * @envvar is given and no flag is present, the value of that environment
- * variable.  NULL means a top-level invocation.  Records argv[0].
- */
-static inline const char *p3s_run_mode(int argc, char **argv,
-				       const char *envvar)
-{
-	if (argc > 0 && argv)
-		p3s_argv0 = argv[0];
-	if (argc >= 2 && !strncmp(argv[1], "--", 2))
-		return argv[1];
-	return envvar ? getenv(envvar) : NULL;
-}
-
-/*
  * Opt-in entry point for tests with the same assertions in both geometries.
  * Default to compat; --native selects the 16K control.  Always prove native
  * 16K exec first: getpagesize() == 4096 alone also matches a native 4K kernel.
@@ -250,6 +235,78 @@ static inline int p3s_geometry_main(int argc, char **argv, int (*run)(void))
 	ksft_print_header();
 	ksft_exit_fail_msg("usage: %s [--native]\n", argv[0]);
 #endif
+}
+
+/*
+ * The mode of a multi-role test: the first "--flag" argument, or, when
+ * @envvar is given and no flag is present, the value of that environment
+ * variable.  NULL means a top-level invocation.  Records argv[0].
+ */
+static inline const char *p3s_run_mode(int argc, char **argv,
+				       const char *envvar)
+{
+	if (argc > 0 && argv)
+		p3s_argv0 = argv[0];
+	if (argc >= 2 && !strncmp(argv[1], "--", 2))
+		return argv[1];
+	return envvar ? getenv(envvar) : NULL;
+}
+
+/* Whole-buffer I/O, retrying short transfers and EINTR. */
+
+static inline bool read_full(int fd, void *buffer, size_t size)
+{
+	unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = read(fd, position, size);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		size -= bytes;
+	}
+	return true;
+}
+
+
+static inline bool write_full(int fd, const void *buffer, size_t size)
+{
+	const unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = write(fd, position, size);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		size -= bytes;
+	}
+	return true;
+}
+
+
+static inline bool pwrite_full(int fd, const void *buffer, size_t size,
+			       off_t offset)
+{
+	const unsigned char *position = buffer;
+
+	while (size) {
+		ssize_t bytes = pwrite(fd, position, size, offset);
+
+		if (bytes < 0 && errno == EINTR)
+			continue;
+		if (bytes <= 0)
+			return false;
+		position += bytes;
+		offset += bytes;
+		size -= bytes;
+	}
+	return true;
 }
 
 #define P3S_COMPAT_MAIN(run_fn)				\
