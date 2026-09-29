@@ -83,6 +83,7 @@ P3S_TESTS := \
 	userfaultfd_remap_p3s userfaultfd_remote_p3s \
 	userfaultfd_shmem_p3s \
 	userfaultfd_unregister_remote_p3s userfaultfd_wp_remote_p3s \
+	uffd_sigbus_anon_p3s \
 	v9fs_mmap_close_p3s vb2_mmap_p3s \
 	vhost_dirty_log_p3s vm_iomap_memory_p3s \
 	vma_range_slice_p3s \
