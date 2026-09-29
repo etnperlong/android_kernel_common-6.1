@@ -82,6 +82,7 @@ elf_core_p3s
 exec_aslr_p3s
 exec_aslr_p3s_helper
 exec_aslr_p3s_interp
+exec_env_p3s
 exec_stack_p3s
 exec_stack_random_p3s
 exec_user_args_p3s
