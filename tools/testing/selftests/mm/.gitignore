@@ -75,6 +75,7 @@ brk_aslr_p3s_sample
 devzero_slice_p3s
 dma_heap_p3s
 dma_mmap_p3s
+dontneed_refault_p3s
 elf_4k_align_p3s
 elf_4k_align_probe
 elf_core_p3s
