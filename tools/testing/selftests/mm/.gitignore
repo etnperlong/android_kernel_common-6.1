@@ -179,6 +179,7 @@ truncate_p3s
 truncate_remote_p3s
 uffd_copy_tuple_p3s
 uffd_move_swap_window_p3s
+uffd_sigbus_anon_p3s
 uprobe_p3s
 userfaultfd_mixed_p3s
 userfaultfd_poison_remote_p3s
