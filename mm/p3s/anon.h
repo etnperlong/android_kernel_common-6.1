@@ -15,6 +15,7 @@
 #include "rmap.h"
 
 #ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+#include <asm/mte.h>
 #include <asm/p3s/mte.h>
 
 /*
@@ -410,17 +411,27 @@ static inline bool p3s_uffd_install_anon_folio(struct vm_area_struct *dst_vma,
 	struct folio *existing_folio =
 		p3s_anon_folio_lookaround_pte(dst_vma, dst_pte, dst_addr);
 	unsigned long offset;
+	void *to, *from;
 
 	if (!existing_folio)
 		return false;
 
 	offset = (unsigned long)vma_slice_offset(dst_vma, dst_addr) << PAGE_SHIFT_4KB;
+	to = folio_address(existing_folio) + offset;
+	from = folio_address(folio) + offset;
 
-	/* The data is replaced below; the old allocation tags must go too */
-	if (dst_vma->vm_flags & VM_MTE)
-		mte_zero_clear_slice_tags(folio_address(existing_folio) + offset);
-	memcpy(folio_address(existing_folio) + offset,
-	       folio_address(folio) + offset, PAGE_SIZE_4KB);
+	/* A source without tags must not retain stale destination tags. */
+	if ((dst_vma->vm_flags & VM_MTE) &&
+	    !(page_mte_tagged(&existing_folio->page) &&
+	      page_mte_tagged(&folio->page)))
+		mte_zero_clear_slice_tags(to);
+	memcpy(to, from, PAGE_SIZE_4KB);
+#ifdef CONFIG_ARM64_MTE
+	if (system_supports_mte() && (dst_vma->vm_flags & VM_MTE) &&
+	    page_mte_tagged(&existing_folio->page) &&
+	    page_mte_tagged(&folio->page))
+		mte_copy_tags_range(to, from, PAGE_SIZE_4KB);
+#endif
 	flush_dcache_folio(existing_folio);
 
 	/* Order the copy before the PTE, as __folio_mark_uptodate() does */
@@ -706,6 +717,27 @@ static inline bool p3s_wp_install_folio_slices(struct folio *new_folio,
 	return true;
 }
 
+/* Reuse a sibling folio when replacing a compat zero-page PTE. */
+static inline bool
+p3s_wp_reuse_zero_folio(struct folio **new_foliop, struct vm_fault *vmf)
+{
+	struct vm_area_struct *vma = vmf->vma;
+	struct folio *existing_folio;
+
+	if (!vma_is_p3s_4k(vma))
+		return false;
+
+	existing_folio = p3s_anon_folio_lookaround_pte(vma, vmf->pte,
+						       vmf->address);
+	if (!existing_folio)
+		return false;
+
+	p3s_anon_folio_zero_slice(existing_folio, vma, vmf->address);
+	folio_put(*new_foliop);
+	*new_foliop = existing_folio;
+	return true;
+}
+
 #else /* !CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */
 
 static inline bool p3s_anon_reuse_sibling_slice(struct vm_fault *vmf,
@@ -776,6 +808,12 @@ static inline void p3s_wp_widen_range(struct folio *old_folio,
 				      struct vm_fault *vmf,
 				      unsigned long *start, unsigned long *end)
 {
+}
+
+static inline bool
+p3s_wp_reuse_zero_folio(struct folio **new_foliop, struct vm_fault *vmf)
+{
+	return false;
 }
 
 #endif /* CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */
