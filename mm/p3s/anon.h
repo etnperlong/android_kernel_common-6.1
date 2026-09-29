@@ -618,8 +618,49 @@ static inline void p3s_wp_widen_range(struct folio *old_folio,
 	*end = first + ((unsigned long)nr_slices << PAGE_SHIFT_4KB);
 }
 
+/* Replace a zero-page PTE with its unused slice of a sibling folio. */
+static inline bool p3s_wp_reuse_zero_folio(struct folio *new_folio,
+					 struct vm_fault *vmf)
+{
+	struct vm_area_struct *vma = vmf->vma;
+	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
+	struct folio *existing_folio;
+	pte_t entry;
+
+	if (!is_zero_pfn(pte_pfn(vmf->orig_pte)))
+		return false;
+
+	existing_folio = p3s_anon_folio_lookaround_pte(vma, vmf->pte,
+						       vmf->address);
+	if (!existing_folio)
+		return false;
+
+	p3s_anon_folio_zero_slice(existing_folio, vma, vmf->address);
+	entry = vma_pte_add_slice(vma, vmf->address,
+				  folio_mk_pte(existing_folio, vma->vm_page_prot));
+	entry = pte_sw_mkyoung(entry);
+	if (unlikely(unshare)) {
+		if (pte_soft_dirty(vmf->orig_pte))
+			entry = pte_mksoft_dirty(entry);
+		if (pte_uffd_wp(vmf->orig_pte))
+			entry = pte_mkuffd_wp(entry);
+	} else {
+		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
+	}
+
+	flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
+	ptep_clear_flush(vma, vmf->address, vmf->pte);
+	folio_add_anon_rmap_pte(existing_folio, &existing_folio->page, vma,
+				vmf->address, RMAP_NONE);
+	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
+	update_mmu_cache_range(vmf, vma, vmf->address, vmf->pte, 1);
+	/* The lookaround reference now belongs to the installed PTE. */
+	folio_put(new_folio);
+	return true;
+}
+
 /*
- * p3s_wp_install_folio_slices - Map a COW copy at every slice of the old folio
+ * p3s_wp_install_folio_slices - Map a COW copy or reuse a zero-page sibling
  * @new_folio: Copy of @old_folio, holding its allocation reference
  * @old_folio: Folio that the faulting PTE maps, or NULL for the zero page
  * @vmf: Fault information; page table lock held, *vmf->pte == vmf->orig_pte
@@ -642,6 +683,10 @@ static inline void p3s_wp_widen_range(struct folio *old_folio,
  * drops. The caller widened its MMU notifier range to the window with
  * p3s_wp_widen_range().
  *
+ * For a zero-page PTE, reuse an unused sibling slice when possible. Its
+ * lookaround reference goes to the PTE through the existing anon-rmap
+ * path, including the per-slice mlock accounting; free the unused copy.
+ *
  * Returns false, having changed nothing, if wp_page_copy() must install
  * only the faulting PTE.
  */
@@ -656,6 +701,8 @@ static inline bool p3s_wp_install_folio_slices(struct folio *new_folio,
 	int mapped_slices;
 	pte_t *pte_base;
 
+	if (!old_folio)
+		return p3s_wp_reuse_zero_folio(new_folio, vmf);
 	if (!p3s_wp_slice_bounds(old_folio, vmf, &nr_slices, &start_addr))
 		return false;
 
