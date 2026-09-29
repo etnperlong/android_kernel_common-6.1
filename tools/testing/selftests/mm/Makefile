@@ -50,7 +50,7 @@ P3S_TESTS := \
 	devzero_slice_p3s \
 	aio_ring_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
 	bpf_map_mmap_p3s bpf_stack_build_id_p3s \
-	dma_heap_p3s dma_mmap_p3s elf_core_p3s \
+	dma_heap_p3s dma_mmap_p3s dontneed_refault_p3s elf_core_p3s \
 	exec_user_args_p3s fadvise_dontneed_p3s fault_in_p3s \
 	file_cow_p3s file_cow_refs_p3s filemap_eof_p3s folio_within_range_p3s \
 	fork_filemap_p3s fork_page_size_p3s \
@@ -280,7 +280,7 @@ $(eval $(call p3s_test_hdrs,pagewalk_p3s,pagewalk_p3s.h))
 $(eval $(call p3s_test_hdrs,vm_map_pages_p3s,vm_map_pages_p3s.h))
 $(foreach t,mincore_p3s mlock_onfault_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),../kselftest_p3s.h)))
-$(foreach t,file_cow_p3s hole_anon_p3s mte_anon_p3s packed_anon_p3s \
+$(foreach t,dontneed_refault_p3s file_cow_p3s hole_anon_p3s mte_anon_p3s packed_anon_p3s \
 	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_swap_window_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),p3s_tuple_test.h)))
 
