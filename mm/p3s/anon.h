@@ -706,6 +706,27 @@ static inline bool p3s_wp_install_folio_slices(struct folio *new_folio,
 	return true;
 }
 
+/* Reuse a sibling folio when replacing a compat zero-page PTE. */
+static inline bool
+p3s_wp_reuse_zero_folio(struct folio **new_foliop, struct vm_fault *vmf)
+{
+	struct vm_area_struct *vma = vmf->vma;
+	struct folio *existing_folio;
+
+	if (!vma_is_p3s_4k(vma))
+		return false;
+
+	existing_folio = p3s_anon_folio_lookaround_pte(vma, vmf->pte,
+						       vmf->address);
+	if (!existing_folio)
+		return false;
+
+	p3s_anon_folio_zero_slice(existing_folio, vma, vmf->address);
+	folio_put(*new_foliop);
+	*new_foliop = existing_folio;
+	return true;
+}
+
 #else /* !CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */
 
 static inline bool p3s_anon_reuse_sibling_slice(struct vm_fault *vmf,
@@ -776,6 +797,12 @@ static inline void p3s_wp_widen_range(struct folio *old_folio,
 				      struct vm_fault *vmf,
 				      unsigned long *start, unsigned long *end)
 {
+}
+
+static inline bool
+p3s_wp_reuse_zero_folio(struct folio **new_foliop, struct vm_fault *vmf)
+{
+	return false;
 }
 
 #endif /* CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */
