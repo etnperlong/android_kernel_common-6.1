@@ -1074,8 +1074,7 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
 		addr = first_iovec_segment(i, &maxsize);
 		if (mm_is_p3s_4k(current->mm))
 			return p3s_iov_iter_extract_pages(i, pages, addr, maxsize,
-							  maxpages, gup_flags,
-							  false, start);
+					maxpages, gup_flags, false, start);
 		*start = addr % PAGE_SIZE;
 		addr &= PAGE_MASK;
 		n = want_pages_array(pages, maxsize, *start, maxpages);
@@ -1753,8 +1752,7 @@ static ssize_t iov_iter_extract_user_pages(struct iov_iter *i,
 	addr = first_iovec_segment(i, &maxsize);
 	if (mm_is_p3s_4k(current->mm))
 		return p3s_iov_iter_extract_pages(i, pages, addr, maxsize,
-						  maxpages, gup_flags, true,
-						  offset0);
+					maxpages, gup_flags, true, offset0);
 	*offset0 = offset = addr % PAGE_SIZE;
 	addr &= PAGE_MASK;
 	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
