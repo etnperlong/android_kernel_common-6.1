@@ -12,6 +12,7 @@
 #include <linux/blk-mq.h>
 #include <linux/blk_types.h>
 #include <linux/blkdev.h>
+#include <linux/completion.h>
 #include <linux/compat.h>
 #include <linux/completion.h>
 #include <linux/cred.h>
@@ -69,6 +70,10 @@ enum {
 	RUST_CONST_HELPER_FMODE_CAN_ODIRECT = FMODE_CAN_ODIRECT,
 };
 
+#ifdef CONFIG_64BIT
+const vm_flags_t RUST_CONST_HELPER_VM_NO_REMAP_FILE_PAGES = VM_NO_REMAP_FILE_PAGES;
+#endif
+
 #ifdef CONFIG_ASHMEM
 #include "../../drivers/staging/android/ashmem.h"
 const size_t RUST_CONST_HELPER_ASHMEM_NAME_PREFIX_LEN = ASHMEM_NAME_PREFIX_LEN;
@@ -83,3 +88,7 @@ const size_t RUST_CONST_HELPER_ASHMEM_FULL_NAME_LEN = ASHMEM_FULL_NAME_LEN;
 #endif
 
 const vm_flags_t RUST_CONST_HELPER_VM_MERGEABLE = VM_MERGEABLE;
+
+#if IS_ENABLED(CONFIG_ANDROID_WRAPFD)
+#include <linux/wrapfd.h>
+#endif
