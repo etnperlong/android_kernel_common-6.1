@@ -124,4 +124,6 @@ config GUEST_DMA_PROXY
 	  into standard dma-buf file descriptors.
 	  Say Y or M here if building a kernel for Microdroid or guest pVMs.
 
+source "drivers/android/wrapfd/Kconfig"
+
 endmenu
