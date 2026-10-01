@@ -65,16 +65,6 @@ static inline void p3s_release_user_pages(struct page **pages, long nr,
 		p3s_release_user_page(pages[i], pin);
 }
 
-static inline long p3s_gup_remote(struct mm_struct *mm, unsigned long start,
-				  unsigned long nr, unsigned int gup_flags,
-				  bool pin, struct page **pages, int *locked)
-{
-	if (pin)
-		return pin_user_pages_remote(mm, start, nr, gup_flags, pages,
-					     locked);
-	return get_user_pages_remote(mm, start, nr, gup_flags, pages, locked);
-}
-
 /*
  * struct p3s_slice_run - Host page vector built from 4KB user pages
  * @pages: The host pages, one reference or pin each
@@ -131,32 +121,32 @@ static inline bool p3s_slice_run_add(struct p3s_slice_run *run,
 /*
  * p3s_slice_run_merge - Append a batch of user pages to a slice run
  * @run: The run so far
- * @mm: mm_struct whose mmap_lock is held
- * @va: Address of the first user page of the batch
- * @slots: The host pages that GUP returned, the unused tail of run->pages
+ * @spans: Physical slice offsets captured with the GUP references
+ * @slots: The host pages that GUP returned
  * @nr: Number of entries in @slots
  * @pin: The pages are pinned rather than referenced
  *
- * Merging only moves entries towards the start of run->pages, so it never
- * overwrites an entry of @slots that it has not read yet.
+ * @maxpages: Capacity of the output host-page vector
  *
  * Return: the number of user pages added, from the start of @slots. The
  * caller drops the rest.
  */
 static inline long p3s_slice_run_merge(struct p3s_slice_run *run,
-				       struct mm_struct *mm, unsigned long va,
-				       struct page **slots, long nr, bool pin)
+				       const struct page_span *spans,
+				       struct page **slots, long nr, bool pin,
+				       unsigned int maxpages)
 {
-	struct vm_area_struct *vma = NULL;
 	long i;
 
-	for (i = 0; i < nr; i++, va += PAGE_SIZE_4KB) {
-		if (!vma || va >= vma->vm_end)
-			vma = vma_lookup(mm, va);
-		if (!vma)
+	for (i = 0; i < nr; i++) {
+		unsigned int slice = spans[i].offset >> PAGE_SHIFT_4KB;
+
+		/* A full vector can still take the rest of its last page. */
+		if (run->nr_pages == maxpages &&
+		    (slots[i] != run->pages[run->nr_pages - 1] ||
+		     slice != run->slice + 1))
 			break;
-		if (!p3s_slice_run_add(run, slots[i],
-				       vma_slice_offset(vma, va), pin))
+		if (!p3s_slice_run_add(run, slots[i], slice, pin))
 			break;
 	}
 	return i;
@@ -174,7 +164,7 @@ static inline long p3s_slice_run_merge(struct p3s_slice_run *run,
  * @offset0: Returns the byte offset of @addr within pages[0]
  *
  * GUP returns one 16KB host page per 4KB user page, and which 4KB slice of
- * that host page a user page maps depends on its VMA. Users of page vectors
+ * that host page a user page maps is captured from the PTE. Users of page vectors
  * instead expect the first byte at *@offset0 in pages[0], and every
  * following page to continue the range from its start. So merge the user
  * pages into a run of consecutive slices (see p3s_slice_run_add()):
@@ -188,8 +178,8 @@ static inline long p3s_slice_run_merge(struct p3s_slice_run *run,
  *
  * The user pages are grabbed in doubling batches, starting with one host
  * page's worth, so that a short run does not cost GUP on the whole range.
- * mmap_lock is held across GUP and the slice lookups so that both see the
- * same mappings.
+ * Each batch captures physical offsets under the same PTE lock as the
+ * acquired references. No later VMA lookup is needed, even after a retry.
  *
  * Return: the number of bytes covered, with DIV_ROUND_UP(*@offset0 + bytes,
  * PAGE_SIZE_KERNEL) pages held in @pages, or a negative error.
@@ -199,6 +189,8 @@ static inline ssize_t p3s_get_user_slice_pages(struct mm_struct *mm,
 		unsigned int gup_flags, bool pin, struct page **pages,
 		size_t *offset0)
 {
+	struct page_span spans[64];
+	struct page *slots[ARRAY_SIZE(spans)];
 	struct p3s_slice_run run = {
 		.pages = pages,
 		.offset = addr & ~PAGE_MASK_4KB,
@@ -206,50 +198,36 @@ static inline ssize_t p3s_get_user_slice_pages(struct mm_struct *mm,
 	unsigned long start = addr & PAGE_MASK_4KB;
 	unsigned long nr = DIV_ROUND_UP(run.offset + maxsize, PAGE_SIZE_4KB);
 	unsigned long batch = P3S_SLICES_PER_PAGE, done = 0;
-	int locked = 0, retries = 0;
 	long ret = 0, used;
 
-	while (done < nr && run.nr_pages < maxpages) {
+	while (done < nr) {
 		unsigned long va = start + done * PAGE_SIZE_4KB;
-		unsigned long avail = maxpages - run.nr_pages;
-		unsigned long chunk = min3(batch, nr - done, avail);
-		struct page **slots = pages + run.nr_pages;
+		unsigned long avail = (unsigned long)(maxpages - run.nr_pages) *
+				      P3S_SLICES_PER_PAGE;
+		unsigned long chunk;
 
-		/* Not locked only before the first batch, with nothing held. */
-		if (!locked) {
-			if (mmap_read_lock_killable(mm))
-				return -EINTR;
-			locked = 1;
-		}
-
-		/* Let faults drop mmap_lock, but retry only a few times. */
-		ret = p3s_gup_remote(mm, va, chunk, gup_flags, pin, slots,
-				     retries < 3 ? &locked : NULL);
-		if (!locked) {
-			/*
-			 * A fault dropped mmap_lock, so the slice lookups would
-			 * not see the mappings GUP saw. Retry the first batch
-			 * under a new lock; after that, return what is merged.
-			 */
-			p3s_release_user_pages(slots, ret, pin);
-			if (done || ret <= 0)
-				break;
-			retries++;
-			continue;
-		}
+		if (run.nr_pages)
+			avail += P3S_SLICE_MASK - run.slice;
+		chunk = min3(batch, nr - done, avail);
+		chunk = min_t(unsigned long, chunk, ARRAY_SIZE(spans));
+		if (!chunk)
+			break;
+		if (pin)
+			ret = pin_user_pages_range(mm, va, chunk * PAGE_SIZE_4KB,
+						   chunk, gup_flags, slots, spans);
+		else
+			ret = get_user_pages_range(mm, va, chunk * PAGE_SIZE_4KB,
+						   chunk, gup_flags, slots, spans);
 		if (ret <= 0)
 			break;
 
-		used = p3s_slice_run_merge(&run, mm, va, slots, ret, pin);
+		used = p3s_slice_run_merge(&run, spans, slots, ret, pin, maxpages);
 		p3s_release_user_pages(slots + used, ret - used, pin);
 		if (used < chunk)
 			break;
 		done += chunk;
-		batch *= 2;
+		batch = min_t(unsigned long, batch * 2, ARRAY_SIZE(spans));
 	}
-	if (locked)
-		mmap_read_unlock(mm);
-
 	if (!run.bytes)
 		return ret < 0 ? ret : -EFAULT;
 	*offset0 = run.offset;
