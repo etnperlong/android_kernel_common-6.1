@@ -92,6 +92,7 @@
 #include "internal.h"
 #include "p3s/anon.h"
 #include "p3s/memory.h"
+#include "p3s/remote_access.h"
 #include "swap.h"
 #include <linux/p3s_user_pages.h>
 
@@ -7017,8 +7018,9 @@ static int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
 		void *maddr;
 		struct folio *folio;
 		struct vm_area_struct *vma = NULL;
-		struct page *page = get_user_page_vma_remote(mm, addr,
-							     gup_flags, &vma);
+		struct page_span span;
+		struct page *page = p3s_get_remote_page(mm, addr, len,
+							 gup_flags, &vma, &span);
 
 		if (IS_ERR(page)) {
 			/* We might need to expand the stack to access it */
@@ -7048,7 +7050,8 @@ static int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
 				break;
 		} else {
 			folio = page_folio(page);
-			vma_remote_access_chunk(vma, addr, len, &offset, &bytes);
+			offset = span.offset;
+			bytes = span.length;
 
 			maddr = kmap_local_folio(folio,
 						 folio_page_idx(folio, page) * PAGE_SIZE_KERNEL);
@@ -7144,7 +7147,9 @@ static int __copy_remote_vm_str(struct mm_struct *mm, unsigned long addr,
 		struct page *page;
 		struct vm_area_struct *vma = NULL;
 
-		page = get_user_page_vma_remote(mm, addr, gup_flags, &vma);
+		struct page_span span;
+
+		page = p3s_get_remote_page(mm, addr, len, gup_flags, &vma, &span);
 		if (IS_ERR(page)) {
 			/*
 			 * Treat as a total failure for now until we decide how
@@ -7157,7 +7162,8 @@ static int __copy_remote_vm_str(struct mm_struct *mm, unsigned long addr,
 		}
 
 		folio = page_folio(page);
-		vma_remote_access_chunk(vma, addr, len, &offset, &bytes);
+		offset = span.offset;
+		bytes = span.length;
 
 		maddr = kmap_local_folio(folio, folio_page_idx(folio, page) * PAGE_SIZE_KERNEL);
 		retval = strscpy(buf, maddr + offset, bytes);
