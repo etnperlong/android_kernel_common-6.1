@@ -945,10 +945,10 @@ static unsigned long vrm_set_new_addr(struct vma_remap_struct *vrm)
 {
 	struct vm_area_struct *vma = vrm->vma;
 	unsigned long map_flags = 0;
-	/* Page Offset _into_ the VMA. */
-	pgoff_t pgoff = vma_pgoff_offset(vma, vrm->addr);
+	pgoff_t pgoff = vma_mmap_pgoff(vma, vrm->addr);
 	unsigned long new_addr = vrm_implies_new_addr(vrm) ? vrm->new_addr : 0;
 	unsigned long res;
+
 
 	if (vrm->flags & MREMAP_FIXED)
 		map_flags |= MAP_FIXED;
@@ -1190,7 +1190,8 @@ static int copy_vma_and_data(struct vma_remap_struct *vrm,
 	int err = 0;
 	PAGETABLE_MOVE(pmc, NULL, NULL, vrm->addr, vrm->new_addr, vrm->old_len);
 
-	new_vma = copy_vma(&vma, vrm->new_addr, vrm->new_len, new_pgoff,
+	new_vma = copy_vma(&vma, vrm->new_addr, vrm->new_len,
+			   new_pgoff,
 			   &pmc.need_rmap_locks);
 	if (!new_vma) {
 		vrm_uncharge(vrm);
