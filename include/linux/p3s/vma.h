@@ -516,6 +516,50 @@ static inline void vma_set_split_offset(struct vm_area_struct *target,
 }
 
 /*
+ * copy_vma_slice_off - Slice offset of a VMA duplicated by mremap()
+ * @vma: Original source VMA
+ * @old_addr: Starting virtual address in the source VMA
+ * @addr: Starting virtual address of the duplicate
+ * @faulted_in_anon_vma: Whether source VMA had faulted anon_vma
+ */
+static inline unsigned short copy_vma_slice_off(const struct vm_area_struct *vma,
+						unsigned long old_addr,
+						unsigned long addr,
+						bool faulted_in_anon_vma)
+{
+	if (vma->vm_file || vma->vm_ops)
+		return vma_slice_offset(vma, old_addr);
+	if (faulted_in_anon_vma)
+		return vma_slice_offset(vma, addr);
+	return 0;
+}
+
+/*
+ * copy_vma_set_range - Set range and slice offset for duplicated VMA
+ * @new_vma: Duplicated target VMA
+ * @vma: Original source VMA
+ * @old_addr: Starting virtual address in the source VMA
+ * @addr: Starting virtual address
+ * @len: Length of range
+ * @pgoff: Page offset
+ * @faulted_in_anon_vma: Whether source VMA had faulted anon_vma
+ */
+static inline void copy_vma_set_range(struct vm_area_struct *new_vma,
+				      const struct vm_area_struct *vma,
+				      unsigned long old_addr,
+				      unsigned long addr, unsigned long len,
+				      pgoff_t pgoff, bool faulted_in_anon_vma)
+{
+	unsigned short slice_off = copy_vma_slice_off(vma, old_addr, addr,
+						      faulted_in_anon_vma);
+
+	new_vma->vm_start = addr;
+	new_vma->vm_end = addr + len;
+	new_vma->vm_pgoff = pgoff;
+	vma_set_slice_off(new_vma, slice_off);
+}
+
+/*
  * p3s_adjust_unmapped_area_info - Align unmapped area allocations to host page
  * @info: Pointer to struct vm_unmapped_area_info
  *
