@@ -83,7 +83,7 @@ PPPS_TESTS := \
 	userfaultfd_shmem_ppps \
 	userfaultfd_unregister_remote_ppps userfaultfd_wp_remote_ppps \
 	uffd_sigbus_anon_ppps \
-	v9fs_mmap_close_ppps vb2_mmap_ppps \
+	v9fs_mmap_close_ppps vb2_mmap_ppps vb2_userptr_reject_ppps \
 	vhost_dirty_log_ppps vm_iomap_memory_ppps \
 	vma_range_slice_ppps \
 	vm_map_pages_ppps vmalloc_align_ppps xdp_umem_ppps xdp_umem_race_ppps
@@ -324,6 +324,7 @@ $(OUTPUT)/taskstats_ppps: CFLAGS += -Wunreachable-code -U_FORTIFY_SOURCE
 $(OUTPUT)/taskstats_ppps: CFLAGS += -I$(selfdir)
 
 $(OUTPUT)/vb2_mmap_ppps: LDFLAGS += -Wl,-z,max-page-size=16384
+$(OUTPUT)/vb2_userptr_reject_ppps: LDFLAGS += -Wl,-z,max-page-size=16384
 $(OUTPUT)/anon_vma_name_ppps $(OUTPUT)/iov_iter_ppps \
 $(OUTPUT)/mremap_pgoff_ppps: LDFLAGS += -pie -Wl,-z,max-page-size=16384
 $(OUTPUT)/pagemap_ioctl \
@@ -380,4 +381,3 @@ clean_page_frag_module:
 	+$(MAKE) -C page_frag KDIR=$(KDIR) clean
 clean: clean_page_frag_module
 endif
-
