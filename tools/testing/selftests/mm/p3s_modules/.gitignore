@@ -12,6 +12,7 @@ mremap_pgoff_p3s_module
 pagewalk_p3s_module
 remap_pfn_cow_p3s_module
 vb2_mmap_p3s_module
+vb2_userptr_reject_p3s_module
 vm_iomap_memory_p3s_module
 vm_iomap_unaligned_p3s_module
 vm_map_pages_p3s_module
