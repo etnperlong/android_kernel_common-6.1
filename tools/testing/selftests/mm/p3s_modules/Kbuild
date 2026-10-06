@@ -20,6 +20,7 @@ obj-m += mmu_notifier_p3s_module.o
 endif
 ifneq ($(CONFIG_VIDEOBUF2_VMALLOC),)
 obj-m += vb2_mmap_p3s_module.o
+obj-m += vb2_userptr_reject_p3s_module.o
 endif
 obj-m += anon_exclusive_probe_p3s_module.o
 obj-m += vmalloc_align_p3s_module.o
