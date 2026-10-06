@@ -84,7 +84,7 @@ P3S_TESTS := \
 	userfaultfd_shmem_p3s \
 	userfaultfd_unregister_remote_p3s userfaultfd_wp_remote_p3s \
 	uffd_sigbus_anon_p3s \
-	v9fs_mmap_close_p3s vb2_mmap_p3s \
+	v9fs_mmap_close_p3s vb2_mmap_p3s vb2_userptr_reject_p3s \
 	vhost_dirty_log_p3s vm_iomap_memory_p3s \
 	vma_range_slice_p3s \
 	vm_map_pages_p3s vmalloc_align_p3s xdp_umem_p3s xdp_umem_race_p3s
@@ -327,6 +327,7 @@ $(OUTPUT)/taskstats_p3s: CFLAGS += -Wunreachable-code -U_FORTIFY_SOURCE
 $(OUTPUT)/taskstats_p3s: CFLAGS += -I$(selfdir)
 
 $(OUTPUT)/vb2_mmap_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
+$(OUTPUT)/vb2_userptr_reject_p3s: LDFLAGS += -Wl,-z,max-page-size=16384
 $(OUTPUT)/anon_vma_name_p3s $(OUTPUT)/iov_iter_p3s \
 $(OUTPUT)/mremap_pgoff_p3s: LDFLAGS += -pie -Wl,-z,max-page-size=16384
 $(OUTPUT)/pagemap_ioctl \
@@ -383,4 +384,3 @@ clean_page_frag_module:
 	+$(MAKE) -C page_frag KDIR=$(KDIR) clean
 clean: clean_page_frag_module
 endif
-
