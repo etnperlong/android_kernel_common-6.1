@@ -84,7 +84,7 @@ P3S_TESTS := \
 	userfaultfd_shmem_p3s \
 	userfaultfd_unregister_remote_p3s userfaultfd_wp_remote_p3s \
 	uffd_sigbus_anon_p3s \
-	v9fs_mmap_close_p3s vb2_mmap_p3s \
+	v9fs_mmap_close_p3s vb2_mmap_p3s vb2_userptr_reject_p3s \
 	vhost_dirty_log_p3s vm_iomap_memory_p3s \
 	vma_range_slice_p3s \
 	vm_map_pages_p3s vmalloc_align_p3s xdp_umem_p3s xdp_umem_race_p3s
@@ -240,10 +240,11 @@ $(P3S_MM_TARGETS): ../kselftest_p3s.h
 $(OUTPUT)/elf_core_p3s: LOCAL_HDRS += iov_iter_p3s.h
 $(OUTPUT)/elf_core_p3s: iov_iter_p3s.h
 P3S_16K_LINK_TARGETS := \
-	bpf_stack_build_id_p3s elf_core_p3s vb2_mmap_p3s anon_vma_name_p3s \
-	iov_iter_p3s mremap_pgoff_p3s pagemap_ioctl pagemap_ioctl_p3s \
-	pagemap_scan_p3s process_madvise_p3s exec_aslr_p3s fork_filemap_p3s \
-	io_uring_mmap_p3s munmap_p3s ashmem_p3s
+	bpf_stack_build_id_p3s elf_core_p3s vb2_mmap_p3s \
+	vb2_userptr_reject_p3s anon_vma_name_p3s iov_iter_p3s \
+	mremap_pgoff_p3s pagemap_ioctl pagemap_ioctl_p3s pagemap_scan_p3s \
+	process_madvise_p3s exec_aslr_p3s fork_filemap_p3s io_uring_mmap_p3s \
+	munmap_p3s ashmem_p3s
 $(addprefix $(OUTPUT)/,$(P3S_16K_LINK_TARGETS)): LDFLAGS += -Wl,-z,max-page-size=16384
 
 $(OUTPUT)/brk_aslr_p3s_sample: brk_aslr_p3s_sample.S
@@ -397,4 +398,3 @@ clean_page_frag_module:
 	+$(MAKE) -C page_frag KDIR=$(KDIR) clean
 clean: clean_page_frag_module
 endif
-
