@@ -192,6 +192,7 @@ userfaultfd_unregister_remote_p3s
 userfaultfd_wp_remote_p3s
 v9fs_mmap_close_p3s
 vb2_mmap_p3s
+vb2_userptr_reject_p3s
 vhost_dirty_log_p3s
 vm_iomap_memory_p3s
 vm_map_pages_p3s
