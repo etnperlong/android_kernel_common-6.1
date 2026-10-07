@@ -180,6 +180,7 @@ swap_pss_p3s
 swap_slice_mremap_p3s
 swap_vma_readahead_p3s
 swapoff_p3s
+swapoff_shared_slice_p3s
 sysv_shm_lock_p3s
 sysv_shm_p3s
 taskstats_p3s
