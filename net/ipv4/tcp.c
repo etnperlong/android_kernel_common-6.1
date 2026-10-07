@@ -250,6 +250,7 @@
 #include <linux/types.h>
 #include <linux/fcntl.h>
 #include <linux/poll.h>
+#include <linux/p3s/mm.h>
 #include <linux/inet_diag.h>
 #include <linux/init.h>
 #include <linux/fs.h>
@@ -1847,6 +1848,9 @@ static const struct vm_operations_struct tcp_vm_ops = {
 int tcp_mmap(struct file *file, struct socket *sock,
 	     struct vm_area_struct *vma)
 {
+	if (p3s_4k_unsupported(vma->vm_mm))
+		return -EOPNOTSUPP;
+
 	if (vma->vm_flags & (VM_WRITE | VM_EXEC))
 		return -EPERM;
 	vm_flags_clear(vma, VM_MAYWRITE | VM_MAYEXEC);
