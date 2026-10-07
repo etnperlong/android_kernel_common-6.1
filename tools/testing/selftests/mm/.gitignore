@@ -151,6 +151,7 @@ process_vm_access_p3s
 remap_file_pages_p3s
 remap_pfn_cow_p3s
 remap_pfn_range_p3s
+remote_write_dontneed_p3s
 rmap_file_referenced_p3s
 rss_stat_trace_p3s
 rusage_p3s
