@@ -48,6 +48,7 @@ CFLAGS += -U_FORTIFY_SOURCE
 # it from the modules in p3s_modules/, loaded by ../p3s/p3s_run_module.sh.
 P3S_TESTS := \
 	devzero_slice_p3s \
+	access_phys_p3s \
 	aio_ring_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
 	bpf_array_mmap_p3s bpf_ringbuf_mmap_p3s bpf_stack_build_id_p3s \
 	btf_vmlinux_mmap_p3s \
