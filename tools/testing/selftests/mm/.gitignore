@@ -210,6 +210,7 @@ vma_merge_file_slice_p3s
 vma_merge_next_pgoff_p3s
 vma_range_slice_p3s
 vmalloc_align_p3s
+vmsplice_slice_p3s
 xdp_umem_p3s
 xdp_umem_race_p3s
 bpf_map_mmap_p3s
