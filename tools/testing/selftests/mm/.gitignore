@@ -134,6 +134,7 @@ mremap_slice_cow_p3s
 mremap_split_p3s
 msync_offset_p3s
 mte_anon_p3s
+mthp_native_anon_p3s
 munmap_p3s
 oom_anon_score_p3s
 oom_score_p3s
