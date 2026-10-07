@@ -195,6 +195,7 @@ vb2_userptr_reject_p3s
 vhost_dirty_log_p3s
 vm_iomap_memory_p3s
 vm_map_pages_p3s
+vma_merge_file_slice_p3s
 vma_merge_next_pgoff_p3s
 vma_range_slice_p3s
 vmalloc_align_p3s
