@@ -87,7 +87,8 @@ P3S_TESTS := \
 	v9fs_mmap_close_p3s vb2_mmap_p3s vb2_userptr_reject_p3s \
 	vhost_dirty_log_p3s vm_iomap_memory_p3s \
 	vma_range_slice_p3s \
-	vm_map_pages_p3s vmalloc_align_p3s xdp_umem_p3s xdp_umem_race_p3s
+	vm_map_pages_p3s vmalloc_align_p3s xdp_umem_p3s xdp_umem_race_p3s \
+	vma_merge_next_pgoff_p3s
 
 P3S_TESTS_arm64 := \
 	brk_aslr_p3s brk_aslr_p3s_sample exec_aslr_p3s \
