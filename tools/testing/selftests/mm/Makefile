@@ -100,6 +100,7 @@ P3S_TESTS := \
 	vhost_dirty_log_p3s vm_iomap_memory_p3s \
 	vma_range_slice_p3s \
 	vm_map_pages_p3s vmalloc_align_p3s xdp_umem_p3s xdp_umem_race_p3s \
+	vmsplice_slice_p3s \
 	vma_merge_file_slice_p3s \
 	vma_merge_next_pgoff_p3s
 
@@ -281,7 +282,7 @@ $(foreach t,dontneed_refault_p3s file_cow_p3s hole_anon_p3s mte_anon_p3s packed_
 	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_retry_p3s \
 	    remote_write_dontneed_p3s anon_rmap_split_window_p3s \
 	    uffd_move_swapped_slice_p3s uffd_move_swapcache_lock_p3s \
-	    swapoff_shared_slice_p3s, \
+	    swapoff_shared_slice_p3s vmsplice_slice_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),p3s_tuple_test.h)))
 
 ifeq ($(ARCH),x86_64)

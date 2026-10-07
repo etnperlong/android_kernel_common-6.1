@@ -422,6 +422,7 @@ CATEGORY="gup_test" run_p3s_module_test iov_iter ./iov_iter_p3s
 CATEGORY="gup_test" run_p3s_module_test iov_iter ./page_range_p3s
 CATEGORY="gup_test" run_p3s_module_test iov_iter ./page_range_p3s --native
 CATEGORY="gup_test" run_p3s_module_test fault_in ./fault_in_p3s
+CATEGORY="gup_test" run_test ./vmsplice_slice_p3s
 CATEGORY="mmap" run_test ./futex_shared_p3s
 CATEGORY="mmap" run_test ./xdp_umem_p3s
 CATEGORY="mmap" run_p3s_module_test xdp_pin_probe ./xdp_umem_race_p3s
