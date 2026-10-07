@@ -286,6 +286,15 @@ run_p3s_module_test() {
 		"/dev/${module}_p3s" -- "$@"
 }
 
+# Like run_p3s_module_test, for a test that needs two fixture modules.
+run_p3s_module2_test() {
+	local module=$1 module2=$2
+	shift 2
+	run_p3s_module_test "$module" "$p3s_runner" \
+		"p3s_modules/${module2}_p3s_module.ko" "/dev/${module2}_p3s" \
+		-- "$@"
+}
+
 echo "TAP version 13" | tap_output
 
 CATEGORY="hugetlb" run_test ./hugepage-mmap
@@ -347,7 +356,7 @@ CATEGORY="mmap" run_test ./mincore_p3s
 CATEGORY="mmap" run_test ./mincore_p3s --native
 CATEGORY="mmap" run_p3s_module_test gup_retry ./mmap_action_cleanup_p3s
 CATEGORY="mmap" run_test ./selinux_status_mmap_p3s.sh
-CATEGORY="mmap" run_p3s_module_test vm_iomap_memory ./vm_iomap_memory_p3s
+CATEGORY="mmap" run_p3s_module2_test vm_iomap_memory vm_iomap_unaligned ./vm_iomap_memory_p3s
 CATEGORY="mmap" run_test ./dma_heap_p3s --native
 CATEGORY="mmap" run_test ./dma_heap_p3s
 CATEGORY="mmap" run_p3s_module_test remap_pfn_cow ./remap_pfn_cow_p3s --native
