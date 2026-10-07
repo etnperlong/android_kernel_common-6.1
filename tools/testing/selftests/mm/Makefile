@@ -69,6 +69,7 @@ P3S_TESTS := \
 	mmap_action_cleanup_p3s mmap_hint_p3s mmap_page_zero_p3s \
 	mmu_notifier_p3s mremap_commit_p3s mremap_file_slice_p3s mremap_hint_p3s mremap_split_p3s \
 	mremap_pgoff_p3s mremap_rlimit_p3s msync_offset_p3s munmap_p3s \
+	mthp_native_anon_p3s \
 	oom_anon_score_p3s oom_score_p3s oom_trace_p3s packed_anon_p3s \
 	packed_swap_p3s page_range_p3s  pagemap_ioctl_p3s pagemap_scan_p3s pagewalk_p3s pci_mmap_p3s \
 	perf_mmap_offset_p3s  perf_phys_addr_p3s \
