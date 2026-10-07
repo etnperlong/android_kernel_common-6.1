@@ -172,6 +172,7 @@ smaps_pss_p3s
 stack_aslr_p3s
 stack_guard_gap_p3s
 statm_cross_geometry_p3s
+swap_header_badpages_p3s
 swap_header_p3s
 swap_pss_p3s
 swap_slice_mremap_p3s
