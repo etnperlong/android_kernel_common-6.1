@@ -71,6 +71,7 @@ P3S_TESTS := \
 	print_vma_addr_p3s proc_pagewalk_p3s process_madvise_p3s \
 	process_mrelease_p3s process_vm_access_p3s remap_file_pages_p3s \
 	remap_pfn_cow_p3s remap_pfn_range_p3s rmap_file_referenced_p3s rss_stat_trace_p3s \
+	remote_write_dontneed_p3s \
 	rusage_p3s selinux_status_mmap_p3s \
 	shmem_mmap_offset_p3s \
 	shmem_quota_p3s shmem_swap_usage_p3s smaps_native_fallback_p3s smaps_page_size_p3s \
@@ -265,7 +266,8 @@ $(eval $(call p3s_test_hdrs,vm_map_pages_p3s,vm_map_pages_p3s.h))
 $(foreach t,mincore_p3s mlock_onfault_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),../kselftest_p3s.h)))
 $(foreach t,dontneed_refault_p3s file_cow_p3s hole_anon_p3s mte_anon_p3s packed_anon_p3s \
-	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_retry_p3s, \
+	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_retry_p3s \
+	    remote_write_dontneed_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),p3s_tuple_test.h)))
 
 ifeq ($(ARCH),x86_64)
