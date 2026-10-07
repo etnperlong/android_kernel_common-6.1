@@ -50,6 +50,7 @@ P3S_TESTS := \
 	devzero_slice_p3s \
 	access_phys_p3s \
 	aio_ring_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
+	anon_rmap_split_window_p3s \
 	bpf_array_mmap_p3s bpf_ringbuf_mmap_p3s bpf_stack_build_id_p3s \
 	btf_vmlinux_mmap_p3s \
 	dma_heap_p3s dma_mmap_p3s dontneed_refault_p3s elf_core_p3s exec_env_p3s \
@@ -272,7 +273,7 @@ $(foreach t,mincore_p3s mlock_onfault_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),../kselftest_p3s.h)))
 $(foreach t,dontneed_refault_p3s file_cow_p3s hole_anon_p3s mte_anon_p3s packed_anon_p3s \
 	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_retry_p3s \
-	    remote_write_dontneed_p3s, \
+	    remote_write_dontneed_p3s anon_rmap_split_window_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),p3s_tuple_test.h)))
 
 ifeq ($(ARCH),x86_64)
