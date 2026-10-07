@@ -72,6 +72,7 @@ bpf_remote_access_p3s
 bpf_stack_build_id_p3s
 brk_aslr_p3s
 brk_aslr_p3s_sample
+btf_vmlinux_mmap_p3s
 devzero_slice_p3s
 dma_heap_p3s
 dma_mmap_p3s
