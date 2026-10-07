@@ -350,6 +350,7 @@ CATEGORY="mmap" run_test ./anon_pageout_p3s
 CATEGORY="mmap" run_test ./madvise_free_p3s
 CATEGORY="mmap" run_test ./madvise_guard_p3s
 CATEGORY="mmap" run_test ./thp_mmap_offset_p3s
+CATEGORY="mmap" run_test ./mthp_native_anon_p3s
 CATEGORY="mmap" run_test ./shmem_mmap_offset_p3s
 CATEGORY="mmap" run_test ./memfd_eof_p3s secretmem
 CATEGORY="mmap" run_test ./memfd_eof_p3s shmem
