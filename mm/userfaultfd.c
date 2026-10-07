@@ -1843,6 +1843,11 @@ retry:
 			goto out;
 		}
 
+		if (!p3s_uffd_swap_pte_movable(dst_vma, dst_addr, orig_src_pte)) {
+			ret = -EBUSY;
+			goto out;
+		}
+
 		si = get_swap_device(entry);
 		if (unlikely(!si)) {
 			ret = -EAGAIN;
@@ -2208,12 +2213,6 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
 		goto out_unlock;
 	if (dst_start + len > dst_vma->vm_end)
 		goto out_unlock;
-
-	/* A moved page keeps its slice of the 16KB page */
-	if (vma_slice_offset(src_vma, src_start) !=
-	    vma_slice_offset(dst_vma, dst_start))
-		goto out_unlock;
-
 	err = validate_move_areas(ctx, src_vma, dst_vma);
 	if (err)
 		goto out_unlock;
