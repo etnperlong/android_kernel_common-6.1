@@ -379,6 +379,7 @@ CATEGORY="mmap" run_test ./mmap_page_zero_p3s
 CATEGORY="mmap" run_test ./exec_stack_random_p3s
 CATEGORY="mmap" run_test ./vma_range_slice_p3s
 CATEGORY="mmap" run_test ./vma_merge_next_pgoff_p3s
+CATEGORY="mmap" run_test ./vma_merge_file_slice_p3s
 CATEGORY="mmap" run_test ./stack_aslr_p3s
 CATEGORY="mmap" run_test ./perf_mmap_offset_p3s
 CATEGORY="mmap" run_test ./perf_page_size_p3s
