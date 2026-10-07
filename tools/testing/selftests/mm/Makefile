@@ -85,7 +85,7 @@ P3S_TESTS := \
 	stack_guard_gap_p3s swap_header_p3s swap_pss_p3s swap_vma_readahead_p3s swapoff_p3s \
 	swapoff_shared_slice_p3s \
 	statm_cross_geometry_p3s \
-	swap_header_badpages_p3s \
+	swap_header_badpages_p3s swap_badpages_loop_p3s \
 	sysv_shm_lock_p3s sysv_shm_p3s taskstats_p3s \
 	tcp_zerocopy_align_p3s tcp_zerocopy_reject_p3s thp_mmap_offset_p3s \
 	trace_ring_buffer_mmap_p3s truncate_p3s truncate_remote_p3s \
