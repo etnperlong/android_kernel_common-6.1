@@ -88,6 +88,7 @@ P3S_TESTS := \
 	tcp_zerocopy_align_p3s thp_mmap_offset_p3s \
 	trace_ring_buffer_mmap_p3s truncate_p3s truncate_remote_p3s \
 	userfaultfd_mixed_p3s userfaultfd_poison_remote_p3s uffd_move_swap_window_p3s \
+	uffd_move_swapcache_lock_p3s \
 	uffd_move_swapped_slice_p3s \
 	userfaultfd_remap_p3s userfaultfd_remote_p3s \
 	userfaultfd_shmem_p3s \
@@ -295,7 +296,7 @@ $(foreach t,mincore_p3s mlock_onfault_p3s, \
 $(foreach t,dontneed_refault_p3s file_cow_p3s hole_anon_p3s mte_anon_p3s packed_anon_p3s \
 	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_swap_window_p3s \
 	    remote_write_dontneed_p3s anon_rmap_split_window_p3s \
-	    uffd_move_swapped_slice_p3s, \
+	    uffd_move_swapped_slice_p3s uffd_move_swapcache_lock_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),p3s_tuple_test.h)))
 
 ifeq ($(ARCH),x86_64)
