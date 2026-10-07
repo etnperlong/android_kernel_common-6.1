@@ -4577,20 +4577,17 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
 				unsigned long size)
 {
 	struct vm_struct *area;
+	unsigned long page_size = mm_pte_size(vma->vm_mm);
 	unsigned long off;
 	unsigned long end_index;
-	unsigned long uoff;
 
-	if (check_shl_overflow(pgoff, PAGE_SHIFT, &off))
+	if (check_shl_overflow(pgoff, PAGE_SHIFT_KERNEL, &off))
 		return -EINVAL;
 
-	if (!mm_pte_aligned(vma->vm_mm, uaddr) || !PAGE_ALIGNED(kaddr))
-		return -EINVAL;
+	size = ALIGN(size, page_size);
 
-	uoff = (unsigned long)vma_slice_offset(vma, uaddr) << PAGE_SHIFT_4KB;
-	if (check_add_overflow(size, uoff, &size))
+	if (!mm_pte_aligned(vma->vm_mm, uaddr) || !PAGE_ALIGNED_KERNEL(kaddr))
 		return -EINVAL;
-	size = PAGE_ALIGN(size);
 
 	area = find_vm_area(kaddr);
 	if (!area)
@@ -4608,14 +4605,17 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
 		struct page *page = vmalloc_to_page(kaddr);
 		int ret;
 
-		ret = vm_insert_page(vma, uaddr, page);
+		if (vma_is_p3s_4k(vma))
+			ret = vm_insert_page_slice(vma, uaddr, page,
+				offset_in_page(kaddr) >> PAGE_SHIFT_4KB);
+		else
+			ret = vm_insert_page(vma, uaddr, page);
 		if (ret)
 			return ret;
 
-		uaddr += PAGE_SIZE - uoff;
-		kaddr += PAGE_SIZE;
-		size -= PAGE_SIZE;
-		uoff = 0;
+		uaddr += page_size;
+		kaddr += page_size;
+		size -= page_size;
 	} while (size > 0);
 
 	vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
