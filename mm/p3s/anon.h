@@ -509,6 +509,15 @@ static inline unsigned int p3s_uffd_move_nr_slices(struct vm_area_struct *vma,
 	}
 	return nr;
 }
+
+/* A moved swap PTE must retain the anonymous slice/address phase. */
+static inline bool p3s_uffd_swap_pte_movable(struct vm_area_struct *dst_vma,
+					     unsigned long dst_addr,
+					     pte_t src_pte)
+{
+	return !vma_is_p3s_4k(dst_vma) ||
+	       pte_swp_slice(src_pte) == vma_slice_offset(dst_vma, dst_addr);
+}
 #endif /* CONFIG_USERFAULTFD */
 
 /*
@@ -786,6 +795,13 @@ static inline unsigned int p3s_uffd_move_nr_slices(struct vm_area_struct *vma,
 						   struct folio *folio)
 {
 	return 1;
+}
+
+static inline bool p3s_uffd_swap_pte_movable(struct vm_area_struct *dst_vma,
+					     unsigned long dst_addr,
+					     pte_t src_pte)
+{
+	return true;
 }
 #endif
 
