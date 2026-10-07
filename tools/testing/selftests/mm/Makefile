@@ -83,6 +83,7 @@ P3S_TESTS := \
 	shmem_quota_p3s shmem_swap_usage_p3s smaps_native_fallback_p3s smaps_page_size_p3s \
 	smaps_pss_p3s \
 	stack_guard_gap_p3s swap_header_p3s swap_pss_p3s swap_vma_readahead_p3s swapoff_p3s \
+	swapoff_shared_slice_p3s \
 	statm_cross_geometry_p3s \
 	swap_header_badpages_p3s \
 	sysv_shm_lock_p3s sysv_shm_p3s taskstats_p3s \
@@ -277,7 +278,8 @@ $(foreach t,mincore_p3s mlock_onfault_p3s, \
 $(foreach t,dontneed_refault_p3s file_cow_p3s hole_anon_p3s mte_anon_p3s packed_anon_p3s \
 	    packed_swap_p3s uffd_copy_tuple_p3s uffd_move_retry_p3s \
 	    remote_write_dontneed_p3s anon_rmap_split_window_p3s \
-	    uffd_move_swapped_slice_p3s uffd_move_swapcache_lock_p3s, \
+	    uffd_move_swapped_slice_p3s uffd_move_swapcache_lock_p3s \
+	    swapoff_shared_slice_p3s, \
 	$(eval $(call p3s_test_hdrs,$(t),p3s_tuple_test.h)))
 
 ifeq ($(ARCH),x86_64)
