@@ -65,6 +65,7 @@ rmap
 access_phys_p3s
 aio_ring_p3s
 anon_pageout_p3s
+anon_rmap_split_window_p3s
 anon_vma_name_p3s
 ashmem_p3s
 bpf_remote_access_p3s
