@@ -1862,10 +1862,12 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
 	if (dst_start + len > dst_vma->vm_end)
 		goto out_unlock;
 
-	/* A moved page keeps its slice of the 16KB page */
+	/* Keep the physical slice; let userspace COPY if it cannot move. */
 	if (vma_slice_offset(src_vma, src_start) !=
-	    vma_slice_offset(dst_vma, dst_start))
+	    vma_slice_offset(dst_vma, dst_start)) {
+		err = -EBUSY;
 		goto out_unlock;
+	}
 
 	err = validate_move_areas(ctx, src_vma, dst_vma);
 	if (err)
