@@ -6926,7 +6926,7 @@ retry:
 	if (follow_pfnmap_start(&args))
 		return -EINVAL;
 	prot = args.pgprot;
-	phys_addr = vma_pfnmap_phys(vma, addr, args.pfn);
+	phys_addr = p3s_pfnmap_phys(&args);
 	writable = args.writable;
 	follow_pfnmap_end(&args);
 
@@ -6941,7 +6941,7 @@ retry:
 		goto out_unmap;
 
 	if ((pgprot_val(prot) != pgprot_val(args.pgprot)) ||
-	    (phys_addr != vma_pfnmap_phys(vma, addr, args.pfn)) ||
+	    (phys_addr != p3s_pfnmap_phys(&args)) ||
 	    (writable != args.writable)) {
 		follow_pfnmap_end(&args);
 		iounmap(maddr);
