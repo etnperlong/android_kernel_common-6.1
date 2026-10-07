@@ -88,6 +88,7 @@ P3S_TESTS := \
 	vhost_dirty_log_p3s vm_iomap_memory_p3s \
 	vma_range_slice_p3s \
 	vm_map_pages_p3s vmalloc_align_p3s xdp_umem_p3s xdp_umem_race_p3s \
+	vma_merge_file_slice_p3s \
 	vma_merge_next_pgoff_p3s
 
 P3S_TESTS_arm64 := \
