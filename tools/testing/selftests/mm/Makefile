@@ -75,6 +75,7 @@ P3S_TESTS := \
 	perf_mmap_offset_p3s perf_page_size_p3s perf_phys_addr_p3s \
 	print_vma_addr_p3s proc_pagewalk_p3s process_madvise_p3s \
 	process_mrelease_p3s process_vm_access_p3s remap_file_pages_p3s \
+	procfs_native_rmap_p3s \
 	remap_pfn_cow_p3s remap_pfn_range_p3s rmap_file_referenced_p3s rss_stat_trace_p3s \
 	remote_write_dontneed_p3s \
 	rusage_p3s selinux_status_mmap_p3s \

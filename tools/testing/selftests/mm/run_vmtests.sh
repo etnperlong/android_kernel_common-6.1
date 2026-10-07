@@ -623,6 +623,7 @@ fi
 CATEGORY="pagemap" run_test ./pagemap_ioctl
 CATEGORY="pagemap" run_test ./pagemap_ioctl_p3s
 CATEGORY="pagemap" run_test ./pagemap_scan_p3s
+CATEGORY="pagemap" run_test ./procfs_native_rmap_p3s
 
 CATEGORY="pfnmap" run_test ./pfnmap
 CATEGORY="pfnmap" run_test ./remap_pfn_range_p3s
