@@ -268,6 +268,67 @@ static s64 jit_smod64(s64 dividend, s64 divisor)
 	return dividend - q * divisor;
 }
 
+/* Wrappers for 32-bit and 64-bit eBPF atomic operations */
+static u32 jit_atomic32_fetch_add(u32 val, atomic_t *ptr)
+{
+	return (u32)atomic_fetch_add(val, ptr);
+}
+
+static u32 jit_atomic32_fetch_and(u32 val, atomic_t *ptr)
+{
+	return (u32)atomic_fetch_and(val, ptr);
+}
+
+static u32 jit_atomic32_fetch_or(u32 val, atomic_t *ptr)
+{
+	return (u32)atomic_fetch_or(val, ptr);
+}
+
+static u32 jit_atomic32_fetch_xor(u32 val, atomic_t *ptr)
+{
+	return (u32)atomic_fetch_xor(val, ptr);
+}
+
+static u32 jit_atomic32_xchg(u32 val, atomic_t *ptr)
+{
+	return (u32)atomic_xchg(ptr, val);
+}
+
+static u32 jit_atomic32_cmpxchg(u32 old, u32 new_val, atomic_t *ptr)
+{
+	return (u32)atomic_cmpxchg(ptr, old, new_val);
+}
+
+static u64 jit_atomic64_fetch_add(u64 val, atomic64_t *ptr)
+{
+	return (u64)atomic64_fetch_add(val, ptr);
+}
+
+static u64 jit_atomic64_fetch_and(u64 val, atomic64_t *ptr)
+{
+	return (u64)atomic64_fetch_and(val, ptr);
+}
+
+static u64 jit_atomic64_fetch_or(u64 val, atomic64_t *ptr)
+{
+	return (u64)atomic64_fetch_or(val, ptr);
+}
+
+static u64 jit_atomic64_fetch_xor(u64 val, atomic64_t *ptr)
+{
+	return (u64)atomic64_fetch_xor(val, ptr);
+}
+
+static u64 jit_atomic64_xchg(u64 val, atomic64_t *ptr)
+{
+	return (u64)atomic64_xchg(ptr, val);
+}
+
+static u64 jit_atomic64_cmpxchg(u64 old, atomic64_t *ptr, u64 new_val)
+{
+	return (u64)atomic64_cmpxchg(ptr, old, new_val);
+}
+
 static inline void _emit(int cond, u32 inst, struct jit_ctx *ctx)
 {
 	inst |= (cond << 28);
@@ -1895,7 +1956,114 @@ exit:
 	/* Atomic ops */
 	case BPF_STX | BPF_ATOMIC | BPF_W:
 	case BPF_STX | BPF_ATOMIC | BPF_DW:
-		goto notyet;
+	{
+		const bool is_dw = BPF_SIZE(code) == BPF_DW;
+		u32 fn;
+		s8 rd32;
+
+		switch (imm) {
+		case BPF_ADD:
+		case BPF_ADD | BPF_FETCH:
+			fn = is_dw ? (u32)jit_atomic64_fetch_add :
+				     (u32)jit_atomic32_fetch_add;
+			break;
+		case BPF_AND:
+		case BPF_AND | BPF_FETCH:
+			fn = is_dw ? (u32)jit_atomic64_fetch_and :
+				     (u32)jit_atomic32_fetch_and;
+			break;
+		case BPF_OR:
+		case BPF_OR | BPF_FETCH:
+			fn = is_dw ? (u32)jit_atomic64_fetch_or :
+				     (u32)jit_atomic32_fetch_or;
+			break;
+		case BPF_XOR:
+		case BPF_XOR | BPF_FETCH:
+			fn = is_dw ? (u32)jit_atomic64_fetch_xor :
+				     (u32)jit_atomic32_fetch_xor;
+			break;
+		case BPF_XCHG:
+			fn = is_dw ? (u32)jit_atomic64_xchg :
+				     (u32)jit_atomic32_xchg;
+			break;
+		case BPF_CMPXCHG:
+			fn = is_dw ? (u32)jit_atomic64_cmpxchg :
+				     (u32)jit_atomic32_cmpxchg;
+			break;
+		default:
+			goto notyet;
+		}
+
+		rd32 = arm_bpf_get_reg32(dst_lo, tmp[1], ctx);
+		if (off != 0) {
+			emit_a32_mov_i(tmp[0], off, ctx);
+			emit(ARM_ADD_R(tmp[1], rd32, tmp[0]), ctx);
+		} else if (rd32 != tmp[1]) {
+			emit(ARM_MOV_R(tmp[1], rd32), ctx);
+		}
+
+		if (is_dw) {
+			rs = arm_bpf_get_reg64(src, tmp2, ctx);
+			if (rs != tmp2) {
+				emit(ARM_MOV_R(tmp2[1], rs[1]), ctx);
+				emit(ARM_MOV_R(tmp2[0], rs[0]), ctx);
+			}
+		} else {
+			s8 rs32 = arm_bpf_get_reg32(src_lo, tmp2[1], ctx);
+
+			if (rs32 != tmp2[1])
+				emit(ARM_MOV_R(tmp2[1], rs32), ctx);
+		}
+
+		emit(ARM_PUSH(CALLER_MASK), ctx);
+
+		if (imm == BPF_CMPXCHG) {
+			if (is_dw) {
+				emit(ARM_MOV_R(ARM_R2, tmp[1]), ctx);
+				emit(ARM_PUSH(BIT(tmp2[1]) | BIT(tmp2[0])), ctx);
+			} else {
+				emit(ARM_MOV_R(ARM_R1, tmp2[1]), ctx);
+				emit(ARM_MOV_R(ARM_R2, tmp[1]), ctx);
+			}
+		} else {
+			if (is_dw) {
+				emit(ARM_MOV_R(ARM_R0, tmp2[1]), ctx);
+				emit(ARM_MOV_R(ARM_R1, tmp2[0]), ctx);
+				emit(ARM_MOV_R(ARM_R2, tmp[1]), ctx);
+			} else {
+				emit(ARM_MOV_R(ARM_R0, tmp2[1]), ctx);
+				emit(ARM_MOV_R(ARM_R1, tmp[1]), ctx);
+			}
+		}
+
+		emit_mov_i(ARM_IP, fn, ctx);
+		emit_blx_r(ARM_IP, ctx);
+		if (is_dw && imm == BPF_CMPXCHG)
+			emit(ARM_ADD_I(ARM_SP, ARM_SP, 8), ctx);
+
+		if (imm & BPF_FETCH) {
+			emit(ARM_MOV_R(tmp2[1], ARM_R0), ctx);
+			if (is_dw)
+				emit(ARM_MOV_R(tmp2[0], ARM_R1), ctx);
+			else
+				emit(ARM_MOV_I(tmp2[0], 0), ctx);
+		}
+
+		emit(ARM_POP(CALLER_MASK), ctx);
+
+		if (imm & BPF_FETCH) {
+			const s8 *ret_reg = (imm == BPF_CMPXCHG) ?
+					    bpf2a32[BPF_REG_0] : src;
+			if (is_dw) {
+				arm_bpf_put_reg64(ret_reg, tmp2, ctx);
+			} else {
+				arm_bpf_put_reg32(ret_reg[1], tmp2[1], ctx);
+				if (!ctx->prog->aux->verifier_zext)
+					arm_bpf_put_reg32(ret_reg[0], tmp2[0], ctx);
+			}
+		}
+		break;
+	}
 	/* STX: *(size *)(dst + off) = src */
 	case BPF_STX | BPF_MEM | BPF_W:
 	case BPF_STX | BPF_MEM | BPF_H:

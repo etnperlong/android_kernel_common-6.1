@@ -1693,6 +1693,10 @@ sd_init(struct sched_domain_topology_level *tl,
 		.name			= tl->name,
 	};
 
+#ifndef CONFIG_64BIT
+	cpumask_and(sd_span, cpu_map, tl->mask(tl, cpu));
+#endif
+
 	WARN_ONCE((sd->flags & (SD_SHARE_CPUCAPACITY | SD_ASYM_CPUCAPACITY)) ==
 		  (SD_SHARE_CPUCAPACITY | SD_ASYM_CPUCAPACITY),
 		  "CPU capacity asymmetry not supported on SMT\n");
