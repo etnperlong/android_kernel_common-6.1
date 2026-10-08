@@ -10,7 +10,6 @@ visibility("private")
 
 _COMMON_GKI_MODULES_LIST = [
     # keep sorted
-    "drivers/android/binder/rust_binder.ko",
     "drivers/block/virtio_blk.ko",
     "drivers/block/zram/zram.ko",
     "drivers/bluetooth/btbcm.ko",
@@ -94,11 +93,14 @@ _COMMON_GKI_MODULES_LIST = [
 
 _ARM_GKI_MODULES_LIST = [
     # keep sorted
+    "drivers/hwtracing/coresight/coresight.ko",
+    "drivers/perf/dwc_pcie_pmu.ko",
 ]
 
 _ARM64_GKI_MODULES_LIST = [
     # keep sorted
     "arch/arm64/geniezone/gzvm.ko",
+    "drivers/android/binder/rust_binder.ko",
     "drivers/char/hw_random/cctrng.ko",
     "drivers/hwtracing/coresight/coresight.ko",
     "drivers/hwtracing/coresight/coresight-etm4x.ko",
@@ -114,6 +116,7 @@ _X86_GKI_MODULES_LIST = [
 
 _X86_64_GKI_MODULES_LIST = [
     # keep sorted
+    "drivers/android/binder/rust_binder.ko",
 ]
 
 def _apply(map_each, lst):
