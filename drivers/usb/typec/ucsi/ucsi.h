@@ -4,6 +4,7 @@
 #define __DRIVER_USB_TYPEC_UCSI_H
 
 #include <linux/bitops.h>
+#include <linux/bitmap.h>
 #include <linux/completion.h>
 #include <linux/device.h>
 #include <linux/power_supply.h>
@@ -315,6 +316,33 @@ struct ucsi_cable_property {
 	u8 latency;
 } __packed;
 
+/* Size (in bits) of the GET_CONNECTOR_STATUS response, for status_raw. */
+#define UCSI_GET_CONNECTOR_STATUS_SIZE		152
+
+struct ucsi_bitfield {
+	const u16 version;
+	const u8 offset;
+	const u8 size;
+};
+
+#define UCSI_DECLARE_BITFIELD(_ver_, _offset_, _size_)			\
+(struct ucsi_bitfield) {						\
+	.version = _ver_,						\
+	.offset = _offset_,						\
+	.size = _size_,							\
+}
+
+#define UCSI_DECLARE_BITFIELD_V1_1(_offset_, _size_)			\
+	  UCSI_DECLARE_BITFIELD(UCSI_VERSION_1_1, (_offset_), (_size_))
+#define UCSI_DECLARE_BITFIELD_V1_2(_offset_, _size_)			\
+	  UCSI_DECLARE_BITFIELD(UCSI_VERSION_1_2, (_offset_), (_size_))
+#define UCSI_DECLARE_BITFIELD_V2_0(_offset_, _size_)			\
+	  UCSI_DECLARE_BITFIELD(UCSI_VERSION_2_0, (_offset_), (_size_))
+#define UCSI_DECLARE_BITFIELD_V2_1(_offset_, _size_)			\
+	  UCSI_DECLARE_BITFIELD(UCSI_VERSION_2_1, (_offset_), (_size_))
+#define UCSI_DECLARE_BITFIELD_V3_0(_offset_, _size_)			\
+	  UCSI_DECLARE_BITFIELD(UCSI_VERSION_3_0, (_offset_), (_size_))
+
 /* Data structure filled by PPM in response to GET_CONNECTOR_STATUS command. */
 struct ucsi_connector_status {
 	u16 change;
@@ -357,6 +385,9 @@ struct ucsi_connector_status {
 #define   UCSI_CONSTAT_BC_NOMINAL_CHARGING	1
 #define   UCSI_CONSTAT_BC_SLOW_CHARGING		2
 #define   UCSI_CONSTAT_BC_TRICKLE_CHARGING	3
+#define	  UCSI_CONSTAT_ORIENTATION		UCSI_DECLARE_BITFIELD_V2_0(86, 1)
+#define   UCSI_CONSTAT_ORIENTATION_NORMAL	0
+#define   UCSI_CONSTAT_ORIENTATION_REVERSE	1
 } __packed;
 
 /* -------------------------------------------------------------------------- */
@@ -439,6 +470,14 @@ struct ucsi_connector {
 	struct typec_capability typec_cap;
 
 	struct ucsi_connector_status status;
+	/*
+	 * Raw bitmap of the same GET_CONNECTOR_STATUS response, kept in
+	 * parallel to the legacy "status" struct above so the generic
+	 * UCSI_CONSTAT()/ucsi_bitfield_read() accessors have a real bitmap
+	 * to operate on without reshuffling every existing con->status.*
+	 * call site.
+	 */
+	DECLARE_BITMAP(status_raw, UCSI_GET_CONNECTOR_STATUS_SIZE);
 	struct ucsi_connector_capability cap;
 	struct power_supply *psy;
 	struct power_supply_desc psy_desc;
@@ -460,6 +499,43 @@ struct ucsi_connector {
 	struct usb_pd_identity partner_identity;
 	struct usb_pd_identity cable_identity;
 };
+
+/**
+ * ucsi_bitfield_read - Read a field from UCSI command response
+ * @_map_: UCSI command response
+ * @_field_: The field offset in the response data structure
+ * @_ver_: UCSI version where the field was introduced
+ *
+ * Reads the fields in the command responses by first checking that the field is
+ * valid with the UCSI interface version that is used in the system.
+ * @_ver_ is the minimum UCSI version for the @_field_. If the UCSI interface is
+ * older than @_ver_, a warning is generated.
+ *
+ * Caveats:
+ * - Removed fields are not checked - @_ver_ is just the minimum UCSI version.
+ *
+ * Returns the value of @_field_, or 0 when the UCSI interface is older than
+ * @_ver_.
+ */
+#define ucsi_bitfield_read(_map_, _field_, _ver_)                       \
+({                                                                      \
+        struct ucsi_bitfield f = (_field_);                             \
+        WARN((_ver_) < f.version,                                       \
+        "Access to unsupported field at offset 0x%x (need version %04x)", \
+             f.offset, f.version) ? 0 :                                 \
+        bitmap_read((_map_), f.offset, f.size);                         \
+})
+
+
+/* Helpers to access cached command responses. */
+#define UCSI_CONCAP(_con_, _field_)                                     \
+        ucsi_bitfield_read((_con_)->cap, UCSI_CONCAP_##_field_, (_con_)->ucsi->version)
+
+#define UCSI_CONSTAT(_con_, _field_)                                    \
+        ucsi_bitfield_read((_con_)->status_raw, UCSI_CONSTAT_##_field_, (_con_)->ucsi->version)
+
+/* -------------------------------------------------------------------------- */
+
 
 int ucsi_send_command(struct ucsi *ucsi, u64 command,
 		      void *retval, size_t size);

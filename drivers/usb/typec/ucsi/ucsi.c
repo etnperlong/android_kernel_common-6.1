@@ -27,6 +27,13 @@
  */
 #define UCSI_TIMEOUT_MS		10000
 
+enum vmbus_connect_state {
+        DISCONNECTED,
+        CONNECTING,
+        CONNECTED,
+        DISCONNECTING
+};
+
 /*
  * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
  *
@@ -999,6 +1006,28 @@ static int ucsi_check_connector_capability(struct ucsi_connector *con)
 	return ret;
 }
 
+static void ucsi_orientation(struct ucsi_connector *con)
+{
+	if (con->ucsi->version < UCSI_VERSION_2_0)
+		return;
+
+	if (!(con->status.flags & UCSI_CONSTAT_CONNECTED)) {
+		typec_set_orientation(con->port, TYPEC_ORIENTATION_NONE);
+		return;
+	}
+
+	switch (UCSI_CONSTAT(con, ORIENTATION)) {
+	case UCSI_CONSTAT_ORIENTATION_NORMAL:
+		typec_set_orientation(con->port, TYPEC_ORIENTATION_NORMAL);
+		break;
+	case UCSI_CONSTAT_ORIENTATION_REVERSE:
+		typec_set_orientation(con->port, TYPEC_ORIENTATION_REVERSE);
+		break;
+	default:
+		break;
+	}
+}
+
 static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
 {
 	switch (UCSI_CONSTAT_PWR_OPMODE(con->status.flags)) {
@@ -1136,11 +1165,13 @@ static int ucsi_check_connection(struct ucsi_connector *con)
 	int ret;
 
 	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
-	ret = ucsi_send_command(con->ucsi, command, &con->status, sizeof(con->status));
+	ret = ucsi_send_command(con->ucsi, command, con->status_raw,
+				 BITS_TO_BYTES(UCSI_GET_CONNECTOR_STATUS_SIZE));
 	if (ret < 0) {
 		dev_err(con->ucsi->dev, "GET_CONNECTOR_STATUS failed (%d)\n", ret);
 		return ret;
 	}
+	memcpy(&con->status, con->status_raw, sizeof(con->status));
 
 	if (con->status.flags == prev_flags)
 		return 0;
@@ -1212,14 +1243,15 @@ static void ucsi_handle_connector_change(struct work_struct *work)
 
 	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
 
-	ret = ucsi_send_command_common(ucsi, command, &con->status,
-				       sizeof(con->status), true);
+	ret = ucsi_send_command_common(ucsi, command, con->status_raw,
+				       BITS_TO_BYTES(UCSI_GET_CONNECTOR_STATUS_SIZE), true);
 	if (ret < 0) {
 		dev_err(ucsi->dev, "%s: GET_CONNECTOR_STATUS failed (%d)\n",
 			__func__, ret);
 		clear_bit(EVENT_PENDING, &con->ucsi->flags);
 		goto out_unlock;
 	}
+	memcpy(&con->status, con->status_raw, sizeof(con->status));
 
 	trace_ucsi_connector_change(con->num, &con->status);
 
@@ -1241,6 +1273,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
 		typec_set_pwr_role(con->port, role);
 		ucsi_port_psy_changed(con);
 		ucsi_partner_change(con);
+		ucsi_orientation(con);
 
 		if (con->status.flags & UCSI_CONSTAT_CONNECTED) {
 			ucsi_register_partner(con);
@@ -1599,6 +1632,9 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
 	cap->driver_data = con;
 	cap->ops = &ucsi_ops;
 
+        if (ucsi->version >= UCSI_VERSION_2_0)
+                con->typec_cap.orientation_aware = true;
+
 	if (ucsi->ops->update_connector)
 		ucsi->ops->update_connector(con);
 
@@ -1626,12 +1662,14 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
 
 	/* Get the status */
 	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
-	ret = ucsi_send_command(ucsi, command, &con->status, sizeof(con->status));
+	ret = ucsi_send_command(ucsi, command, con->status_raw,
+				 BITS_TO_BYTES(UCSI_GET_CONNECTOR_STATUS_SIZE));
 	if (ret < 0) {
 		dev_err(ucsi->dev, "con%d: failed to get status\n", con->num);
 		ret = 0;
 		goto out;
 	}
+	memcpy(&con->status, con->status_raw, sizeof(con->status));
 	ret = 0; /* ucsi_send_command() returns length on success */
 
 	if (ucsi->ops->connector_status)
@@ -1659,6 +1697,7 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
 				  !!(con->status.flags & UCSI_CONSTAT_PWR_DIR));
 		ucsi_register_partner(con);
 		ucsi_pwr_opmode_change(con);
+		ucsi_orientation(con);
 		ucsi_port_psy_changed(con);
 		if (con->ucsi->cap.features & UCSI_CAP_GET_PD_MESSAGE)
 			ucsi_get_partner_identity(con);
