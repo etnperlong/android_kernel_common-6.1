@@ -2535,14 +2535,12 @@ static void __init teardown_hyp_mode(void)
 
 static int __init do_pkvm_init(u32 hyp_va_bits)
 {
-	void *per_cpu_base = kvm_ksym_ref(kvm_nvhe_sym(kvm_arm_hyp_percpu_base));
 	int ret;
 
 	preempt_disable();
 	cpu_hyp_init_context();
 	ret = kvm_call_hyp_nvhe(__pkvm_init, hyp_mem_base, hyp_mem_size,
-				num_possible_cpus(), kern_hyp_va(per_cpu_base),
-				hyp_va_bits);
+				num_possible_cpus(), hyp_va_bits);
 	cpu_hyp_init_features();
 
 	/*

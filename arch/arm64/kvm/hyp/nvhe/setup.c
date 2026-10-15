@@ -139,7 +139,6 @@ static int pkvm_create_host_sve_mappings(void)
 }
 
 static int recreate_hyp_mappings(phys_addr_t phys, unsigned long size,
-				 unsigned long *per_cpu_base,
 				 u32 hyp_va_bits)
 {
 	unsigned long pgt_size = hyp_s1_pgtable_pages() << PAGE_SHIFT;
@@ -482,7 +481,7 @@ out:
 }
 
 int __pkvm_init(phys_addr_t phys, unsigned long size, unsigned long nr_cpus,
-		unsigned long *per_cpu_base, u32 hyp_va_bits)
+		u32 hyp_va_bits)
 {
 	struct kvm_nvhe_init_params *params;
 	void *virt = hyp_phys_to_virt(phys);
@@ -501,7 +500,7 @@ int __pkvm_init(phys_addr_t phys, unsigned long size, unsigned long nr_cpus,
 	if (ret)
 		return ret;
 
-	ret = recreate_hyp_mappings(phys, size, per_cpu_base, hyp_va_bits);
+	ret = recreate_hyp_mappings(phys, size, hyp_va_bits);
 	if (ret)
 		return ret;
 
