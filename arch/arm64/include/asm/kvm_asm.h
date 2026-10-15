@@ -9,6 +9,7 @@
 
 #include <asm/hyp_image.h>
 #include <asm/insn.h>
+#include <asm/page.h>
 #include <asm/virt.h>
 #include <asm/sysreg.h>
 
@@ -299,6 +300,19 @@ DECLARE_KVM_HYP_SYM(__kvm_hyp_vector);
 extern unsigned long kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[];
 DECLARE_KVM_NVHE_SYM(__per_cpu_start);
 DECLARE_KVM_NVHE_SYM(__per_cpu_end);
+
+static inline unsigned long hyp_percpu_size(void)
+{
+	return (unsigned long)CHOOSE_NVHE_SYM(__per_cpu_end) -
+		(unsigned long)CHOOSE_NVHE_SYM(__per_cpu_start);
+}
+
+static inline unsigned long hyp_percpu_order(void)
+{
+	unsigned long size = hyp_percpu_size();
+
+	return size ? get_order(size) : 0;
+}
 
 DECLARE_KVM_HYP_SYM(__bp_harden_hyp_vecs);
 #define __bp_harden_hyp_vecs	CHOOSE_HYP_SYM(__bp_harden_hyp_vecs)

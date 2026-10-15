@@ -34,9 +34,6 @@ size_t hyp_kvm_iommu_pages = CONFIG_IOMMU_POOL_PAGES;
 size_t hyp_kvm_iommu_pages;
 #endif
 
-#define hyp_percpu_size ((unsigned long)__per_cpu_end - \
-			 (unsigned long)__per_cpu_start)
-
 u64 hyp_lm_size_mb;
 
 static void *vmemmap_base;
@@ -60,6 +57,12 @@ static int divide_memory_pool(void *virt, unsigned long size)
 	base = hyp_early_alloc_contig(pkvm_hyp_stack_pages());
 	if (!base)
 		return -ENOMEM;
+
+	base = hyp_early_alloc_contig(pkvm_hyp_percpu_pages());
+	if (!base)
+		return -ENOMEM;
+
+	WARN_ON(base != (void *)kern_hyp_va(kvm_arm_hyp_percpu_base[0]));
 
 	nr_pages = pkvm_selftest_pages();
 	selftest_base = hyp_early_zalloc_contig(nr_pages);
@@ -186,12 +189,6 @@ static int recreate_hyp_mappings(phys_addr_t phys, unsigned long size,
 
 	for (i = 0; i < hyp_nr_cpus; i++) {
 		struct kvm_nvhe_init_params *params = per_cpu_ptr(&kvm_init_params, i);
-
-		start = (void *)kern_hyp_va(per_cpu_base[i]);
-		end = start + PAGE_ALIGN(hyp_percpu_size);
-		ret = pkvm_create_mappings(start, end, PAGE_HYP);
-		if (ret)
-			return ret;
 
 		ret = pkvm_create_stack(stack_pa, &params->stack_hyp_va);
 		if (ret)

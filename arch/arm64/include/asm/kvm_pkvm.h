@@ -318,6 +318,17 @@ static inline unsigned long pkvm_hyp_stack_start(void)
 	return (unsigned long)phys_to_virt(hyp_mem_base);
 }
 
+static inline unsigned long pkvm_hyp_percpu_pages(void)
+{
+	/* Allocated from the carveout before num_possible_cpus() */
+	return NR_CPUS * BIT(hyp_percpu_order());
+}
+
+static inline unsigned long pkvm_hyp_percpu_start(void)
+{
+	return pkvm_hyp_stack_start() + (pkvm_hyp_stack_pages() << PAGE_SHIFT);
+}
+
 static inline size_t pkvm_host_sve_state_size(void)
 {
 	if (!system_supports_sve())
