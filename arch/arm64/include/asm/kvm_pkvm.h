@@ -307,6 +307,17 @@ static inline unsigned long hyp_ffa_proxy_pages(void)
 	return num_pages;
 }
 
+static inline unsigned long pkvm_hyp_stack_pages(void)
+{
+	/* Allocated from the carveout before num_possible_cpus() */
+	return NR_CPUS * BIT(NVHE_STACK_SHIFT - PAGE_SHIFT);
+}
+
+static inline unsigned long pkvm_hyp_stack_start(void)
+{
+	return (unsigned long)phys_to_virt(hyp_mem_base);
+}
+
 static inline size_t pkvm_host_sve_state_size(void)
 {
 	if (!system_supports_sve())

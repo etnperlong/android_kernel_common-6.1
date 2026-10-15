@@ -53,8 +53,13 @@ static void *iommu_base;
 static int divide_memory_pool(void *virt, unsigned long size)
 {
 	unsigned long nr_pages;
+	void *base;
 
 	hyp_early_alloc_init(virt, size);
+
+	base = hyp_early_alloc_contig(pkvm_hyp_stack_pages());
+	if (!base)
+		return -ENOMEM;
 
 	nr_pages = pkvm_selftest_pages();
 	selftest_base = hyp_early_zalloc_contig(nr_pages);
@@ -134,8 +139,9 @@ static int recreate_hyp_mappings(phys_addr_t phys, unsigned long size,
 				 unsigned long *per_cpu_base,
 				 u32 hyp_va_bits)
 {
-	void *start, *end, *virt = hyp_phys_to_virt(phys);
 	unsigned long pgt_size = hyp_s1_pgtable_pages() << PAGE_SHIFT;
+	void *start, *end, *virt = hyp_phys_to_virt(phys);
+	phys_addr_t stack_pa = phys;
 	enum kvm_pgtable_prot prot;
 	int ret, i;
 
@@ -187,9 +193,11 @@ static int recreate_hyp_mappings(phys_addr_t phys, unsigned long size,
 		if (ret)
 			return ret;
 
-		ret = pkvm_create_stack(params->stack_pa, &params->stack_hyp_va);
+		ret = pkvm_create_stack(stack_pa, &params->stack_hyp_va);
 		if (ret)
 			return ret;
+
+		stack_pa += NVHE_STACK_SIZE;
 	}
 
 	ret = pkvm_create_host_sve_mappings();
@@ -357,16 +365,6 @@ static int fix_host_ownership(void)
 		u64 start = (u64)hyp_phys_to_virt(reg->base);
 
 		ret = kvm_pgtable_walk(&pkvm_pgtable, start, reg->size, &walker);
-		if (ret)
-			return ret;
-	}
-
-	/* The stacks sit in the private VA range, not the linear map. */
-	for (i = 0; i < hyp_nr_cpus; i++) {
-		struct kvm_nvhe_init_params *params = per_cpu_ptr(&kvm_init_params, i);
-		u64 start = params->stack_hyp_va - NVHE_STACK_SIZE;
-
-		ret = kvm_pgtable_walk(&pkvm_pgtable, start, NVHE_STACK_SIZE, &walker);
 		if (ret)
 			return ret;
 	}

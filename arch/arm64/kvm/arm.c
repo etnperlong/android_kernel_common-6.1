@@ -2359,6 +2359,22 @@ static inline void __init hyp_cpu_pm_exit(void)
 }
 #endif
 
+static unsigned long allocate_hyp_stack(int cpu)
+{
+	if (is_protected_kvm_enabled())
+		return pkvm_hyp_stack_start() + (cpu * NVHE_STACK_SIZE);
+
+	return __get_free_pages(GFP_KERNEL, NVHE_STACK_SHIFT - PAGE_SHIFT);
+}
+
+static void free_hyp_stack(int cpu)
+{
+	if (is_protected_kvm_enabled())
+		return;
+
+	free_pages(per_cpu(kvm_arm_hyp_stack_base, cpu), NVHE_STACK_SHIFT - PAGE_SHIFT);
+}
+
 static void __init init_cpu_logical_map(void)
 {
 	unsigned int cpu;
@@ -2485,7 +2501,7 @@ static void __init teardown_hyp_mode(void)
 		if (per_cpu(kvm_hyp_initialized, cpu))
 			continue;
 
-		free_pages(per_cpu(kvm_arm_hyp_stack_base, cpu), NVHE_STACK_SHIFT - PAGE_SHIFT);
+		free_hyp_stack(cpu);
 
 		if (!kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu])
 			continue;
@@ -2506,10 +2522,6 @@ static int __init do_pkvm_init(u32 hyp_va_bits)
 {
 	void *per_cpu_base = kvm_ksym_ref(kvm_nvhe_sym(kvm_arm_hyp_percpu_base));
 	int ret;
-
-	ret = pkvm_host_stage2_reserve();
-	if (ret)
-		return ret;
 
 	preempt_disable();
 	cpu_hyp_init_context();
@@ -2733,6 +2745,10 @@ static int __init init_hyp_mode(void)
 	if (is_protected_kvm_enabled() && !hyp_mem_base)
 		goto out_err;
 
+	err = pkvm_host_stage2_reserve();
+	if (err)
+		goto out_err;
+
 	/*
 	 * Allocate Hyp PGD and setup Hyp identity mapping
 	 */
@@ -2744,15 +2760,11 @@ static int __init init_hyp_mode(void)
 	 * Allocate stack pages for Hypervisor-mode
 	 */
 	for_each_possible_cpu(cpu) {
-		unsigned long stack_base;
-
-		stack_base = __get_free_pages(GFP_KERNEL, NVHE_STACK_SHIFT - PAGE_SHIFT);
-		if (!stack_base) {
+		per_cpu(kvm_arm_hyp_stack_base, cpu) = allocate_hyp_stack(cpu);
+		if (!per_cpu(kvm_arm_hyp_stack_base, cpu)) {
 			err = -ENOMEM;
 			goto out_err;
 		}
-
-		per_cpu(kvm_arm_hyp_stack_base, cpu) = stack_base;
 	}
 
 	/*
@@ -2835,14 +2847,6 @@ static int __init init_hyp_mode(void)
 			kvm_err("Cannot map hyp stack\n");
 			goto out_err;
 		}
-
-		/*
-		 * Save the stack PA in nvhe_init_params. This will be needed
-		 * to recreate the stack mapping in protected nVHE mode.
-		 * __hyp_pa() won't do the right thing there, since the stack
-		 * has been mapped in the flexible private VA space.
-		 */
-		params->stack_pa = __pa(stack_base);
 	}
 
 	for_each_possible_cpu(cpu) {

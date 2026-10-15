@@ -387,6 +387,7 @@ void __init kvm_hyp_reserve(void)
 		return;
 	}
 
+	hyp_mem_pages += pkvm_hyp_stack_pages();
 	hyp_mem_pages += hyp_s1_pgtable_pages();
 	hyp_mem_pages += host_s2_mmio_pgtable_pages();
 	hyp_mem_pages += hyp_vm_table_pages();
