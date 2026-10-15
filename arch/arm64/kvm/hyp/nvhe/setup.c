@@ -57,22 +57,22 @@ static int divide_memory_pool(void *virt, unsigned long size)
 	hyp_early_alloc_init(virt, size);
 
 	nr_pages = pkvm_selftest_pages();
-	selftest_base = hyp_early_alloc_contig(nr_pages);
+	selftest_base = hyp_early_zalloc_contig(nr_pages);
 	if (nr_pages && !selftest_base)
 		return -ENOMEM;
 
 	nr_pages = hyp_vmemmap_pages(sizeof(struct hyp_page));
-	vmemmap_base = hyp_early_alloc_contig(nr_pages);
+	vmemmap_base = hyp_early_zalloc_contig(nr_pages);
 	if (!vmemmap_base)
 		return -ENOMEM;
 
 	nr_pages = hyp_vm_table_pages();
-	vm_table_base = hyp_early_alloc_contig(nr_pages);
+	vm_table_base = hyp_early_zalloc_contig(nr_pages);
 	if (!vm_table_base)
 		return -ENOMEM;
 
 	nr_pages = hyp_s1_pgtable_pages();
-	hyp_pgt_base = hyp_early_alloc_contig(nr_pages);
+	hyp_pgt_base = hyp_early_zalloc_contig(nr_pages);
 	if (!hyp_pgt_base)
 		return -ENOMEM;
 
@@ -80,27 +80,27 @@ static int divide_memory_pool(void *virt, unsigned long size)
 	if (host_s2_cma_size) {
 		host_s2_pgt_base = hyp_phys_to_virt(host_s2_cma_base);
 	} else {
-		host_s2_pgt_base = hyp_early_alloc_contig(nr_pages);
+		host_s2_pgt_base = hyp_early_zalloc_contig(nr_pages);
 		if (!host_s2_pgt_base)
 			return -ENOMEM;
 	}
 
 	nr_pages = host_s2_mmio_pgtable_pages();
-	host_s2_mmio_base = hyp_early_alloc_contig(nr_pages);
+	host_s2_mmio_base = hyp_early_zalloc_contig(nr_pages);
 	if (!host_s2_mmio_base)
 		return -ENOMEM;
 
 	nr_pages = hyp_ffa_proxy_pages();
-	ffa_proxy_pages = hyp_early_alloc_contig(nr_pages);
+	ffa_proxy_pages = hyp_early_zalloc_contig(nr_pages);
 	if (!ffa_proxy_pages)
 		return -ENOMEM;
 
-	hyp_ppages = hyp_early_alloc_contig(1);
+	hyp_ppages = hyp_early_zalloc_contig(1);
 	if (!hyp_ppages)
 		return -ENOMEM;
 
 	if (hyp_kvm_iommu_pages) {
-		iommu_base = hyp_early_alloc_contig(hyp_kvm_iommu_pages);
+		iommu_base = hyp_early_zalloc_contig(hyp_kvm_iommu_pages);
 		if (!iommu_base)
 			return -ENOMEM;
 	}

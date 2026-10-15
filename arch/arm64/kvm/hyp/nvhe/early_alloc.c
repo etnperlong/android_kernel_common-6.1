@@ -33,14 +33,25 @@ void *hyp_early_alloc_contig(unsigned int nr_pages)
 		return NULL;
 
 	cur += size;
-	memset(ret, 0, size);
 
 	return ret;
 }
 
-void *hyp_early_alloc_page(void *arg)
+void *hyp_early_zalloc_contig(unsigned int nr_pages)
 {
-	return hyp_early_alloc_contig(1);
+	void *ret = hyp_early_alloc_contig(nr_pages);
+
+	if (!ret)
+		return NULL;
+
+	memset(ret, 0, nr_pages << PAGE_SHIFT);
+
+	return ret;
+}
+
+void *hyp_early_zalloc_page(void *arg)
+{
+	return hyp_early_zalloc_contig(1);
 }
 
 static void hyp_early_alloc_get_page(void *addr) { }
@@ -51,7 +62,7 @@ void hyp_early_alloc_init(void *virt, unsigned long size)
 	base = cur = (unsigned long)virt;
 	end = base + size;
 
-	hyp_early_alloc_mm_ops.zalloc_page = hyp_early_alloc_page;
+	hyp_early_alloc_mm_ops.zalloc_page = hyp_early_zalloc_page;
 	hyp_early_alloc_mm_ops.phys_to_virt = hyp_phys_to_virt;
 	hyp_early_alloc_mm_ops.virt_to_phys = hyp_virt_to_phys;
 	hyp_early_alloc_mm_ops.get_page = hyp_early_alloc_get_page;
