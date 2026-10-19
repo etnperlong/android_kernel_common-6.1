@@ -4005,6 +4005,8 @@ struct ieee80211_prep_tx_info {
 	int link_id;
 };
 
+struct apf_info;
+
 /**
  * struct ieee80211_ops - callbacks from mac80211 to the driver
  *
@@ -4668,6 +4670,19 @@ struct ieee80211_prep_tx_info {
  *      interface with the specified type would be added, and thus drivers that
  *      implement this callback need to handle such cases. The type is the full
  *      &enum nl80211_iftype.
+ * @apf_get_info: Query APF capabilities and version information.
+ * @apf_set_id: Set chip-level APF instance identifier.
+ * @apf_enable: Allocate and enable per-interface APF state.
+ * @apf_get_ram_size: Query allocated APF RAM size for the vif.
+ * @apf_write: Write buffer at a byte offset into APF RAM (offset -1 installs program).
+ * @apf_read: Read buffer at a non-negative byte offset from APF RAM.
+ * @apf_disable: Disable and free per-interface APF state.
+ * @apf_run_filter: Run APF packet filter on incoming rx skb. Returns non-zero to pass, 0 to drop.
+ * @apf_fast_path: Configure hardware/driver APF fast path filtering parameters.
+ *	The APF callbacks other than @apf_run_filter are called from net-apf with
+ *	the netdev instance lock held but not the wiphy mutex, may sleep, and may
+ *	race with @remove_interface. @apf_run_filter is called on RX and must not
+ *	sleep.
  */
 struct ieee80211_ops {
 	void (*tx)(struct ieee80211_hw *hw,
@@ -4715,6 +4730,31 @@ struct ieee80211_ops {
 				    struct ieee80211_vif *vif,
 				    unsigned int filter_flags,
 				    unsigned int changed_flags);
+#if IS_ENABLED(CONFIG_NET_APF)
+	int (*apf_get_info)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			    struct netlink_ext_ack *extack,
+			    struct apf_info *info);
+	int (*apf_set_id)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			  struct netlink_ext_ack *extack, u32 chip_id);
+	int (*apf_enable)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			  struct netlink_ext_ack *extack, u32 ram_size);
+	int (*apf_get_ram_size)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+				struct netlink_ext_ack *extack);
+	int (*apf_write)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			 struct netlink_ext_ack *extack,
+			 s32 offset, const u8 *buf, u32 len);
+	int (*apf_read)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			struct netlink_ext_ack *extack,
+			u32 offset, u8 *buf, u32 len);
+	int (*apf_disable)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			   struct netlink_ext_ack *extack);
+	int (*apf_run_filter)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			      struct sk_buff *skb, struct net_device *dev);
+	int (*apf_fast_path)(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+			     struct netlink_ext_ack *extack,
+			     const u8 ucast_mac[ETH_ALEN], s16 vlan_tag,
+			     __be32 ucast_addr4, bool enable_ipv6_fastpath);
+#endif
 	int (*set_tim)(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
 		       bool set);
 	int (*set_key)(struct ieee80211_hw *hw, enum set_key_cmd cmd,
