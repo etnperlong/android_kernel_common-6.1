@@ -171,6 +171,59 @@ impl DmaBuf {
 
         f(opt_name)
     }
+
+    /// Prepares the DMA-BUF for CPU access.
+    ///
+    /// After the CPU access is complete, the caller should call [`Self::end_cpu_access`].
+    pub fn begin_cpu_access(&self, dir: DataDirection) -> Result {
+        // SAFETY: `self.as_ptr()` is a valid `dma_buf` pointer by the type invariants.
+        to_result(unsafe { bindings::dma_buf_begin_cpu_access(self.as_ptr(), dir.into()) })
+    }
+
+    /// Completes CPU access to the DMA-BUF started with [`Self::begin_cpu_access`].
+    pub fn end_cpu_access(&self, dir: DataDirection) -> Result {
+        // SAFETY: `self.as_ptr()` is a valid `dma_buf` pointer by the type invariants.
+        to_result(unsafe { bindings::dma_buf_end_cpu_access(self.as_ptr(), dir.into()) })
+    }
+
+    /// Prepares a sub-range of the DMA-BUF for CPU access.
+    ///
+    /// If the exporter does not implement `begin_cpu_access_partial`, this falls back to
+    /// [`Self::begin_cpu_access`] for the entire buffer.
+    ///
+    /// After the CPU access is complete, the caller should call [`Self::end_cpu_access_partial`].
+    pub fn begin_cpu_access_partial(&self, dir: DataDirection, offset: u32, len: u32) -> Result {
+        // SAFETY: `self.as_ptr()` is a valid `dma_buf` pointer and `ops` is valid and immutable
+        // for the lifetime of the `dma_buf`.
+        let has_partial = unsafe { (*(*self.as_ptr()).ops).begin_cpu_access_partial.is_some() };
+        if has_partial {
+            // SAFETY: `self.as_ptr()` is a valid `dma_buf` pointer by the type invariants.
+            to_result(unsafe {
+                bindings::dma_buf_begin_cpu_access_partial(self.as_ptr(), dir.into(), offset, len)
+            })
+        } else {
+            self.begin_cpu_access(dir)
+        }
+    }
+
+    /// Completes CPU access to a sub-range of the DMA-BUF started with
+    /// [`Self::begin_cpu_access_partial`].
+    ///
+    /// If the exporter does not implement `end_cpu_access_partial`, this falls back to
+    /// [`Self::end_cpu_access`] for the entire buffer.
+    pub fn end_cpu_access_partial(&self, dir: DataDirection, offset: u32, len: u32) -> Result {
+        // SAFETY: `self.as_ptr()` is a valid `dma_buf` pointer and `ops` is valid and immutable
+        // for the lifetime of the `dma_buf`.
+        let has_partial = unsafe { (*(*self.as_ptr()).ops).end_cpu_access_partial.is_some() };
+        if has_partial {
+            // SAFETY: `self.as_ptr()` is a valid `dma_buf` pointer by the type invariants.
+            to_result(unsafe {
+                bindings::dma_buf_end_cpu_access_partial(self.as_ptr(), dir.into(), offset, len)
+            })
+        } else {
+            self.end_cpu_access(dir)
+        }
+    }
 }
 
 /// A wrapper for the kernel's `struct dma_buf_attachment`.
@@ -366,16 +419,14 @@ impl DmaBufVmap {
             }
         };
         let mut map = self.map;
-        // SAFETY: It's always safe to begin cpu access.
-        to_result(unsafe { bindings::dma_buf_begin_cpu_access(self.dmabuf.as_ptr(), dir.into()) })?;
+        self.dmabuf.begin_cpu_access(dir)?;
         // INVARIANT: Cpu access has begin with the given direction.
         let result = f(CpuAccess {
             map: &raw mut map,
             size: self.dmabuf.size(),
             _lifetime: PhantomData,
         });
-        // SAFETY: We started cpu access, so we can end it.
-        to_result(unsafe { bindings::dma_buf_end_cpu_access(self.dmabuf.as_ptr(), dir.into()) })?;
+        self.dmabuf.end_cpu_access(dir)?;
         Ok(result)
     }
 
