@@ -11,6 +11,7 @@
 #include <linux/slab.h>
 #include <linux/bpf.h>
 #include <linux/mm.h>
+#include <linux/p3s/mm.h>
 #include <linux/netdevice.h>
 #include <linux/rtnetlink.h>
 #include <linux/idr.h>
@@ -93,18 +94,22 @@ void xdp_put_umem(struct xdp_umem *umem, bool defer_cleanup)
 
 static int xdp_umem_pin_pages(struct xdp_umem *umem, unsigned long address)
 {
+	struct mm_struct *mm = current->mm;
 	unsigned int gup_flags = FOLL_WRITE;
 	long npgs;
 	int err;
+
+	if (p3s_4k_unsupported(mm))
+		return -EOPNOTSUPP;
 
 	umem->pgs = kvcalloc(umem->npgs, sizeof(*umem->pgs), GFP_KERNEL | __GFP_NOWARN);
 	if (!umem->pgs)
 		return -ENOMEM;
 
-	mmap_read_lock(current->mm);
+	mmap_read_lock(mm);
 	npgs = pin_user_pages(address, umem->npgs,
 			      gup_flags | FOLL_LONGTERM, &umem->pgs[0]);
-	mmap_read_unlock(current->mm);
+	mmap_read_unlock(mm);
 
 	if (npgs != umem->npgs) {
 		if (npgs >= 0) {
