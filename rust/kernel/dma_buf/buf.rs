@@ -7,7 +7,11 @@
 use crate::{
     bindings,
     device::Device,
-    dma::DataDirection,
+    dma::{
+        Attrs,
+        DataDirection,
+        DmaAddress, //
+    },
     error::{from_err_ptr, to_result},
     fs::File,
     prelude::*,
@@ -185,6 +189,31 @@ unsafe impl Send for DmaBufAttachment {}
 unsafe impl Sync for DmaBufAttachment {}
 
 impl DmaBufAttachment {
+    /// Returns a raw pointer to the dma-buf attachment.
+    #[inline]
+    pub fn as_ptr(&self) -> *mut bindings::dma_buf_attachment {
+        self.ptr.as_ptr()
+    }
+
+    /// Returns the DMA mapping attributes for this attachment.
+    #[inline]
+    pub fn dma_map_attrs(&self) -> Attrs {
+        // SAFETY: `self.ptr` is a valid `dma_buf_attachment` pointer and `&self` guarantees
+        // shared access to the unmapped attachment.
+        let raw = unsafe { (*self.ptr.as_ptr()).dma_map_attrs };
+        Attrs::from_raw(raw)
+    }
+
+    /// Sets the DMA mapping attributes for this attachment.
+    ///
+    /// These attributes are used when the exporter maps the buffer via [`Self::map`].
+    #[inline]
+    pub fn set_dma_map_attrs(&mut self, attrs: Attrs) {
+        // SAFETY: `self.ptr` is a valid `dma_buf_attachment` pointer and `&mut self` guarantees
+        // exclusive access to the unmapped attachment.
+        unsafe { (*self.ptr.as_ptr()).dma_map_attrs = attrs.as_raw() };
+    }
+
     /// Map the attachment.
     pub fn map(self, dir: DataDirection) -> Result<DmaBufMapping> {
         // SAFETY: A DmaBufAttachment contains a valid attachment.
@@ -225,6 +254,29 @@ pub struct DmaBufMapping {
 unsafe impl Send for DmaBufMapping {}
 // SAFETY: `DmaBufMapping` is safe to share between threads.
 unsafe impl Sync for DmaBufMapping {}
+
+impl DmaBufMapping {
+    /// Returns the starting DMA address of the mapping if all segments form a single contiguous
+    /// DMA address range.
+    ///
+    /// This is useful for devices that expect a single contiguous mapping.
+    #[inline]
+    pub fn iova(&self) -> Option<DmaAddress> {
+        let mut iter = self.iter();
+        let first = iter.next()?;
+        let start = first.dma_address();
+        let mut end = start.checked_add(first.dma_len() as DmaAddress)?;
+
+        for entry in iter {
+            if entry.dma_address() != end {
+                return None;
+            }
+            end = end.checked_add(entry.dma_len() as DmaAddress)?;
+        }
+
+        Some(start)
+    }
+}
 
 impl Drop for DmaBufMapping {
     fn drop(&mut self) {
