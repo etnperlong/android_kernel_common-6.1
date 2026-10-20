@@ -102,6 +102,9 @@ static int zram_process_walker(pmd_t *pmd, unsigned long start,
 			goto unlock_swap_device;
 
 		if (cmd == ZRAM_ANDROID_IOC_PROCESS_RANGE_WRITEBACK) {
+			if (swp_swapcount(entry) > 1)
+				goto unlock_swap_device;
+
 			/* Use PAGE_WRITEBACK for single index */
 			scan_slots_for_writeback(zram, 0, index, index+1,
 						 pp_ctl);
