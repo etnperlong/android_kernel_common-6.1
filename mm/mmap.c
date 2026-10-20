@@ -1794,6 +1794,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
 			goto out;
 	}
 
+#ifdef CONFIG_ANDROID_WRAPFD_LEGACY
 	/*
 	 * Remapping pages of the wrapfd is not supported since vma->vm_file
 	 * points to the file object representing the wrapped content and not
@@ -1801,6 +1802,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
 	 */
 	if (unlikely(is_wrapfd_vma(vma)))
 		goto out;
+#endif
 
 	ret = do_mmap(vma->vm_file, start, size,
 			prot, flags, 0, pgoff, &populate, NULL);

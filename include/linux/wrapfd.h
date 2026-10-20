@@ -12,7 +12,7 @@ union wrapfd_mappable {
 	struct dma_buf *dmabuf;
 };
 
-#ifdef CONFIG_ANDROID_WRAPFD
+#ifdef CONFIG_ANDROID_WRAPFD_LEGACY
 
 /* Check if the vma is mapping a wrapfd file. */
 bool is_wrapfd_vma(struct vm_area_struct *vma);
@@ -55,7 +55,7 @@ int wrapfd_get_mappable(struct file *file, struct device *dev,
 int wrapfd_put_mappable(struct file *file, struct device *dev,
 			union wrapfd_mappable *mappable);
 
-#else /* CONFIG_ANDROID_WRAPFD */
+#else /* CONFIG_ANDROID_WRAPFD_LEGACY */
 
 static inline bool is_wrapfd_vma(struct vm_area_struct *vma)
 {
@@ -74,6 +74,6 @@ static inline int wrapfd_put_mappable(struct file *file, struct device *dev,
 	return -ENOENT;
 }
 
-#endif /* CONFIG_ANDROID_WRAPFD */
+#endif /* CONFIG_ANDROID_WRAPFD_LEGACY */
 
 #endif /* _LINUX_WRAPFD_H */
