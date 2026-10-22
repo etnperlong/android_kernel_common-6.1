@@ -81,6 +81,12 @@ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
 
 #ifdef CONFIG_PROC_FS
 
+/* Permanent regular file registration; fops->owner must be THIS_MODULE. */
+int proc_tgid_register(const char *name, umode_t mode,
+		       const struct file_operations *fops);
+/* Returns a reference for put_task_struct(), or NULL if the target exited. */
+struct task_struct *proc_tgid_get_task(const struct inode *inode);
+
 typedef int (*proc_write_t)(struct file *, char *, size_t);
 
 extern void proc_root_init(void);
@@ -169,6 +175,17 @@ void arch_report_meminfo(struct seq_file *m);
 void arch_proc_pid_thread_features(struct seq_file *m, struct task_struct *task);
 
 #else /* CONFIG_PROC_FS */
+
+static inline int proc_tgid_register(const char *name, umode_t mode,
+				     const struct file_operations *fops)
+{
+	return -EOPNOTSUPP;
+}
+
+static inline struct task_struct *proc_tgid_get_task(const struct inode *inode)
+{
+	return NULL;
+}
 
 static inline void proc_root_init(void)
 {
