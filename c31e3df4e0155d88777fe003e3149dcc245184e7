@@ -95,6 +95,30 @@
       "isAi": true,
       "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0a8fccc_3d83ddf4",
+        "filename": "groups",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1042719
+      },
+      "writtenOn": "2026-10-22T19:25:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ff7f2b2_07b00158",
+      "range": {
+        "startLine": 17,
+        "startChar": 63,
+        "endLine": 17,
+        "endChar": 78
+      },
+      "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
