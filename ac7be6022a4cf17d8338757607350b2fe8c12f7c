@@ -22,6 +22,30 @@
       },
       "revId": "ac7be6022a4cf17d8338757607350b2fe8c12f7c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d474a8da_5c49c009",
+        "filename": "mm/ptshare.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-22T20:55:20Z",
+      "side": 1,
+      "message": "Hi @runpinglai@google.com\n\nThanks for calling that out For now we disable this for the emulated x86 16k page size. Lets test on 4kB x86 or 16kb arm64. \n\nThanks,  \nKalesh.",
+      "parentUuid": "20b1993d_741e5018",
+      "range": {
+        "startLine": 168,
+        "startChar": 1,
+        "endLine": 168,
+        "endChar": 32
+      },
+      "revId": "ac7be6022a4cf17d8338757607350b2fe8c12f7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
