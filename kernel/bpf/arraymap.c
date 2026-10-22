@@ -436,7 +436,7 @@ int bpf_percpu_array_update(struct bpf_map *map, void *key, void *value,
 	void __percpu *pptr;
 	void *ptr, *val;
 	u32 size;
-	int cpu, off = 0;
+	int cpu;
 
 	if (unlikely((map_flags & BPF_F_LOCK) || (u32)map_flags > BPF_F_ALL_CPUS))
 		/* unknown flags */
@@ -468,10 +468,9 @@ int bpf_percpu_array_update(struct bpf_map *map, void *key, void *value,
 	}
 	for_each_possible_cpu(cpu) {
 		ptr = per_cpu_ptr(pptr, cpu);
-		val = (map_flags & BPF_F_ALL_CPUS) ? value : value + off;
+		val = (map_flags & BPF_F_ALL_CPUS) ? value : value + size * cpu;
 		copy_map_value(map, ptr, val);
 		bpf_obj_cancel_fields(map, ptr);
-		off += size;
 	}
 unlock:
 	rcu_read_unlock();
