@@ -3,6 +3,41 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fa705845_c1ed635b",
+        "filename": "tools/testing/selftests/drivers/wrapfd/config",
+        "patchSetId": 7
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T20:38:21Z",
+      "side": 1,
+      "message": "should not be needed",
+      "fixSuggestions": [
+        {
+          "fixId": "4c333e70_15f7525e",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "tools/testing/selftests/drivers/wrapfd/config",
+              "range": {
+                "startLine": 5,
+                "startChar": 0,
+                "endLine": 6,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "86e513e49e5b0870b73058f79e29bbb958a32965",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e8468e36_06bf6760",
         "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
         "patchSetId": 7
