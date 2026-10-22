@@ -1818,18 +1818,21 @@ static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
 	release_firmware(fw);
 }
 
+static void rproc_attach_work(struct work_struct *work)
+{
+	struct rproc *rproc = container_of(work, struct rproc, attach_work);
+
+	rproc_boot(rproc);
+}
+
 static int rproc_trigger_auto_boot(struct rproc *rproc)
 {
 	int ret;
 
-	/*
-	 * Since the remote processor is in a detached state, it has already
-	 * been booted by another entity.  As such there is no point in waiting
-	 * for a firmware image to be loaded, we can simply initiate the process
-	 * of attaching to it immediately.
-	 */
-	if (rproc->state == RPROC_DETACHED)
-		return rproc_boot(rproc);
+	if (rproc->state == RPROC_DETACHED) {
+		schedule_work(&rproc->attach_work);
+		return 0;
+	}
 
 	/*
 	 * We're initiating an asynchronous firmware loading, so we can
@@ -2601,6 +2604,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
 	INIT_LIST_HEAD(&rproc->dump_segments);
 
 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+	INIT_WORK(&rproc->attach_work, rproc_attach_work);
 
 	rproc->state = RPROC_OFFLINE;
 
@@ -2792,11 +2796,18 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
 		rproc->name, rproc_crash_to_string(type));
 
+<<<<<<< HEAD   (c4cfc3ce1d2697a3479981002cfe5ee2f3dac1b4 Merge 988784bc1135 ("w1: ds2482: Fix signedness bug in ds248)
 	if (rproc_recovery_wq)
 		queue_work(rproc_recovery_wq, &rproc->crash_handler);
 	else
 	/* Have a worker handle the error; ensure system is not suspended */
 		queue_work(system_freezable_wq, &rproc->crash_handler);
+||||||| BASE   (988784bc113583ce1a46b87e7ab2b80b87140774 w1: ds2482: Fix signedness bug in ds2482_w1_triplet())
+	/* Have a worker handle the error; ensure system is not suspended */
+	queue_work(system_freezable_wq, &rproc->crash_handler);
+=======
+	queue_work(rproc_recovery_wq, &rproc->crash_handler);
+>>>>>>> BRANCH (ec1fb8ce53c3f0bba2f7779a1ad90a9197396e59 remoteproc: core: Attach rproc asynchronously in rproc_add())
 }
 EXPORT_SYMBOL(rproc_report_crash);
 
@@ -2847,8 +2858,16 @@ static int __init remoteproc_init(void)
 {
 	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
 						WQ_UNBOUND | WQ_FREEZABLE, 0);
+<<<<<<< HEAD   (c4cfc3ce1d2697a3479981002cfe5ee2f3dac1b4 Merge 988784bc1135 ("w1: ds2482: Fix signedness bug in ds248)
 	if (!rproc_recovery_wq)
 		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+||||||| BASE   (988784bc113583ce1a46b87e7ab2b80b87140774 w1: ds2482: Fix signedness bug in ds2482_w1_triplet())
+=======
+	if (!rproc_recovery_wq) {
+		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+		return -ENOMEM;
+	}
+>>>>>>> BRANCH (ec1fb8ce53c3f0bba2f7779a1ad90a9197396e59 remoteproc: core: Attach rproc asynchronously in rproc_add())
 
 	rproc_init_sysfs();
 	rproc_init_debugfs();
@@ -2863,11 +2882,19 @@ static void __exit remoteproc_exit(void)
 {
 	ida_destroy(&rproc_dev_index);
 
+	if (!rproc_recovery_wq)
+		return;
+
 	rproc_exit_panic();
 	rproc_exit_debugfs();
 	rproc_exit_sysfs();
+<<<<<<< HEAD   (c4cfc3ce1d2697a3479981002cfe5ee2f3dac1b4 Merge 988784bc1135 ("w1: ds2482: Fix signedness bug in ds248)
 	if (rproc_recovery_wq)
 		destroy_workqueue(rproc_recovery_wq);
+||||||| BASE   (988784bc113583ce1a46b87e7ab2b80b87140774 w1: ds2482: Fix signedness bug in ds2482_w1_triplet())
+=======
+	destroy_workqueue(rproc_recovery_wq);
+>>>>>>> BRANCH (ec1fb8ce53c3f0bba2f7779a1ad90a9197396e59 remoteproc: core: Attach rproc asynchronously in rproc_add())
 }
 module_exit(remoteproc_exit);
 
