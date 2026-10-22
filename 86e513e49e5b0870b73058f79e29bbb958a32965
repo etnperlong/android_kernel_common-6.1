@@ -36,6 +36,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b64ba93_72c08ace",
+        "filename": "tools/testing/selftests/drivers/wrapfd/config",
+        "patchSetId": 7
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T22:28:35Z",
+      "side": 1,
+      "message": "Keeping it: ANDROID_WRAPFD depends on RUST, and merge_config doesn\u0027t pull in dependencies.",
+      "parentUuid": "fa705845_c1ed635b",
+      "isAi": true,
+      "revId": "86e513e49e5b0870b73058f79e29bbb958a32965",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e8468e36_06bf6760",
@@ -49,6 +68,25 @@
       "writtenOn": "2026-10-22T00:11:09Z",
       "side": 1,
       "message": "We should be consistent with caring about the return value of `close()`. I think in general, we don\u0027t care throughout the file, so why do we care about it now?",
+      "revId": "86e513e49e5b0870b73058f79e29bbb958a32965",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f181784_e60d8ec4",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1720,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T22:28:35Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "e8468e36_06bf6760",
+      "isAi": true,
       "revId": "86e513e49e5b0870b73058f79e29bbb958a32965",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
