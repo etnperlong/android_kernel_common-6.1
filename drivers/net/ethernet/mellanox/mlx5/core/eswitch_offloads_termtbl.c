@@ -163,15 +163,12 @@ void
 mlx5_eswitch_termtbl_put(struct mlx5_eswitch *esw,
 			 struct mlx5_termtbl_handle *tt)
 {
-	bool last;
-
 	mutex_lock(&esw->offloads.termtbl_mutex);
-	last = (--tt->ref_count == 0);
-	if (last)
+	if (--tt->ref_count == 0)
 		hash_del(&tt->termtbl_hlist);
 	mutex_unlock(&esw->offloads.termtbl_mutex);
 
-	if (last) {
+	if (!tt->ref_count) {
 		mlx5_del_flow_rules(tt->rule);
 		mlx5_destroy_flow_table(tt->termtbl);
 		kfree(tt);

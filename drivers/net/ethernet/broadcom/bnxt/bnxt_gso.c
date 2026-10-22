@@ -31,14 +31,10 @@ static u32 bnxt_sw_gso_lhint(unsigned int len)
 		return TX_BD_FLAGS_LHINT_2048_AND_LARGER;
 }
 
-/* Transmit an skb requiring software UDP segmentation.
- *
- * Returns 1 if the skb was queued and new BDs were produced, 0 if the skb
- * was dropped, or -1 if the ring is full and the skb should be retried.
- * The caller owns the doorbell for all three cases.
- */
-int bnxt_sw_udp_gso_xmit(struct bnxt *bp, struct bnxt_tx_ring_info *txr,
-			 struct netdev_queue *txq, struct sk_buff *skb)
+netdev_tx_t bnxt_sw_udp_gso_xmit(struct bnxt *bp,
+				 struct bnxt_tx_ring_info *txr,
+				 struct netdev_queue *txq,
+				 struct sk_buff *skb)
 {
 	unsigned int last_unmap_len __maybe_unused = 0;
 	dma_addr_t last_unmap_addr __maybe_unused = 0;
@@ -73,7 +69,7 @@ int bnxt_sw_udp_gso_xmit(struct bnxt *bp, struct bnxt_tx_ring_info *txr,
 	if (unlikely(bnxt_tx_avail(bp, txr) < bds_needed)) {
 		netif_txq_try_stop(txq, bnxt_tx_avail(bp, txr),
 				   bp->tx_wake_thresh);
-		return -1;
+		return NETDEV_TX_BUSY;
 	}
 
 	/* BD backpressure alone cannot prevent overwriting in-flight
@@ -81,7 +77,7 @@ int bnxt_sw_udp_gso_xmit(struct bnxt *bp, struct bnxt_tx_ring_info *txr,
 	 */
 	if (!netif_txq_maybe_stop(txq, bnxt_inline_avail(txr),
 				  num_segs, num_segs))
-		return -1;
+		return NETDEV_TX_BUSY;
 
 	if (unlikely(tso_dma_map_init(&map, &pdev->dev, skb, hdr_len)))
 		goto drop;
@@ -227,15 +223,16 @@ int bnxt_sw_udp_gso_xmit(struct bnxt *bp, struct bnxt_tx_ring_info *txr,
 	netdev_tx_sent_queue(txq, skb->len);
 
 	WRITE_ONCE(txr->tx_prod, prod);
+	txr->kick_pending = 1;
 
 	if (unlikely(bnxt_tx_avail(bp, txr) <= bp->tx_wake_thresh))
 		netif_txq_try_stop(txq, bnxt_tx_avail(bp, txr),
 				   bp->tx_wake_thresh);
 
-	return 1;
+	return NETDEV_TX_OK;
 
 drop:
 	dev_kfree_skb_any(skb);
 	dev_core_stats_tx_dropped_inc(bp->dev);
-	return 0;
+	return NETDEV_TX_OK;
 }

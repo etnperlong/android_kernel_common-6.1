@@ -38,7 +38,9 @@ static inline int bnxt_min_tx_desc_cnt(struct bnxt *bp,
 	return BNXT_MIN_TX_DESC_CNT;
 }
 
-int bnxt_sw_udp_gso_xmit(struct bnxt *bp, struct bnxt_tx_ring_info *txr,
-			 struct netdev_queue *txq, struct sk_buff *skb);
+netdev_tx_t bnxt_sw_udp_gso_xmit(struct bnxt *bp,
+				 struct bnxt_tx_ring_info *txr,
+				 struct netdev_queue *txq,
+				 struct sk_buff *skb);
 
 #endif

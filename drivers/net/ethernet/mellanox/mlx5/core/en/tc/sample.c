@@ -311,15 +311,12 @@ err_alloc:
 static void
 sample_restore_put(struct mlx5e_tc_psample *tc_psample, struct mlx5e_sample_restore *restore)
 {
-	bool last;
-
 	mutex_lock(&tc_psample->restore_lock);
-	last = --restore->count == 0;
-	if (last)
+	if (--restore->count == 0)
 		hash_del(&restore->hlist);
 	mutex_unlock(&tc_psample->restore_lock);
 
-	if (last) {
+	if (!restore->count) {
 		mlx5_del_flow_rules(restore->rule);
 		mlx5_modify_header_dealloc(tc_psample->esw->dev, restore->modify_hdr);
 		kfree(restore);
