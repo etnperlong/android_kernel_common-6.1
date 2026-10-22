@@ -54,6 +54,24 @@
       ],
       "revId": "98cb9c75a33beb3ee9cd54ae1c31078e08b5afb8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce82ea8e_34b50a34",
+        "filename": "drivers/android/wrapfd/content.rs",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-22T18:13:05Z",
+      "side": 1,
+      "message": "With that approach, what happens if you have 2 callers who register a listener, and then the one that got index 0 unregisters their listener first. Is the index for the second caller still valid?\n\nWhat happens if you try to unregister multiple times with the same index?",
+      "parentUuid": "1fe3e709_5c372b72",
+      "revId": "98cb9c75a33beb3ee9cd54ae1c31078e08b5afb8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
