@@ -325,6 +325,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "18a810c0_7b2c3132",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 994,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T23:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5bb838d0_0988e287",
+      "range": {
+        "startLine": 984,
+        "startChar": 1,
+        "endLine": 994,
+        "endChar": 64
+      },
+      "revId": "5308fa67f46e63fd67b5ae10091ca81979acf5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "82f57b07_15373987",
@@ -369,6 +393,30 @@
         "endChar": 14
       },
       "isAi": true,
+      "revId": "5308fa67f46e63fd67b5ae10091ca81979acf5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b0fbbef_b80a5862",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T23:04:20Z",
+      "side": 1,
+      "message": "actually, it came back, but it is the wrapfd now.",
+      "parentUuid": "fc92672a_80b5d27f",
+      "range": {
+        "startLine": 1370,
+        "startChar": 6,
+        "endLine": 1370,
+        "endChar": 14
+      },
       "revId": "5308fa67f46e63fd67b5ae10091ca81979acf5c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
