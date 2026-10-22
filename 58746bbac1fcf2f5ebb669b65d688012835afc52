@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5abaa54_b0cb92df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:14:26Z",
+      "side": 1,
+      "message": "There should be an annotation explaining what changed were needed as part of the BACKPORT. See https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
+      "revId": "58746bbac1fcf2f5ebb669b65d688012835afc52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "a033a918_0e469d28",
@@ -14,6 +31,23 @@
       "writtenOn": "2026-10-22T15:39:11Z",
       "side": 1,
       "message": "Hello, our changes to `idlemaint` in the Android ROM require the use of both `max_discard_request` and `min_discard_issue_time` in conjunction; this has been tested and verified on a local device.",
+      "revId": "58746bbac1fcf2f5ebb669b65d688012835afc52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25e32b2f_2d4bb7e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:14:26Z",
+      "side": 1,
+      "message": "why is this patch needed on this old branch?",
       "revId": "58746bbac1fcf2f5ebb669b65d688012835afc52",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
