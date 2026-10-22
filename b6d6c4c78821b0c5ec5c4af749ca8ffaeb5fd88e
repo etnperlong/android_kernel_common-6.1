@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c64129d4_1a9fcd28",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T16:14:38Z",
+      "side": 1,
+      "message": "aosp/4382544 must land first. Once it does, cherry-pick it here again to pick up the resolution to the comments.",
+      "revId": "b6d6c4c78821b0c5ec5c4af749ca8ffaeb5fd88e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
