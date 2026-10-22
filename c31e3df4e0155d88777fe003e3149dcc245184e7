@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc988f9a_05c8343b",
+        "filename": "groups",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-22T18:11:37Z",
+      "side": 1,
+      "message": "Is this the same group as https://ganpati2.corp.google.com/group/android-16k.prod?tab\u003dchildren?\n\nIf so, I\u0027m not sure that\u0027s the right group to use (or the members need to be updated). @kaleshsingh@google.com",
+      "range": {
+        "startLine": 17,
+        "startChar": 63,
+        "endLine": 17,
+        "endChar": 78
+      },
+      "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
