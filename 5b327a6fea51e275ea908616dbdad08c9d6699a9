@@ -1,6 +1,40 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c92fd39d_3d639771",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:03:44Z",
+      "side": 1,
+      "message": "Please fix this ERROR reported by KernelCommit: Please **add an open respin request bug** to the commit message. Do not remove e...\n\nPlease **add an open respin request bug** to the commit message. Do not remove existing bug references.\nRefer to the following link for more information:\nhttps://source.android.com/docs/core/architecture/kernel/gki-respin\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
+      "revId": "5b327a6fea51e275ea908616dbdad08c9d6699a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "379a8db6_7030aa5b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:03:44Z",
+      "side": 1,
+      "message": "Please fix this ERROR reported by KernelCommit: Can not find the original change on base branch (android17-6.18) for this change...\n\nCan not find the original change on base branch (android17-6.18) for this change.\nPlease ensure that the Change-Id of this change is same as the original change on the base branch.\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
+      "revId": "5b327a6fea51e275ea908616dbdad08c9d6699a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b63d331a_0b295700",
