@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c9487d0_c027a830",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-22T17:22:28Z",
+      "side": 1,
+      "message": "So this patch series is pretty high churn for a release branch (and we landed these after the android17-6.18-2026-06 cutoff intentionally so they would have more test time prior to 2026-09).  I don\u0027t yet see a respin request, but I\u0027d like to get some more details as to what is motivating pulling these back instead of moving to a 2026-09 or greater based release? Can you point me to a bug that might have more context?",
+      "revId": "a6780f724955a66a15662a211bcc415a9e24f457",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
