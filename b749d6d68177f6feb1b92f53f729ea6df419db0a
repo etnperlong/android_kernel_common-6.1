@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7090a4f5_d167d7d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-22T17:27:19Z",
+      "side": 1,
+      "message": "I think clearing should be the last thing we do, when we\u0027re at a point that we know we won\u0027t fail. Otherwise, when we clean up what we did, we\u0027ll have lost the data that was in the content, so I don\u0027t think `make_writable()` is a suitable place for this.",
+      "revId": "b749d6d68177f6feb1b92f53f729ea6df419db0a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
