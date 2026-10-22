@@ -16,6 +16,24 @@
       "message": "Having this part of IOCTL would help size the queue depth dynamically in the I/O path instead of hard coding it to 4.",
       "revId": "21d40864d4cb9aafecea661ea95c64fd5902bbdb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01c6ef5a_ea64efbd",
+        "filename": "fs/f2fs/file.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 4879,
+      "author": {
+        "id": 1651802
+      },
+      "writtenOn": "2026-10-22T17:13:38Z",
+      "side": 1,
+      "message": "On the device I tested (UFS, 1GB load, 4MB chunks), depth 1/2/4/8 gave 284/252/252/252 ms. The load is storage bound from 2 chunks in flight, so a deeper queue does not help. A shallower one only throttles the load, and depth 1 still keeps 4MB in flight. For throttling, the chunk I/Os already carry the caller\u0027s ioprio and its blkcg, so ioprio or io.cost can limit it with finer control than a depth, right? If faster storage needs more I/O in flight, we can raise the depth in the ioctl. It costs no memory, and the caller would not know the right value either.\n\nAlso, this ioctl is a temporary solution for P27, not a general interface. I\u0027d like to keep its uAPI minimal.",
+      "parentUuid": "07cd811b_b7cc0879",
+      "revId": "21d40864d4cb9aafecea661ea95c64fd5902bbdb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
