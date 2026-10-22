@@ -16,6 +16,24 @@
       "message": "That is not what this patch is doing; it is adding a test to verify this, so please update the commit message accordingly.",
       "revId": "352d0ac1f81aa8326216f0b3bf975e088554719d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99d75b1b_75a63077",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T11:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2d9ae26_d47f006e",
+      "revId": "352d0ac1f81aa8326216f0b3bf975e088554719d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
