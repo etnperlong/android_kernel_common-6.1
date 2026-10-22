@@ -52,6 +52,24 @@
       "parentUuid": "f1955b37_5c4261e2",
       "revId": "7a8660b2fd643f3e082e5407cd2b95534bbbd7ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b217fe74_c6cb3198",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 11
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-22T17:47:46Z",
+      "side": 1,
+      "message": "Hmm...I see. Lets leave it where it is actually. Moving it to happen after `publish_wrap()`, would mean moving it after `fd_install()`, at which point the buffer is visible to threads of the invoking process. If they open that fd and we haven\u0027t cleared the buffer yet, they could potentially read data that belonged to another process.",
+      "parentUuid": "4903a30e_e6700b83",
+      "revId": "7a8660b2fd643f3e082e5407cd2b95534bbbd7ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
