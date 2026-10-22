@@ -1623,13 +1623,15 @@ int64_t pnv_opal_pci_msi_eoi(struct irq_data *d)
 	return opal_pci_msi_eoi(phb->opal_id, d->parent_data->hwirq);
 }
 
+static struct irq_chip pnv_pci_msi_irq_chip;
+
 /*
  * Returns true iff chip is something that we could call
  * pnv_opal_pci_msi_eoi for.
  */
 bool is_pnv_opal_msi(struct irq_chip *chip)
 {
-	return chip && chip->name && str_has_prefix(chip->name, "PNV-");
+	return chip == &pnv_pci_msi_irq_chip;
 }
 EXPORT_SYMBOL_GPL(is_pnv_opal_msi);
 
@@ -1726,7 +1728,7 @@ static const struct msi_parent_ops pnv_msi_parent_ops = {
 	.chip_flags		= MSI_CHIP_FLAG_SET_EOI,
 	.bus_select_token	= DOMAIN_BUS_NEXUS,
 	.bus_select_mask	= MATCH_PCI_MSI,
-	.prefix			= "PNV-", /* Note: is_pnv_opal_msi() uses this */
+	.prefix			= "PNV-",
 	.init_dev_msi_info	= pnv_init_dev_msi_info,
 };
 

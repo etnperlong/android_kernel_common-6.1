@@ -120,9 +120,7 @@ static irqreturn_t vp_interrupt(int irq, void *opaque)
 	if (isr & VIRTIO_PCI_ISR_CONFIG)
 		vp_config_changed(irq, opaque);
 
-	vp_vring_interrupt(irq, opaque);
-
-	return IRQ_HANDLED;
+	return vp_vring_interrupt(irq, opaque);
 }
 
 static int vp_request_msix_vectors(struct virtio_device *vdev, int nvectors,

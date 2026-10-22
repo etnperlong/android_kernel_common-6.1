@@ -533,13 +533,19 @@ DEFINE_FREE(ns_put, struct ns_common *, if (!IS_ERR_OR_NULL(_T)) ns_put(_T))
 static inline struct ns_common *__must_check legitimize_ns(const struct klistns *kls,
 							   struct ns_common *candidate)
 {
+	struct ns_common *ns __free(ns_put) = NULL;
+
 	if (!ns_requested(kls, candidate))
 		return NULL;
 
-	if (!may_list_ns(kls, candidate))
+	ns = ns_get_unless_inactive(candidate);
+	if (!ns)
 		return NULL;
 
-	return ns_get_unless_inactive(candidate);
+	if (!may_list_ns(kls, ns))
+		return NULL;
+
+	return no_free_ptr(ns);
 }
 
 static ssize_t do_listns_userns(struct klistns *kls)

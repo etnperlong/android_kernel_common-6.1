@@ -216,10 +216,7 @@ static void eni_vdpa_set_status(struct vdpa_device *vdpa, u8 status)
 
 	if (status & VIRTIO_CONFIG_S_DRIVER_OK &&
 	    !(s & VIRTIO_CONFIG_S_DRIVER_OK)) {
-		if (eni_vdpa_request_irq(eni_vdpa)) {
-			WARN_ON(1);
-			return;
-		}
+		eni_vdpa_request_irq(eni_vdpa);
 	}
 
 	vp_legacy_set_status(ldev, status);
