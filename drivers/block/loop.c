@@ -458,14 +458,12 @@ static void loop_update_dio_alignment(struct loop_device *lo)
 	 * Use the dio alignment of the file system if provided.  The incomoing
 	 * request's bio_vec is forwarded to the backing file unchanged, so its
 	 * required memory alignment becomes the device's dma_alignment when
-	 * used for direct-io.  The file system reports zeroed alignments if the
-	 * file can't be used for direct-io at all, so fall back to the block
-	 * device limits in that case.
+	 * used for direct-io.
 	 */
 	if (!vfs_getattr(&file->f_path, &st, STATX_DIOALIGN, 0) &&
-	    (st.result_mask & STATX_DIOALIGN) && st.dio_mem_align) {
+	    (st.result_mask & STATX_DIOALIGN)) {
 		lo->lo_min_dio_size = st.dio_offset_align;
-		lo->lo_dio_mem_align = min(st.dio_mem_align - 1, PAGE_SIZE - 1);
+		lo->lo_dio_mem_align = st.dio_mem_align - 1;
 		return;
 	}
 
