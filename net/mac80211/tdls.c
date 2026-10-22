@@ -1142,7 +1142,6 @@ ieee80211_tdls_mgmt_setup(struct wiphy *wiphy, struct net_device *dev,
 	struct ieee80211_local *local = sdata->local;
 	enum ieee80211_smps_mode smps_mode =
 		sdata->deflink.u.mgd.driver_smps_mode;
-	struct sta_info *sta;
 	int ret;
 
 	/* don't support setup with forced SMPS mode that's not off */
@@ -1169,10 +1168,14 @@ ieee80211_tdls_mgmt_setup(struct wiphy *wiphy, struct net_device *dev,
 	 * Allow error packets to be sent - sometimes we don't even add a STA
 	 * before failing the setup.
 	 */
-	sta = sta_info_get(sdata, peer);
-	if ((status_code == 0 && !sta) || (sta && !sta->sta.tdls)) {
-		ret = -ENOLINK;
-		goto out_unlock;
+	if (status_code == 0) {
+		rcu_read_lock();
+		if (!sta_info_get(sdata, peer)) {
+			rcu_read_unlock();
+			ret = -ENOLINK;
+			goto out_unlock;
+		}
+		rcu_read_unlock();
 	}
 
 	ieee80211_flush_queues(local, sdata, false);
@@ -1281,24 +1284,6 @@ int ieee80211_tdls_mgmt(struct wiphy *wiphy, struct net_device *dev,
 						   peer_capability, initiator,
 						   extra_ies, extra_ies_len);
 		break;
-	case WLAN_TDLS_SETUP_CONFIRM: {
-		struct sta_info *sta;
-
-		sta = sta_info_get(sdata, peer);
-		if (!sta || !sta->sta.tdls) {
-			ret = -ENOLINK;
-			break;
-		}
-
-		ret = ieee80211_tdls_prep_mgmt_packet(wiphy, dev, peer,
-						      link_id, action_code,
-						      dialog_token,
-						      status_code,
-						      peer_capability,
-						      initiator, extra_ies,
-						      extra_ies_len, 0, NULL);
-		break;
-	}
 	case WLAN_TDLS_DISCOVERY_REQUEST:
 		/*
 		 * Protect the discovery so we can hear the TDLS discovery
@@ -1307,6 +1292,7 @@ int ieee80211_tdls_mgmt(struct wiphy *wiphy, struct net_device *dev,
 		 */
 		drv_mgd_protect_tdls_discover(sdata->local, sdata, link_id);
 		fallthrough;
+	case WLAN_TDLS_SETUP_CONFIRM:
 	case WLAN_PUB_ACTION_TDLS_DISCOVER_RES:
 		/* no special handling */
 		ret = ieee80211_tdls_prep_mgmt_packet(wiphy, dev, peer,
@@ -1456,16 +1442,16 @@ int ieee80211_tdls_oper(struct wiphy *wiphy, struct net_device *dev,
 	 */
 	tdls_dbg(sdata, "TDLS oper %d peer %pM\n", oper, peer);
 
-	sta = sta_info_get(sdata, peer);
-	if (!sta || !sta->sta.tdls)
-		return -ENOLINK;
-
 	switch (oper) {
 	case NL80211_TDLS_ENABLE_LINK:
 		if (sdata->vif.bss_conf.csa_active) {
 			tdls_dbg(sdata, "TDLS: disallow link during CSA\n");
 			return -EBUSY;
 		}
+
+		sta = sta_info_get(sdata, peer);
+		if (!sta || !sta->sta.tdls)
+			return -ENOLINK;
 
 		iee80211_tdls_recalc_chanctx(sdata, sta);
 		iee80211_tdls_recalc_ht_protection(sdata, sta);
