@@ -411,7 +411,12 @@ static void l2cap_chan_timeout(struct work_struct *work)
 
 	BT_DBG("chan %p state %s", chan, state_to_string(chan->state));
 
+<<<<<<< HEAD   (5e7003ce6c5db0f3b06b5b65725958a044c3bb22 Merge 388051f7389a ("smb: client: fix uninitialized variable)
 	if (!conn || test_bit(FLAG_DEL, &chan->flags)) {
+||||||| BASE   (388051f7389a61697c69691e5a40bb977cebd57c smb: client: fix uninitialized variable in smb2_writev_callb)
+=======
+	if (!conn) {
+>>>>>>> BRANCH (e8a5baff5be273ca07771fd2b9bb1f2a4152917b Bluetooth: L2CAP: fix chan ref leak in l2cap_chan_timeout() )
 		l2cap_chan_put(chan);
 		return;
 	}
