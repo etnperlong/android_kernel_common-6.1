@@ -72,6 +72,24 @@
       "parentUuid": "1fe3e709_5c372b72",
       "revId": "98cb9c75a33beb3ee9cd54ae1c31078e08b5afb8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3bae97a0_5aa4dc81",
+        "filename": "drivers/android/wrapfd/content.rs",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T18:43:35Z",
+      "side": 1,
+      "message": "all good points, I withdraw my suggestion.",
+      "parentUuid": "ce82ea8e_34b50a34",
+      "revId": "98cb9c75a33beb3ee9cd54ae1c31078e08b5afb8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

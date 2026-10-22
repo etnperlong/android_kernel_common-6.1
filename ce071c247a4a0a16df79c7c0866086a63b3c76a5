@@ -109,6 +109,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "853a3071_a98b91a5",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 9
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T18:43:35Z",
+      "side": 1,
+      "message": "I triggered notify_listeners() from publish_wrap() after content.clear() to accomplish this and now I see that I accidentally made that part of the \"take/release buffer ownership\" change instead of this one. fixing.",
+      "parentUuid": "67c13687_5ff75063",
+      "range": {
+        "startLine": 434,
+        "startChar": 7,
+        "endLine": 437,
+        "endChar": 0
+      },
+      "revId": "ce071c247a4a0a16df79c7c0866086a63b3c76a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0345670b_d86c95ff",
         "filename": "drivers/android/wrapfd/wrap.rs",
         "patchSetId": 9
