@@ -291,7 +291,7 @@ xrep_symlink_swap_prep(
 		if (error)
 			return error;
 
-		xfs_trans_log_inode(sc->tp, sc->tempip, logflags);
+		xfs_trans_log_inode(sc->tp, sc->ip, 0);
 
 		error = xfs_defer_finish(&sc->tp);
 		if (error)

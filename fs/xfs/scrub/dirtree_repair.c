@@ -479,7 +479,6 @@ again:
 	}
 
 	if (xfs_has_parent(sc->mp)) {
-		memset(&dl->ppargs, 0, sizeof(dl->ppargs));
 		error = xfs_parent_removename(sc->tp, &dl->ppargs, dp,
 				&dl->xname, sc->ip);
 		if (error)
@@ -619,7 +618,6 @@ xrep_dirtree_create_adoption_path(
 	return 0;
 
 out_path:
-	xino_bitmap_destroy(&path->seen_inodes);
 	kfree(path);
 	return error;
 }

@@ -62,10 +62,8 @@ static inline int hwh_prepare(struct ahash_request *req,
  */
 static inline int hwh_advance(struct hash_walk_helper *hwh, int n)
 {
-	if (n < 0) {
-		hwh->walkbytes = n;
+	if (n < 0)
 		return crypto_hash_walk_done(&hwh->walk, n);
-	}
 
 	hwh->walkbytes -= n;
 	hwh->walkaddr += n;
@@ -341,10 +339,6 @@ static inline int convert_key(const u8 *key, unsigned int keylen,
 				      xflags);
 	}
 
-	/* But finally map -EBUSY to -EIO to indicate an IO failure */
-	if (rc == -EBUSY)
-		rc = -EIO;
-
 out:
 	pr_debug("rc=%d\n", rc);
 	return rc;
@@ -612,7 +606,6 @@ static int phmac_update(struct ahash_request *req)
 	struct phmac_tfm_ctx *tfm_ctx = crypto_ahash_ctx(tfm);
 	struct kmac_sha2_ctx *kmac_ctx = &req_ctx->kmac_ctx;
 	struct hash_walk_helper *hwh = &req_ctx->hwh;
-	bool cleanup = true;
 	int rc;
 
 	/* prep the walk in the request context */
@@ -636,15 +629,12 @@ static int phmac_update(struct ahash_request *req)
 		req_ctx->async_op = OP_UPDATE;
 		atomic_inc(&tfm_ctx->via_engine_ctr);
 		rc = crypto_transfer_hash_request_to_engine(phmac_crypto_engine, req);
-		if (rc == -EINPROGRESS || rc == -EBUSY)
-			cleanup = false;
-		else
+		if (rc != -EINPROGRESS)
 			atomic_dec(&tfm_ctx->via_engine_ctr);
 	}
 
-	if (cleanup) {
-		if (hwh->walkbytes > 0)
-			hwh_advance(hwh, rc);
+	if (rc != -EINPROGRESS) {
+		hwh_advance(hwh, rc);
 		memzero_explicit(kmac_ctx, sizeof(*kmac_ctx));
 	}
 
@@ -659,7 +649,6 @@ static int phmac_final(struct ahash_request *req)
 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
 	struct phmac_tfm_ctx *tfm_ctx = crypto_ahash_ctx(tfm);
 	struct kmac_sha2_ctx *kmac_ctx = &req_ctx->kmac_ctx;
-	bool cleanup = true;
 	int rc = 0;
 
 	/* Try synchronous operation if no active engine usage */
@@ -678,14 +667,12 @@ static int phmac_final(struct ahash_request *req)
 		req_ctx->async_op = OP_FINAL;
 		atomic_inc(&tfm_ctx->via_engine_ctr);
 		rc = crypto_transfer_hash_request_to_engine(phmac_crypto_engine, req);
-		if (rc == -EINPROGRESS || rc == -EBUSY)
-			cleanup = false;
-		else
+		if (rc != -EINPROGRESS)
 			atomic_dec(&tfm_ctx->via_engine_ctr);
 	}
 
 out:
-	if (cleanup)
+	if (rc != -EINPROGRESS)
 		memzero_explicit(kmac_ctx, sizeof(*kmac_ctx));
 	pr_debug("rc=%d\n", rc);
 	return rc;
@@ -698,7 +685,6 @@ static int phmac_finup(struct ahash_request *req)
 	struct phmac_tfm_ctx *tfm_ctx = crypto_ahash_ctx(tfm);
 	struct kmac_sha2_ctx *kmac_ctx = &req_ctx->kmac_ctx;
 	struct hash_walk_helper *hwh = &req_ctx->hwh;
-	bool cleanup = true;
 	int rc;
 
 	/* prep the walk in the request context */
@@ -730,17 +716,15 @@ static int phmac_finup(struct ahash_request *req)
 		/* req->async_op has been set to either OP_FINUP or OP_FINAL */
 		atomic_inc(&tfm_ctx->via_engine_ctr);
 		rc = crypto_transfer_hash_request_to_engine(phmac_crypto_engine, req);
-		if (rc == -EINPROGRESS || rc == -EBUSY)
-			cleanup = false;
-		else
+		if (rc != -EINPROGRESS)
 			atomic_dec(&tfm_ctx->via_engine_ctr);
 	}
 
-	if (cleanup && hwh->walkbytes > 0)
+	if (rc != -EINPROGRESS)
 		hwh_advance(hwh, rc);
 
 out:
-	if (cleanup)
+	if (rc != -EINPROGRESS)
 		memzero_explicit(kmac_ctx, sizeof(*kmac_ctx));
 	pr_debug("rc=%d\n", rc);
 	return rc;
@@ -930,7 +914,7 @@ out:
 	atomic_dec(&tfm_ctx->via_engine_ctr);
 	crypto_finalize_hash_request(engine, req, rc);
 	local_bh_enable();
-	return 0;
+	return rc;
 }
 
 #define S390_ASYNC_PHMAC_ALG(x)						\

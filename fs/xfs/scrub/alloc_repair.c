@@ -571,7 +571,7 @@ xrep_abt_dispose_one(
  * allocation, and blocks that didn't get used can be freed via the usual
  * (deferred) means.
  */
-STATIC int
+STATIC void
 xrep_abt_dispose_reservations(
 	struct xrep_abt		*ra,
 	int			error)
@@ -582,13 +582,9 @@ xrep_abt_dispose_reservations(
 		goto junkit;
 
 	list_for_each_entry_safe(resv, n, &ra->new_bnobt.resv_list, list) {
-		int		error2 = xrep_abt_dispose_one(ra, resv);
-
-		if (error2) {
-			if (!error)
-				error = error2;
+		error = xrep_abt_dispose_one(ra, resv);
+		if (error)
 			goto junkit;
-		}
 	}
 
 junkit:
@@ -600,7 +596,6 @@ junkit:
 
 	xrep_newbt_cancel(&ra->new_bnobt);
 	xrep_newbt_cancel(&ra->new_cntbt);
-	return error;
 }
 
 /* Retrieve free space data for bulk load. */
@@ -806,9 +801,7 @@ xrep_abt_build_new_trees(
 		goto err_newbt;
 
 	/* Dispose of any unused blocks and the accounting information. */
-	error = xrep_abt_dispose_reservations(ra, error);
-	if (error)
-		return error;
+	xrep_abt_dispose_reservations(ra, error);
 
 	return xrep_roll_ag_trans(sc);
 
@@ -819,7 +812,8 @@ err_cur:
 	xfs_btree_del_cursor(cnt_cur, error);
 	xfs_btree_del_cursor(bno_cur, error);
 err_newbt:
-	return xrep_abt_dispose_reservations(ra, error);
+	xrep_abt_dispose_reservations(ra, error);
+	return error;
 }
 
 /*
