@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1955b37_5c4261e2",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 11
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-22T17:34:01Z",
+      "side": 1,
+      "message": "While it works right now, because there\u0027s no fallable logic after the buffer is cleared, `publish_wrap()` doing the clearing doesn\u0027t seem particularly obvious from here. Since we would only do it on rewrap, should we do the clearing explicitly after `publish_wrap()`?",
+      "fixSuggestions": [
+        {
+          "fixId": "6291f8ab_b45ea748",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/android/wrapfd/wrap.rs",
+              "range": {
+                "startLine": 450,
+                "startChar": 0,
+                "endLine": 451,
+                "endChar": 0
+              },
+              "replacement": "            Ok(new_wrap) \u003d\u003e DmaBufContent::publish_wrap(new_wrap, content, close_on_exec, false),\n"
+            }
+          ]
+        }
+      ],
+      "revId": "7a8660b2fd643f3e082e5407cd2b95534bbbd7ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
