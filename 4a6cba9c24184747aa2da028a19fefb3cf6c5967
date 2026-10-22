@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b3867ff_b2e002a2",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 6
+      },
+      "lineNbr": 967,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T18:53:36Z",
+      "side": 1,
+      "message": "yes, part of the same snafu as on that other CL. I mistakenly updated the wrong commit (this one) instead of the add_listener one.",
+      "parentUuid": "1f74745d_8319961b",
+      "range": {
+        "startLine": 959,
+        "startChar": 0,
+        "endLine": 967,
+        "endChar": 59
+      },
+      "revId": "4a6cba9c24184747aa2da028a19fefb3cf6c5967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6afd12a5_10c1bd87",
@@ -55,6 +79,24 @@
           ]
         }
       ],
+      "revId": "4a6cba9c24184747aa2da028a19fefb3cf6c5967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff05a4c1_d845b0fe",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 6
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T18:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6afd12a5_10c1bd87",
       "revId": "4a6cba9c24184747aa2da028a19fefb3cf6c5967",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
