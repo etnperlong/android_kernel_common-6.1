@@ -153,13 +153,24 @@ static void damon_do_test_apply_three_regions(struct kunit *test,
 
 	damon_va_apply_three_regions(t, three_regions);
 
+	KUNIT_EXPECT_EQ(test, damon_nr_regions(t), nr_expected / 2);
+	if (damon_nr_regions(t) != nr_expected / 2)
+		goto out;
+
 	for (i = 0; i < nr_expected / 2; i++) {
 		r = __nth_region_of(t, i);
 		KUNIT_EXPECT_EQ(test, r->ar.start, expected[i * 2]);
 		KUNIT_EXPECT_EQ(test, r->ar.end, expected[i * 2 + 1]);
 	}
 
+<<<<<<< HEAD   (be731d5350249b8a8d15da2c8717a864657151f4 Merge 9f30ba9aa027 ("tcp: clear sock_ops cb flags before for)
 	damon_destroy_target(t);
+||||||| BASE   (9f30ba9aa0270a18fdd1e6cd426c480c35f7de9d tcp: clear sock_ops cb flags before force-closing a child so)
+	damon_destroy_ctx(ctx);
+=======
+out:
+	damon_destroy_ctx(ctx);
+>>>>>>> BRANCH (8b2f7a411e7ceaef268355c2150c22ee3f509c3b clk: meson: align gxbb_32k_clk_sel number of parents with ac)
 }
 
 /*
