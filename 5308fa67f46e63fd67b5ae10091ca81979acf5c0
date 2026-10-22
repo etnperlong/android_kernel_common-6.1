@@ -463,6 +463,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "81e7d8ab_c407a542",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1459,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T22:56:55Z",
+      "side": 1,
+      "message": "Done: each behaviour test now skips when /dev/dma_heap/system is missing, and the LOAD-gate tests also skip when the kernel has no sw_sync or no debugfs. I\u0027m keeping the config lines for kselftest-merge. wrapfd_test_dmabuf_system_heap gets the same skip in a separate change.",
+      "parentUuid": "875a313a_187b12cb",
+      "isAi": true,
+      "revId": "5308fa67f46e63fd67b5ae10091ca81979acf5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fee76473_bd2cfc46",
