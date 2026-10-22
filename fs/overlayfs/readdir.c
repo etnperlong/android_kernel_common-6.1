@@ -1044,7 +1044,7 @@ static int ovl_dir_open(struct inode *inode, struct file *file)
 	struct ovl_dir_file *od;
 	enum ovl_path_type type;
 
-	od = kzalloc_obj(struct ovl_dir_file);
+	od = kzalloc(sizeof(struct ovl_dir_file), GFP_KERNEL);
 	if (!od)
 		return -ENOMEM;
 

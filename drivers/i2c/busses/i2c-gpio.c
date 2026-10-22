@@ -418,7 +418,7 @@ static struct i2c_gpio_scl_data *i2c_gpio_create_scl(struct device *dev)
 		}
 	}
 
-	scl = kzalloc_obj(*scl);
+	scl = kzalloc(sizeof(*scl), GFP_KERNEL);
 	if (!scl) {
 		if (sharable)
 			fwnode_handle_put(args.fwnode);

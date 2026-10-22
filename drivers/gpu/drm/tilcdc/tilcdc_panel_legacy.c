@@ -22,7 +22,7 @@ tilcdc_panel_update_prop(struct of_changeset *ocs, struct device_node *node,
 {
 	struct property *prop;
 
-	prop = kzalloc_obj(*prop);
+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
 	if (!prop)
 		return -ENOMEM;
 

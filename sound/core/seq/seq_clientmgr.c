@@ -210,7 +210,7 @@ static struct snd_seq_client *seq_create_client1(int client_index, int poolsize)
 	struct snd_seq_client *client;
 
 	/* init client data */
-	client = kzalloc_obj(*client);
+	client = kzalloc(sizeof(*client), GFP_KERNEL);
 	if (client == NULL)
 		return NULL;
 	client->pool = snd_seq_pool_new(poolsize);

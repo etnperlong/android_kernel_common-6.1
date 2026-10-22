@@ -150,7 +150,7 @@ static int cttimeout_new_timeout(struct sk_buff *skb,
 		goto err_proto_put;
 	}
 
-	timeout = kzalloc_obj(*timeout);
+	timeout = kzalloc(sizeof(*timeout), GFP_KERNEL);
 	if (timeout == NULL) {
 		ret = -ENOMEM;
 		goto err_proto_put;

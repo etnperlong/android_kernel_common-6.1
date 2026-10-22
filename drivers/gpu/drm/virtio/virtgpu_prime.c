@@ -293,7 +293,9 @@ int virtgpu_dma_buf_obj_resubmit(struct virtio_gpu_device *vgdev,
 		return -ENOMEM;
 	}
 
-	ents = kvmalloc_objs(struct virtio_gpu_mem_entry, bo->sgt->nents);
+	ents = kvmalloc_array(bo->sgt->nents,
+			      sizeof(struct virtio_gpu_mem_entry),
+			      GFP_KERNEL);
 	if (!ents) {
 		DRM_ERROR("failed to allocate ent list\n");
 		return -ENOMEM;

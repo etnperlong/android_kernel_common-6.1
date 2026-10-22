@@ -1249,7 +1249,8 @@ static int find_sdca_entity_pde(struct device *dev,
 		return -EINVAL;
 	}
 
-	u32 *delay_list __free(kfree) = kzalloc_objs(*delay_list, num_delays);
+	u32 *delay_list __free(kfree) = kcalloc(num_delays, sizeof(*delay_list),
+						GFP_KERNEL);
 	if (!delay_list)
 		return -ENOMEM;
 
@@ -1312,8 +1313,8 @@ static int find_sdca_entity_ge(struct device *dev,
 		return -EINVAL;
 	}
 
-	u8 *affected_list __free(kfree) = kzalloc_objs(*affected_list,
-						       num_affected);
+	u8 *affected_list __free(kfree) = kcalloc(num_affected, sizeof(*affected_list),
+						  GFP_KERNEL);
 	if (!affected_list)
 		return -ENOMEM;
 
@@ -1551,8 +1552,8 @@ static int find_sdca_entities(struct device *dev, struct fwnode_handle *function
 	if (!entities)
 		return -ENOMEM;
 
-	u32 *entity_list __free(kfree) = kzalloc_objs(*entity_list,
-						      num_entities);
+	u32 *entity_list __free(kfree) = kcalloc(num_entities, sizeof(*entity_list),
+						 GFP_KERNEL);
 	if (!entity_list)
 		return -ENOMEM;
 
@@ -1714,8 +1715,8 @@ static int find_sdca_entity_connection_pde(struct device *dev,
 	if (!managed)
 		return -ENOMEM;
 
-	u32 *managed_list __free(kfree) = kzalloc_objs(*managed_list,
-						       num_managed);
+	u32 *managed_list __free(kfree) = kcalloc(num_managed, sizeof(*managed_list),
+						  GFP_KERNEL);
 	if (!managed_list)
 		return -ENOMEM;
 
@@ -2032,8 +2033,8 @@ static int find_sdca_clusters(struct device *dev,
 	if (!clusters)
 		return -ENOMEM;
 
-	u32 *cluster_list __free(kfree) = kzalloc_objs(*cluster_list,
-						       num_clusters);
+	u32 *cluster_list __free(kfree) = kcalloc(num_clusters, sizeof(*cluster_list),
+						  GFP_KERNEL);
 	if (!cluster_list)
 		return -ENOMEM;
 

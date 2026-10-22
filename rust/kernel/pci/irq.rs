@@ -151,10 +151,8 @@ impl<'a> IrqVectorRegistration<'a> {
     /// [`Self::len()`].
     #[inline]
     pub fn index(&self, index: usize) -> Result<IrqVector<'_>> {
-        let index = u32::try_from(index)?;
-
         // SAFETY: `self.dev.as_raw()` is a valid pointer to a `struct pci_dev`.
-        let irq = unsafe { bindings::pci_irq_vector(self.dev.as_raw(), index) };
+        let irq = unsafe { bindings::pci_irq_vector(self.dev.as_raw(), index as u32) };
         if irq < 0 {
             return Err(Error::from_errno(irq));
         }

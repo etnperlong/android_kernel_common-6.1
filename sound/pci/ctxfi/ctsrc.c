@@ -432,9 +432,9 @@ get_src_rsc(struct src_mgr *mgr, const struct src_desc *desc, struct src **rsrc)
 
 	/* Allocate mem for master src resource */
 	if (MEMRD == desc->mode)
-		src = kzalloc_objs(*src, desc->multi);
+		src = kcalloc(desc->multi, sizeof(*src), GFP_KERNEL);
 	else
-		src = kzalloc_obj(*src);
+		src = kzalloc(sizeof(*src), GFP_KERNEL);
 
 	if (!src) {
 		err = -ENOMEM;

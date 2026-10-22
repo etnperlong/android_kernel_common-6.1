@@ -253,7 +253,7 @@ struct gx_stream *gx_stream_alloc(struct gx_iface *iface)
 {
 	struct gx_stream *ts;
 
-	ts = kzalloc_obj(*ts);
+	ts = kzalloc(sizeof(*ts), GFP_KERNEL);
 	if (ts) {
 		INIT_LIST_HEAD(&ts->formatter_list);
 		mutex_init(&ts->lock);

@@ -236,7 +236,7 @@ static int get_amixer_rsc(struct amixer_mgr *mgr,
 	*ramixer = NULL;
 
 	/* Allocate mem for amixer resource */
-	amixer = kzalloc_obj(*amixer);
+	amixer = kzalloc(sizeof(*amixer), GFP_KERNEL);
 	if (!amixer)
 		return -ENOMEM;
 
@@ -390,7 +390,7 @@ static int get_sum_rsc(struct sum_mgr *mgr,
 	*rsum = NULL;
 
 	/* Allocate mem for sum resource */
-	sum = kzalloc_obj(*sum);
+	sum = kzalloc(sizeof(*sum), GFP_KERNEL);
 	if (!sum)
 		return -ENOMEM;
 

@@ -158,7 +158,7 @@ static void snd_ctl_led_set_state(struct snd_card *card, unsigned int access,
 			UPDATE_ROUTE(route, snd_ctl_led_get(lctl));
 		}
 		if (!found && kctl && card) {
-			lctl = kzalloc_obj(*lctl);
+			lctl = kzalloc(sizeof(*lctl), GFP_KERNEL);
 			if (lctl) {
 				lctl->card = card;
 				lctl->access = access;

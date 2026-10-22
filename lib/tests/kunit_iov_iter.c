@@ -57,7 +57,7 @@ static void *__init iov_kunit_create_buffer(struct kunit *test,
 	void *buffer;
 	unsigned int i;
 
-	pages = kzalloc_objs(struct page *, npages);
+	pages = kzalloc_objs(struct page *, npages, GFP_KERNEL);
 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pages);
 	*ppages = pages;
 

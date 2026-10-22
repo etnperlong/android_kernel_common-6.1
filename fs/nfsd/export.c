@@ -358,7 +358,7 @@ int nfsd_nl_expkey_get_reqs_dumpit(struct sk_buff *skb,
 		goto out_unlock;
 	}
 
-	items = kzalloc_objs(*items, cnt);
+	items = kcalloc(cnt, sizeof(*items), GFP_KERNEL);
 	seqnos = kcalloc(cnt, sizeof(*seqnos), GFP_KERNEL);
 	if (!items || !seqnos) {
 		ret = -ENOMEM;
@@ -685,7 +685,7 @@ int nfsd_nl_svc_export_get_reqs_dumpit(struct sk_buff *skb,
 		goto out_unlock;
 	}
 
-	items = kzalloc_objs(*items, cnt);
+	items = kcalloc(cnt, sizeof(*items), GFP_KERNEL);
 	seqnos = kcalloc(cnt, sizeof(*seqnos), GFP_KERNEL);
 	pathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
 	if (!items || !seqnos || !pathbuf) {
@@ -786,7 +786,8 @@ static int nfsd_nl_parse_fslocations(struct nlattr *attr,
 	if (!count)
 		return 0;
 
-	fsloc->locations = kzalloc_objs(struct nfsd4_fs_location, count);
+	fsloc->locations = kcalloc(count, sizeof(struct nfsd4_fs_location),
+				   GFP_KERNEL);
 	if (!fsloc->locations)
 		return -ENOMEM;
 

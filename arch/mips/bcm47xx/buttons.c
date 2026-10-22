@@ -523,24 +523,24 @@ bcm47xx_buttons_add(const struct bcm47xx_gpio_key *buttons, int nbuttons)
 
 	/* 1 node for gpio-keys device, 1 node for each button, 1 terminator */
 	const struct software_node **node_group __free(kfree) =
-		kzalloc_objs(*node_group, 1 + nbuttons + 1);
+		kcalloc(1 + nbuttons + 1, sizeof(*node_group), GFP_KERNEL);
 	if (!node_group)
 		return -ENOMEM;
 
 	/* 1 code property, 1 gpio property, 1 terminator */
 	struct property_entry *props __free(kfree) =
-		kzalloc_objs(*props, nbuttons * 3);
+		kcalloc(nbuttons * 3, sizeof(*props), GFP_KERNEL);
 	if (!props)
 		return -ENOMEM;
 
 	/* 1 node for gpio-keys device, 1 node for each button */
 	struct software_node *nodes __free(kfree) =
-		kzalloc_objs(*nodes, 1 + nbuttons);
+		kcalloc(1 + nbuttons, sizeof(*nodes), GFP_KERNEL);
 	if (!nodes)
 		return -ENOMEM;
 
 	struct software_node_ref_args *ref_args __free(kfree) =
-		kzalloc_objs(*ref_args, nbuttons);
+		kcalloc(nbuttons, sizeof(*ref_args), GFP_KERNEL);
 	if (!ref_args)
 		return -ENOMEM;
 

@@ -376,7 +376,7 @@ static struct xi3c_xfer *xi3c_master_alloc_xfer(unsigned int ncmds)
 {
 	struct xi3c_xfer *xfer;
 
-	xfer = kzalloc_flex(*xfer, cmds, ncmds);
+	xfer = kzalloc_flex(*xfer, cmds, ncmds, GFP_KERNEL);
 	if (!xfer)
 		return NULL;
 
@@ -735,7 +735,7 @@ static int xi3c_master_send_bdcast_ccc_cmd(struct xi3c_master *master,
 	if (!xfer)
 		return -ENOMEM;
 
-	buf = kmalloc_objs(*buf, xfer_len);
+	buf = kmalloc_objs(*buf, xfer_len, GFP_KERNEL);
 	if (!buf)
 		return -ENOMEM;
 

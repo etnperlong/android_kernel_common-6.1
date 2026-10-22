@@ -1023,10 +1023,6 @@ static void scrub_stripe_report_errors(struct scrub_ctx *sctx,
 
 skip:
 	for_each_set_bit(sector_nr, &extent_bitmap, stripe->nr_sectors) {
-		const u64 sector_logical = stripe->logical +
-					   ((u64)sector_nr << fs_info->sectorsize_bits);
-		const u64 sector_physical = physical +
-					   ((u64)sector_nr << fs_info->sectorsize_bits);
 		bool repaired = false;
 
 		if (scrub_bitmap_test_bit_is_metadata(stripe, sector_nr)) {
@@ -1055,12 +1051,12 @@ skip:
 			if (dev) {
 				btrfs_err_rl(fs_info,
 		"scrub: fixed up error at logical %llu on dev %s physical %llu",
-					    sector_logical, btrfs_dev_name(dev),
-					    sector_physical);
+					    stripe->logical, btrfs_dev_name(dev),
+					    physical);
 			} else {
 				btrfs_err_rl(fs_info,
 			   "scrub: fixed up error at logical %llu on mirror %u",
-					    sector_logical, stripe->mirror_num);
+					    stripe->logical, stripe->mirror_num);
 			}
 			continue;
 		}
@@ -1069,30 +1065,30 @@ skip:
 		if (dev) {
 			btrfs_err_rl(fs_info,
 "scrub: unable to fixup (regular) error at logical %llu on dev %s physical %llu",
-					    sector_logical, btrfs_dev_name(dev),
-					    sector_physical);
+					    stripe->logical, btrfs_dev_name(dev),
+					    physical);
 		} else {
 			btrfs_err_rl(fs_info,
 	  "scrub: unable to fixup (regular) error at logical %llu on mirror %u",
-					    sector_logical, stripe->mirror_num);
+					    stripe->logical, stripe->mirror_num);
 		}
 
 		if (scrub_bitmap_test_bit_io_error(stripe, sector_nr))
 			if (__ratelimit(&rs) && dev)
 				scrub_print_common_warning("i/o error", dev, false,
-						     sector_logical, sector_physical);
+						     stripe->logical, physical);
 		if (scrub_bitmap_test_bit_csum_error(stripe, sector_nr))
 			if (__ratelimit(&rs) && dev)
 				scrub_print_common_warning("checksum error", dev, false,
-						     sector_logical, sector_physical);
+						     stripe->logical, physical);
 		if (scrub_bitmap_test_bit_meta_error(stripe, sector_nr))
 			if (__ratelimit(&rs) && dev)
 				scrub_print_common_warning("header error", dev, false,
-						     sector_logical, sector_physical);
+						     stripe->logical, physical);
 		if (scrub_bitmap_test_bit_meta_gen_error(stripe, sector_nr))
 			if (__ratelimit(&rs) && dev)
 				scrub_print_common_warning("generation error", dev, false,
-						     sector_logical, sector_physical);
+						     stripe->logical, physical);
 	}
 
 	/* Update the device stats. */

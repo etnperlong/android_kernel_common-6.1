@@ -97,7 +97,7 @@ int mv88e6xxx_cls_flower_add(struct dsa_switch *ds, int port,
 		goto err_unlock;
 	}
 
-	entry = kzalloc_obj(*entry);
+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
 	if (!entry) {
 		err = -ENOMEM;
 		goto err_unlock;

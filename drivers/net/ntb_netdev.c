@@ -659,7 +659,8 @@ static int ntb_netdev_probe(struct device *client_dev)
 	dev->client_dev = client_dev;
 	dev->num_queues = 0;
 
-	dev->queues = kzalloc_objs(*dev->queues, NTB_NETDEV_MAX_QUEUES);
+	dev->queues = kzalloc_objs(*dev->queues, NTB_NETDEV_MAX_QUEUES,
+				   GFP_KERNEL);
 	if (!dev->queues) {
 		rc = -ENOMEM;
 		goto err_free_netdev;

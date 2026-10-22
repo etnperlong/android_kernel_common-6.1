@@ -651,7 +651,7 @@ static int eea_pci_probe(struct pci_dev *pci_dev,
 	struct eea_device *edev;
 	int err;
 
-	ep_dev = kzalloc_obj(*ep_dev);
+	ep_dev = kzalloc(sizeof(*ep_dev), GFP_KERNEL);
 	if (!ep_dev)
 		return -ENOMEM;
 

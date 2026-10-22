@@ -232,7 +232,7 @@ int psmouse_smbus_init(struct psmouse *psmouse,
 	struct psmouse_smbus_dev *smbdev;
 	int error;
 
-	smbdev = kzalloc_obj(*smbdev);
+	smbdev = kzalloc(sizeof(*smbdev), GFP_KERNEL);
 	if (!smbdev)
 		return -ENOMEM;
 

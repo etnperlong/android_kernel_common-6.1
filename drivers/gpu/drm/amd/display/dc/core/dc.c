@@ -914,7 +914,8 @@ static bool dc_construct_update_scratch_pool(struct dc *dc)
 	unsigned int i;
 
 	for (i = 0; i < ARRAY_SIZE(dc->update_scratch_pool); i++) {
-		dc->update_scratch_pool[i] = kzalloc_obj(struct dc_update_scratch_space);
+		dc->update_scratch_pool[i] = kzalloc(
+				sizeof(struct dc_update_scratch_space), GFP_KERNEL);
 		if (!dc->update_scratch_pool[i])
 			return false;
 		dc->update_scratch_in_use[i] = false;

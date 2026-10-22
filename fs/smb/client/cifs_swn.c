@@ -443,7 +443,7 @@ static struct cifs_swn_reg *cifs_get_swn_reg(struct cifs_tcon *tcon)
 		goto unlock;
 	}
 
-	reg = kmalloc_obj(struct cifs_swn_reg);
+	reg = kmalloc_obj(struct cifs_swn_reg, GFP_KERNEL);
 	if (reg == NULL) {
 		ret = -ENOMEM;
 		goto fail_unlock;

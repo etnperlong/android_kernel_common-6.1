@@ -137,7 +137,7 @@ static void enic_admin_msg_enqueue(struct enic *enic, void *buf,
 {
 	struct enic_admin_msg *msg;
 
-	msg = kmalloc_flex(*msg, data, len);
+	msg = kmalloc(struct_size(msg, data, len), GFP_KERNEL);
 	if (!msg)
 		return;
 

@@ -93,7 +93,8 @@ acpi_disc_t pmc_parse_telem_dsd(union acpi_object *obj,
 	if (header->num_entries != num_regions)
 		return ERR_PTR(-EINVAL);
 
-	acpi_disc_t disc __free(kfree) = kmalloc_objs(*disc, num_regions);
+	acpi_disc_t disc __free(kfree) = kmalloc_array(num_regions, sizeof(*disc),
+						      GFP_KERNEL);
 	if (!disc)
 		return ERR_PTR(-ENOMEM);
 

@@ -62,7 +62,6 @@ struct hd3ss3220 {
 	int id_irq;
 
 	struct regulator *vbus;
-	bool vbus_enabled;
 };
 
 static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
@@ -209,7 +208,7 @@ static void hd3ss3220_regulator_control(struct hd3ss3220 *hd3ss3220, bool on)
 {
 	int ret;
 
-	if (hd3ss3220->vbus_enabled == on)
+	if (regulator_is_enabled(hd3ss3220->vbus) == on)
 		return;
 
 	if (on)
@@ -217,13 +216,9 @@ static void hd3ss3220_regulator_control(struct hd3ss3220 *hd3ss3220, bool on)
 	else
 		ret = regulator_disable(hd3ss3220->vbus);
 
-	if (ret) {
+	if (ret)
 		dev_err(hd3ss3220->dev,
 			"vbus regulator %s failed: %d\n", on ? "enable" : "disable", ret);
-		return;
-	}
-
-	hd3ss3220->vbus_enabled = on;
 }
 
 static void hd3ss3220_set_role(struct hd3ss3220 *hd3ss3220)

@@ -177,7 +177,7 @@ int xe_amc_init(struct xe_i2c *i2c)
 {
 	struct xe_amc *amc;
 
-	amc = kzalloc_obj(*amc);
+	amc = kzalloc(sizeof(*amc), GFP_KERNEL);
 	if (!amc)
 		return -ENOMEM;
 

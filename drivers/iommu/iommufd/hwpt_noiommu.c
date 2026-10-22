@@ -54,7 +54,7 @@ noiommu_alloc_paging_flags(struct device *dev, u32 flags,
 		(BIT(PT_FEAT_DYNAMIC_TOP) | BIT(PT_FEAT_AMDV1_ENCRYPT_TABLES) |
 		 BIT(PT_FEAT_AMDV1_FORCE_COHERENCE));
 
-	dom = kzalloc_obj(*dom);
+	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
 	if (!dom)
 		return ERR_PTR(-ENOMEM);
 

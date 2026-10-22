@@ -157,7 +157,8 @@ static void libie_ctlq_free_tx_msgs(struct libie_ctlq_info *ctlq,
  */
 static int libie_ctlq_alloc_tx_msgs(struct libie_ctlq_info *ctlq)
 {
-	ctlq->tx_msg = kvzalloc_objs(*ctlq->tx_msg, ctlq->ring_len);
+	ctlq->tx_msg = kvzalloc_objs(*ctlq->tx_msg, ctlq->ring_len,
+				     GFP_KERNEL);
 	if (!ctlq->tx_msg)
 		return -ENOMEM;
 

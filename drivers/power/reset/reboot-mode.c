@@ -122,14 +122,14 @@ static int reboot_mode_create_device(struct reboot_mode_driver *reboot)
 	struct mode_info *info;
 	int ret;
 
-	priv = kzalloc_obj(*priv);
+	priv = kzalloc_obj(*priv, GFP_KERNEL);
 	if (!priv)
 		return -ENOMEM;
 
 	INIT_LIST_HEAD(&priv->head);
 
 	list_for_each_entry(info, &reboot->head, list) {
-		sysfs_info = kzalloc_obj(*sysfs_info);
+		sysfs_info = kzalloc_obj(*sysfs_info, GFP_KERNEL);
 		if (!sysfs_info) {
 			ret = -ENOMEM;
 			goto error;
@@ -188,7 +188,7 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
 			continue;
 		}
 
-		info = kzalloc_obj(*info);
+		info = kzalloc_obj(*info, GFP_KERNEL);
 		if (!info) {
 			ret = -ENOMEM;
 			goto error;

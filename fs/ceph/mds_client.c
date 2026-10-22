@@ -5492,7 +5492,7 @@ static void ceph_mdsc_reset_workfn(struct work_struct *work)
 		goto out_complete;
 	}
 
-	sessions = kzalloc_objs(*sessions, max_sessions);
+	sessions = kcalloc(max_sessions, sizeof(*sessions), GFP_KERNEL);
 	if (!sessions) {
 		mutex_unlock(&mdsc->mutex);
 		ret = -ENOMEM;
