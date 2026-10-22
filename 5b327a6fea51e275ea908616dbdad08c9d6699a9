@@ -37,6 +37,42 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "d58c0602_e953ecc1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1728636
+      },
+      "writtenOn": "2026-10-22T22:27:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "379a8db6_7030aa5b",
+      "revId": "5b327a6fea51e275ea908616dbdad08c9d6699a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afba7cd2_97d0cb76",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1728636
+      },
+      "writtenOn": "2026-10-22T22:27:39Z",
+      "side": 1,
+      "message": "Bug 576781977 registered",
+      "parentUuid": "c92fd39d_3d639771",
+      "revId": "5b327a6fea51e275ea908616dbdad08c9d6699a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "b63d331a_0b295700",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
