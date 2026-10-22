@@ -1,0 +1,59 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1fe3e709_5c372b72",
+        "filename": "drivers/android/wrapfd/content.rs",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T17:37:04Z",
+      "side": 1,
+      "message": "We could also, since we\u0027re using a KVec here, just use the index of an entry as the \"handle\". This would get rid of the inner Pin\u003cKBox\u003cListener\u003e\u003e in favor of a plain Listener struct. Let me know what you prefer.",
+      "fixSuggestions": [
+        {
+          "fixId": "5e6c4fb3_aa3d616d",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/android/wrapfd/content.rs",
+              "range": {
+                "startLine": 32,
+                "startChar": 0,
+                "endLine": 33,
+                "endChar": 0
+              },
+              "replacement": "    listeners: KVec\u003cKBox\u003cListener\u003e\u003e,\n"
+            },
+            {
+              "path": "drivers/android/wrapfd/content.rs",
+              "range": {
+                "startLine": 259,
+                "startChar": 0,
+                "endLine": 261,
+                "endChar": 0
+              },
+              "replacement": "        let listener \u003d KBox::new(Listener { ops, param }, GFP_KERNEL)?;\n        let handle \u003d listener.as_ref() as *const Listener as _;\n"
+            },
+            {
+              "path": "drivers/android/wrapfd/content.rs",
+              "range": {
+                "startLine": 269,
+                "startChar": 0,
+                "endLine": 271,
+                "endChar": 0
+              },
+              "replacement": "                let listener_handle \u003d listener.as_ref() as *const Listener as *const ffi::c_void;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "98cb9c75a33beb3ee9cd54ae1c31078e08b5afb8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
