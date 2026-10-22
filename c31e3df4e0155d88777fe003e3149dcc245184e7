@@ -22,6 +22,30 @@
       },
       "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9dea99cd_a9b0c4df",
+        "filename": "groups",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1889140
+      },
+      "writtenOn": "2026-10-22T18:13:51Z",
+      "side": 1,
+      "message": "Hi Will,\n\nI requested that group to have +2 permissions on the p3s branches.",
+      "parentUuid": "cc988f9a_05c8343b",
+      "range": {
+        "startLine": 17,
+        "startChar": 63,
+        "endLine": 17,
+        "endChar": 78
+      },
+      "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
