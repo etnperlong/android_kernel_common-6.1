@@ -46,6 +46,30 @@
       },
       "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ff7f2b2_07b00158",
+        "filename": "groups",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-22T18:31:48Z",
+      "side": 1,
+      "message": "Hi @byi@google.com @jyescas@google.com\n\nCOuld we use the google group instead of the mdb group: \n\nhttps://groups.google.com/a/google.com/g/16kb-core-eng/members",
+      "parentUuid": "9dea99cd_a9b0c4df",
+      "range": {
+        "startLine": 17,
+        "startChar": 63,
+        "endLine": 17,
+        "endChar": 78
+      },
+      "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
