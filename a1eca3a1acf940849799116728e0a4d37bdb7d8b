@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b3059a3_e1a0dd99",
+        "filename": "gki/aarch64/abi.stg.allowed_breaks",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-22T23:34:07Z",
+      "side": 1,
+      "message": "I think you need to re-generate this file on this branch to avoid adding these extra changes. Or maybe just manually delete these extra additions?",
+      "range": {
+        "startLine": 329,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 27
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "fd4cc289_20285ea2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "gki/aarch64/abi.stg.allowed_breaks",
+              "range": {
+                "startLine": 327,
+                "startChar": 0,
+                "endLine": 349,
+                "endChar": 0
+              },
+              "replacement": "    parameter 11 of type \u0027unsigned int\u0027 was added\n"
+            },
+            {
+              "path": "gki/aarch64/abi.stg.allowed_breaks",
+              "range": {
+                "startLine": 1,
+                "startChar": 0,
+                "endLine": 2,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "a1eca3a1acf940849799116728e0a4d37bdb7d8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
