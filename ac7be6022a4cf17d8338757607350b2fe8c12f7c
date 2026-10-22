@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20b1993d_741e5018",
+        "filename": "mm/ptshare.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 4311469
+      },
+      "writtenOn": "2026-10-22T20:15:52Z",
+      "side": 1,
+      "message": "Hey @kaleshsingh@google.com, with this we won\u0027t be able to test on 16K cuttlefish since cf pgagnostic target has `__PAGE_SIZE (16k) !\u003d PAGE_SIZE (4k)`. Will this be okay with us?",
+      "range": {
+        "startLine": 168,
+        "startChar": 1,
+        "endLine": 168,
+        "endChar": 32
+      },
+      "revId": "ac7be6022a4cf17d8338757607350b2fe8c12f7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
