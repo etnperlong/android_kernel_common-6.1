@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13a49cb2_a1c68b04",
+        "filename": "mm/vmscan.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 5073,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-22T15:57:00Z",
+      "side": 1,
+      "message": "In pgdat_balanced() `size` parameter is calculated differently, so I\u0027m concerned that if a partner already implemented the handler for trace_android_vh_mm_get_zone_mark() then this change might have unexpected side-effects (the hook was not affecting this path before and now it does).\nPlease add a separate vendor hook for this path to avoid such side-effects. Something like `trace_android_vh_mm_get_zone_mark_mglru()`",
+      "range": {
+        "startLine": 5073,
+        "startChar": 2,
+        "endLine": 5073,
+        "endChar": 61
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "7ba6e2d3_af05d665",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "mm/vmscan.c",
+              "range": {
+                "startLine": 5074,
+                "startChar": 0,
+                "endLine": 5075,
+                "endChar": 0
+              },
+              "replacement": "\t\ttrace_android_vh_mm_get_zone_mark_mglru(zone, \u0026size);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "066d0c0303f704d3cc02f03dabfec21399c230fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
