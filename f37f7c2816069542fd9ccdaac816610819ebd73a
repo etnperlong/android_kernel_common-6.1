@@ -22,6 +22,30 @@
       },
       "revId": "f37f7c2816069542fd9ccdaac816610819ebd73a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eed90930_ce160f15",
+        "filename": "drivers/android/wrapfd/content.rs",
+        "patchSetId": 9
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T11:33:26Z",
+      "side": 1,
+      "message": "Done, note that this is what the original wrapfd driver does, though.",
+      "parentUuid": "48ea0e4f_d0f46a6e",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 22
+      },
+      "revId": "f37f7c2816069542fd9ccdaac816610819ebd73a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
