@@ -70,6 +70,31 @@
       },
       "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ab6bf96_7ad6953f",
+        "filename": "groups",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1042719
+      },
+      "writtenOn": "2026-10-22T19:25:39Z",
+      "side": 1,
+      "message": "Done. Updated both changes in the topic to use google/16kb-core-eng@google.com instead of mdb/android-16k.",
+      "parentUuid": "9ff7f2b2_07b00158",
+      "range": {
+        "startLine": 17,
+        "startChar": 63,
+        "endLine": 17,
+        "endChar": 78
+      },
+      "isAi": true,
+      "revId": "c31e3df4e0155d88777fe003e3149dcc245184e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
