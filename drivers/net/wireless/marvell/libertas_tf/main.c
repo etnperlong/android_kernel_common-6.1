@@ -173,8 +173,16 @@ static int lbtf_init_adapter(struct lbtf_private *priv)
 static void lbtf_free_adapter(struct lbtf_private *priv)
 {
 	lbtf_deb_enter(LBTF_DEB_MAIN);
+<<<<<<< HEAD   (d3231d350eb864921ea0a9dbcb177ac2d7cdf934 Merge 7f9a05c930d3 ("xfrm: add extack to verify_one_alg, ver)
 	lbtf_free_cmd_buffer(priv);
 	del_timer(&priv->command_timer);
+||||||| BASE   (7f9a05c930d3f7a69b20a00acb34a1a1a7b0ab28 xfrm: add extack to verify_one_alg, verify_auth_trunc, verif)
+	lbtf_free_cmd_buffer(priv);
+	timer_delete_sync(&priv->command_timer);
+=======
+	timer_delete_sync(&priv->command_timer);
+	lbtf_free_cmd_buffer(priv);
+>>>>>>> BRANCH (587461ddf5d522bfcb50ebd55078c0dac37be496 Linux 5.10.271)
 	lbtf_deb_leave(LBTF_DEB_MAIN);
 }
 
