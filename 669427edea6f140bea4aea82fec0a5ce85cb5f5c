@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07e142a7_b176a9b7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:13:43Z",
+      "side": 1,
+      "message": "There should be an annotation explaining what changed were needed as part of the BACKPORT. See https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
+      "revId": "669427edea6f140bea4aea82fec0a5ce85cb5f5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62dbe450_7a5a6087",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:13:43Z",
+      "side": 1,
+      "message": "Why is this patch needed on this old branch?",
+      "revId": "669427edea6f140bea4aea82fec0a5ce85cb5f5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
