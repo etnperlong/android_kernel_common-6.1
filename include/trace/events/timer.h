@@ -302,7 +302,7 @@ DECLARE_EVENT_CLASS(hrtimer_class,
  * hrtimer_start_expired - Invoked when a expired timer was started
  * @hrtimer:	pointer to struct hrtimer
  *
- * Preceded by a hrtimer_start tracepoint.
+ * Preceeded by a hrtimer_start tracepoint.
  */
 DEFINE_EVENT(hrtimer_class, hrtimer_start_expired,
 
