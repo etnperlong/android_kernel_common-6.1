@@ -547,9 +547,13 @@ impl Transaction {
                         if let Some(t_outdated) =
                             target_node.take_outdated_transaction(&self, &mut process_inner)
                         {
+<<<<<<< HEAD   (0c763494ff654f5a59ed464b861b404aa1bc13d5 Merge e8a5baff5be2 ("Bluetooth: L2CAP: fix chan ref leak in )
                             crate::trace::trace_transaction_update_buffer_release(
                                 t_outdated.debug_id,
                             );
+||||||| BASE   (e8a5baff5be273ca07771fd2b9bb1f2a4152917b Bluetooth: L2CAP: fix chan ref leak in l2cap_chan_timeout() )
+=======
+>>>>>>> BRANCH (acb7cf4c1184e27622be0faf89244d5001ed1e87 Linux 6.18.35)
                             let mut alloc_guard = t_outdated.allocation.lock();
                             if let Some(alloc) = (*alloc_guard).as_mut() {
                                 // Take the oneway node to prevent `Allocation::drop` from calling
