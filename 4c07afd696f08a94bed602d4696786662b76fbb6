@@ -215,6 +215,24 @@
       "parentUuid": "1333d915_b8879acd",
       "revId": "4c07afd696f08a94bed602d4696786662b76fbb6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4202a77_18436605",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 2173,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T20:37:26Z",
+      "side": 1,
+      "message": "will combine",
+      "parentUuid": "f93789f0_f8d5a3d2",
+      "revId": "4c07afd696f08a94bed602d4696786662b76fbb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

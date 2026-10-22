@@ -429,6 +429,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "255f6036_2500c6af",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1459,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-22T20:37:26Z",
+      "side": 1,
+      "message": "Okay, I can do that. \n\nShould I still change `tools/testing/selftests/drivers/wrapfd/config`? I will drop CONFIG_DMABUF_HEAPS_SYSTEM from there, but what about the others?",
+      "parentUuid": "c5469a67_a39bd4c7",
+      "revId": "5308fa67f46e63fd67b5ae10091ca81979acf5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "fee76473_bd2cfc46",
         "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
         "patchSetId": 2
