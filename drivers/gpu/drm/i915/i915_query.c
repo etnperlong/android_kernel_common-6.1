@@ -403,10 +403,8 @@ static int query_perf_config_list(struct drm_i915_private *i915,
 		ids = krealloc(oa_config_ids,
 			       n_configs * sizeof(*oa_config_ids),
 			       GFP_KERNEL);
-		if (!ids) {
-			kfree(oa_config_ids);
+		if (!ids)
 			return -ENOMEM;
-		}
 
 		alloc = fetch_and_zero(&n_configs);
 
