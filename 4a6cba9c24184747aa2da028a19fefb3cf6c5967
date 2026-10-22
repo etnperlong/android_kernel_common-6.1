@@ -1,0 +1,62 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f74745d_8319961b",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 6
+      },
+      "lineNbr": 967,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-22T18:18:53Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be part of the patch that adds the [add|del]_listener functions?",
+      "range": {
+        "startLine": 959,
+        "startChar": 0,
+        "endLine": 967,
+        "endChar": 59
+      },
+      "revId": "4a6cba9c24184747aa2da028a19fefb3cf6c5967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6afd12a5_10c1bd87",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 6
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-22T18:18:53Z",
+      "side": 1,
+      "message": "We should also ensure that the wrap is not in use via any one of the other functions, like `load()`",
+      "fixSuggestions": [
+        {
+          "fixId": "391e6beb_565e9389",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/android/wrapfd/wrap.rs",
+              "range": {
+                "startLine": 1060,
+                "startChar": 0,
+                "endLine": 1061,
+                "endChar": 0
+              },
+              "replacement": "        if matches!(guard.state, WrapState::InUse(_)) || guard.is_mapped() {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "4a6cba9c24184747aa2da028a19fefb3cf6c5967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
