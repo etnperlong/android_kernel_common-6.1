@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a801a83_0e3f6ba7",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 3
+      },
+      "lineNbr": 1010,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T11:43:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d600f81e_b685ad9e",
+      "revId": "21804a790fc87936024ea0610668b8f43e76b2d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a0046f49_4584cf3b",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7cb545e4_a24221b3",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 3
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T11:43:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0046f49_4584cf3b",
+      "range": {
+        "startLine": 1037,
+        "startChar": 0,
+        "endLine": 1039,
+        "endChar": 9
+      },
+      "revId": "21804a790fc87936024ea0610668b8f43e76b2d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f84aaa63_ed27f849",
@@ -54,6 +96,24 @@
       "writtenOn": "2026-10-21T23:06:48Z",
       "side": 1,
       "message": "`wrapfd_release_ownership()` and please update the header accordingly.",
+      "revId": "21804a790fc87936024ea0610668b8f43e76b2d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43fe6c8d_56073f7b",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 3
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T11:43:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f84aaa63_ed27f849",
       "revId": "21804a790fc87936024ea0610668b8f43e76b2d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
