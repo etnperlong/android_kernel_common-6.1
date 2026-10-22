@@ -53,6 +53,7 @@
 #include <linux/errno.h>
 #include <linux/time.h>
 #include <linux/proc_fs.h>
+#include <linux/rwsem.h>
 #include <linux/stat.h>
 #include <linux/task_io_accounting_ops.h>
 #include <linux/init.h>
@@ -3596,10 +3597,66 @@ static const struct pid_entry tgid_base_stuff[] = {
 #endif
 };
 
+static const struct pid_entry *proc_tgid_entries = tgid_base_stuff;
+static unsigned int proc_tgid_nents = ARRAY_SIZE(tgid_base_stuff);
+static DECLARE_RWSEM(proc_tgid_entries_lock);
+
+/*
+ * Permanent registration: the module reference and name live until reboot.
+ * Call as the final action in module_init; do not return an error afterwards.
+ */
+int proc_tgid_register(const char *name, umode_t mode,
+		       const struct file_operations *fops)
+{
+	size_t len;
+	unsigned int i;
+
+	if (!name || !fops || !fops->owner || (mode & ~0777))
+		return -EINVAL;
+	len = strnlen(name, NAME_MAX + 1);
+	if (!len || len > NAME_MAX || strchr(name, '/') ||
+	    !strcmp(name, ".") || !strcmp(name, ".."))
+		return -EINVAL;
+	char *copy __free(kfree) = kstrdup(name, GFP_KERNEL);
+	if (!copy)
+		return -ENOMEM;
+
+	guard(rwsem_write)(&proc_tgid_entries_lock);
+	for (i = 0; i < proc_tgid_nents; i++)
+		if (!strcmp(copy, proc_tgid_entries[i].name))
+			return -EEXIST;
+	struct pid_entry *entries __free(kfree) =
+		kmalloc_array(proc_tgid_nents + 1, sizeof(*entries), GFP_KERNEL);
+	if (!entries)
+		return -ENOMEM;
+	if (!try_module_get(fops->owner))
+		return -ENODEV;
+	memcpy(entries, proc_tgid_entries, proc_tgid_nents * sizeof(*entries));
+	entries[proc_tgid_nents] = (struct pid_entry) {
+		.name = no_free_ptr(copy),
+		.len = len,
+		.mode = S_IFREG | mode,
+		.fop = fops,
+	};
+	if (proc_tgid_entries != tgid_base_stuff)
+		kfree(proc_tgid_entries);
+	proc_tgid_entries = no_free_ptr(entries);
+	proc_tgid_nents++;
+	return 0;
+}
+EXPORT_SYMBOL_GPL(proc_tgid_register);
+
+/* Release a successful lookup with put_task_struct(). */
+struct task_struct *proc_tgid_get_task(const struct inode *inode)
+{
+	return get_proc_task(inode);
+}
+EXPORT_SYMBOL_GPL(proc_tgid_get_task);
+
 static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
 {
-	return proc_pident_readdir(file, ctx,
-				   tgid_base_stuff, ARRAY_SIZE(tgid_base_stuff));
+	guard(rwsem_read)(&proc_tgid_entries_lock);
+	return proc_pident_readdir(file, ctx, proc_tgid_entries, proc_tgid_nents);
 }
 
 static const struct file_operations proc_tgid_base_operations = {
@@ -3618,9 +3675,9 @@ struct pid *tgid_pidfd_to_pid(const struct file *file)
 
 static struct dentry *proc_tgid_base_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
 {
-	return proc_pident_lookup(dir, dentry,
-				  tgid_base_stuff,
-				  tgid_base_stuff + ARRAY_SIZE(tgid_base_stuff));
+	guard(rwsem_read)(&proc_tgid_entries_lock);
+	return proc_pident_lookup(dir, dentry, proc_tgid_entries,
+				  proc_tgid_entries + proc_tgid_nents);
 }
 
 static const struct inode_operations proc_tgid_base_inode_operations = {
