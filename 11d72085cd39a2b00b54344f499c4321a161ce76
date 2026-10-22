@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8d9d92c_249bc1ad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1096846
+      },
+      "writtenOn": "2026-10-22T23:12:25Z",
+      "side": 1,
+      "message": "wanna backport appropriate Fixes too?\n\nhttp://git.kernel.org/linus/b2f6648c735639d246dc5f98f377b69d5374c2bd\nusb: hcd: queue wakeup_work to system_freezable_wq workqueue\n\nFixes: 4fb352df14de (\"PM: sleep: Do not flag runtime PM workqueue as freezable\")\n\nSide note: it\u0027d be nice if we had some automatic \"Fixes\" scanning in the Android kernel tree, considering how many manual backports we do.",
+      "revId": "11d72085cd39a2b00b54344f499c4321a161ce76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
