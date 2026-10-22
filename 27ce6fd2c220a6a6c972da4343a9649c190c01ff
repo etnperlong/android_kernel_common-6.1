@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "80db15b5_a585dee1",
+        "filename": "drivers/mmc/host/sdhci.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-22T17:10:23Z",
+      "side": 1,
+      "message": "This is the likely cause of the CRC issues. The common case is that the full definition of struct trace_eval_map is now exposed. You can try this to suppress the CRCs:\n```\n#include \u003clinux/android_kabi.h\u003e\nANDROID_KABI_DECLONLY(trace_eval_map);\n```\nif that doesn\u0027t solve it, add:\n```\nANDROID_KABI_DECLONLY(static_call_mod);\n```\n\nIf that isn\u0027t enough, then you\u0027ll have to dig deeper. See documentation at https://source.android.com/docs/core/architecture/kernel/abi-monitor#fixing-crc-mismatch",
+      "revId": "27ce6fd2c220a6a6c972da4343a9649c190c01ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
