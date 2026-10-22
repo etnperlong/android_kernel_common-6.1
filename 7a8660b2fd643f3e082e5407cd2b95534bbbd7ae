@@ -34,6 +34,24 @@
       ],
       "revId": "7a8660b2fd643f3e082e5407cd2b95534bbbd7ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4903a30e_e6700b83",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 11
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-22T17:39:29Z",
+      "side": 1,
+      "message": "I would have done so if that was doable in a reasonably straightforward way, however, content\u0027s ownership is tranferred in the call to publish_wrap so we no longer have a good way to access it, the only thread available to us after this call is a file descriptor and I\u0027d really rather not.",
+      "parentUuid": "f1955b37_5c4261e2",
+      "revId": "7a8660b2fd643f3e082e5407cd2b95534bbbd7ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
