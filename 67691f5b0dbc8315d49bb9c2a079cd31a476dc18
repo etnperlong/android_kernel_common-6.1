@@ -50,6 +50,30 @@
       ],
       "revId": "67691f5b0dbc8315d49bb9c2a079cd31a476dc18",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73c5dfa5_9f6a8188",
+        "filename": "drivers/android/wrapfd/content.rs",
+        "patchSetId": 13
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-23T00:52:49Z",
+      "side": 1,
+      "message": "Yeah, the listener needs to be notified while the original content is still valid.",
+      "parentUuid": "f5a7e9cc_6e915e67",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 129,
+        "endChar": 39
+      },
+      "revId": "67691f5b0dbc8315d49bb9c2a079cd31a476dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
