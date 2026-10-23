@@ -16,6 +16,23 @@
       "message": "This change is ok to land once the associated kabi change is fixed on 6.1 and older.",
       "revId": "9d8670c7050bf733ca122d3be923697e3f45a1e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e0027ef_4d0011eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1981633
+      },
+      "writtenOn": "2026-10-23T21:55:36Z",
+      "side": 1,
+      "message": "This change is ok to land once the associated kabi change is fixed on 6.1 and older.",
+      "revId": "9d8670c7050bf733ca122d3be923697e3f45a1e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
