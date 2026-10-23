@@ -1,0 +1,123 @@
+# Core size & CPU scaling for x86_64 Mini-GKI (Wear OS / low-RAM Cuttlefish)
+# CONFIG_AUTOFDO_CLANG is not set
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+CONFIG_BPF_PROG_PACK_SHIFT=14
+CONFIG_NR_CPUS=8
+CONFIG_LOG_BUF_SHIFT=16
+CONFIG_SLAB_MERGE_DEFAULT=y
+# CONFIG_SLUB_CPU_PARTIAL is not set
+
+# Pre-approved TV-GKI / low-RAM cuts
+# CONFIG_BLK_DEV_NVME is not set
+# CONFIG_NVME_MULTIPATH is not set
+# CONFIG_EDAC is not set
+# CONFIG_KVM is not set
+# CONFIG_KVM_INTEL is not set
+# CONFIG_PKVM_INTEL is not set
+# CONFIG_KVM_AMD is not set
+# CONFIG_KALLSYMS_ALL is not set
+# CONFIG_PAGE_OWNER is not set
+# CONFIG_PAGE_PINNER is not set
+# CONFIG_IKHEADERS is not set
+# CONFIG_CMA_DEBUGFS is not set
+# CONFIG_SW_SYNC is not set
+# CONFIG_KUNIT is not set
+# CONFIG_KUNIT_DEBUGFS is not set
+# CONFIG_KUNIT_TEST is not set
+# CONFIG_KUNIT_EXAMPLE_TEST is not set
+# CONFIG_TIME_KUNIT_TEST is not set
+# CONFIG_NETDEV_ADDR_LIST_TEST is not set
+# CONFIG_REGMAP_KUNIT is not set
+# CONFIG_INPUT_KUNIT_TEST is not set
+# CONFIG_SND_SOC_TOPOLOGY_KUNIT_TEST is not set
+# CONFIG_SND_SOC_UTILS_KUNIT_TEST is not set
+# CONFIG_HID_KUNIT_TEST is not set
+# CONFIG_RTC_LIB_KUNIT_TEST is not set
+# CONFIG_IIO_FORMAT_KUNIT_TEST is not set
+# CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST is not set
+# CONFIG_EXT4_KUNIT_TESTS is not set
+# CONFIG_FAT_KUNIT_TEST is not set
+
+# Keep vmlinux BTF enabled for Mainline Connectivity @funcs.o, skip module BTF
+CONFIG_DEBUG_INFO_DWARF4=y
+# CONFIG_DEBUG_INFO_DWARF5 is not set
+# CONFIG_MODULE_ALLOW_BTF_MISMATCH is not set
+# CONFIG_SCHED_CLASS_EXT is not set
+
+# Unused enterprise/virtualization/network bloat on 1-2GB devices
+# CONFIG_HIBERNATION is not set
+# CONFIG_BLK_DEV_RAM is not set
+CONFIG_BLK_DEV_RAM_SIZE=8192 # nocheck: BLK_DEV_RAM is disabled
+# CONFIG_USB4 is not set
+# CONFIG_NET_9P is not set
+# CONFIG_PPTP is not set
+# CONFIG_WWAN is not set
+# CONFIG_USB_MON is not set
+
+# Sanitizers, allocation codetags, dynamic debug & tracing overhead
+# CONFIG_MEM_ALLOC_PROFILING is not set
+CONFIG_KFENCE=y
+CONFIG_KFENCE_SAMPLE_INTERVAL=0
+# CONFIG_DYNAMIC_DEBUG_CORE is not set
+# CONFIG_HIST_TRIGGERS is not set
+# CONFIG_SCHEDSTATS is not set
+# CONFIG_DEBUG_MEMORY_INIT is not set
+# CONFIG_KPROBES is not set
+# CONFIG_DAMON is not set
+
+# Keep core parent menus built-in when savedefconfig leaf selectors are disabled
+CONFIG_UNIX=y
+CONFIG_INET=y
+CONFIG_PCIEPORTBUS=y
+CONFIG_HOTPLUG_PCI=y
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+CONFIG_USB=y
+CONFIG_MEDIA_SUPPORT=y
+
+# Drop legacy 1980s Macintosh & regional DOS codepages from wired .rodata
+# CONFIG_NLS_CODEPAGE_737 is not set
+# CONFIG_NLS_CODEPAGE_775 is not set
+# CONFIG_NLS_CODEPAGE_850 is not set
+# CONFIG_NLS_CODEPAGE_852 is not set
+# CONFIG_NLS_CODEPAGE_855 is not set
+# CONFIG_NLS_CODEPAGE_857 is not set
+# CONFIG_NLS_CODEPAGE_860 is not set
+# CONFIG_NLS_CODEPAGE_861 is not set
+# CONFIG_NLS_CODEPAGE_862 is not set
+# CONFIG_NLS_CODEPAGE_863 is not set
+# CONFIG_NLS_CODEPAGE_864 is not set
+# CONFIG_NLS_CODEPAGE_865 is not set
+# CONFIG_NLS_CODEPAGE_866 is not set
+# CONFIG_NLS_CODEPAGE_869 is not set
+# CONFIG_NLS_CODEPAGE_936 is not set
+# CONFIG_NLS_CODEPAGE_950 is not set
+# CONFIG_NLS_CODEPAGE_932 is not set
+# CONFIG_NLS_CODEPAGE_949 is not set
+# CONFIG_NLS_CODEPAGE_874 is not set
+# CONFIG_NLS_ISO8859_8 is not set
+# CONFIG_NLS_CODEPAGE_1250 is not set
+# CONFIG_NLS_CODEPAGE_1251 is not set
+# CONFIG_NLS_ISO8859_2 is not set
+# CONFIG_NLS_ISO8859_3 is not set
+# CONFIG_NLS_ISO8859_4 is not set
+# CONFIG_NLS_ISO8859_5 is not set
+# CONFIG_NLS_ISO8859_6 is not set
+# CONFIG_NLS_ISO8859_7 is not set
+# CONFIG_NLS_ISO8859_9 is not set
+# CONFIG_NLS_ISO8859_13 is not set
+# CONFIG_NLS_ISO8859_14 is not set
+# CONFIG_NLS_ISO8859_15 is not set
+# CONFIG_NLS_KOI8_R is not set
+# CONFIG_NLS_KOI8_U is not set
+# CONFIG_NLS_MAC_ROMAN is not set
+# CONFIG_NLS_MAC_CELTIC is not set
+# CONFIG_NLS_MAC_CENTEURO is not set
+# CONFIG_NLS_MAC_CROATIAN is not set
+# CONFIG_NLS_MAC_CYRILLIC is not set
+# CONFIG_NLS_MAC_GAELIC is not set
+# CONFIG_NLS_MAC_GREEK is not set
+# CONFIG_NLS_MAC_ICELAND is not set
+# CONFIG_NLS_MAC_INUIT is not set
+# CONFIG_NLS_MAC_ROMANIAN is not set
+# CONFIG_NLS_MAC_TURKISH is not set

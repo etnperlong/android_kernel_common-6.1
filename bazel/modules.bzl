@@ -6,6 +6,7 @@
 
 load(
     ":bazel/modules_private.bzl",
+    _exclude_slim_disabled_basename = "exclude_slim_disabled_basename",
     _get_gki_modules_list = "get_gki_modules_list",
     _get_kunit_modules_list = "get_kunit_modules_list",
     _get_kunit_modules_superset = "get_kunit_modules_superset",
@@ -13,6 +14,7 @@ load(
 
 visibility("public")
 
+exclude_slim_disabled_basename = _exclude_slim_disabled_basename
 get_gki_modules_list = _get_gki_modules_list
 get_kunit_modules_list = _get_kunit_modules_list
 get_kunit_modules_superset = _get_kunit_modules_superset

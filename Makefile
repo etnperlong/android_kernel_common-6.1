@@ -897,7 +897,8 @@ KBUILD_CFLAGS += -O2
 KBUILD_RUSTFLAGS += -Copt-level=2
 else ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS += -Os
-KBUILD_RUSTFLAGS += -Copt-level=s
+# Keep -Copt-level=2 for Rust so rust_binder stack frames stay compact.
+KBUILD_RUSTFLAGS += -Copt-level=2
 endif
 
 # Always set `debug-assertions` and `overflow-checks` because their default
