@@ -126,6 +126,30 @@ def _apply(map_each, lst):
             ret.append(mapped)
     return ret
 
+_SLIM_DISABLED_GKI_MODULES = {
+    "arch/arm64/geniezone/gzvm.ko": True,
+    "drivers/hwtracing/coresight/coresight.ko": True,
+    "drivers/hwtracing/coresight/coresight-etm4x.ko": True,
+    "drivers/hwtracing/coresight/coresight-funnel.ko": True,
+    "drivers/hwtracing/coresight/coresight-replicator.ko": True,
+    "drivers/hwtracing/coresight/coresight-trbe.ko": True,
+    "drivers/net/ppp/pptp.ko": True,
+    "drivers/net/wwan/wwan.ko": True,
+    "drivers/perf/dwc_pcie_pmu.ko": True,
+    "drivers/thunderbolt/thunderbolt.ko": True,
+    "drivers/usb/mon/usbmon.ko": True,
+    "fs/netfs/netfs.ko": True,
+    "kernel/kheaders.ko": True,
+    "net/9p/9pnet.ko": True,
+    "net/9p/9pnet_fd.ko": True,
+}
+
+def exclude_kheaders(m):
+    return None if m == "kernel/kheaders.ko" else m
+
+def exclude_slim_disabled(m):
+    return None if m in _SLIM_DISABLED_GKI_MODULES else m
+
 def _get_gki_modules_list_minus_select(arch, map_each):
     """ Provides the list of GKI modules, minus those in select() branches.
 
