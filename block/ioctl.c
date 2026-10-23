@@ -292,7 +292,6 @@ static int compat_put_ulong(compat_ulong_t __user *argp, compat_ulong_t val)
 }
 #endif
 
-#ifdef CONFIG_COMPAT
 /*
  * This is the equivalent of compat_ptr_ioctl(), to be used by block
  * drivers that implement only commands that are completely compatible
@@ -310,7 +309,6 @@ int blkdev_compat_ptr_ioctl(struct block_device *bdev, blk_mode_t mode,
 	return -ENOIOCTLCMD;
 }
 EXPORT_SYMBOL(blkdev_compat_ptr_ioctl);
-#endif
 
 enum pr_direction {
 	PR_IN,  /* read from device */
