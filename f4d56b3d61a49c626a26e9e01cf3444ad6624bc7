@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0f286be_94d9a960",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1870730
+      },
+      "writtenOn": "2026-10-23T11:46:02Z",
+      "side": 1,
+      "message": "These fixes are already in most branches.\n\nI just extended their reach to v5.10 via aosp/4387045",
+      "revId": "f4d56b3d61a49c626a26e9e01cf3444ad6624bc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
