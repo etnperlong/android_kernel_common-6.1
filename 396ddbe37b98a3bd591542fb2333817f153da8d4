@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb971277_32484540",
+        "filename": "mm/migrate.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 1859,
+      "author": {
+        "id": 1096846
+      },
+      "writtenOn": "2026-10-23T00:38:43Z",
+      "side": 1,
+      "message": "you\u0027ve changed `\u003e` to `\u003e\u003d`. I suspect that was not intentional, and it may lead to an infinite loop\n\nalso at line 1862",
+      "range": {
+        "startLine": 1859,
+        "startChar": 15,
+        "endLine": 1859,
+        "endChar": 17
+      },
+      "revId": "396ddbe37b98a3bd591542fb2333817f153da8d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
