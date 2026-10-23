@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd54e602_787b1113",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1981633
+      },
+      "writtenOn": "2026-10-23T17:35:41Z",
+      "side": 1,
+      "message": "I thought we were pursuing a separate kernel module for this? This introduces a lot of coupling to the internal bpf code, and could become a nightmare to maintain.\n\nAlso we need to discuss if we will be targeting android-mainline for this. We try to keep as much as possible out of mainline to ease syncing with upstream.",
+      "revId": "8cf7919199deb58fd68fc155b49f5024d5f1c32f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
