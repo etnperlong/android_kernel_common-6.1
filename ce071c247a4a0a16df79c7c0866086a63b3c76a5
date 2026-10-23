@@ -179,6 +179,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0338d487_eaa27c82",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 9
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-23T16:11:18Z",
+      "side": 1,
+      "message": "Yup, thanks!",
+      "parentUuid": "b564e389_cc81fd72",
+      "range": {
+        "startLine": 434,
+        "startChar": 7,
+        "endLine": 437,
+        "endChar": 0
+      },
+      "revId": "ce071c247a4a0a16df79c7c0866086a63b3c76a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0345670b_d86c95ff",
