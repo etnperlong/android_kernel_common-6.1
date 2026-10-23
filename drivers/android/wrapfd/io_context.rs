@@ -17,7 +17,7 @@ use kernel::{
         is_page_aligned, offset_in_page, page_align, page_align_down, Page, PAGE_MASK, PAGE_SIZE,
     },
     prelude::*,
-    sync::{Arc, Completion, SpinLockIrq},
+    sync::{Arc, SpinLockIrq},
     types::{ARef, Opaque},
 };
 
@@ -83,7 +83,7 @@ struct IoResults {
 #[pin_data]
 struct SharedContext {
     #[pin]
-    io_done: Completion,
+    io_done: Opaque<bindings::completion>,
 
     #[pin]
     inner: SpinLockIrq<IoResults>,
@@ -95,7 +95,12 @@ struct SharedContext {
 impl SharedContext {
     fn new(nr_reqs: usize) -> impl PinInit<Self> {
         pin_init!(Self {
-            io_done <- Completion::new(),
+            io_done <- Opaque::ffi_init(|slot| {
+                // SAFETY: `slot` points to valid, properly aligned, uninitialized memory for a
+                // `struct completion` provided by `Opaque::ffi_init`. `init_completion` safely
+                // initializes it in place.
+                unsafe { bindings::init_completion(slot) }
+            }),
             inner <- new_spinlock_irq!(IoResults {
                 io_ret: 0,
                 bytes_read: 0,
@@ -217,7 +222,10 @@ impl IoRequest {
             guard.nr_reqs -= 1;
 
             if guard.nr_reqs == 0 {
-                shared_context.io_done.complete_all();
+                // SAFETY: `SharedContext::io_done` is a properly initialized
+                // `Opaque<bindings::completion>`, and remains valid because `shared_context`
+                // holds a strong `Arc` reference across this call.
+                unsafe { bindings::complete(shared_context.io_done.get()) };
             }
         });
     }
@@ -560,7 +568,9 @@ impl IoContext {
             }
         }
 
-        shared_context.io_done.wait_for_completion();
+        // SAFETY: `shared_context.io_done` points to a valid `struct completion` initialized in
+        // `SharedContext::new`, and `shared_context` remains live via `Arc` for this call.
+        unsafe { bindings::wait_for_completion(shared_context.io_done.get()) };
 
         // It is unfortunate that the kernel SpinLock cannot be unwrapped using something like
         // `into_inner()` now that we no longer need to protect that content. An alternative
