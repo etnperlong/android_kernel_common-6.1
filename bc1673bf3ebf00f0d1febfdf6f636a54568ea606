@@ -22,6 +22,47 @@
       },
       "revId": "bc1673bf3ebf00f0d1febfdf6f636a54568ea606",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5edf3030_8a211f2a",
+        "filename": "mm/mempolicy.c",
+        "patchSetId": 21
+      },
+      "lineNbr": 3186,
+      "author": {
+        "id": 1889140
+      },
+      "writtenOn": "2026-10-23T21:40:55Z",
+      "side": 1,
+      "message": "I think we should rename this function to vma_host_pages(). This name makes clear that it is the page size of the kernel, no the user space.",
+      "range": {
+        "startLine": 3186,
+        "startChar": 20,
+        "endLine": 3186,
+        "endChar": 36
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "e42862db_ce9ff018",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "mm/mempolicy.c",
+              "range": {
+                "startLine": 3186,
+                "startChar": 0,
+                "endLine": 3187,
+                "endChar": 0
+              },
+              "replacement": "\tunsigned long sz \u003d vma_host_pages(vma);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "bc1673bf3ebf00f0d1febfdf6f636a54568ea606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
