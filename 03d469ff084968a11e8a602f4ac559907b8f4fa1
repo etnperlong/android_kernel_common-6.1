@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1501f009_84fd7cc7",
+        "filename": "drivers/usb/gadget/udc/core.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 1981633
+      },
+      "writtenOn": "2026-10-23T21:49:13Z",
+      "side": 1,
+      "message": "In 6.1 and older this has the potential for a UAF due to a dangling gadget-\u003eudc pointer which was freed in usb_del_gadget()-\u003edevice_del().\n\nI think we need to also backport https://android-review.git.corp.google.com/c/kernel/common/+/4200205 (or see if it\u0027s already been backported to stable). Should be a clean backport on 6.1, but will require a little tweaking on 5.15 and 5.10 due to ordering:\n\n```\n Only a minor context adjustment in usb_add_gadget() is\n      needed because device_add(\u0026gadget-\u003edev) is called earlier in usb_add_gadget() on 5.15/5.10 (core_4350887.c:1334-1374):\n            udc-\u003egadget \u003d gadget;\n            gadget-\u003eudc \u003d udc;\n            udc-\u003estarted \u003d false;\n            udc-\u003egadget_release \u003d gadget-\u003edev.release;\n            gadget-\u003edev.release \u003d usb_gadget_release;\n            get_device(\u0026udc-\u003edev);\n      and in the error path (err_unlist_udc:), restore gadget-\u003edev.release \u003d udc-\u003egadget_release; put_device(\u0026udc-\u003edev); right after\n      device_del(\u0026gadget-\u003edev);.\n```",
+      "range": {
+        "startLine": 1112,
+        "startChar": 12,
+        "endLine": 1112,
+        "endChar": 26
+      },
+      "revId": "03d469ff084968a11e8a602f4ac559907b8f4fa1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
