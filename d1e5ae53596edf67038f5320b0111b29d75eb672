@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea050a67_18c1585e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1728636
+      },
+      "writtenOn": "2026-10-23T00:12:19Z",
+      "side": 1,
+      "message": "Apologies for the KernelCommit error.\n\nI first created this cherry-pick as 4381430 using the Gerrit UI\nunder my secondary account (soukjin.bae@samsung.corp-partner.google.com),\nwhich only had the vendor hook commit. I re-created the full chain\nlocally under my primary account (soukjin.bae@samsung.com).\n\nBut since 4381430 already held the original Change-Id\nIe18dcc6b1b7cea37c57c8371193dfdbf0f71a9c7 and I could not push to it\nfrom a different account, I had to use a new one.\n\nThe rest of the chain (4381611, 4381612) kept their original\nChange-Ids and pass the check.\n\n4381430 is abandoned - could it be deleted so I can restore the\noriginal Change-Id? Or let me know the preferred way to fix this.",
+      "revId": "d1e5ae53596edf67038f5320b0111b29d75eb672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
