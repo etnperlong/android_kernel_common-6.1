@@ -50,6 +50,30 @@
       ],
       "revId": "a1eca3a1acf940849799116728e0a4d37bdb7d8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bb48c20_039b36d6",
+        "filename": "gki/aarch64/abi.stg.allowed_breaks",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1279563
+      },
+      "writtenOn": "2026-10-23T00:27:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b3059a3_e1a0dd99",
+      "range": {
+        "startLine": 329,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 27
+      },
+      "revId": "a1eca3a1acf940849799116728e0a4d37bdb7d8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
