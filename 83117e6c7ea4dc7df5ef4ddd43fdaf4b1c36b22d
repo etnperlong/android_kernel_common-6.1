@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "edf5316a_dea92ad4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1967151
+      },
+      "writtenOn": "2026-10-23T20:13:40Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "6180d96d_45168aa0",
+      "revId": "83117e6c7ea4dc7df5ef4ddd43fdaf4b1c36b22d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c894a198_ef8fb75c",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-23T19:53:12Z",
       "side": 1,
       "message": "You might want to move the trailers separated by spaces to be on their own section.",
+      "revId": "83117e6c7ea4dc7df5ef4ddd43fdaf4b1c36b22d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7803cb7_74ecaf9f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1967151
+      },
+      "writtenOn": "2026-10-23T20:13:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c894a198_ef8fb75c",
       "revId": "83117e6c7ea4dc7df5ef4ddd43fdaf4b1c36b22d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
