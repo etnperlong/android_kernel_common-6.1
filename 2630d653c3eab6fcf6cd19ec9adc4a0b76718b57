@@ -34,6 +34,24 @@
       "parentUuid": "495ec942_28bc4a63",
       "revId": "2630d653c3eab6fcf6cd19ec9adc4a0b76718b57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03f155c2_13e1b383",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1096846
+      },
+      "writtenOn": "2026-10-23T16:53:01Z",
+      "side": 1,
+      "message": "ok, good to know\n\nbut it was left in the september branch, until I complained yesterday: https://android-review.git.corp.google.com/c/kernel/common/+/4386284",
+      "parentUuid": "20983446_00da5104",
+      "revId": "2630d653c3eab6fcf6cd19ec9adc4a0b76718b57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
