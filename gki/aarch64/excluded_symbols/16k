@@ -1,0 +1,7 @@
+# Symbols gated behind CONFIG_COMPAT that are absent on 16KiB/64KiB arm64 builds (b/571902075)
+blkdev_compat_ptr_ioctl
+compat_only_sysfs_link_entry_to_kobj
+compat_ptr_ioctl
+drm_compat_ioctl
+pppox_compat_ioctl
+v4l2_compat_ioctl32

@@ -883,11 +883,18 @@ static LIST_HEAD(pack_list);
  */
 #ifdef PMD_SIZE
 /* PMD_SIZE is really big for some archs. It doesn't make sense to
- * reserve too much memory in one allocation. Hardcode BPF_PROG_PACK_SIZE to
- * 2MiB * num_possible_nodes(). On most architectures PMD_SIZE will be
- * greater than or equal to 2MB.
+ * reserve too much memory in one allocation. Default BPF_PROG_PACK_SHIFT is
+ * 21 (2MiB), while low-memory configurations can select smaller PAGE_SIZE
+ * multiples (e.g. 16KiB or 64KiB).
  */
-#define BPF_PROG_PACK_SIZE (SZ_2M * num_possible_nodes())
+#if defined(CONFIG_BPF_PROG_PACK_SHIFT) && (CONFIG_BPF_PROG_PACK_SHIFT > PAGE_SHIFT)
+#define BPF_PROG_PACK_UNIT_SIZE (1UL << CONFIG_BPF_PROG_PACK_SHIFT)
+#elif defined(CONFIG_BPF_PROG_PACK_SHIFT)
+#define BPF_PROG_PACK_UNIT_SIZE PAGE_SIZE
+#else
+#define BPF_PROG_PACK_UNIT_SIZE SZ_2M
+#endif
+#define BPF_PROG_PACK_SIZE (BPF_PROG_PACK_UNIT_SIZE * num_possible_nodes())
 #else
 #define BPF_PROG_PACK_SIZE PAGE_SIZE
 #endif

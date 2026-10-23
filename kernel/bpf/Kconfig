@@ -70,6 +70,17 @@ config BPF_JIT_DEFAULT_ON
 	def_bool ARCH_WANT_DEFAULT_BPF_JIT || BPF_JIT_ALWAYS_ON
 	depends on HAVE_EBPF_JIT && BPF_JIT
 
+config BPF_PROG_PACK_SHIFT
+	int "BPF JIT program pack allocation shift (log2 bytes)"
+	depends on BPF_JIT
+	range 12 21
+	default 21
+	help
+	  Controls the log2 size in bytes of each BPF JIT ROX program pack
+	  allocation. Defaults to 21 (2 MiB) on standard servers/phones;
+	  low-memory systems can set 14 (16 KiB) or 16 (64 KiB) to avoid
+	  hoarding 2 MiB of wired memory when total BPF JIT code is < 64 KiB.
+
 config BPF_UNPRIV_DEFAULT_OFF
 	bool "Disable unprivileged BPF by default"
 	default y

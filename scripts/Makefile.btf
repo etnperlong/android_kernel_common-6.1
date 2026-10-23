@@ -14,7 +14,15 @@ pahole-flags-$(call test-ge, $(pahole-ver), 125)	+= --skip_encoding_btf_inconsis
 else
 
 # Switch to using --btf_features for v1.26 and later.
-pahole-flags-$(call test-ge, $(pahole-ver), 126)  = -j$(JOBS) --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs
+# Note: pahole drops DW_OP_plus_uconst on section-anchored .data..percpu
+# variables emitted by Clang -Os/-Oz, causing duplicate DATASEC offsets in
+# btf_datasec_check_meta(). Omit 'var' under CONFIG_CC_OPTIMIZE_FOR_SIZE.
+ifeq ($(CONFIG_CC_OPTIMIZE_FOR_SIZE),y)
+pahole-btf-var-feature :=
+else
+pahole-btf-var-feature := var,
+endif
+pahole-flags-$(call test-ge, $(pahole-ver), 126)  = -j$(JOBS) --btf_features=encode_force,$(pahole-btf-var-feature)float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs
 
 pahole-flags-$(call test-ge, $(pahole-ver), 130) += --btf_features=attributes
 
