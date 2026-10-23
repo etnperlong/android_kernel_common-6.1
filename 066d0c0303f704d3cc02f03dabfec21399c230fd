@@ -40,6 +40,30 @@
       ],
       "revId": "066d0c0303f704d3cc02f03dabfec21399c230fd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43c4d93f_0330ae5d",
+        "filename": "mm/vmscan.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 5073,
+      "author": {
+        "id": 5174160
+      },
+      "writtenOn": "2026-10-23T03:26:12Z",
+      "side": 1,
+      "message": "Thank you for the review. I will update soon.",
+      "parentUuid": "13a49cb2_a1c68b04",
+      "range": {
+        "startLine": 5073,
+        "startChar": 2,
+        "endLine": 5073,
+        "endChar": 61
+      },
+      "revId": "066d0c0303f704d3cc02f03dabfec21399c230fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
