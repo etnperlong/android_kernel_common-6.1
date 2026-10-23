@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "29974454_181237bd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1965911
+      },
+      "writtenOn": "2026-10-23T12:26:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "724735ea_ba103174",
+      "revId": "a386b3ebbb5bdf965783491ce46b49d2638b88a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "77fe3899_f8e9cbd4",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-23T11:03:26Z",
       "side": 1,
       "message": "Not for this change, but the type \u003c 0 half could live in the core: kvm_iommu_alloc_domain() passes the host\u0027s signed type to whichever kvm_iommu_ops is registered, module drivers included, so a driver that checks only against its own maximum accepts negative types too. Could the core reject them in a follow-up, next to the host\u0027s domain_id check?",
+      "revId": "a386b3ebbb5bdf965783491ce46b49d2638b88a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa8ca363_1d7283dc",
+        "filename": "drivers/iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 701,
+      "author": {
+        "id": 1965911
+      },
+      "writtenOn": "2026-10-23T12:26:31Z",
+      "side": 1,
+      "message": "The `type` is opaque to the core code, so maybe some drivers make use of negative values.",
+      "parentUuid": "77fe3899_f8e9cbd4",
       "revId": "a386b3ebbb5bdf965783491ce46b49d2638b88a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
