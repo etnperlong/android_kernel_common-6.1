@@ -73,13 +73,4 @@ pub use bindings_raw::*;
 
 pub const compat_ptr_ioctl: Option<
     unsafe extern "C" fn(*mut file, ffi::c_uint, ffi::c_ulong) -> ffi::c_long,
-> = {
-    #[cfg(CONFIG_COMPAT)]
-    {
-        Some(bindings_raw::compat_ptr_ioctl)
-    }
-    #[cfg(not(CONFIG_COMPAT))]
-    {
-        None
-    }
-};
+> = Some(bindings_raw::compat_ptr_ioctl);
