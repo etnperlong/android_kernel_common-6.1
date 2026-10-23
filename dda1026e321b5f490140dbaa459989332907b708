@@ -46,6 +46,30 @@
       },
       "revId": "dda1026e321b5f490140dbaa459989332907b708",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1708926_a92a342a",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-23T00:50:51Z",
+      "side": 1,
+      "message": "https://android-review.git.corp.google.com/c/kernel/common/+/4349067/13/drivers/android/wrapfd/content.rs with regards to the ordering, do you agree with the comment there?",
+      "parentUuid": "d294a4d8_0d8128a3",
+      "range": {
+        "startLine": 1369,
+        "startChar": 1,
+        "endLine": 1370,
+        "endChar": 29
+      },
+      "revId": "dda1026e321b5f490140dbaa459989332907b708",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
