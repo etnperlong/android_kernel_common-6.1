@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71e5086d_6276a332",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3581334
+      },
+      "writtenOn": "2026-10-23T08:05:10Z",
+      "side": 1,
+      "message": "Hi @tkjos@google.com, could you please help me figure out how to merge this patch? It\u0027s my first time submitting, so I\u0027m not sure if I\u0027ve missed any steps. Thanks in advance!",
+      "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
