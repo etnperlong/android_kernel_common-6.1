@@ -171,6 +171,25 @@ DECLARE_HOOK(android_vh_mm_customize_pgdat_balanced,
 DECLARE_HOOK(android_vh_mm_customize_reclaim_idx,
 	TP_PROTO(int order, gfp_t gfp, s8 *reclaim_idx, enum zone_type *highest_zoneidx),
 	TP_ARGS(order, gfp, reclaim_idx, highest_zoneidx));
+<<<<<<< HEAD   (01c7e6b174af760d2ae7d975ab8d6f2597c2d1ec Merge branch 'android17-6.18-kminext' into android17-6.18)
+||||||| BASE   (c244ab6f4052117d41afb006022431fe1226fd5e ANDROID: ABI: Add to QCOM symbols list)
+DECLARE_HOOK(android_vh_may_unmap_folio,
+	TP_PROTO(enum lru_list lru, struct scan_control *sc, struct folio *folio, bool *bypass),
+	TP_ARGS(lru, sc, folio, bypass));
+DECLARE_HOOK(android_vh_skip_cma,
+	TP_PROTO(struct scan_control *sc, bool *bypass),
+	TP_ARGS(sc, bypass));
+=======
+DECLARE_HOOK(android_vh_may_unmap_folio,
+	TP_PROTO(enum lru_list lru, struct scan_control *sc, struct folio *folio, bool *bypass),
+	TP_ARGS(lru, sc, folio, bypass));
+DECLARE_HOOK(android_vh_skip_cma,
+	TP_PROTO(struct scan_control *sc, bool *bypass),
+	TP_ARGS(sc, bypass));
+DECLARE_HOOK(android_vh_customize_may_deactivate,
+	TP_PROTO(struct lruvec *target_lruvec, struct scan_control *sc),
+	TP_ARGS(target_lruvec, sc));
+>>>>>>> CHANGE (cd0df7897c2ebcb8ad82860d72c4c2c8d52245dc ANDROID: add hook to customize legacy lru deactivation)
 DECLARE_HOOK(android_vh_can_reclaim_anon_pages,
 	TP_PROTO(struct mem_cgroup *memcg, int nid, gfp_t gfp_mask, bool *skip),
 	TP_ARGS(memcg, nid, gfp_mask, skip));
