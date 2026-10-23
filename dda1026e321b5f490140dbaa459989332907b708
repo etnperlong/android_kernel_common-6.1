@@ -22,6 +22,30 @@
       },
       "revId": "dda1026e321b5f490140dbaa459989332907b708",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d294a4d8_0d8128a3",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-23T00:44:25Z",
+      "side": 1,
+      "message": "Yeah, I think you are right. And if we have the content clearing patch coming before this one then that would have been more obvious. I\u0027ll reorder them to do that and will trigger listeners here unconditionally.",
+      "parentUuid": "eb9d2b4c_1c0ba5c7",
+      "range": {
+        "startLine": 1369,
+        "startChar": 1,
+        "endLine": 1370,
+        "endChar": 29
+      },
+      "revId": "dda1026e321b5f490140dbaa459989332907b708",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
