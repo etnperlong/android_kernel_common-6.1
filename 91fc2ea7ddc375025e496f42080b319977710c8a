@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a933967_37e48720",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3704062
+      },
+      "writtenOn": "2026-10-23T18:54:57Z",
+      "side": 1,
+      "message": "Nilesh found that change is not identical as https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/thermal/intel/int340x_thermal/processor_thermal_wt_hint.c?id\u003da499c24cc0720258376b6c66d7a0c73b47a0e30a.\n\nLatest change must be identical as upstream",
+      "revId": "91fc2ea7ddc375025e496f42080b319977710c8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
