@@ -681,7 +681,6 @@ extern const char *v4l2_field_names[];
  */
 extern const char *v4l2_type_names[];
 
-#ifdef CONFIG_COMPAT
 /**
  * v4l2_compat_ioctl32 -32 Bits compatibility layer for 64 bits processors
  *
@@ -691,7 +690,6 @@ extern const char *v4l2_type_names[];
  */
 long int v4l2_compat_ioctl32(struct file *file, unsigned int cmd,
 			     unsigned long arg);
-#endif
 
 unsigned int v4l2_compat_translate_cmd(unsigned int cmd);
 unsigned int v4l2_translate_cmd(unsigned int cmd);
