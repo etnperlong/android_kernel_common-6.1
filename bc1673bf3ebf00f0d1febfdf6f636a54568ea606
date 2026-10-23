@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d23b8991_14ef2708",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 21
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 1889140
+      },
+      "writtenOn": "2026-10-23T21:39:56Z",
+      "side": 1,
+      "message": "we should make clear that these are 4kb page sizes.",
+      "range": {
+        "startLine": 256,
+        "startChar": 28,
+        "endLine": 256,
+        "endChar": 52
+      },
+      "revId": "bc1673bf3ebf00f0d1febfdf6f636a54568ea606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
