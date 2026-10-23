@@ -50,6 +50,24 @@
       "message": "why is this patch needed on this old branch?",
       "revId": "58746bbac1fcf2f5ebb669b65d688012835afc52",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "314d975e_91233374",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1941466
+      },
+      "writtenOn": "2026-10-23T01:04:04Z",
+      "side": 1,
+      "message": "The current idle maintenance service (\"run Trim\") in the Android system is not sufficiently effective.\nThe existing workflow (omitting branches for errors, timeouts, etc.) is as follows:\n1. vold idlemaint trigger\n2. Start F2FS GC\n3. Wait until dirty_segments ≤ 100\n4. Stop F2FS GC\n5. Start Fstrim on /data\n6. vold idlemaint done\n\nDue to the default behavior of F2FS, if \"realtime discard\" is enabled, `f2fs_trim_fs` merely generates a list of candidate blocks for discard; the actual discard operations are then performed in the background based on system idle status.\n\nSince this mechanism is not entirely reliable under varying Android system loads, we have modified `idlemaint` to trigger `gc_urgent` again after the `Fstrim /data` operation. Because a list of discard candidates has already been generated, this action wakes both the `gc_thread` and the `discard_thread`. However, the default configuration limits each discard round to processing only 8 requests. In the 5.10 kernel, this limit is defined as a hard-coded macro, which cannot be modified from userspace. Therefore, we require the `sysfs` nodes provided by this patch to adjust specific parameters and accelerate the discard process.",
+      "parentUuid": "25e32b2f_2d4bb7e2",
+      "revId": "58746bbac1fcf2f5ebb669b65d688012835afc52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
