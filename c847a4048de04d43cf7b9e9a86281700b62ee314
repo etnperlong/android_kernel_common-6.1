@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddf0f59c_796622fb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1981633
+      },
+      "writtenOn": "2026-10-23T21:52:16Z",
+      "side": 1,
+      "message": "This change is ok to land once the associated kabi change is fixed on 6.1 and older.",
+      "revId": "c847a4048de04d43cf7b9e9a86281700b62ee314",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
