@@ -16,6 +16,24 @@
       "message": "this was reverted on purpose in 6.1 stable\n\nhttps://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id\u003d1adb500f85780ee7d122b9a21040606b6055eab8",
       "revId": "2630d653c3eab6fcf6cd19ec9adc4a0b76718b57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20983446_00da5104",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-23T16:49:55Z",
+      "side": 1,
+      "message": "Was reverted in September: aosp/4305391",
+      "parentUuid": "495ec942_28bc4a63",
+      "revId": "2630d653c3eab6fcf6cd19ec9adc4a0b76718b57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
