@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17af5e77_0475b0ef",
+        "filename": "mm/gup.c",
+        "patchSetId": 21
+      },
+      "lineNbr": 2228,
+      "author": {
+        "id": 1889140
+      },
+      "writtenOn": "2026-10-23T21:34:39Z",
+      "side": 1,
+      "message": "will __get_user_pages_locked unlock *locked?",
+      "range": {
+        "startLine": 2228,
+        "startChar": 20,
+        "endLine": 2228,
+        "endChar": 27
+      },
+      "revId": "13b6909159757a7d29b4ffbbaee7e974dc59c2f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
