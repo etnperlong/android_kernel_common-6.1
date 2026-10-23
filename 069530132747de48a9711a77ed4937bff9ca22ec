@@ -16,6 +16,23 @@
       "message": "@tkjos@google.com to review ABI type additions",
       "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "334644c6_25ff245a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-23T18:39:08Z",
+      "side": 1,
+      "message": "This has a surprisingly huge impact on the KMI with many structures becoming frozen. Take a look at the ABI Fidelity Changes report. Can you find another way that doesn\u0027t require so much KMI impact?",
+      "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
