@@ -16,6 +16,23 @@
       "message": "@tkjos@google.com to review ABI type additions.",
       "revId": "79dd6b04e8893f863e9c470a761d5568be8e7837",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75e9136d_bd187aa2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-23T18:41:26Z",
+      "side": 1,
+      "message": "This has a surprisingly huge impact on the KMI with many kernel structs becoming KMI frozen. Can you accomplish this in a way that doesn\u0027t require this KMI impact?",
+      "revId": "79dd6b04e8893f863e9c470a761d5568be8e7837",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
