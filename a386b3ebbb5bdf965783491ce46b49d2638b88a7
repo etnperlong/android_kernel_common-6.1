@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "724735ea_ba103174",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1782620
+      },
+      "writtenOn": "2026-10-23T11:03:26Z",
+      "side": 1,
+      "message": "nit: could it say which check lets the negative type through, with a blank line before the last sentence? Something like:\n\n```\nsmmu_alloc_domain() checks the signed domain type only against\nKVM_ARM_SMMU_DOMAIN_MAX, so a negative type is accepted and leaves the\ndomain with a type the rest of the driver handles inconsistently.\n\nReject negative types too.\n```",
+      "revId": "a386b3ebbb5bdf965783491ce46b49d2638b88a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77fe3899_f8e9cbd4",
+        "filename": "drivers/iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 701,
+      "author": {
+        "id": 1782620
+      },
+      "writtenOn": "2026-10-23T11:03:26Z",
+      "side": 1,
+      "message": "Not for this change, but the type \u003c 0 half could live in the core: kvm_iommu_alloc_domain() passes the host\u0027s signed type to whichever kvm_iommu_ops is registered, module drivers included, so a driver that checks only against its own maximum accepts negative types too. Could the core reject them in a follow-up, next to the host\u0027s domain_id check?",
+      "revId": "a386b3ebbb5bdf965783491ce46b49d2638b88a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
