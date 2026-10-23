@@ -16,6 +16,23 @@
       "message": "Respin Bug: b/576815760",
       "revId": "d7c7d60f60916b38d403f8cd94fe3216b5ef0987",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12ded0d6_58d71649",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1625880
+      },
+      "writtenOn": "2026-10-23T15:08:08Z",
+      "side": 1,
+      "message": "You can rebase this change on top of aosp/4381430 once it is restored.",
+      "revId": "d7c7d60f60916b38d403f8cd94fe3216b5ef0987",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
