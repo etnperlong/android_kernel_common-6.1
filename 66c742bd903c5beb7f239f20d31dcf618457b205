@@ -33,6 +33,24 @@
       "message": "hi Ivan,Hubert\nplease help me check how can I fix lint/PV -1?  I cannot see failure point",
       "revId": "66c742bd903c5beb7f239f20d31dcf618457b205",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0ef62af_e531cf33",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3497487
+      },
+      "writtenOn": "2026-10-23T10:26:09Z",
+      "side": 1,
+      "message": "See https://b.corp.google.com/issues/561381746#comment53",
+      "parentUuid": "481ded5c_4a5e97f1",
+      "revId": "66c742bd903c5beb7f239f20d31dcf618457b205",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
