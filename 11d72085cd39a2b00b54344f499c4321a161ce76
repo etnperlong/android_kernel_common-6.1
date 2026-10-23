@@ -52,6 +52,24 @@
       "parentUuid": "e0f12d3e_175c3a99",
       "revId": "11d72085cd39a2b00b54344f499c4321a161ce76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cd79f44_cff73008",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1279563
+      },
+      "writtenOn": "2026-10-23T06:29:49Z",
+      "side": 1,
+      "message": "It seems like @tkjos@google.com just backported it to android16-6.12, and it does not exist in other branches yet.",
+      "parentUuid": "26f2e149_e7087483",
+      "revId": "11d72085cd39a2b00b54344f499c4321a161ce76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
