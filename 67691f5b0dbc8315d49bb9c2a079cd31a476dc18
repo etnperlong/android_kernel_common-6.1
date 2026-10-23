@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5a7e9cc_6e915e67",
+        "filename": "drivers/android/wrapfd/content.rs",
+        "patchSetId": 13
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-23T00:26:57Z",
+      "side": 1,
+      "message": "I think we should flip this. The reason being that a driver might be interested in reading whatever data they had in the dmabuf and they should get a chance to do so before we wipe it.",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 129,
+        "endChar": 39
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f82ab089_c17f2d41",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/android/wrapfd/content.rs",
+              "range": {
+                "startLine": 128,
+                "startChar": 0,
+                "endLine": 129,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "drivers/android/wrapfd/content.rs",
+              "range": {
+                "startLine": 1,
+                "startChar": 0,
+                "endLine": 1,
+                "endChar": 0
+              },
+              "replacement": "            _ \u003d content.clear();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "67691f5b0dbc8315d49bb9c2a079cd31a476dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
