@@ -157,6 +157,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b564e389_cc81fd72",
+        "filename": "drivers/android/wrapfd/wrap.rs",
+        "patchSetId": 9
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-23T16:01:58Z",
+      "side": 1,
+      "message": "I\u0027m refactoring C version as well. Will compare with yours once finished but looks correct to me.",
+      "parentUuid": "1cc68a39_d76efb29",
+      "range": {
+        "startLine": 434,
+        "startChar": 7,
+        "endLine": 437,
+        "endChar": 0
+      },
+      "revId": "ce071c247a4a0a16df79c7c0866086a63b3c76a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0345670b_d86c95ff",
         "filename": "drivers/android/wrapfd/wrap.rs",
         "patchSetId": 9
