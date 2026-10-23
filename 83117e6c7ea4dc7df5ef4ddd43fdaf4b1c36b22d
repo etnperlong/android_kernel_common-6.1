@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6180d96d_45168aa0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-23T19:53:12Z",
+      "side": 1,
+      "message": "Please fix this WARNING reported by KernelCommit: Revert commit message should contain the line: This reverts commit \u003ccommit_id\u003e.\n...\n\nRevert commit message should contain the line: This reverts commit \u003ccommit_id\u003e.\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
+      "revId": "83117e6c7ea4dc7df5ef4ddd43fdaf4b1c36b22d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c894a198_ef8fb75c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2026-10-23T19:53:12Z",
+      "side": 1,
+      "message": "You might want to move the trailers separated by spaces to be on their own section.",
+      "revId": "83117e6c7ea4dc7df5ef4ddd43fdaf4b1c36b22d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
