@@ -33,6 +33,24 @@
       "message": "This has a surprisingly huge impact on the KMI with many structures becoming frozen. Take a look at the ABI Fidelity Changes report. Can you find another way that doesn\u0027t require so much KMI impact?",
       "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e6b9de6_bf235c53",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1996690
+      },
+      "writtenOn": "2026-10-24T00:05:22Z",
+      "side": 1,
+      "message": "Thanks Todd for pointing this out. I\u0027m trying to address this at https://android-review.git.corp.google.com/c/kernel/common/+/4136179/comment/271a037a_a8fee1de/. Let me mark this and 6.18 target change (aosp/4381650) WIP and will request the review again once that\u0027s resolved.",
+      "parentUuid": "334644c6_25ff245a",
+      "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
