@@ -547,9 +547,13 @@ impl Transaction {
                         if let Some(t_outdated) =
                             target_node.take_outdated_transaction(&self, &mut process_inner)
                         {
+<<<<<<< HEAD   (d9318bdb4c34e8b2d997b4f67ced56b120b22b87 ANDROID: ABI update with new STG version.)
                             crate::trace::trace_transaction_update_buffer_release(
                                 t_outdated.debug_id,
                             );
+||||||| BASE   (388051f7389a61697c69691e5a40bb977cebd57c smb: client: fix uninitialized variable in smb2_writev_callb)
+=======
+>>>>>>> BRANCH (acb7cf4c1184e27622be0faf89244d5001ed1e87 Linux 6.18.35)
                             let mut alloc_guard = t_outdated.allocation.lock();
                             if let Some(alloc) = (*alloc_guard).as_mut() {
                                 // Take the oneway node to prevent `Allocation::drop` from calling

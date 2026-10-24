@@ -411,7 +411,12 @@ static void l2cap_chan_timeout(struct work_struct *work)
 
 	BT_DBG("chan %p state %s", chan, state_to_string(chan->state));
 
+<<<<<<< HEAD   (d9318bdb4c34e8b2d997b4f67ced56b120b22b87 ANDROID: ABI update with new STG version.)
 	if (!conn || test_bit(FLAG_DEL, &chan->flags)) {
+||||||| BASE   (388051f7389a61697c69691e5a40bb977cebd57c smb: client: fix uninitialized variable in smb2_writev_callb)
+=======
+	if (!conn) {
+>>>>>>> BRANCH (acb7cf4c1184e27622be0faf89244d5001ed1e87 Linux 6.18.35)
 		l2cap_chan_put(chan);
 		return;
 	}
