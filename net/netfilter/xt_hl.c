@@ -28,7 +28,12 @@ static int ttl_mt_check(const struct xt_mtchk_param *par)
 	const struct ipt_ttl_info *info = par->matchinfo;
 
 	if (info->mode > IPT_TTL_GT) {
+<<<<<<< HEAD   (668c22005aabe968fe452d5370a5b1fc4dcc238d Revert "remoteproc: Use unbounded workqueue for recovery wor)
 		pr_err("Unknown TTL match mode: %d\n", info->mode);
+||||||| BASE   (69af36f1fb7d24d287662fef6b2093bcf847a9db remoteproc: Prevent crash handling to race with rproc_del())
+=======
+		pr_info_ratelimited("Unknown TTL match mode: %d\n", info->mode);
+>>>>>>> BRANCH (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
 		return -EINVAL;
 	}
 
@@ -59,7 +64,12 @@ static int hl_mt6_check(const struct xt_mtchk_param *par)
 	const struct ip6t_hl_info *info = par->matchinfo;
 
 	if (info->mode > IP6T_HL_GT) {
+<<<<<<< HEAD   (668c22005aabe968fe452d5370a5b1fc4dcc238d Revert "remoteproc: Use unbounded workqueue for recovery wor)
 		pr_err("Unknown Hop Limit match mode: %d\n", info->mode);
+||||||| BASE   (69af36f1fb7d24d287662fef6b2093bcf847a9db remoteproc: Prevent crash handling to race with rproc_del())
+=======
+		pr_info_ratelimited("Unknown Hop Limit match mode: %d\n", info->mode);
+>>>>>>> BRANCH (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
 		return -EINVAL;
 	}
 

@@ -337,6 +337,7 @@ static inline int rsc_table_for_each_entry(struct resource_table *table,
 	int i, ret;
 
 	for (i = 0; i < table->num; i++) {
+<<<<<<< HEAD   (668c22005aabe968fe452d5370a5b1fc4dcc238d Revert "remoteproc: Use unbounded workqueue for recovery wor)
 		int offset = table->offset[i];
 		struct fw_rsc_hdr *hdr = (void *)table + offset;
 		int avail = table_sz - offset - sizeof(*hdr);
@@ -347,6 +348,24 @@ static inline int rsc_table_for_each_entry(struct resource_table *table,
 			dev_err(dev, "rsc table is truncated\n");
 			return -EINVAL;
 		}
+||||||| BASE   (69af36f1fb7d24d287662fef6b2093bcf847a9db remoteproc: Prevent crash handling to race with rproc_del())
+=======
+		u32 offset = table->offset[i];
+		struct fw_rsc_hdr *hdr;
+		int avail, rsc_offset;
+		void *rsc;
+
+		if (offset < sizeof(*table) || offset >= table_sz ||
+		    table_sz - offset < sizeof(*hdr)) {
+			dev_err(dev, "rsc table is truncated\n");
+			return -EINVAL;
+		}
+
+		hdr = (void *)table + offset;
+		avail = table_sz - offset - sizeof(*hdr);
+		rsc_offset = offset + sizeof(*hdr);
+		rsc = (void *)hdr + sizeof(*hdr);
+>>>>>>> BRANCH (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
 
 		ret = cb(hdr->type, rsc, rsc_offset, avail, data);
 		if (ret)
