@@ -2005,9 +2005,15 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
 		block_t sec_len;
 
 		if (map.m_lblk % sec_blks) {
+<<<<<<< HEAD   (9034885dd07e3625e9b2911cbf0586d5c9d02c73 Merge 6.18.37 into android17-6.18-lts)
 			pg_start = rounddown(map.m_lblk, sec_blks);
 			map.m_lblk = pg_start;
 			map.m_len = pg_end - pg_start;
+||||||| BASE   (0c503cf3dde2e53614f05261ece12f9d3d4c3c20 Linux 6.18.37)
+=======
+			map.m_lblk = rounddown(map.m_lblk, sec_blks);
+			map.m_len = pg_end - map.m_lblk;
+>>>>>>> BRANCH (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
 			if (off_end)
 				map.m_len++;
 		}

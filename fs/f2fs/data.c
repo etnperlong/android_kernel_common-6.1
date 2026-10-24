@@ -3945,12 +3945,28 @@ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
 	err = __find_data_block(cow_inode, index, blk_addr);
 	if (err)
 		return err;
+<<<<<<< HEAD   (9034885dd07e3625e9b2911cbf0586d5c9d02c73 Merge 6.18.37 into android17-6.18-lts)
 
 	if (__is_valid_data_blkaddr(*blk_addr))
+||||||| BASE   (0c503cf3dde2e53614f05261ece12f9d3d4c3c20 Linux 6.18.37)
+	} else if (*blk_addr != NULL_ADDR) {
+		*use_cow = true;
+=======
+	} else if (__is_valid_data_blkaddr(*blk_addr)) {
+		*use_cow = true;
+>>>>>>> BRANCH (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
 		return 0;
+<<<<<<< HEAD   (9034885dd07e3625e9b2911cbf0586d5c9d02c73 Merge 6.18.37 into android17-6.18-lts)
 
 	if (*blk_addr == NEW_ADDR)
 		cow_has_reserved_block = true;
+||||||| BASE   (0c503cf3dde2e53614f05261ece12f9d3d4c3c20 Linux 6.18.37)
+	}
+=======
+	} else if (*blk_addr == NEW_ADDR) {
+		cow_has_reserved_block = true;
+	}
+>>>>>>> BRANCH (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
 
 	if (is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
 		goto reserve_block;
