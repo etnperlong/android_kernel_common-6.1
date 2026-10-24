@@ -57,6 +57,30 @@
       ],
       "revId": "849945eaeba495e51cf5d43d0980413d5d80fa4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62de021c_4e444365",
+        "filename": "include/linux/vfio_platform.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1587335
+      },
+      "writtenOn": "2026-10-24T00:32:20Z",
+      "side": 1,
+      "message": "I discussed this with the reviewer (tkjos@), and his proposal was to introduce a separate wrapper interface that uses a different callback signature. Since our callback needs almost none of the context in `vfio_platform_device`, this should be fine for us.\n\nThis new registration handler will have to use some internal callback that matches the existing `vfio_platform_reset_fn_t` signature, which is responsible for calling the user-provided handler, passing it the more generic device info (perhaps just `struct device` as you\u0027ve proposed here).\n\nSee b/577252424 for more detail. I believe this proposed new interface will make this change and b/526875176 obsolete, since it\u0027s been determined exposing this much of VFIO in the KMI is unacceptable.",
+      "parentUuid": "271a037a_a8fee1de",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 27
+      },
+      "revId": "849945eaeba495e51cf5d43d0980413d5d80fa4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
