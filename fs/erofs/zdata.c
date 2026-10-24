@@ -890,12 +890,27 @@ err_out:
 }
 
 static void z_erofs_decompressqueue_work(struct work_struct *work);
+<<<<<<< HEAD   (5fadee709c6eebf5c8eec563bcd507a0003cf1c3 Merge 5.15.221 into android13-5.15-lts)
 #ifdef CONFIG_EROFS_FS_PCPU_KTHREAD
 static void z_erofs_decompressqueue_kthread_work(struct kthread_work *work)
 {
 	z_erofs_decompressqueue_work((struct work_struct *)work);
 }
 #endif
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+=======
+
+/* Use (kthread_)work in atomic contexts to minimize scheduling overhead */
+static inline bool z_erofs_in_atomic(void)
+{
+	if (IS_ENABLED(CONFIG_PREEMPTION) && rcu_preempt_depth())
+		return true;
+	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+		return true;
+	return !preemptible();
+}
+
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 static void z_erofs_decompress_kickoff(struct z_erofs_decompressqueue *io,
 				       bool sync, int bios)
 {
@@ -913,6 +928,7 @@ static void z_erofs_decompress_kickoff(struct z_erofs_decompressqueue *io,
 	if (atomic_add_return(bios, &io->pending_bios))
 		return;
 	/* Use workqueue and sync decompression for atomic contexts only */
+<<<<<<< HEAD   (5fadee709c6eebf5c8eec563bcd507a0003cf1c3 Merge 5.15.221 into android13-5.15-lts)
 	if (in_atomic() || irqs_disabled()) {
 #ifdef CONFIG_EROFS_FS_PCPU_KTHREAD
 		struct kthread_worker *worker;
@@ -928,6 +944,11 @@ static void z_erofs_decompress_kickoff(struct z_erofs_decompressqueue *io,
 		}
 		rcu_read_unlock();
 #else
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+	if (in_atomic() || irqs_disabled()) {
+=======
+	if (z_erofs_in_atomic()) {
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 		queue_work(z_erofs_workqueue, &io->u.work);
 #endif
 		sbi->opt.readahead_sync_decompress = true;
