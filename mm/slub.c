@@ -5417,6 +5417,8 @@ static void set_cpu_partial(struct kmem_cache *s)
 	else
 		nr_objects = 120;
 
+	if (IS_ENABLED(CONFIG_CC_OPTIMIZE_FOR_SIZE))
+		nr_objects = 0;
 	slub_set_cpu_partial(s, nr_objects);
 #endif
 }

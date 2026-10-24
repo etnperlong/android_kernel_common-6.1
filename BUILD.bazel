@@ -311,10 +311,32 @@ common_kernel(
     visibility = ["//visibility:public"],
 )
 
+_TV_MINI_DISABLED = ['arch/arm64/geniezone/gzvm.ko', 'drivers/net/ppp/pptp.ko', 'drivers/net/wwan/wwan.ko', 'fs/netfs/netfs.ko', 'net/9p/9pnet.ko', 'net/9p/9pnet_fd.ko']
+_TV_MINI_EXTRA = ['drivers/hid/hid-apple.ko', 'drivers/hid/hid-elecom.ko', 'drivers/hid/hid-lg-g15.ko', 'drivers/hid/hid-logitech-dj.ko', 'drivers/hid/hid-logitech-hidpp.ko', 'drivers/hid/hid-logitech.ko', 'drivers/hid/hid-magicmouse.ko', 'drivers/hid/hid-microsoft.ko', 'drivers/hid/hid-nintendo.ko', 'drivers/hid/hid-picolcd.ko', 'drivers/hid/hid-plantronics.ko', 'drivers/hid/hid-prodikeys.ko', 'drivers/hid/hid-roccat-arvo.ko', 'drivers/hid/hid-roccat-common.ko', 'drivers/hid/hid-roccat-isku.ko', 'drivers/hid/hid-roccat-kone.ko', 'drivers/hid/hid-roccat-koneplus.ko', 'drivers/hid/hid-roccat-konepure.ko', 'drivers/hid/hid-roccat-kovaplus.ko', 'drivers/hid/hid-roccat-lua.ko', 'drivers/hid/hid-roccat-pyra.ko', 'drivers/hid/hid-roccat-ryos.ko', 'drivers/hid/hid-roccat-savu.ko', 'drivers/hid/hid-roccat.ko', 'drivers/hid/hid-steam.ko', 'drivers/hid/hid-uclogic.ko', 'drivers/hid/hid-wiimote.ko', 'drivers/hid/wacom.ko', 'drivers/media/usb/gspca/gspca_main.ko', 'drivers/media/usb/uvc/uvcvideo.ko', 'drivers/net/wireguard/wireguard.ko', 'drivers/ufs/core/ufshcd-core.ko', 'drivers/ufs/host/tc-dwc-g210-pltfrm.ko', 'drivers/ufs/host/tc-dwc-g210.ko', 'drivers/ufs/host/ufshcd-dwc.ko', 'drivers/ufs/host/ufshcd-pci.ko', 'drivers/ufs/host/ufshcd-pltfrm.ko', 'drivers/usb/dwc3/dwc3-haps.ko', 'drivers/usb/dwc3/dwc3-of-simple.ko', 'drivers/usb/dwc3/dwc3-qcom.ko', 'drivers/usb/dwc3/dwc3.ko', 'drivers/usb/roles/roles.ko', 'drivers/usb/storage/uas.ko', 'drivers/usb/typec/altmodes/typec_displayport.ko', 'drivers/usb/typec/tcpm/tcpci.ko', 'drivers/usb/typec/tcpm/tcpm.ko', 'drivers/usb/typec/typec.ko', 'drivers/usb/typec/ucsi/typec_ucsi.ko', 'fs/exfat/exfat.ko', 'fs/fuse/virtiofs.ko', 'lib/crypto/libchacha20poly1305.ko', 'lib/crypto/libcurve25519-generic.ko', 'lib/crypto/libcurve25519.ko', 'net/ipv4/udp_tunnel.ko', 'net/ipv6/ip6_udp_tunnel.ko', 'sound/core/snd-hwdep.ko', 'sound/usb/snd-usb-audio.ko', 'sound/usb/snd-usbmidi-lib.ko']
+_TV_MINI_MODULES = sorted([
+    m for m in get_gki_modules_list("arm64") if m not in _TV_MINI_DISABLED
+] + _TV_MINI_EXTRA)
+
+write_file(
+    name = "gki_system_dlkm_modules_arm64_tv",
+    out = "gki/aarch64/system_dlkm_modules_tv",
+    content = _TV_MINI_MODULES + [""],
+)
+
+write_file(
+    name = "gki_aarch64_tv_protected_module_names",
+    out = "gki/aarch64/protected_module_names_tv",
+    content = [
+        m.removesuffix(".ko")
+        for m in _TV_MINI_MODULES
+        if m not in ("drivers/block/zram/zram.ko", "mm/zsmalloc.ko")
+    ] + [""],
+)
+
 common_kernel(
     name = "kernel_aarch64_tv",
     outs = DEFAULT_GKI_OUTS,
-    additional_kmi_symbol_lists = [":aarch64_additional_kmi_symbol_lists"],
+    additional_kmi_symbol_lists = [],
     arch = "arm64",
     build_gki_artifacts = True,
     check_defconfig = "disabled",
@@ -323,19 +345,19 @@ common_kernel(
     defconfig = "arch/arm64/configs/gki_defconfig",
     extra_dist = [],
     gki_boot_img_sizes = _GKI_AARCH64_BOOT_IMAGE_SIZES,
-    gki_system_dlkm_modules = ":gki_system_dlkm_modules_arm64",
-    kcflags = COMMON_KCFLAGS,
+    gki_system_dlkm_modules = ":gki_system_dlkm_modules_arm64_tv",
+    kcflags = list(COMMON_KCFLAGS) + ["-Oz", "-mno-outline"],
     # We don't guarantee ABI stability for TV target
     kmi_enforced = False,
-    kmi_symbol_list = "gki/aarch64/symbols/base",
+    kmi_symbol_list = "gki/aarch64/symbols/tv_gki_union",
     kmi_symbol_list_strict_mode = False,
     make_goals = _GKI_AARCH64_MAKE_GOALS,
     makefile = ":Makefile",
-    module_implicit_outs = get_gki_modules_list("arm64") + get_kunit_modules_list("arm64") + [
+    module_implicit_outs = _TV_MINI_MODULES + get_kunit_modules_list("arm64") + [
         "fs/xfs/xfs.ko",
     ],
     pre_defconfig_fragments = ["arch/arm64/configs/tv_gki.fragment"],
-    protected_module_names_list = ":gki_aarch64_protected_module_names",
+    protected_module_names_list = ":gki_aarch64_tv_protected_module_names",
     system_dlkm_extra_archive_files = [":generate_gki_module_info_arm64"],
     trim_nonlisted_kmi = True,
     visibility = ["//visibility:public"],

@@ -70,6 +70,12 @@ config BPF_JIT_DEFAULT_ON
 	def_bool ARCH_WANT_DEFAULT_BPF_JIT || BPF_JIT_ALWAYS_ON
 	depends on HAVE_EBPF_JIT && BPF_JIT
 
+config BPF_PROG_PACK_SHIFT
+	int "BPF JIT program pack allocation shift"
+	depends on BPF_JIT
+	range 12 21
+	default 21
+
 config BPF_UNPRIV_DEFAULT_OFF
 	bool "Disable unprivileged BPF by default"
 	default y

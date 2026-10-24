@@ -915,7 +915,14 @@ static LIST_HEAD(pack_list);
  * 2MiB * num_possible_nodes(). On most architectures PMD_SIZE will be
  * greater than or equal to 2MB.
  */
-#define BPF_PROG_PACK_SIZE (SZ_2M * num_possible_nodes())
+#if defined(CONFIG_BPF_PROG_PACK_SHIFT) && (CONFIG_BPF_PROG_PACK_SHIFT > PAGE_SHIFT)
+#define BPF_PROG_PACK_UNIT_SIZE (1UL << CONFIG_BPF_PROG_PACK_SHIFT)
+#elif defined(CONFIG_BPF_PROG_PACK_SHIFT)
+#define BPF_PROG_PACK_UNIT_SIZE PAGE_SIZE
+#else
+#define BPF_PROG_PACK_UNIT_SIZE SZ_2M
+#endif
+#define BPF_PROG_PACK_SIZE (BPF_PROG_PACK_UNIT_SIZE * num_possible_nodes())
 #else
 #define BPF_PROG_PACK_SIZE PAGE_SIZE
 #endif
