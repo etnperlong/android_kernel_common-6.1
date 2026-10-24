@@ -153,6 +153,11 @@ extern unsigned long kvm_nvhe_sym(__icache_flags);
 extern unsigned int kvm_nvhe_sym(kvm_arm_vmid_bits);
 extern unsigned int kvm_nvhe_sym(kvm_sve_max_vl);
 extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_vl);
+<<<<<<< HEAD   (571d9c1bbba0039f8fa842785e434862ba744377 Merge android16-6.12 into android16-6.12-lts)
 extern bool kvm_nvhe_sym(smccc_trng_available);
+||||||| BASE   (60eafc7b08c6689ea3ad39eff8d97aefc8a087c7 crypto: algif_skcipher - force synchronous processing)
+=======
+extern unsigned int kvm_nvhe_sym(hyp_gicv3_nr_lr);
+>>>>>>> BRANCH (9fa301d8298778dd799fa4dcf7a7f440715d146e KVM: arm64: Bound used_lrs when flushing the pKVM hyp vCPU)
 
 #endif /* __ARM64_KVM_HYP_H__ */

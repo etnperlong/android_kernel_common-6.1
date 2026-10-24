@@ -37,6 +37,7 @@
 
 DEFINE_PER_CPU(struct kvm_nvhe_init_params, kvm_init_params);
 
+<<<<<<< HEAD   (571d9c1bbba0039f8fa842785e434862ba744377 Merge android16-6.12 into android16-6.12-lts)
 /*
  * Holds one request only, in theory we can compress more, but
  * typically HVC returns on first failure.
@@ -63,6 +64,11 @@ static inline void hyp_reqs_smccc_encode(unsigned long ret, struct kvm_cpu_conte
 	WARN_ON((req->type != KVM_HYP_REQ_TYPE_MEM) && ((req->type != KVM_HYP_LAST_REQ)));
 	req->type = KVM_HYP_LAST_REQ;
 }
+||||||| BASE   (60eafc7b08c6689ea3ad39eff8d97aefc8a087c7 crypto: algif_skcipher - force synchronous processing)
+=======
+/* Number of implemented GICv3 LRs. Used by flush_hyp_vcpu(). */
+unsigned int hyp_gicv3_nr_lr;
+>>>>>>> BRANCH (9fa301d8298778dd799fa4dcf7a7f440715d146e KVM: arm64: Bound used_lrs when flushing the pKVM hyp vCPU)
 
 void __kvm_hyp_host_forward_smc(struct kvm_cpu_context *host_ctxt);
 
@@ -857,6 +863,7 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
 	case ARM_EXCEPTION_TRAP:
 		esr_ec = ESR_ELx_EC(kvm_vcpu_get_esr(&hyp_vcpu->vcpu));
 
+<<<<<<< HEAD   (571d9c1bbba0039f8fa842785e434862ba744377 Merge android16-6.12 into android16-6.12-lts)
 		if (pkvm_hyp_vcpu_is_protected(hyp_vcpu))
 			ec_handler = entry_hyp_pvm_handlers[esr_ec];
 		else
@@ -873,6 +880,17 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
 	}
 
 	hyp_vcpu->exit_code = 0;
+||||||| BASE   (60eafc7b08c6689ea3ad39eff8d97aefc8a087c7 crypto: algif_skcipher - force synchronous processing)
+	hyp_vcpu->vcpu.arch.vgic_cpu.vgic_v3 = host_vcpu->arch.vgic_cpu.vgic_v3;
+=======
+	hyp_vcpu->vcpu.arch.vgic_cpu.vgic_v3 = host_vcpu->arch.vgic_cpu.vgic_v3;
+
+	/* Bound used_lrs by the number of implemented list registers. */
+	hyp_vcpu->vcpu.arch.vgic_cpu.vgic_v3.used_lrs =
+		min_t(unsigned int,
+		      hyp_vcpu->vcpu.arch.vgic_cpu.vgic_v3.used_lrs,
+		      hyp_gicv3_nr_lr);
+>>>>>>> BRANCH (9fa301d8298778dd799fa4dcf7a7f440715d146e KVM: arm64: Bound used_lrs when flushing the pKVM hyp vCPU)
 }
 
 static void sync_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu, u64 *exit_code)
