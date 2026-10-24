@@ -533,6 +533,28 @@ static void disk_remove_zone_wplug(struct gendisk *disk,
 	disk_put_zone_wplug(zwplug);
 }
 
+static inline bool disk_check_zone_wplug_dead(struct blk_zone_wplug *zwplug)
+{
+	if (!(zwplug->flags & BLK_ZONE_WPLUG_DEAD))
+		return false;
+
+	/*
+	 * If a new write is received right after a zone reset completes and
+	 * while the disk_zone_wplugs_worker() thread has not yet released the
+	 * reference on the zone write plug after processing the last write to
+	 * the zone, then the new write BIO will see the zone write plug marked
+	 * as dead. This case is however a false positive and a perfectly valid
+	 * pattern. In such case, restore the zone write plug to a live one.
+	 */
+	if (!zwplug->wp_offset && bio_list_empty(&zwplug->bio_list)) {
+		zwplug->flags &= ~BLK_ZONE_WPLUG_DEAD;
+		refcount_inc(&zwplug->ref);
+		return false;
+	}
+
+	return true;
+}
+
 static void blk_zone_wplug_bio_work(struct work_struct *work);
 
 /*
@@ -1068,13 +1090,41 @@ static bool blk_zone_wplug_handle_write(struct bio *bio, unsigned int nr_segs,
 	}
 
 	/*
+<<<<<<< HEAD   (56e3ec894e4ea1faef5d6e6e2aaa22245552f5ab Merge 7b569b3a2f29 ("arm64: errata: Mitigate TLBI errata on )
 	 * Disable write pipelining while a flush request is in progress since
 	 * these requests pass through the requeue list and hence could be
 	 * reordered if pipelined.
+||||||| BASE   (7b569b3a2f295db7b76ad85cd14aeea1cb0704cb arm64: errata: Mitigate TLBI errata on Microsoft Azure Cobal)
+	 * If we got a zone write plug marked as dead, then the user is issuing
+	 * writes to a full zone, or without synchronizing with zone reset or
+	 * zone finish operations. In such case, fail the BIO to signal this
+	 * invalid usage.
+=======
+	 * Check if we got a zone write plug marked as dead. If yes, then the
+	 * user is likely issuing writes to a full zone, or without
+	 * synchronizing with zone reset or zone finish operations. In such
+	 * case, fail the BIO to signal this invalid usage.
+>>>>>>> BRANCH (275d294b2b24abcd65452198551cd8a5b8d4f775 Linux 6.18.36)
 	 */
+<<<<<<< HEAD   (56e3ec894e4ea1faef5d6e6e2aaa22245552f5ab Merge 7b569b3a2f29 ("arm64: errata: Mitigate TLBI errata on )
 	if (bio->bi_opf & (REQ_PREFLUSH | REQ_FUA) &&
 	    !bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
 		bio->bi_opf |= REQ_ZONE_SERIALIZED;
+||||||| BASE   (7b569b3a2f295db7b76ad85cd14aeea1cb0704cb arm64: errata: Mitigate TLBI errata on Microsoft Azure Cobal)
+	if (zwplug->flags & BLK_ZONE_WPLUG_DEAD) {
+		spin_unlock_irqrestore(&zwplug->lock, flags);
+		disk_put_zone_wplug(zwplug);
+		bio_io_error(bio);
+		return true;
+	}
+=======
+	if (disk_check_zone_wplug_dead(zwplug)) {
+		spin_unlock_irqrestore(&zwplug->lock, flags);
+		disk_put_zone_wplug(zwplug);
+		bio_io_error(bio);
+		return true;
+	}
+>>>>>>> BRANCH (275d294b2b24abcd65452198551cd8a5b8d4f775 Linux 6.18.36)
 
 	/* Indicate that this BIO is being handled using zone write plugging. */
 	bio_set_flag(bio, BIO_ZONE_WRITE_PLUGGING);
