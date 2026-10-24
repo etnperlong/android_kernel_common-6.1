@@ -33,6 +33,24 @@
       "message": "This has a surprisingly huge impact on the KMI with many kernel structs becoming KMI frozen. Can you accomplish this in a way that doesn\u0027t require this KMI impact?",
       "revId": "79dd6b04e8893f863e9c470a761d5568be8e7837",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6220a0e_d709c2f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1996690
+      },
+      "writtenOn": "2026-10-24T00:05:42Z",
+      "side": 1,
+      "message": "https://android-review.git.corp.google.com/c/kernel/common/+/4380071/comments/334644c6_25ff245a",
+      "parentUuid": "75e9136d_bd187aa2",
+      "revId": "79dd6b04e8893f863e9c470a761d5568be8e7837",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
