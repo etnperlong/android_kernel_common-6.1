@@ -16,6 +16,47 @@
       "message": "Ping to get feedback on this.",
       "revId": "849945eaeba495e51cf5d43d0980413d5d80fa4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "271a037a_a8fee1de",
+        "filename": "include/linux/vfio_platform.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1996690
+      },
+      "writtenOn": "2026-10-24T00:04:08Z",
+      "side": 1,
+      "message": "While proposing aosp/4380071 to add `vfio_platform_unregister_reset()` and `__vfio_platform_register_reset()` functions to the ABI symbol list, the reviewer was concerned that there are too many symbols to be added due to dependencies.\n\nAs @smostafa@google.com also had a similar concern at the other comment above, I\u0027d suggest hiding and keeping this `struct vfio_platform_device` (and region and irq) in `vfio_platform_private.h` file, and updating `vfio_platform_reset_fn_t` to receive `struct device *` pointer instead. I expect that this will also require updating `of_reset()` callback and 3 in-tree reset drivers though.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 27
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "492d0a29_b11aa9e8",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "include/linux/vfio_platform.h",
+              "range": {
+                "startLine": 14,
+                "startChar": 0,
+                "endLine": 65,
+                "endChar": 0
+              },
+              "replacement": "typedef int (*vfio_platform_reset_fn_t)(struct device *dev);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "849945eaeba495e51cf5d43d0980413d5d80fa4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
