@@ -17,7 +17,7 @@ config SND_DMAENGINE_PCM
 	tristate
 
 config SND_HWDEP
-	tristate
+	tristate "Sound hardware-dependent device support"
 
 config SND_SEQ_DEVICE
 	tristate

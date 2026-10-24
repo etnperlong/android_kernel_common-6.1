@@ -113,14 +113,15 @@ jiffies = jiffies_64;
 #define IDMAP_TEXT					\
 	. = ALIGN(SZ_4K);				\
 	__idmap_text_start = .;				\
-	*(.idmap.text)					\
+	KEEP(*(.idmap.text))				\
+	KEEP(*(.idmap.text.*))				\
 	__idmap_text_end = .;
 
 #ifdef CONFIG_HIBERNATION
 #define HIBERNATE_TEXT					\
 	ALIGN_FUNCTION();				\
 	__hibernate_exit_text_start = .;		\
-	*(.hibernate_exit.text)				\
+	KEEP(*(.hibernate_exit.text))			\
 	__hibernate_exit_text_end = .;
 #else
 #define HIBERNATE_TEXT
@@ -130,7 +131,7 @@ jiffies = jiffies_64;
 #define KEXEC_TEXT					\
 	ALIGN_FUNCTION();				\
 	__relocate_new_kernel_start = .;		\
-	*(.kexec_relocate.text)				\
+	KEEP(*(.kexec_relocate.text))			\
 	__relocate_new_kernel_end = .;
 #else
 #define KEXEC_TEXT
@@ -140,10 +141,10 @@ jiffies = jiffies_64;
 #define TRAMP_TEXT					\
 	. = ALIGN(PAGE_SIZE);				\
 	__entry_tramp_text_start = .;			\
-	*(.entry.tramp.text)				\
+	KEEP(*(.entry.tramp.text))			\
 	. = ALIGN(PAGE_SIZE);				\
 	__entry_tramp_text_end = .;			\
-	*(.entry.tramp.rodata)
+	KEEP(*(.entry.tramp.rodata))
 #else
 #define TRAMP_TEXT
 #endif
@@ -276,7 +277,7 @@ SECTIONS
 	. = ALIGN(4);
 	.altinstructions : {
 		__alt_instructions = .;
-		*(.altinstructions)
+		KEEP(*(.altinstructions))
 		__alt_instructions_end = .;
 	}
 
@@ -296,7 +297,7 @@ SECTIONS
 		INIT_CALLS
 		CON_INITCALL
 		INIT_RAM_FS
-		*(.init.altinstructions .init.bss)	/* from the EFI stub */
+		KEEP(*(.init.altinstructions .init.bss))	/* from the EFI stub */
 	}
 	.exit.data : {
 		EXIT_DATA
@@ -344,11 +345,11 @@ SECTIONS
 	 */
 	.mmuoff.data.write : ALIGN(SZ_2K) {
 		__mmuoff_data_start = .;
-		*(.mmuoff.data.write)
+		KEEP(*(.mmuoff.data.write))
 	}
 	. = ALIGN(SZ_2K);
 	.mmuoff.data.read : {
-		*(.mmuoff.data.read)
+		KEEP(*(.mmuoff.data.read))
 		__mmuoff_data_end = .;
 	}
 

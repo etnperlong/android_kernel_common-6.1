@@ -560,7 +560,7 @@ bool f2fs_is_compress_level_valid(int alg, int lvl)
 }
 
 static mempool_t *compress_page_pool;
-static int num_compress_pages = 512;
+static int num_compress_pages = 32;
 module_param(num_compress_pages, uint, 0444);
 MODULE_PARM_DESC(num_compress_pages,
 		"Number of intermediate compress pages to preallocate");

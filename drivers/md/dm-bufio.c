@@ -2744,8 +2744,7 @@ static unsigned long __evict_a_few(unsigned long nr_buffers)
 
 	dm_bufio_unlock(c);
 
-	if (count)
-		c->oldest_buffer = oldest_buffer;
+	c->oldest_buffer = oldest_buffer;
 	__insert_client(c);
 
 	return count;
@@ -2771,11 +2770,16 @@ static void evict_old(void)
 {
 	unsigned long threshold = dm_bufio_cache_size -
 		dm_bufio_cache_size / DM_BUFIO_LOW_WATERMARK_RATIO;
+	int empty_clients = 0;
 
 	mutex_lock(&dm_bufio_clients_lock);
 	while (dm_bufio_current_allocated > threshold) {
-		if (!__evict_a_few(64))
-			break;
+		if (!__evict_a_few(64)) {
+			if (++empty_clients >= dm_bufio_client_count)
+				break;
+		} else {
+			empty_clients = 0;
+		}
 		cond_resched();
 	}
 	mutex_unlock(&dm_bufio_clients_lock);
