@@ -51,6 +51,23 @@
       "parentUuid": "481ded5c_4a5e97f1",
       "revId": "66c742bd903c5beb7f239f20d31dcf618457b205",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22f4c2d2_e6824fff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4270060
+      },
+      "writtenOn": "2026-10-25T12:36:34Z",
+      "side": 1,
+      "message": "conflict in https://partnerissuetracker.corp.google.com/issues/561381746#comment55\n\ncan we abandon this as google kernel team is handing the integration?  as https://partnerissuetracker.corp.google.com/issues/561381746#comment57",
+      "revId": "66c742bd903c5beb7f239f20d31dcf618457b205",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
