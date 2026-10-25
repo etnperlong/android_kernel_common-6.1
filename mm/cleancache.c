@@ -16,6 +16,7 @@
 #include <linux/mm.h>
 #include <linux/debugfs.h>
 #include <linux/cleancache.h>
+#include <trace/hooks/mm.h>
 
 /*
  * cleancache_ops is set by cleancache_register_ops to contain the pointers
@@ -184,7 +185,9 @@ int __cleancache_get_page(struct page *page)
 		goto out;
 	}
 
-	VM_BUG_ON_PAGE(!PageLocked(page), page);
+	VM_BUG_ON_PAGE(!PageLocked(page) || PageUptodate(page) ||
+		       PageCompound(page) ||
+		       !folio_test_mappedtodisk(page_folio(page)), page);
 	pool_id = page->mapping->host->i_sb->cleancache_poolid;
 	if (pool_id < 0)
 		goto out;
@@ -216,16 +219,31 @@ void __cleancache_put_page(struct page *page)
 {
 	int pool_id;
 	struct cleancache_filekey key = { .u.key = { 0 } };
+	bool bypass = false;
+	bool allow_nonworkingset = false;
 
 	if (!cleancache_ops) {
 		cleancache_puts++;
 		return;
 	}
 
-	VM_BUG_ON_PAGE(!PageLocked(page), page);
+	VM_BUG_ON_PAGE(!PageLocked(page) || !PageUptodate(page) ||
+		       !folio_test_mappedtodisk(page_folio(page)) ||
+		       PageCompound(page), page);
+
 	pool_id = page->mapping->host->i_sb->cleancache_poolid;
-	if (pool_id >= 0 &&
-		cleancache_get_key(page->mapping->host, &key) >= 0) {
+	if (pool_id < 0)
+		return;
+
+	trace_android_vh_gcma_cc_store_page_bypass(&bypass);
+	if (bypass)
+		return;
+
+	trace_android_vh_gcma_cc_allow_nonworkingset(&allow_nonworkingset);
+	if (!PageWorkingset(page) && !allow_nonworkingset)
+		return;
+
+	if (cleancache_get_key(page->mapping->host, &key) >= 0) {
 		cleancache_ops->put_page(pool_id, key, page->__folio_index, page);
 		cleancache_puts++;
 	}
@@ -246,16 +264,20 @@ void __cleancache_invalidate_page(struct address_space *mapping,
 	/* careful... page->mapping is NULL sometimes when this is called */
 	int pool_id = mapping->host->i_sb->cleancache_poolid;
 	struct cleancache_filekey key = { .u.key = { 0 } };
+	struct folio *folio = page_folio(page);
+	unsigned long i, nr = folio_nr_pages(folio);
 
 	if (!cleancache_ops)
 		return;
 
 	if (pool_id >= 0) {
-		VM_BUG_ON_PAGE(!PageLocked(page), page);
+		VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
 		if (cleancache_get_key(mapping->host, &key) >= 0) {
-			cleancache_ops->invalidate_page(pool_id,
-					key, page->__folio_index);
-			cleancache_invalidates++;
+			for (i = 0; i < nr; i++) {
+				cleancache_ops->invalidate_page(pool_id,
+						key, folio->index + i);
+				cleancache_invalidates++;
+			}
 		}
 	}
 }
