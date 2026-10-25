@@ -399,6 +399,7 @@ CATEGORY="mmap" run_test ./swap_header_badpages_ppps
 CATEGORY="mmap" run_test ./swapoff_shared_slice_ppps
 CATEGORY="mmap" run_test ./swap_pss_ppps
 CATEGORY="mmap" run_test ./anon_rmap_split_window_ppps
+CATEGORY="mmap" run_test ./fork_dontfork_slice_ppps
 CATEGORY="mmap" run_test ./trace_ring_buffer_mmap_ppps
 CATEGORY="mmap" run_test ./truncate_ppps
 
