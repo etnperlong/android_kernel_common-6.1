@@ -401,6 +401,7 @@ CATEGORY="mmap" run_test ./swap_header_badpages_p3s
 CATEGORY="mmap" run_test ./swapoff_shared_slice_p3s
 CATEGORY="mmap" run_test ./swap_pss_p3s
 CATEGORY="mmap" run_test ./anon_rmap_split_window_p3s
+CATEGORY="mmap" run_test ./fork_dontfork_slice_p3s
 CATEGORY="mmap" run_test ./trace_ring_buffer_mmap_p3s
 CATEGORY="mmap" run_test ./truncate_p3s
 
