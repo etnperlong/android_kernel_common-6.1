@@ -1198,14 +1198,30 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
 		return 0;
 
 	if (flags & RENAME_EXCHANGE) {
+<<<<<<< HEAD   (760106d61c18a351e827df663f0d8a77311a62c6 Revert "net: ipa: Convert to platform remove callback return)
 		int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
 					old_dir, old_dentry);
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+		int err = call_int_hook(path_rename, new_dir, new_dentry,
+					old_dir, old_dentry);
+=======
+		int err = call_int_hook(path_rename, new_dir, new_dentry,
+					old_dir, old_dentry, flags);
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 		if (err)
 			return err;
 	}
 
+<<<<<<< HEAD   (760106d61c18a351e827df663f0d8a77311a62c6 Revert "net: ipa: Convert to platform remove callback return)
 	return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
 				new_dentry);
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+	return call_int_hook(path_rename, old_dir, old_dentry, new_dir,
+				new_dentry);
+=======
+	return call_int_hook(path_rename, old_dir, old_dentry, new_dir,
+			     new_dentry, flags);
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 }
 EXPORT_SYMBOL(security_path_rename);
 

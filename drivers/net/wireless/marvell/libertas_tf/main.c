@@ -173,8 +173,16 @@ static int lbtf_init_adapter(struct lbtf_private *priv)
 static void lbtf_free_adapter(struct lbtf_private *priv)
 {
 	lbtf_deb_enter(LBTF_DEB_MAIN);
+<<<<<<< HEAD   (760106d61c18a351e827df663f0d8a77311a62c6 Revert "net: ipa: Convert to platform remove callback return)
 	lbtf_free_cmd_buffer(priv);
 	del_timer(&priv->command_timer);
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+	lbtf_free_cmd_buffer(priv);
+	timer_delete_sync(&priv->command_timer);
+=======
+	timer_delete_sync(&priv->command_timer);
+	lbtf_free_cmd_buffer(priv);
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 	lbtf_deb_leave(LBTF_DEB_MAIN);
 }
 
