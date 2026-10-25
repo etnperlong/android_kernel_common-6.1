@@ -2307,12 +2307,13 @@ static int f2fs_read_single_page(struct inode *inode, struct fsverity_info *vi,
 got_it:
 	if ((map->m_flags & F2FS_MAP_MAPPED)) {
 		block_nr = map->m_pblk + block_in_file - map->m_lblk;
-		folio_set_mappedtodisk(folio);
-
-		if (!folio_test_uptodate(folio) && (!folio_test_swapcache(folio) &&
-					!cleancache_get_page(&folio->page))) {
-			folio_mark_uptodate(folio);
-			goto confused;
+		if (!folio_test_large(folio) && !folio_test_uptodate(folio) &&
+		    !folio_test_swapcache(folio)) {
+			folio_set_mappedtodisk(folio);
+			if (!cleancache_get_page(&folio->page)) {
+				folio_mark_uptodate(folio);
+				goto confused;
+			}
 		}
 
 		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,

@@ -13,7 +13,6 @@
 #include <linux/idr.h>
 #include <linux/slab.h>
 #include <linux/xarray.h>
-#include <trace/hooks/mm.h>
 #include "gcma_sysfs.h"
 #include "internal.h"
 
@@ -148,16 +147,6 @@ static void add_page_to_lru(struct page *page)
 
 	spin_lock(&lru_lock);
 	list_add(&page->lru, &gcma_lru);
-	spin_unlock(&lru_lock);
-}
-
-static void rotate_lru_page(struct page *page)
-{
-	VM_BUG_ON(!irqs_disabled());
-
-	spin_lock(&lru_lock);
-	if (!list_empty(&page->lru))
-		list_move(&page->lru, &gcma_lru);
 	spin_unlock(&lru_lock);
 }
 
@@ -467,7 +456,7 @@ static void gcma_erase_page(struct gcma_inode *inode, unsigned long index,
 
 	/* The inode refcount will decrease when the page is freed */
 	old = __xa_erase(&inode->pages, index);
-	VM_BUG_ON(old == 0);
+	VM_BUG_ON(old != page);
 	delete_page_from_lru(page);
 	if (put_page)
 		gcma_put_page(page);
@@ -757,13 +746,12 @@ static void evict_gcma_pages(struct work_struct *work)
 static DECLARE_WORK(lru_evict_work, evict_gcma_pages);
 
 /*
- * We want to store only workingset page in the GCMA to increase hit ratio
- * so there are four cases:
+ * We want to store only workingset page in the GCMA to increase hit ratio.
+ * Since GCMA is exclusive with the page cache for PG_mappedtodisk pages
+ * (loaded pages are erased from GCMA on cleancache_get_page, and other paths
+ * invalidate GCMA), a page being stored here must never already exist in GCMA:
  *
  * @page is workingset but GCMA doesn't have @page: create new gcma page
- * @page is workingset and GCMA has @page: overwrite the stale data
- * @page is !workingset and GCMA doesn't have @page: just bail out
- * @page is !workingset and GCMA has @page: remove the stale @page
  */
 static void gcma_cc_store_page(int hash_id, struct cleancache_filekey key,
 			       pgoff_t offset, struct page *page)
@@ -772,12 +760,7 @@ static void gcma_cc_store_page(int hash_id, struct cleancache_filekey key,
 	struct gcma_inode *inode;
 	struct page *g_page;
 	void *src, *dst;
-	bool is_new = false;
-	bool workingset = PageWorkingset(page);
-	bool bypass = false;
-	bool allow_nonworkingset = false;
 
-	trace_android_vh_gcma_cc_store_page_bypass(&bypass);
 	/*
 	 * This cleancache function is called under irq disabled so every
 	 * locks in this function should take of the irq if they are
@@ -789,12 +772,9 @@ static void gcma_cc_store_page(int hash_id, struct cleancache_filekey key,
 	if (!gcma_fs)
 		return;
 
-	trace_android_vh_gcma_cc_allow_nonworkingset(&allow_nonworkingset);
 find_inode:
 	inode = find_and_get_gcma_inode(gcma_fs, &key);
 	if (!inode) {
-		if ((!workingset && !allow_nonworkingset) || bypass)
-			return;
 		inode = add_gcma_inode(gcma_fs, &key);
 		if (!IS_ERR(inode))
 			goto load_page;
@@ -810,17 +790,7 @@ load_page:
 	VM_BUG_ON(!inode);
 
 	xa_lock(&inode->pages);
-	g_page = xa_load(&inode->pages, offset);
-	if (g_page) {
-		if ((!workingset && !allow_nonworkingset) || bypass) {
-			gcma_erase_page(inode, offset, g_page, true);
-			goto out_unlock;
-		}
-		goto copy;
-	}
-
-	if ((!workingset && !allow_nonworkingset) || bypass)
-		goto out_unlock;
+	VM_BUG_ON(xa_load(&inode->pages, offset));
 
 	g_page = gcma_alloc_page();
 	if (!g_page) {
@@ -834,18 +804,14 @@ load_page:
 	}
 
 	gcma_put_page(g_page);
-	is_new = true;
-copy:
+
 	src = kmap_local_page(page);
 	dst = kmap_local_page(g_page);
 	memcpy(dst, src, PAGE_SIZE);
 	kunmap_local(dst);
 	kunmap_local(src);
 
-	if (is_new)
-		add_page_to_lru(g_page);
-	else
-		rotate_lru_page(g_page);
+	add_page_to_lru(g_page);
 
 	gcma_stat_inc(STORED_PAGE);
 out_unlock:
@@ -889,7 +855,8 @@ static int gcma_cc_load_page(int hash_id, struct cleancache_filekey key,
 	memcpy(dst, src, PAGE_SIZE);
 	kunmap_local(dst);
 	kunmap_local(src);
-	rotate_lru_page(g_page);
+	gcma_erase_page(inode, offset, g_page, true);
+	VM_BUG_ON(xa_load(&inode->pages, offset) != NULL);
 	xa_unlock_irq(&inode->pages);
 
 	put_gcma_inode(inode);
