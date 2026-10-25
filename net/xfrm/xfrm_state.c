@@ -2448,10 +2448,18 @@ int xfrm_user_policy(struct sock *sk, int optname, sockptr_t optval, int optlen)
 	if (IS_ERR(data))
 		return PTR_ERR(data);
 
+<<<<<<< HEAD   (42b9def319e72691aa20250578ae51cde62cff54 Merge a4f1c8e1a5a8 ("Bluetooth: ISO: exclude RFU bits from I)
 	/* Use the 64-bit / untranslated format on Android, even for compat */
 	if (!IS_ENABLED(CONFIG_GKI_NET_XFRM_HACKS) || IS_ENABLED(CONFIG_XFRM_USER_COMPAT)) {
 		if (in_compat_syscall()) {
 			struct xfrm_translator *xtr = xfrm_get_translator();
+||||||| BASE   (a4f1c8e1a5a8e00b9f2603ef551653253dcb5061 Bluetooth: ISO: exclude RFU bits from ISO_SDU_Length)
+	if (in_compat_syscall()) {
+		struct xfrm_translator *xtr = xfrm_get_translator();
+=======
+	if (IS_ENABLED(CONFIG_COMPAT_FOR_U64_ALIGNMENT) && in_compat_syscall()) {
+		struct xfrm_translator *xtr = xfrm_get_translator();
+>>>>>>> BRANCH (046a95e2d2fc05d52cefdad99448cd4e2f9cb126 netfilter: ebtables: Use vmalloc_array() to improve code)
 
 			if (!xtr) {
 				kfree(data);
