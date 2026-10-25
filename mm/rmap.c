@@ -2562,6 +2562,13 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
 			 * pte. do_swap_page() will wait until the migration
 			 * pte is removed and then restart fault handling.
 			 */
+			/* A compat folio shared after fork can retain a writable
+			 * slice outside the copied VMA (including one moved by
+			 * mremap). Never restore that stale permission as exclusive.
+			 */
+			if (writable && folio_test_anon(folio) &&
+			    !anon_exclusive && vma_is_p3s_4k(vma))
+				writable = false;
 			if (writable)
 				entry = make_writable_migration_entry(
 							page_to_pfn(subpage));
