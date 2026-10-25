@@ -57,7 +57,7 @@ P3S_TESTS := \
 	dma_mmap_full_p3s \
 	exec_user_args_p3s fadvise_dontneed_p3s fault_in_p3s \
 	file_cow_p3s file_cow_refs_p3s filemap_eof_p3s folio_within_range_p3s \
-	fork_filemap_p3s fork_page_size_p3s \
+	fork_dontfork_slice_p3s fork_filemap_p3s fork_page_size_p3s \
 	futex_shared_p3s \
 	gup_retry_p3s hole_anon_p3s \
 	io_uring_mmap_p3s iommu_dma_mmap_p3s iov_iter_p3s kcov_p3s \
