@@ -1198,14 +1198,30 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
 		return 0;
 
 	if (flags & RENAME_EXCHANGE) {
+<<<<<<< HEAD   (177b1c8dec2e84b8ebb72f05d3c1243a2585b722 UPSTREAM: clk: at91: pmc: #undef field_{get,prep}() before d)
 		int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
 					old_dir, old_dentry);
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+		int err = call_int_hook(path_rename, new_dir, new_dentry,
+					old_dir, old_dentry);
+=======
+		int err = call_int_hook(path_rename, new_dir, new_dentry,
+					old_dir, old_dentry, flags);
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 		if (err)
 			return err;
 	}
 
+<<<<<<< HEAD   (177b1c8dec2e84b8ebb72f05d3c1243a2585b722 UPSTREAM: clk: at91: pmc: #undef field_{get,prep}() before d)
 	return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
 				new_dentry);
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+	return call_int_hook(path_rename, old_dir, old_dentry, new_dir,
+				new_dentry);
+=======
+	return call_int_hook(path_rename, old_dir, old_dentry, new_dir,
+			     new_dentry, flags);
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 }
 EXPORT_SYMBOL(security_path_rename);
 
