@@ -335,6 +335,38 @@ const struct spi_device_id *spi_get_device_id(const struct spi_device *sdev)
 }
 EXPORT_SYMBOL_GPL(spi_get_device_id);
 
+<<<<<<< HEAD   (c1a643b577ea174c9934e7ef0fec0ae221c71b3c Revert "HID: split apart hid_device_probe to make logic more)
+||||||| BASE   (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
+const void *spi_get_device_match_data(const struct spi_device *sdev)
+{
+	const void *match;
+
+	match = device_get_match_data(&sdev->dev);
+	if (match)
+		return match;
+
+	return (const void *)spi_get_device_id(sdev)->driver_data;
+}
+EXPORT_SYMBOL_GPL(spi_get_device_match_data);
+
+=======
+const void *spi_get_device_match_data(const struct spi_device *sdev)
+{
+	const void *match;
+	const struct spi_device_id *id;
+
+	match = device_get_match_data(&sdev->dev);
+	if (match)
+		return match;
+
+	id = spi_get_device_id(sdev);
+	if (!id)
+		return NULL;
+	return (const void *)id->driver_data;
+}
+EXPORT_SYMBOL_GPL(spi_get_device_match_data);
+
+>>>>>>> BRANCH (a051a4bf909f76f470ccb3761ee0cf6e2395616e Linux 5.15.222)
 static int spi_match_device(struct device *dev, struct device_driver *drv)
 {
 	const struct spi_device	*spi = to_spi_device(dev);
