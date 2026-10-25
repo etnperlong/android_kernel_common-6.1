@@ -345,6 +345,7 @@ CATEGORY="mmap" run_test ./aio_ring_ppps
 CATEGORY="mmap" run_test ./stack_guard_gap_ppps
 CATEGORY="mmap" run_test ./mglru_ppps
 CATEGORY="mmap" run_test ./mmu_notifier_ppps.sh
+CATEGORY="mmap" run_test ./cow_notifier_ppps.sh
 CATEGORY="mmap" run_test ./anon_pageout_ppps
 CATEGORY="mmap" run_test ./madvise_free_ppps
 CATEGORY="mmap" run_test ./madvise_guard_ppps
