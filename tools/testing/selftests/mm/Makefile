@@ -51,7 +51,7 @@ PPPS_TESTS := \
 	aio_ring_ppps anon_pageout_ppps anon_vma_name_ppps ashmem_ppps \
 	anon_rmap_split_window_ppps \
 	bpf_array_mmap_ppps bpf_ringbuf_mmap_ppps bpf_stack_build_id_ppps \
-	btf_vmlinux_mmap_ppps \
+	btf_vmlinux_mmap_ppps cow_notifier_ppps \
 	dma_heap_ppps dma_mmap_ppps devzero_mthp_ppps dontneed_refault_ppps elf_core_ppps exec_env_ppps \
 	dma_mmap_full_ppps \
 	exec_user_args_ppps fadvise_dontneed_ppps fault_in_ppps \
@@ -215,7 +215,7 @@ TEST_FILES += test_hmm.sh
 TEST_FILES += va_high_addr_switch.sh
 TEST_FILES += charge_reserved_hugetlb.sh
 TEST_FILES += hugetlb_reparenting_test.sh
-TEST_FILES += iommu_dma_mmap_ppps.sh mmu_notifier_ppps.sh \
+TEST_FILES += cow_notifier_ppps.sh iommu_dma_mmap_ppps.sh mmu_notifier_ppps.sh \
 	      selinux_status_mmap_ppps.sh v9fs_mmap_close_ppps.sh \
 	      ../ppps/ppps_run_module.sh
 
@@ -271,6 +271,7 @@ $(eval $(call ppps_test_hdrs,iov_iter_ppps,iov_iter_ppps.h))
 $(eval $(call ppps_test_hdrs,page_range_ppps,iov_iter_ppps.h page_range_ppps.h))
 $(eval $(call ppps_test_hdrs,file_cow_refs_ppps,iov_iter_ppps.h page_range_ppps.h))
 $(eval $(call ppps_test_hdrs,mmu_notifier_ppps,mmu_notifier_ppps.h))
+$(eval $(call ppps_test_hdrs,cow_notifier_ppps,mmu_notifier_ppps.h))
 $(eval $(call ppps_test_hdrs,pagewalk_ppps,pagewalk_ppps.h))
 $(eval $(call ppps_test_hdrs,vm_map_pages_ppps,vm_map_pages_ppps.h))
 $(foreach t,mincore_ppps mlock_onfault_ppps, \
