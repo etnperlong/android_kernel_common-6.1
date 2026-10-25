@@ -173,8 +173,16 @@ static int lbtf_init_adapter(struct lbtf_private *priv)
 static void lbtf_free_adapter(struct lbtf_private *priv)
 {
 	lbtf_deb_enter(LBTF_DEB_MAIN);
+<<<<<<< HEAD   (61676b7f35684faa4f43a24c8fe7b4524135ab4c Merge android13-5.10 into android13-5.10-lts)
 	lbtf_free_cmd_buffer(priv);
 	del_timer(&priv->command_timer);
+||||||| BASE   (7f9a05c930d3f7a69b20a00acb34a1a1a7b0ab28 xfrm: add extack to verify_one_alg, verify_auth_trunc, verif)
+	lbtf_free_cmd_buffer(priv);
+	timer_delete_sync(&priv->command_timer);
+=======
+	timer_delete_sync(&priv->command_timer);
+	lbtf_free_cmd_buffer(priv);
+>>>>>>> BRANCH (c6d5c582d55a8f229d75e98d62eaa065b0deb18d xsk: Use a 32-bit compare in xsk_map_gen_lookup)
 	lbtf_deb_leave(LBTF_DEB_MAIN);
 }
 
