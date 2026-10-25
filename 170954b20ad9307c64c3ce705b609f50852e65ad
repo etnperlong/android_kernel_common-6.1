@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3cd9b09_6f2e8852",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5271766
+      },
+      "writtenOn": "2026-10-25T16:32:32Z",
+      "side": 1,
+      "message": "4335453: ANDROID: Initialize android15-6.6-2026-10 | https://android-review.googlesource.com/c/kernel/common/+/4335453",
+      "revId": "170954b20ad9307c64c3ce705b609f50852e65ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
