@@ -820,12 +820,12 @@ static void ipa_remove(struct platform_device *pdev)
 		}
 		if (ret) {
 			/*
-			 * Continuing teardown after failing to stop the modem
-			 * could crash, so leave the remaining resources allocated.
+			 * Not cleaning up here properly might also yield a
+			 * crash later on. As the device is still unregistered
+			 * in this case, this might even yield a crash later on.
 			 */
 			dev_err(dev, "Failed to stop modem (%pe), leaking resources\n",
 				ERR_PTR(ret));
-			pm_runtime_put_noidle(dev);
 			return;
 		}
 
