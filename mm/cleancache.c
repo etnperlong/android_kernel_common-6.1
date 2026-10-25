@@ -244,6 +244,14 @@ void __cleancache_put_page(struct page *page)
 		return;
 
 	if (cleancache_get_key(page->mapping->host, &key) >= 0) {
+		/*
+		 * Mark the mapping as having pages in cleancache. Keep this bit
+		 * set for the lifetime of the inode to avoid races between
+		 * concurrent page eviction and partial range truncation
+		 * (truncate_inode_pages_range -> cleancache_invalidate_inode).
+		 */
+		if (!mapping_cleancache(page->mapping))
+			mapping_set_cleancache(page->mapping);
 		cleancache_ops->put_page(pool_id, key, page->__folio_index, page);
 		cleancache_puts++;
 	}
