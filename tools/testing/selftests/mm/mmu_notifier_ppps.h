@@ -18,6 +18,10 @@ struct mmu_notifier_ppps_stats {
 	__u64 last_start;
 	__u64 last_end;
 	__u64 max_span;
+	__u64 invalidate_starts;
+	__u64 invalidate_ends;
+	__u64 last_invalidate_start;
+	__u64 last_invalidate_end;
 };
 
 #define MMU_NOTIFIER_PPPS_IOC_MAGIC	'N'
