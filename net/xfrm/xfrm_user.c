@@ -3067,10 +3067,18 @@ static int xfrm_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
 	if (!netlink_net_capable(skb, CAP_NET_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD   (2ddfccf2bf388ead8f60adaa97944b3d4950dc45 Merge a4f1c8e1a5a8 ("Bluetooth: ISO: exclude RFU bits from I)
 	/* Use the 64-bit / untranslated format on Android, even for compat */
 	if (!IS_ENABLED(CONFIG_GKI_NET_XFRM_HACKS) || IS_ENABLED(CONFIG_XFRM_USER_COMPAT)) {
 		if (in_compat_syscall()) {
 			struct xfrm_translator *xtr = xfrm_get_translator();
+||||||| BASE   (a4f1c8e1a5a8e00b9f2603ef551653253dcb5061 Bluetooth: ISO: exclude RFU bits from ISO_SDU_Length)
+	if (in_compat_syscall()) {
+		struct xfrm_translator *xtr = xfrm_get_translator();
+=======
+	if (IS_ENABLED(CONFIG_COMPAT_FOR_U64_ALIGNMENT) && in_compat_syscall()) {
+		struct xfrm_translator *xtr = xfrm_get_translator();
+>>>>>>> BRANCH (046a95e2d2fc05d52cefdad99448cd4e2f9cb126 netfilter: ebtables: Use vmalloc_array() to improve code)
 
 			if (!xtr)
 				return -EOPNOTSUPP;

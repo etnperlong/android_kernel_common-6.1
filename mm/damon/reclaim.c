@@ -200,6 +200,52 @@ static int damon_reclaim_turn(bool on)
 	return 0;
 }
 
+<<<<<<< HEAD   (2ddfccf2bf388ead8f60adaa97944b3d4950dc45 Merge a4f1c8e1a5a8 ("Bluetooth: ISO: exclude RFU bits from I)
+||||||| BASE   (a4f1c8e1a5a8e00b9f2603ef551653253dcb5061 Bluetooth: ISO: exclude RFU bits from ISO_SDU_Length)
+static bool damon_reclaim_enabled(void)
+{
+	if (!ctx)
+		return false;
+	return damon_is_running(ctx);
+}
+
+static struct delayed_work damon_reclaim_timer;
+static void damon_reclaim_timer_fn(struct work_struct *work)
+{
+	bool now_enabled;
+
+	now_enabled = enabled;
+	if (damon_reclaim_enabled() != now_enabled)
+		return;
+	damon_reclaim_turn(now_enabled);
+}
+static DECLARE_DELAYED_WORK(damon_reclaim_timer, damon_reclaim_timer_fn);
+
+static bool damon_reclaim_initialized;
+
+=======
+static bool damon_reclaim_enabled(void)
+{
+	if (!ctx)
+		return false;
+	return damon_is_running(ctx);
+}
+
+static struct delayed_work damon_reclaim_timer;
+static void damon_reclaim_timer_fn(struct work_struct *work)
+{
+	bool now_enabled;
+
+	now_enabled = enabled;
+	if (damon_reclaim_enabled() == now_enabled)
+		return;
+	damon_reclaim_turn(now_enabled);
+}
+static DECLARE_DELAYED_WORK(damon_reclaim_timer, damon_reclaim_timer_fn);
+
+static bool damon_reclaim_initialized;
+
+>>>>>>> BRANCH (046a95e2d2fc05d52cefdad99448cd4e2f9cb126 netfilter: ebtables: Use vmalloc_array() to improve code)
 static int damon_reclaim_enabled_store(const char *val,
 		const struct kernel_param *kp)
 {
