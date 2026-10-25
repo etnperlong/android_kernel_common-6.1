@@ -7,6 +7,7 @@
  */
 
 #include <linux/virtio.h>
+#include <uapi/linux/virtio_ring.h>
 #include <linux/virtio_balloon.h>
 #include <linux/swap.h>
 #include <linux/workqueue.h>
@@ -1142,6 +1143,17 @@ static int virtballoon_validate(struct virtio_device *vdev)
 	else if (!virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON))
 		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_REPORTING);
 
+<<<<<<< HEAD   (2e721fe2a7c61ba84dd9da95c9ca2ca1baae9e0f Merge 69af36f1fb7d ("remoteproc: Prevent crash handling to r)
+||||||| BASE   (69af36f1fb7d24d287662fef6b2093bcf847a9db remoteproc: Prevent crash handling to race with rproc_del())
+	__virtio_clear_bit(vdev, VIRTIO_F_ACCESS_PLATFORM);
+=======
+	/*
+	 * Disable indirect descriptors to avoid memory allocation in
+	 * virtqueue_add during page reporting.
+	 */
+	__virtio_clear_bit(vdev, VIRTIO_RING_F_INDIRECT_DESC);
+	__virtio_clear_bit(vdev, VIRTIO_F_ACCESS_PLATFORM);
+>>>>>>> BRANCH (0248c33e835ecbec3a591f93fdaae53f7b90a4d6 Linux 5.15.221)
 	return 0;
 }
 
