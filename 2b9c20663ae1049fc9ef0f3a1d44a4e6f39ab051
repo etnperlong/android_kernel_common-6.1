@@ -340,6 +340,23 @@
       "message": "Ftyr",
       "revId": "2b9c20663ae1049fc9ef0f3a1d44a4e6f39ab051",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "619017a4_e5db1c58",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4845191
+      },
+      "writtenOn": "2026-10-25T07:48:58Z",
+      "side": 1,
+      "message": ".",
+      "revId": "2b9c20663ae1049fc9ef0f3a1d44a4e6f39ab051",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
