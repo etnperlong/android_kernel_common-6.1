@@ -346,6 +346,7 @@ CATEGORY="mmap" run_test ./aio_ring_p3s
 CATEGORY="mmap" run_test ./stack_guard_gap_p3s
 CATEGORY="mmap" run_test ./mglru_p3s
 CATEGORY="mmap" run_test ./mmu_notifier_p3s.sh
+CATEGORY="mmap" run_test ./cow_notifier_p3s.sh
 CATEGORY="mmap" run_test ./anon_pageout_p3s
 CATEGORY="mmap" run_test ./madvise_free_p3s
 CATEGORY="mmap" run_test ./madvise_guard_p3s

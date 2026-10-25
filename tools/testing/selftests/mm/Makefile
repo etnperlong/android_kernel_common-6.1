@@ -52,7 +52,7 @@ P3S_TESTS := \
 	aio_ring_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
 	anon_rmap_split_window_p3s \
 	bpf_map_mmap_p3s bpf_stack_build_id_p3s \
-	btf_vmlinux_mmap_p3s \
+	btf_vmlinux_mmap_p3s cow_notifier_p3s \
 	dma_heap_p3s dma_mmap_p3s devzero_mthp_p3s dontneed_refault_p3s elf_core_p3s exec_env_p3s \
 	dma_mmap_full_p3s \
 	exec_user_args_p3s fadvise_dontneed_p3s fault_in_p3s \
@@ -216,7 +216,7 @@ TEST_FILES += test_hmm.sh
 TEST_FILES += va_high_addr_switch.sh
 TEST_FILES += charge_reserved_hugetlb.sh
 TEST_FILES += hugetlb_reparenting_test.sh
-TEST_FILES += iommu_dma_mmap_p3s.sh mmu_notifier_p3s.sh \
+TEST_FILES += cow_notifier_p3s.sh iommu_dma_mmap_p3s.sh mmu_notifier_p3s.sh \
 	      selinux_status_mmap_p3s.sh v9fs_mmap_close_p3s.sh \
 	      ../p3s/p3s_run_module.sh
 
@@ -298,6 +298,7 @@ $(eval $(call p3s_test_hdrs,iov_iter_p3s,iov_iter_p3s.h))
 $(eval $(call p3s_test_hdrs,page_range_p3s,iov_iter_p3s.h page_range_p3s.h))
 $(eval $(call p3s_test_hdrs,file_cow_refs_p3s,iov_iter_p3s.h page_range_p3s.h))
 $(eval $(call p3s_test_hdrs,mmu_notifier_p3s,mmu_notifier_p3s.h))
+$(eval $(call p3s_test_hdrs,cow_notifier_p3s,mmu_notifier_p3s.h))
 $(eval $(call p3s_test_hdrs,pagewalk_p3s,pagewalk_p3s.h))
 $(eval $(call p3s_test_hdrs,vm_map_pages_p3s,vm_map_pages_p3s.h))
 $(foreach t,mincore_p3s mlock_onfault_p3s, \
