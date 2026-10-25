@@ -56,7 +56,7 @@ PPPS_TESTS := \
 	dma_mmap_full_ppps \
 	exec_user_args_ppps fadvise_dontneed_ppps fault_in_ppps \
 	file_cow_ppps file_cow_refs_ppps filemap_eof_ppps folio_within_range_ppps \
-	fork_filemap_ppps fork_page_size_ppps \
+	fork_dontfork_slice_ppps fork_filemap_ppps fork_page_size_ppps \
 	futex_shared_ppps \
 	gup_retry_ppps hole_anon_ppps \
 	io_uring_mmap_ppps iommu_dma_mmap_ppps iov_iter_ppps kcov_ppps \
