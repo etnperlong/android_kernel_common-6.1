@@ -109,7 +109,7 @@ void device_pm_sleep_init(struct device *dev)
 	dev->power.is_noirq_suspended = false;
 	dev->power.is_late_suspended = false;
 	init_completion(&dev->power.completion);
-	complete_all(&dev->power.completion);
+	complete(&dev->power.completion);
 	dev->power.wakeup = NULL;
 	INIT_LIST_HEAD(&dev->power.entry);
 }
@@ -246,8 +246,18 @@ static void dpm_wait(struct device *dev, bool async)
 	if (!dev)
 		return;
 
+<<<<<<< HEAD   (380932b6397eabed6bd62ebdf31c82efaa0a6ec9 Merge 016f90fd4503 ("iommu: Pass old domain to set_dev_pasid)
 	if (async || (pm_async_enabled && dev->power.async_suspend)) {
 		trace_android_vh_dpm_wait_start(dev);
+||||||| BASE   (016f90fd450387fcb730cfcdb338c557000c4292 iommu: Pass old domain to set_dev_pasid op)
+	if (async || (pm_async_enabled && dev->power.async_suspend))
+=======
+	/* Devices with no PM support don't use the completion. */
+	if (dev->power.no_pm)
+		return;
+
+	if (async || (pm_async_enabled && dev->power.async_suspend))
+>>>>>>> BRANCH (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
 		wait_for_completion(&dev->power.completion);
 		trace_android_vh_dpm_wait_finish(dev);
 	}

@@ -225,7 +225,12 @@ static void __of_attach_node(struct device_node *np)
 	np->sibling = np->parent->child;
 	np->parent->child = np;
 	of_node_clear_flag(np, OF_DETACHED);
+<<<<<<< HEAD   (380932b6397eabed6bd62ebdf31c82efaa0a6ec9 Merge 016f90fd4503 ("iommu: Pass old domain to set_dev_pasid)
 	np->fwnode.flags |= FWNODE_FLAG_NOT_DEVICE;
+||||||| BASE   (016f90fd450387fcb730cfcdb338c557000c4292 iommu: Pass old domain to set_dev_pasid op)
+	fwnode_set_flag(&np->fwnode, FWNODE_FLAG_NOT_DEVICE);
+=======
+>>>>>>> BRANCH (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
 
 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
 
