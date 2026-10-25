@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 #include <linux/fs.h>
+#include <linux/kprobes.h>
 #include <linux/mm.h>
 #include <linux/mmu_notifier.h>
 #include <linux/module.h>
@@ -18,6 +19,31 @@ struct mmu_notifier_ppps_ctx {
 	struct mmu_notifier_ppps_range range;
 	struct mmu_notifier_ppps_stats stats;
 };
+
+/* The disposable GKI test kernel does not export these registration helpers.
+ * Resolve them only in this test fixture, keeping the production KMI intact.
+ */
+static int (*ppps_notifier_register)(struct mmu_notifier *, struct mm_struct *);
+static void (*ppps_notifier_unregister)(struct mmu_notifier *, struct mm_struct *);
+
+static void *ppps_test_symbol(const char *name)
+{
+	struct kprobe probe = { .symbol_name = name };
+	void *address;
+
+	if (register_kprobe(&probe))
+		return NULL;
+	address = (void *)probe.addr;
+	unregister_kprobe(&probe);
+	return address;
+}
+
+static int ppps_notifier_setup(void)
+{
+	ppps_notifier_register = ppps_test_symbol("mmu_notifier_register");
+	ppps_notifier_unregister = ppps_test_symbol("mmu_notifier_unregister");
+	return ppps_notifier_register && ppps_notifier_unregister ? 0 : -ENOENT;
+}
 
 static void mmu_notifier_ppps_record(struct mmu_notifier *notifier,
 				     unsigned long start,
@@ -70,9 +96,45 @@ mmu_notifier_ppps_clear_flush_young(struct mmu_notifier *notifier,
 	return false;
 }
 
+static int mmu_notifier_ppps_invalidate_start(struct mmu_notifier *notifier,
+				      const struct mmu_notifier_range *range)
+{
+	struct mmu_notifier_ppps_ctx *ctx = container_of(notifier,
+		struct mmu_notifier_ppps_ctx, notifier);
+	unsigned long flags;
+
+	if (range->event != MMU_NOTIFY_CLEAR)
+		return 0;
+	spin_lock_irqsave(&ctx->lock, flags);
+	if (range->start < ctx->range.end && range->end > ctx->range.start) {
+		ctx->stats.invalidate_starts++;
+		ctx->stats.last_invalidate_start = range->start;
+		ctx->stats.last_invalidate_end = range->end;
+	}
+	spin_unlock_irqrestore(&ctx->lock, flags);
+	return 0;
+}
+
+static void mmu_notifier_ppps_invalidate_end(struct mmu_notifier *notifier,
+				     const struct mmu_notifier_range *range)
+{
+	struct mmu_notifier_ppps_ctx *ctx = container_of(notifier,
+		struct mmu_notifier_ppps_ctx, notifier);
+	unsigned long flags;
+
+	if (range->event != MMU_NOTIFY_CLEAR)
+		return;
+	spin_lock_irqsave(&ctx->lock, flags);
+	if (range->start < ctx->range.end && range->end > ctx->range.start)
+		ctx->stats.invalidate_ends++;
+	spin_unlock_irqrestore(&ctx->lock, flags);
+}
+
 static const struct mmu_notifier_ops mmu_notifier_ppps_ops = {
 	.clear_young = mmu_notifier_ppps_clear_young,
 	.clear_flush_young = mmu_notifier_ppps_clear_flush_young,
+	.invalidate_range_start = mmu_notifier_ppps_invalidate_start,
+	.invalidate_range_end = mmu_notifier_ppps_invalidate_end,
 };
 
 static int mmu_notifier_ppps_open(struct inode *inode, struct file *file)
@@ -89,7 +151,7 @@ static int mmu_notifier_ppps_open(struct inode *inode, struct file *file)
 
 	spin_lock_init(&ctx->lock);
 	ctx->notifier.ops = &mmu_notifier_ppps_ops;
-	ret = mmu_notifier_register(&ctx->notifier, current->mm);
+	ret = ppps_notifier_register(&ctx->notifier, current->mm);
 	if (ret) {
 		kfree(ctx);
 		return ret;
@@ -103,7 +165,7 @@ static int mmu_notifier_ppps_release(struct inode *inode, struct file *file)
 {
 	struct mmu_notifier_ppps_ctx *ctx = file->private_data;
 
-	mmu_notifier_unregister(&ctx->notifier, ctx->notifier.mm);
+	ppps_notifier_unregister(&ctx->notifier, ctx->notifier.mm);
 	kfree(ctx);
 	return 0;
 }
@@ -153,5 +215,5 @@ static const struct file_operations mmu_notifier_ppps_fops = {
 };
 
 PPPS_MISC_MODULE("mmu_notifier_ppps", &mmu_notifier_ppps_fops, 0600,
-		 ppps_misc_no_setup, ppps_misc_no_teardown,
+		 ppps_notifier_setup, ppps_misc_no_teardown,
 		 "PPPS MMU notifier range regression test helper");
