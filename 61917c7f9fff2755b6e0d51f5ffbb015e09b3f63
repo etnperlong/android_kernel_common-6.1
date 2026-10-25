@@ -515,7 +515,11 @@
         "submittabilityExpression": {
           "expressionString": "is:review-enforcement-satisfied_gerrit"
         },
-        "overrideExpression": {},
+        "overrideExpression": {
+          "value": {
+            "expressionString": "NOT label:Code-Review\u003c0 AND is:auto-approval-override-enabled_gerrit"
+          }
+        },
         "allowOverrideInChildProjects": false
       },
       "applicabilityExpressionResult": {
@@ -524,7 +528,9 @@
       "submittabilityExpressionResult": {
         "value": {"expression":{"expressionString":"is:review-enforcement-satisfied_gerrit"},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
       },
-      "overrideExpressionResult": {},
+      "overrideExpressionResult": {
+        "value": {"expression":{"expressionString":"NOT label:Code-Review<0 AND is:auto-approval-override-enabled_gerrit"},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
+      },
       "patchSetCommitId": "61917c7f9fff2755b6e0d51f5ffbb015e09b3f63",
       "legacy": {
         "value": false
