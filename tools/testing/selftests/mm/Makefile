@@ -52,7 +52,7 @@ PPPS_TESTS := \
 	anon_rmap_split_window_ppps \
 	bpf_array_mmap_ppps bpf_ringbuf_mmap_ppps bpf_stack_build_id_ppps \
 	btf_vmlinux_mmap_ppps \
-	dma_heap_ppps dma_mmap_ppps dontneed_refault_ppps elf_core_ppps exec_env_ppps \
+	dma_heap_ppps dma_mmap_ppps devzero_mthp_ppps dontneed_refault_ppps elf_core_ppps exec_env_ppps \
 	dma_mmap_full_ppps \
 	exec_user_args_ppps fadvise_dontneed_ppps fault_in_ppps \
 	file_cow_ppps file_cow_refs_ppps filemap_eof_ppps folio_within_range_ppps \

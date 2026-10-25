@@ -350,6 +350,7 @@ CATEGORY="mmap" run_test ./madvise_free_ppps
 CATEGORY="mmap" run_test ./madvise_guard_ppps
 CATEGORY="mmap" run_test ./thp_mmap_offset_ppps
 CATEGORY="mmap" run_test ./mthp_native_anon_ppps
+CATEGORY="mmap" run_test ./devzero_mthp_ppps
 CATEGORY="mmap" run_test ./shmem_mmap_offset_ppps
 CATEGORY="mmap" run_test ./memfd_eof_ppps secretmem
 CATEGORY="mmap" run_test ./memfd_eof_ppps shmem
