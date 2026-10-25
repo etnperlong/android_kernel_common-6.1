@@ -4,6 +4,7 @@
 
 #include <linux/mm.h>
 #include <linux/pagemap.h>
+#include <linux/pgtable.h>
 
 /*
  * p3s_pte_maps_folio - Check if a PTE maps the given normal folio at addr
@@ -18,6 +19,36 @@ static inline bool p3s_pte_maps_folio(struct vm_area_struct *vma,
 {
 	return pte_present(ptent) &&
 	       vm_normal_folio(vma, addr, ptent) == folio;
+}
+
+/* Fork may share a folio across VMAs but only copy the current VMA's PTEs. */
+static inline void p3s_fork_wrprotect_slices(struct vm_area_struct *vma,
+					    struct folio *folio, pte_t *ptep,
+					    unsigned long addr)
+{
+#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE
+	unsigned long start, slice_addr;
+	pte_t *first;
+
+	if (!vma_is_p3s_4k(vma) || folio_test_large(folio) ||
+	    !is_cow_mapping(vma->vm_flags))
+		return;
+
+	start = ALIGN_DOWN(addr, PAGE_SIZE_KERNEL);
+	first = ptep - ((addr - start) >> PAGE_SHIFT_4KB);
+	for (slice_addr = start; slice_addr < start + PAGE_SIZE_KERNEL;
+	     slice_addr += PAGE_SIZE_4KB) {
+		pte_t *sibling = first + ((slice_addr - start) >> PAGE_SHIFT_4KB);
+		pte_t pte;
+
+		if (slice_addr == addr)
+			continue;
+		pte = ptep_get(sibling);
+		if (pte_write(pte) &&
+		    p3s_pte_maps_folio(vma, slice_addr, pte, folio))
+			wrprotect_ptes(vma->vm_mm, slice_addr, sibling, 1);
+	}
+#endif
 }
 
 /*
