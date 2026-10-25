@@ -415,13 +415,13 @@
         "allowOverrideInChildProjects": false
       },
       "applicabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"has:unresolved"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["has:unresolved"],"atomExplanations":{"value":{"has:unresolved":""}}}
+        "value": {"expression":{"expressionString":"has:unresolved"},"status":"PASS","errorMessage":{"value":null},"passingAtoms":["has:unresolved"],"failingAtoms":[],"atomExplanations":{"value":{"has:unresolved":""}}}
       },
       "submittabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"-has:unresolved"},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"-has:unresolved"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":["has:unresolved"],"failingAtoms":[],"atomExplanations":{"value":{"has:unresolved":""}}}
       },
       "overrideExpressionResult": {
-        "value": {"expression":{"expressionString":"message:\"^.*Unresolved-Comment-Reason:.*\""},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"message:\"^.*Unresolved-Comment-Reason:.*\""},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["message:\"^.*Unresolved-Comment-Reason:.*\""],"atomExplanations":{"value":{"message:\"^.*Unresolved-Comment-Reason:.*\"":""}}}
       },
       "patchSetCommitId": "e39c5b978129a0ab4d0ba5396d028137e4fbde26",
       "legacy": {
@@ -580,7 +580,11 @@
         "submittabilityExpression": {
           "expressionString": "is:review-enforcement-satisfied_gerrit"
         },
-        "overrideExpression": {},
+        "overrideExpression": {
+          "value": {
+            "expressionString": "NOT label:Code-Review\u003c0 AND is:auto-approval-override-enabled_gerrit"
+          }
+        },
         "allowOverrideInChildProjects": false
       },
       "applicabilityExpressionResult": {
@@ -589,7 +593,9 @@
       "submittabilityExpressionResult": {
         "value": {"expression":{"expressionString":"is:review-enforcement-satisfied_gerrit"},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
       },
-      "overrideExpressionResult": {},
+      "overrideExpressionResult": {
+        "value": {"expression":{"expressionString":"NOT label:Code-Review<0 AND is:auto-approval-override-enabled_gerrit"},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
+      },
       "patchSetCommitId": "e39c5b978129a0ab4d0ba5396d028137e4fbde26",
       "legacy": {
         "value": false
