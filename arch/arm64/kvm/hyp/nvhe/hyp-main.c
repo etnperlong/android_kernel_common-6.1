@@ -836,8 +836,21 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
 	if (!pkvm_hyp_vcpu_is_protected(hyp_vcpu)) {
 		u8 host_iflags = READ_ONCE(host_vcpu->arch.iflags);
 
+<<<<<<< HEAD   (e6599b2566bcf46dd53db6527a0f03b4986de1f6 Merge android16-6.12 into android16-6.12-lts)
 		if (host_iflags & unpack_vcpu_flag(PKVM_HOST_STATE_DIRTY))
 			__flush_hyp_vcpu(hyp_vcpu);
+||||||| BASE   (9fa301d8298778dd799fa4dcf7a7f440715d146e KVM: arm64: Bound used_lrs when flushing the pKVM hyp vCPU)
+	hyp_vcpu->vcpu.arch.sve_state	= kern_hyp_va(host_vcpu->arch.sve_state);
+	/* Limit guest vector length to the maximum supported by the host.  */
+	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_vl);
+=======
+	/* __hyp_running_vcpu must be NULL in a guest context. */
+	hyp_vcpu->vcpu.arch.ctxt.__hyp_running_vcpu = NULL;
+
+	hyp_vcpu->vcpu.arch.sve_state	= kern_hyp_va(host_vcpu->arch.sve_state);
+	/* Limit guest vector length to the maximum supported by the host.  */
+	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_vl);
+>>>>>>> BRANCH (016f90fd450387fcb730cfcdb338c557000c4292 iommu: Pass old domain to set_dev_pasid op)
 
 		hyp_vcpu->vcpu.arch.iflags = host_iflags;
 		flush_debug_state(hyp_vcpu);
