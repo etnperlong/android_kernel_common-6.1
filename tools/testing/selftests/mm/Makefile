@@ -49,7 +49,7 @@ CFLAGS += -U_FORTIFY_SOURCE
 P3S_TESTS := \
 	devzero_slice_p3s \
 	access_phys_p3s \
-	aio_ring_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
+	aio_ring_p3s alsa_pcm_mmap_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
 	anon_rmap_split_window_p3s \
 	bpf_map_mmap_p3s bpf_stack_build_id_p3s \
 	btf_vmlinux_mmap_p3s cow_notifier_p3s \
