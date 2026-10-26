@@ -631,6 +631,7 @@ CATEGORY="pagemap" run_test ./procfs_native_rmap_ppps
 CATEGORY="pfnmap" run_test ./pfnmap
 CATEGORY="pfnmap" run_test ./remap_pfn_range_ppps
 CATEGORY="pfnmap" run_test ./btf_vmlinux_mmap_ppps
+CATEGORY="pfnmap" run_test ./alsa_pcm_mmap_ppps
 CATEGORY="pfnmap" run_test ./access_phys_ppps
 
 # COW tests
