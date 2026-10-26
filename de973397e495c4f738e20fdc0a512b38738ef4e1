@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1da3af3_f6330b9d",
+        "filename": "mm/p3s/filemap.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-26T18:17:00Z",
+      "side": 1,
+      "message": "name of this function sound like it works for both 4KB/16KB code path, code seems like it only checks for 4KB case. Should we make it `vma_file_offset_at(vma, addr) \u003e\u003d i_size_read(inode);` just to be safe?",
+      "fixSuggestions": [
+        {
+          "fixId": "b23265cc_59a9505f",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "mm/p3s/filemap.h",
+              "range": {
+                "startLine": 37,
+                "startChar": 0,
+                "endLine": 39,
+                "endChar": 0
+              },
+              "replacement": "\treturn vma_file_offset_at(vma, addr) \u003e\u003d i_size_read(inode);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "de973397e495c4f738e20fdc0a512b38738ef4e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
