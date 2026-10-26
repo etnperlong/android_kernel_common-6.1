@@ -670,6 +670,24 @@ config PKVM_IOMMU_TEMPLATE
 
 		Say N here unless you know what you are doing.
 
+config PKVM_IOMMU_TESTING
+	  tristate "pKVM IOMMU testing driver"
+	  depends on KVM && ARM64 && m
+	  help
+		A test-only pKVM IOMMU driver for QEMU and other platforms without
+		a supported IOMMU. It registers with the pKVM hypervisor as an
+		IOMMU driver and validates the hypervisor's IOMMU calls (host
+		stage-2 identity map, domain map/unmap) against a shadow page
+		table, reporting inconsistencies such as double map or unmap.
+
+		WARNING: this driver does NOT program any IOMMU hardware and
+		provides NO DMA protection. pKVM will wrongly consider DMA to be
+		protected. Never enable it on production devices.
+
+		Load it with kvm-arm.protected_modules=pkvm_iommu_testing.
+
+		Say N here unless you are testing pKVM.
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
