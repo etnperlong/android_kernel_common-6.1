@@ -22,6 +22,30 @@
       },
       "revId": "13b6909159757a7d29b4ffbbaee7e974dc59c2f7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6193100b_36dfd203",
+        "filename": "mm/gup.c",
+        "patchSetId": 21
+      },
+      "lineNbr": 2228,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-26T16:01:13Z",
+      "side": 1,
+      "message": "Hi Juan, \n\nWithout `FOLL_UNLOCKABLE`, which `get_dump_page()` does not pass, `faultin_page()` never sets `FAULT_FLAG_ALLOW_RETRY`, so the fault cannot drop mmap_lock. `__get_user_pages_locked()` only unlocks when it took the lock itself.",
+      "parentUuid": "17af5e77_0475b0ef",
+      "range": {
+        "startLine": 2228,
+        "startChar": 20,
+        "endLine": 2228,
+        "endChar": 27
+      },
+      "revId": "13b6909159757a7d29b4ffbbaee7e974dc59c2f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
