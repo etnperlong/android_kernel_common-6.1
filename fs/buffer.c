@@ -50,6 +50,7 @@
 #include <linux/fscrypt.h>
 #include <linux/fsverity.h>
 #include <linux/sched/isolation.h>
+#include <linux/cleancache.h>
 
 #include "internal.h"
 
@@ -2445,8 +2446,10 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
 		prev = bh;
 	} while (iblock++, (bh = bh->b_this_page) != head);
 
-	if (fully_mapped)
+	if (fully_mapped && !folio_test_large(folio)) {
 		folio_set_mappedtodisk(folio);
+		cleancache_invalidate_page(folio->mapping, &folio->page);
+	}
 
 	/*
 	 * All buffers are uptodate or get_block() returned an error
