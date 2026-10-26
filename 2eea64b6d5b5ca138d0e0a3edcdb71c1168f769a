@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "091c77a0_df98403d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1892347
+      },
+      "writtenOn": "2026-10-26T08:46:59Z",
+      "side": 1,
+      "message": "Android\u0027s rustc is patched so this is not needed.",
+      "revId": "2eea64b6d5b5ca138d0e0a3edcdb71c1168f769a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
