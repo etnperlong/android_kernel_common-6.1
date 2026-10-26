@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3701ecd0_71d4ecfe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1625880
+      },
+      "writtenOn": "2026-10-26T13:40:33Z",
+      "side": 1,
+      "message": "The commit message is missing a blank line.\n\nThe ABI files need to be updated.\n\nThere may still be a symbol CRC issue.",
+      "revId": "a00e31e105a11e5c518f7c9a2f479ddeb42679bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
