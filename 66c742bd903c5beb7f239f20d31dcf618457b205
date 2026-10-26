@@ -68,6 +68,24 @@
       "message": "conflict in https://partnerissuetracker.corp.google.com/issues/561381746#comment55\n\ncan we abandon this as google kernel team is handing the integration?  as https://partnerissuetracker.corp.google.com/issues/561381746#comment57",
       "revId": "66c742bd903c5beb7f239f20d31dcf618457b205",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e10e257_8da012dc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2055842
+      },
+      "writtenOn": "2026-10-26T06:01:54Z",
+      "side": 1,
+      "message": "Yes, please abandon this change as the NVME, HWMON will be moved to the vendor part. We will need to update the abi again soon.",
+      "parentUuid": "22f4c2d2_e6824fff",
+      "revId": "66c742bd903c5beb7f239f20d31dcf618457b205",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
