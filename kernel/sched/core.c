@@ -222,7 +222,7 @@ static inline struct task_struct *__blocked_on_owner(struct blocked_on_lock *bo)
 
 static inline struct task_struct *task_blocked_on_owner(struct task_struct *p)
 {
-	return __blocked_on_owner(&p->blocked_on);
+	return __blocked_on_owner(&p->blocked_on_l);
 }
 
 #else
@@ -7510,7 +7510,7 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 	for (p = donor; task_is_blocked(p); p = owner) {
 		/* copy the entire blocked_on structure */
 		raw_spin_lock(&p->blocked_lock);
-		bo = p->blocked_on;
+		bo = p->blocked_on_l;
 		raw_spin_unlock(&p->blocked_lock);
 		blocked_on = &bo;
 
@@ -7809,7 +7809,7 @@ static void __sched notrace __schedule(int sched_mode)
 		block = try_to_block_task(rq, prev, &prev_state,
 					  !task_is_blocked(prev));
 		switch_count = &prev->nvcsw;
-	} else if (preempt && prev->blocked_on.lock) {
+	} else if (preempt && prev->blocked_on_l.lock) {
 		/*
 		 * If we are SM_PREEMPT, we may have interrupted
 		 * after blocked_on was set, before schedule()
@@ -7830,12 +7830,12 @@ pick_again:
 	if (sched_proxy_exec()) {
 		struct task_struct *prev_donor = rq->donor;
 
-		if (!prev_state && prev->blocked_on.lock)
+		if (!prev_state && prev->blocked_on_l.lock)
 			clear_task_blocked_on(prev, NULL);
 
 		rq_set_donor(rq, next);
 		next->blocked_donor = NULL;
-		if (unlikely(next->blocked_on.lock)) {
+		if (unlikely(next->blocked_on_l.lock)) {
 			next = find_proxy_task(rq, next, &rf);
 			if (!next) {
 				/* zap the balance_callbacks before picking again */

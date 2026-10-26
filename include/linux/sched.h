@@ -1247,7 +1247,8 @@ struct task_struct {
 #endif
 
 	enum blocked_on_state		blocked_on_state;
-	struct blocked_on_lock		blocked_on;	/* lock we're blocked on */
+	struct mutex			*blocked_on;    /* left to preserve KABI */
+	struct blocked_on_lock		blocked_on_l;	/* lock we're blocked on */
 	struct task_struct		*blocked_donor;	/* task that is boosting this task */
 	struct list_head		migration_node;
 #ifdef CONFIG_SCHED_PROXY_EXEC
@@ -2217,7 +2218,7 @@ extern int __cond_resched_rwlock_write(rwlock_t *lock);
 static inline void *__get_task_blocked_on(struct task_struct *p)
 {
 	lockdep_assert_held_once(&p->blocked_lock);
-	return p->blocked_on.lock == PROXY_WAKING ? NULL : p->blocked_on.lock;
+	return p->blocked_on_l.lock == PROXY_WAKING ? NULL : p->blocked_on_l.lock;
 }
 
 /*
@@ -2237,9 +2238,10 @@ static inline void __set_task_blocked_on(struct task_struct *p, void *m,
 	 * with a different mutex. Note, setting it to the same
 	 * lock repeatedly is ok.
 	 */
-	WARN_ON_ONCE(p->blocked_on.lock && p->blocked_on.lock != m);
-	p->blocked_on.lock = m;
-	p->blocked_on.type = type;
+	WARN_ON_ONCE(p->blocked_on_l.lock && p->blocked_on_l.lock != m);
+	p->blocked_on = m; // kept for KABI, has to stay sync'ed with blocked_on_l.lock
+	p->blocked_on_l.lock = m;
+	p->blocked_on_l.type = type;
 }
 
 static inline void __clear_task_blocked_on(struct task_struct *p, void *m)
@@ -2251,10 +2253,11 @@ static inline void __clear_task_blocked_on(struct task_struct *p, void *m)
 	 * blocked_on relationships, but make sure we are not
 	 * clearing the relationship with a different lock.
 	 */
-	WARN_ON_ONCE(m && p->blocked_on.lock &&
-		     p->blocked_on.lock != m && p->blocked_on.lock != PROXY_WAKING);
-	p->blocked_on.lock = NULL;
-	p->blocked_on.type = BO_T_NONE;
+	WARN_ON_ONCE(m && p->blocked_on_l.lock &&
+		     p->blocked_on_l.lock != m && p->blocked_on_l.lock != PROXY_WAKING);
+	p->blocked_on = NULL; // kept for KABI, has to stay sync'ed with blocked_on_l.lock
+	p->blocked_on_l.lock = NULL;
+	p->blocked_on_l.type = BO_T_NONE;
 }
 
 static inline void clear_task_blocked_on(struct task_struct *p, void *m)
@@ -2274,15 +2277,16 @@ static inline void __set_task_blocked_on_waking(struct task_struct *p, void *m)
 	}
 
 	/* Don't set PROXY_WAKING if blocked_on was already cleared */
-	if (!p->blocked_on.lock)
+	if (!p->blocked_on_l.lock)
 		return;
 	/*
 	 * There may be cases where we set PROXY_WAKING on tasks that were
 	 * already set to waking, but make sure we are not changing
 	 * the relationship with a different lock.
 	 */
-	WARN_ON_ONCE(m && p->blocked_on.lock != m && p->blocked_on.lock != PROXY_WAKING);
-	p->blocked_on.lock = PROXY_WAKING;
+	WARN_ON_ONCE(m && p->blocked_on_l.lock != m && p->blocked_on_l.lock != PROXY_WAKING);
+	p->blocked_on = PROXY_WAKING; // kept for KABI, sync with blocked_on_l.lock
+	p->blocked_on_l.lock = PROXY_WAKING;
 }
 
 static inline void set_task_blocked_on_waking(struct task_struct *p, void *m)
