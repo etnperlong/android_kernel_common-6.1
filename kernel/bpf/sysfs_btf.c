@@ -10,6 +10,7 @@
 #include <linux/mm.h>
 #include <linux/io.h>
 #include <linux/btf.h>
+#include <linux/p3s/mm.h>
 
 /* See scripts/link-vmlinux.sh, gen_btf() func for details */
 extern char __start_BTF[];
@@ -23,6 +24,9 @@ static int btf_sysfs_vmlinux_mmap(struct file *filp, struct kobject *kobj,
 	size_t vm_size = vma->vm_end - vma->vm_start;
 	phys_addr_t addr = __pa_symbol(__start_BTF);
 	unsigned long pfn = addr >> PAGE_SHIFT;
+
+	if (p3s_4k_unsupported(vma->vm_mm))
+		return -EOPNOTSUPP;
 
 	if (attr->private != __start_BTF || !PAGE_ALIGNED(addr))
 		return -EINVAL;
