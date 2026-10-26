@@ -16,6 +16,7 @@
 #include <linux/mm.h>
 #include <linux/debugfs.h>
 #include <linux/cleancache.h>
+#include <trace/hooks/mm.h>
 
 /*
  * cleancache_ops is set by cleancache_register_ops to contain the pointers
@@ -218,6 +219,8 @@ void __cleancache_put_page(struct page *page)
 {
 	int pool_id;
 	struct cleancache_filekey key = { .u.key = { 0 } };
+	bool bypass = false;
+	bool allow_nonworkingset = false;
 
 	if (!cleancache_ops) {
 		cleancache_puts++;
@@ -227,9 +230,20 @@ void __cleancache_put_page(struct page *page)
 	VM_BUG_ON_PAGE(!PageLocked(page) || !PageUptodate(page) ||
 		       !folio_test_mappedtodisk(page_folio(page)) ||
 		       PageCompound(page), page);
+
 	pool_id = page->mapping->host->i_sb->cleancache_poolid;
-	if (pool_id >= 0 &&
-		cleancache_get_key(page->mapping->host, &key) >= 0) {
+	if (pool_id < 0)
+		return;
+
+	trace_android_vh_gcma_cc_store_page_bypass(&bypass);
+	if (bypass)
+		return;
+
+	trace_android_vh_gcma_cc_allow_nonworkingset(&allow_nonworkingset);
+	if (!PageWorkingset(page) && !allow_nonworkingset)
+		return;
+
+	if (cleancache_get_key(page->mapping->host, &key) >= 0) {
 		cleancache_ops->put_page(pool_id, key, page->__folio_index, page);
 		cleancache_puts++;
 	}
