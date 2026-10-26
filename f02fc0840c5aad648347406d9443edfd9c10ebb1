@@ -34,6 +34,24 @@
       "parentUuid": "def36521_d6b04405",
       "revId": "f02fc0840c5aad648347406d9443edfd9c10ebb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f7ec7d5_a94f8b14",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1951687
+      },
+      "writtenOn": "2026-10-26T20:39:37Z",
+      "side": 1,
+      "message": "Some testing is currently failing on this branch due to the backport of Quentin\u0027s MODULE_OWNED support for guest.\n\nThe backport is missing those fixes (that we have in Android17-6.18)",
+      "parentUuid": "def36521_d6b04405",
+      "revId": "f02fc0840c5aad648347406d9443edfd9c10ebb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
