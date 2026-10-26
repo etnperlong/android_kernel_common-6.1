@@ -1,13 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * /sys/kernel/btf/vmlinux can be mmap()ed read-only; the mapping is set up
- * with remap_pfn_range().  For a 4K compat process every 4K page of the
- * mapping must show the next 4K of the BTF blob, exactly what read() returns,
- * and nothing may be mapped past the end of the VMA.  A remap that steps one
- * native 16K frame per 4K PTE instead maps four times as much physical memory
- * (kernel data following the BTF section) at the wrong offsets.
- *
- * Both geometries are checked; the native 16K run is the control.
+ * Native processes can mmap() the BTF blob read-only.  A 4K compat process
+ * can still read() it, but must not mmap() it: the native-page length check
+ * does not reject a trailing 4K slice beyond the BTF allocation.
  */
 #define _GNU_SOURCE
 
@@ -38,7 +33,7 @@ static int probe_byte(const volatile unsigned char *addr)
 	return 0;
 }
 
-static int run_case(void)
+static int run_case(bool compat)
 {
 	struct sigaction action = { .sa_handler = fault_handler };
 	unsigned long page = getpagesize();
@@ -54,6 +49,26 @@ static int run_case(void)
 	}
 	if (fstat(fd, &st) || st.st_size <= 0)
 		return KSFT_FAIL;
+	if (compat) {
+		unsigned char first;
+
+		if (pread(fd, &first, 1, 0) != 1)
+			return KSFT_FAIL;
+		errno = 0;
+		map = mmap(NULL, page, PROT_READ, MAP_PRIVATE, fd, 0);
+		if (map != MAP_FAILED) {
+			munmap(map, page);
+			ksft_print_msg("compat BTF mmap unexpectedly succeeded\n");
+			return KSFT_FAIL;
+		}
+		if (errno != EOPNOTSUPP) {
+			ksft_print_msg("compat BTF mmap: expected EOPNOTSUPP, got %d\n",
+				       errno);
+			return KSFT_FAIL;
+		}
+		close(fd);
+		return KSFT_PASS;
+	}
 	size = st.st_size;
 	map_len = (size + page - 1) & ~(page - 1);
 	buf = malloc(size);
@@ -156,14 +171,14 @@ int main(int argc, char **argv)
 	const char *mode = ppps_run_mode(argc, argv, NULL);
 
 	if (mode && !strcmp(mode, "--native"))
-		return getpagesize() == (int)NATIVE_PAGE_SIZE ? run_case() : KSFT_SKIP;
+		return getpagesize() == (int)NATIVE_PAGE_SIZE ? run_case(false) : KSFT_SKIP;
 	if (mode && !strcmp(mode, "--compat"))
-		return ppps_is_compat_process() ? run_case() : KSFT_SKIP;
+		return ppps_is_compat_process() ? run_case(true) : KSFT_SKIP;
 
 	ksft_print_header();
 	ksft_set_plan(2);
 	fflush(stdout);
 	report(run_child(false), "native 16K mmap of BTF matches read()");
-	report(run_child(true), "4K compat mmap of BTF matches read()");
+	report(run_child(true), "4K compat read of BTF works but mmap is unsupported");
 	ksft_finished();
 }
