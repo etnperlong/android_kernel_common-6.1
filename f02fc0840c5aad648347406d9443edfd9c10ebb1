@@ -70,6 +70,24 @@
       "parentUuid": "1f7ec7d5_a94f8b14",
       "revId": "f02fc0840c5aad648347406d9443edfd9c10ebb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2cc1899_d54941f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1951687
+      },
+      "writtenOn": "2026-10-26T20:45:50Z",
+      "side": 1,
+      "message": "They depend on \"ANDROID: KVM: arm64: Enable MODULE_OWNED pages to be shared with a guest\" which we only have in the -kminext branch at the moment.",
+      "parentUuid": "188f67dc_7ccdfb6b",
+      "revId": "f02fc0840c5aad648347406d9443edfd9c10ebb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
