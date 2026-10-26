@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * A 4K compat process can mmap the multi-page remap_pfn_range() mapping of
- * /sys/kernel/btf/vmlinux and read every 4K page of it without SIGBUS.
+ * If available to a 4K compat process, mmap the multi-page
+ * remap_pfn_range() mapping of /sys/kernel/btf/vmlinux and read every 4K
+ * page without SIGBUS.  BTF mmap may instead be deliberately unsupported.
  */
 #define _GNU_SOURCE
 
@@ -64,18 +65,18 @@ static int run_test(void)
 	int fd;
 
 	ksft_print_header();
-	ksft_set_plan(3);
 
 	fd = ppps_open_fixture_or_skip(BTF_PATH, O_RDONLY);
 	if (fstat(fd, &status) || status.st_size <= 0)
 		ksft_exit_fail_msg("invalid %s size: %s\n", BTF_PATH,
 				   strerror(errno));
-	ksft_test_result(status.st_size > (off_t)PROCESS_PAGE_SIZE,
-			 "BTF exposes a multi-page PFN mapping\n");
 
 	mapping = mmap(NULL, status.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (mapping == MAP_FAILED && errno == ENODEV)
-		ksft_exit_skip("%s is not mappable on this kernel\n", BTF_PATH);
+	if (mapping == MAP_FAILED && (errno == ENODEV || errno == EOPNOTSUPP))
+		ksft_exit_skip("%s mmap is unavailable to 4K processes\n", BTF_PATH);
+	ksft_set_plan(3);
+	ksft_test_result(status.st_size > (off_t)PROCESS_PAGE_SIZE,
+			 "BTF exposes a multi-page PFN mapping\n");
 	ksft_test_result(mapping != MAP_FAILED, "BTF PFN mapping succeeds\n");
 	if (mapping == MAP_FAILED)
 		ksft_exit_fail_msg("mmap %s failed: %s\n", BTF_PATH,
