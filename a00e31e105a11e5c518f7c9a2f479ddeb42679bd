@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f6934670_a6729e85",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-26T15:19:41Z",
+      "side": 1,
+      "message": "Please fix this ERROR reported by KernelCommit: The second line of the commit message must be blank.\n\nPlease refer to the contri...\n\nThe second line of the commit message must be blank.\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md\n\n\nAdd a description that includes the symbols being added",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 0
+      },
+      "revId": "a00e31e105a11e5c518f7c9a2f479ddeb42679bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3701ecd0_71d4ecfe",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 6
