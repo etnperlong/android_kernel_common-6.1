@@ -25,6 +25,7 @@
 #include <linux/uio.h>
 #include <linux/delay.h>
 #include <linux/bitops.h>
+#include <linux/p3s/mm.h>
 
 #include "pcm_local.h"
 
@@ -3974,6 +3975,9 @@ int snd_pcm_mmap_data(struct snd_pcm_substream *substream, struct file *file,
 	unsigned long offset;
 	size_t dma_bytes;
 	int err;
+
+	if (p3s_4k_unsupported(area->vm_mm))
+		return -EOPNOTSUPP;
 
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		if (!(area->vm_flags & (VM_WRITE|VM_READ)))
