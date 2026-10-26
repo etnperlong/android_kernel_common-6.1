@@ -46,6 +46,30 @@
       },
       "revId": "13b6909159757a7d29b4ffbbaee7e974dc59c2f7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fc89a05_1926d321",
+        "filename": "mm/gup.c",
+        "patchSetId": 21
+      },
+      "lineNbr": 2228,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-26T16:19:03Z",
+      "side": 1,
+      "message": "Added a comment to clarify.",
+      "parentUuid": "6193100b_36dfd203",
+      "range": {
+        "startLine": 2228,
+        "startChar": 20,
+        "endLine": 2228,
+        "endChar": 27
+      },
+      "revId": "13b6909159757a7d29b4ffbbaee7e974dc59c2f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
