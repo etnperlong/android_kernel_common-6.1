@@ -52,6 +52,24 @@
       "parentUuid": "def36521_d6b04405",
       "revId": "f02fc0840c5aad648347406d9443edfd9c10ebb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "188f67dc_7ccdfb6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1724998
+      },
+      "writtenOn": "2026-10-26T20:43:54Z",
+      "side": 1,
+      "message": "Can\u0027t we have these patches on GKI 6.12 branch ? we may need a respin if these patches are important.",
+      "parentUuid": "1f7ec7d5_a94f8b14",
+      "revId": "f02fc0840c5aad648347406d9443edfd9c10ebb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
