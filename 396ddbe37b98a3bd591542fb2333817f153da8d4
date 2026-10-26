@@ -22,6 +22,30 @@
       },
       "revId": "396ddbe37b98a3bd591542fb2333817f153da8d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4893295e_6dd3dc45",
+        "filename": "mm/migrate.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 1859,
+      "author": {
+        "id": 4184930
+      },
+      "writtenOn": "2026-10-26T06:05:04Z",
+      "side": 1,
+      "message": "Thanks Brian, good catch. This was not intentional — it was a mistake when\n  cherry-picking from the android15-6.6 version.\n  In 6.6 the `\u003e\u003d` is paired with list_cut_before(..., \u0026folio2-\u003elru), but that\n  part wasn\u0027t carried over to 6.1, so it can indeed loop forever. I\u0027ll send a\n  follow-up fix.",
+      "parentUuid": "fb971277_32484540",
+      "range": {
+        "startLine": 1859,
+        "startChar": 15,
+        "endLine": 1859,
+        "endChar": 17
+      },
+      "revId": "396ddbe37b98a3bd591542fb2333817f153da8d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
