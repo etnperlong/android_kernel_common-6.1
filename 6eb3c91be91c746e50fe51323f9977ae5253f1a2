@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd7e3b66_e9fd3c05",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-26T11:56:43Z",
+      "side": 1,
+      "message": "Why isn\u0027t the needed functionality added properly to the kernel upstream instead?  Using a hook here seems odd for a basic feature.",
+      "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
