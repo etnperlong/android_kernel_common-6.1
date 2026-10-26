@@ -16,6 +16,24 @@
       "message": "Android\u0027s rustc is patched so this is not needed.",
       "revId": "2eea64b6d5b5ca138d0e0a3edcdb71c1168f769a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "82fd704a_733d2d9d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-26T09:47:53Z",
+      "side": 1,
+      "message": "Great, but then upstream is now broken, so that should be fixed too.",
+      "parentUuid": "091c77a0_df98403d",
+      "revId": "2eea64b6d5b5ca138d0e0a3edcdb71c1168f769a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
