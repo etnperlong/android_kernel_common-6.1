@@ -3378,6 +3378,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
 		folio_xchg_last_cpupid(new_folio, folio_last_cpupid(folio));
 	}
 
+	VM_BUG_ON_FOLIO(!folio_test_anon(folio) &&
+			folio_test_mappedtodisk(folio), folio);
+
 	if (new_order)
 		folio_set_order(folio, new_order);
 	else

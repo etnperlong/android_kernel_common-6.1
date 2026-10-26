@@ -273,14 +273,13 @@ static void do_mpage_readpage(struct mpage_readpage_args *args)
 			folio_unlock(folio);
 			goto out;
 		}
-	} else if (fully_mapped) {
+	} else if (fully_mapped && !folio_test_large(folio) &&
+		   !folio_test_uptodate(folio)) {
 		folio_set_mappedtodisk(folio);
-	}
-
-	if (fully_mapped && blocks_per_folio == 1 && !folio_test_uptodate(folio) &&
-	    cleancache_get_page(&folio->page) == 0) {
-		folio_mark_uptodate(folio);
-		goto confused;
+		if (cleancache_get_page(&folio->page) == 0) {
+			folio_mark_uptodate(folio);
+			goto confused;
+		}
 	}
 
 	/*
@@ -317,10 +316,12 @@ out:
 confused:
 	if (args->bio)
 		args->bio = mpage_bio_submit_read(args->bio);
-	if (!folio_test_uptodate(folio))
+	if (!folio_test_uptodate(folio)) {
+		cleancache_invalidate_page(folio->mapping, &folio->page);
 		block_read_full_folio(folio, args->get_block);
-	else
+	} else {
 		folio_unlock(folio);
+	}
 	goto out;
 }
 

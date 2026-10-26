@@ -107,8 +107,7 @@ static inline void cleancache_invalidate_page(struct address_space *mapping,
 					struct page *page)
 {
 	/* careful... page->mapping is NULL sometimes when this is called */
-	if (cleancache_enabled && cleancache_fs_enabled_mapping(mapping) &&
-	    !PageCompound(page))
+	if (cleancache_enabled && cleancache_fs_enabled_mapping(mapping))
 		__cleancache_invalidate_page(mapping, page);
 }
 
