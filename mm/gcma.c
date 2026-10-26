@@ -13,7 +13,6 @@
 #include <linux/idr.h>
 #include <linux/slab.h>
 #include <linux/xarray.h>
-#include <trace/hooks/mm.h>
 #include "gcma_sysfs.h"
 #include "internal.h"
 
@@ -761,9 +760,6 @@ static void gcma_cc_store_page(int hash_id, struct cleancache_filekey key,
 	struct gcma_inode *inode;
 	struct page *g_page;
 	void *src, *dst;
-	bool workingset = PageWorkingset(page);
-	bool bypass = false;
-	bool allow_nonworkingset = false;
 
 	/*
 	 * This cleancache function is called under irq disabled so every
@@ -771,14 +767,6 @@ static void gcma_cc_store_page(int hash_id, struct cleancache_filekey key,
 	 * used in the non-irqdisabled context.
 	 */
 	VM_BUG_ON(!irqs_disabled());
-
-	trace_android_vh_gcma_cc_store_page_bypass(&bypass);
-	if (bypass)
-		return;
-
-	trace_android_vh_gcma_cc_allow_nonworkingset(&allow_nonworkingset);
-	if (!workingset && !allow_nonworkingset)
-		return;
 
 	gcma_fs = find_gcma_fs(hash_id);
 	if (!gcma_fs)
