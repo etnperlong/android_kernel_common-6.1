@@ -5,6 +5,7 @@
 #include <linux/fs.h>
 #include <linux/exportfs.h>
 #include <linux/mm.h>
+#include <linux/pagemap.h>
 
 #define CLEANCACHE_NO_POOL		-1
 #define CLEANCACHE_NO_BACKEND		-2
@@ -91,7 +92,7 @@ static inline void cleancache_init_shared_fs(struct super_block *sb)
 static inline int cleancache_get_page(struct page *page)
 {
 	if (cleancache_enabled && cleancache_fs_enabled(page) &&
-	    !PageCompound(page))
+	    mapping_cleancache(page->mapping) && !PageCompound(page))
 		return __cleancache_get_page(page);
 	return -1;
 }
@@ -107,13 +108,15 @@ static inline void cleancache_invalidate_page(struct address_space *mapping,
 					struct page *page)
 {
 	/* careful... page->mapping is NULL sometimes when this is called */
-	if (cleancache_enabled && cleancache_fs_enabled_mapping(mapping))
+	if (cleancache_enabled && cleancache_fs_enabled_mapping(mapping) &&
+	    mapping_cleancache(mapping))
 		__cleancache_invalidate_page(mapping, page);
 }
 
 static inline void cleancache_invalidate_inode(struct address_space *mapping)
 {
-	if (cleancache_enabled && cleancache_fs_enabled_mapping(mapping))
+	if (cleancache_enabled && cleancache_fs_enabled_mapping(mapping) &&
+	    mapping_cleancache(mapping))
 		__cleancache_invalidate_inode(mapping);
 }
 
