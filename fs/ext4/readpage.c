@@ -336,13 +336,13 @@ static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
 				folio_end_read(folio, true);
 				continue;
 			}
-		} else if (fully_mapped) {
+		} else if (fully_mapped && !folio_test_large(folio) &&
+			   !folio_test_uptodate(folio)) {
 			folio_set_mappedtodisk(folio);
-		}
-		if (fully_mapped && blocks_per_page == 1 &&
-		    !folio_test_uptodate(folio) && cleancache_get_page(&folio->page) == 0) {
-			folio_mark_uptodate(folio);
-			goto confused;
+			if (cleancache_get_page(&folio->page) == 0) {
+				folio_mark_uptodate(folio);
+				goto confused;
+			}
 		}
 
 		/*
@@ -388,10 +388,12 @@ static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
 			submit_bio(bio);
 			bio = NULL;
 		}
-		if (!folio_test_uptodate(folio))
+		if (!folio_test_uptodate(folio)) {
+			cleancache_invalidate_page(folio->mapping, &folio->page);
 			block_read_full_folio(folio, ext4_get_block);
-		else
+		} else {
 			folio_unlock(folio);
+		}
 next_page:
 		; /* A label shall be followed by a statement until C23 */
 	}
