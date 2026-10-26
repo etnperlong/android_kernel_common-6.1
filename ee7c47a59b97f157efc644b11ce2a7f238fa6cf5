@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db502adf_734ddc25",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-26T21:22:43Z",
+      "side": 1,
+      "message": "Cherry-pick the `android17-6.18` version (aosp/3858790) so the Change-Id is preserved",
+      "revId": "ee7c47a59b97f157efc644b11ce2a7f238fa6cf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
