@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "08593a04_9a949bfd",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 21
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-26T16:19:47Z",
+      "side": 1,
+      "message": "Updated the diagrams to label these as 4KB pages and 4KB slices.",
+      "parentUuid": "d23b8991_14ef2708",
+      "range": {
+        "startLine": 256,
+        "startChar": 28,
+        "endLine": 256,
+        "endChar": 52
+      },
+      "revId": "bc1673bf3ebf00f0d1febfdf6f636a54568ea606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5edf3030_8a211f2a",
@@ -61,6 +85,30 @@
           ]
         }
       ],
+      "revId": "bc1673bf3ebf00f0d1febfdf6f636a54568ea606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3f6a514_a8581e98",
+        "filename": "mm/mempolicy.c",
+        "patchSetId": 21
+      },
+      "lineNbr": 3186,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-26T16:19:47Z",
+      "side": 1,
+      "message": "Hi Juan, \n\nAgreed `native` is a bit ambiguous, though I think `host` may also be bit misleading.\n\nThe count is not always in host pages: it is in `vm_pgoff` units. In a 4KB anonymous VMA, `vm_pgoff` counts 4KB pages. \n\nI\u0027ve renamed it to vma_pgoff_pages() to claify this.",
+      "parentUuid": "5edf3030_8a211f2a",
+      "range": {
+        "startLine": 3186,
+        "startChar": 20,
+        "endLine": 3186,
+        "endChar": 36
+      },
       "revId": "bc1673bf3ebf00f0d1febfdf6f636a54568ea606",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
