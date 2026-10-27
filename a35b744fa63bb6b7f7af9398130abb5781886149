@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef337a80_c9136093",
+        "filename": "mm/memory.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 3405,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-27T17:26:09Z",
+      "side": 1,
+      "message": "mm_pte_size to be clear? we are adding new code, better be explicit",
+      "range": {
+        "startLine": 3405,
+        "startChar": 50,
+        "endLine": 3405,
+        "endChar": 59
+      },
+      "revId": "a35b744fa63bb6b7f7af9398130abb5781886149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
