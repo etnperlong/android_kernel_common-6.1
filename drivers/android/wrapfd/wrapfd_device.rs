@@ -11,7 +11,6 @@ pub(crate) struct WrapFdDevice;
 #[pin_data]
 pub(crate) struct WrapfdDevFile {
     wrapping_dev: ARef<device::Device>,
-    wrap: Option<Pin<KBox<Wrap>>>,
 }
 
 #[vtable]
@@ -26,7 +25,7 @@ impl kernel::miscdevice::MiscDevice for WrapFdDevice {
 
         KBox::try_pin_init(
             try_pin_init! {
-                WrapfdDevFile { wrapping_dev, wrap: None }
+                WrapfdDevFile { wrapping_dev }
             },
             GFP_KERNEL,
         )
