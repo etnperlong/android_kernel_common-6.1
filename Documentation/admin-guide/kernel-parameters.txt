@@ -2716,6 +2716,15 @@ Kernel parameters
 			0 - Sanitizer disabled.
 			1 - Sanitizer enabled, expect runtime overhead.
 
+	iommu.passthrough_devs=
+			[KNL,EARLY] Configure DMA to bypass the IOMMU by default
+			for specific devices.
+			Format: <dev_name>[,<dev_name>...]
+			Specify a comma-separated list of device names (matching
+			dev_name() of the client device or any of its parent/bridge
+			devices) whose IOMMU groups should default to passthrough
+			(identity) mode.
+
 	io7=		[HW] IO7 for Marvel-based Alpha systems
 			See comment before marvel_specify_io7 in
 			arch/alpha/kernel/core_marvel.c.
