@@ -912,13 +912,28 @@ int l2cap_chan_check_security(struct l2cap_chan *chan, bool initiator)
 
 static u8 l2cap_get_ident(struct l2cap_conn *conn)
 {
+<<<<<<< HEAD   (fce0756961dcac5d1aef84072031cc055649dc1f Revert "HID: appleir: fix UAF on pending key_up_timer in rem)
 	u8 id;
 
+||||||| BASE   (5673c251f35c041eec0181437f992178dd29df87 seqlock: fix scoped_seqlock_read kernel-doc)
+	/* LE link does not support tools like l2ping so use the full range */
+	if (conn->hcon->type == LE_LINK)
+		return ida_alloc_range(&conn->tx_ida, 1, 255, GFP_ATOMIC);
+
+=======
+	u8 max;
+	int ident;
+
+	/* LE link does not support tools like l2ping so use the full range */
+	if (conn->hcon->type == LE_LINK)
+		max = 255;
+>>>>>>> BRANCH (b8a32a5fc915b024c60f18d51b6cffd2bd64d4a6 Bluetooth: L2CAP: fix tx ident leak for commands without a r)
 	/* Get next available identificator.
 	 *    1 - 128 are used by kernel.
 	 *  129 - 199 are reserved.
 	 *  200 - 254 are used by utilities like l2ping, etc.
 	 */
+<<<<<<< HEAD   (fce0756961dcac5d1aef84072031cc055649dc1f Revert "HID: appleir: fix UAF on pending key_up_timer in rem)
 
 	mutex_lock(&conn->ident_lock);
 
@@ -930,6 +945,32 @@ static u8 l2cap_get_ident(struct l2cap_conn *conn)
 	mutex_unlock(&conn->ident_lock);
 
 	return id;
+||||||| BASE   (5673c251f35c041eec0181437f992178dd29df87 seqlock: fix scoped_seqlock_read kernel-doc)
+	return ida_alloc_range(&conn->tx_ida, 1, 128, GFP_ATOMIC);
+=======
+	else
+		max = 128;
+
+	/* Allocate ident using min as last used + 1 (cyclic) */
+	ident = ida_alloc_range(&conn->tx_ida, READ_ONCE(conn->tx_ident) + 1,
+				max, GFP_ATOMIC);
+	/* Force min 1 to start over */
+	if (ident <= 0) {
+		ident = ida_alloc_range(&conn->tx_ida, 1, max, GFP_ATOMIC);
+		if (ident <= 0) {
+			/* If all idents are in use, log an error, this is
+			 * extremely unlikely to happen and would indicate a bug
+			 * in the code that idents are not being freed properly.
+			 */
+			BT_ERR("Unable to allocate ident: %d", ident);
+			return 0;
+		}
+	}
+
+	WRITE_ONCE(conn->tx_ident, ident);
+
+	return ident;
+>>>>>>> BRANCH (b8a32a5fc915b024c60f18d51b6cffd2bd64d4a6 Bluetooth: L2CAP: fix tx ident leak for commands without a r)
 }
 
 static void l2cap_send_cmd(struct l2cap_conn *conn, u8 ident, u8 code, u16 len,
@@ -4802,6 +4843,65 @@ unlock:
 	return err;
 }
 
+<<<<<<< HEAD   (fce0756961dcac5d1aef84072031cc055649dc1f Revert "HID: appleir: fix UAF on pending key_up_timer in rem)
+||||||| BASE   (5673c251f35c041eec0181437f992178dd29df87 seqlock: fix scoped_seqlock_read kernel-doc)
+static void l2cap_put_ident(struct l2cap_conn *conn, u8 code, u8 id)
+{
+	int ret;
+
+	switch (code) {
+	case L2CAP_COMMAND_REJ:
+	case L2CAP_CONN_RSP:
+	case L2CAP_CONF_RSP:
+	case L2CAP_DISCONN_RSP:
+	case L2CAP_ECHO_RSP:
+	case L2CAP_INFO_RSP:
+	case L2CAP_CONN_PARAM_UPDATE_RSP:
+	case L2CAP_ECRED_CONN_RSP:
+	case L2CAP_ECRED_RECONF_RSP:
+		/* The remote may send bogus ids that would make ida_free
+		 * generate warnings, so only free ids that are actually
+		 * allocated: probing the exact id returns -ENOSPC when it
+		 * is in use, otherwise the probe allocated it and freeing
+		 * is safe either way.  Only on -ENOMEM is the id known to
+		 * be unallocated and the free must be skipped.
+		 */
+		ret = ida_alloc_range(&conn->tx_ida, id, id, GFP_ATOMIC);
+		if (ret >= 0 || ret == -ENOSPC)
+			ida_free(&conn->tx_ida, id);
+	}
+}
+
+=======
+static void l2cap_put_ident(struct l2cap_conn *conn, u8 code, u8 id)
+{
+	int ret;
+
+	switch (code) {
+	case L2CAP_COMMAND_REJ:
+	case L2CAP_CONN_RSP:
+	case L2CAP_CONF_RSP:
+	case L2CAP_DISCONN_RSP:
+	case L2CAP_ECHO_RSP:
+	case L2CAP_INFO_RSP:
+	case L2CAP_CONN_PARAM_UPDATE_RSP:
+	case L2CAP_LE_CONN_RSP:
+	case L2CAP_ECRED_CONN_RSP:
+	case L2CAP_ECRED_RECONF_RSP:
+		/* The remote may send bogus ids that would make ida_free
+		 * generate warnings, so only free ids that are actually
+		 * allocated: probing the exact id returns -ENOSPC when it
+		 * is in use, otherwise the probe allocated it and freeing
+		 * is safe either way.  Only on -ENOMEM is the id known to
+		 * be unallocated and the free must be skipped.
+		 */
+		ret = ida_alloc_range(&conn->tx_ida, id, id, GFP_ATOMIC);
+		if (ret >= 0 || ret == -ENOSPC)
+			ida_free(&conn->tx_ida, id);
+	}
+}
+
+>>>>>>> BRANCH (b8a32a5fc915b024c60f18d51b6cffd2bd64d4a6 Bluetooth: L2CAP: fix tx ident leak for commands without a r)
 static inline int l2cap_bredr_sig_cmd(struct l2cap_conn *conn,
 				      struct l2cap_cmd_hdr *cmd, u16 cmd_len,
 				      u8 *data)
@@ -6696,9 +6796,16 @@ static void l2cap_chan_le_send_credits(struct l2cap_chan *chan)
 {
 	struct l2cap_conn *conn = chan->conn;
 	struct l2cap_le_credits pkt;
+<<<<<<< HEAD   (fce0756961dcac5d1aef84072031cc055649dc1f Revert "HID: appleir: fix UAF on pending key_up_timer in rem)
 	u16 return_credits;
 
 	return_credits = (chan->imtu / chan->mps) + 1;
+||||||| BASE   (5673c251f35c041eec0181437f992178dd29df87 seqlock: fix scoped_seqlock_read kernel-doc)
+	u16 return_credits = l2cap_le_rx_credits(chan);
+=======
+	u16 return_credits = l2cap_le_rx_credits(chan);
+	int ident;
+>>>>>>> BRANCH (b8a32a5fc915b024c60f18d51b6cffd2bd64d4a6 Bluetooth: L2CAP: fix tx ident leak for commands without a r)
 
 	if (chan->mode != L2CAP_MODE_LE_FLOWCTL &&
 	    chan->mode != L2CAP_MODE_EXT_FLOWCTL)
@@ -6716,9 +6823,18 @@ static void l2cap_chan_le_send_credits(struct l2cap_chan *chan)
 	pkt.cid     = cpu_to_le16(chan->scid);
 	pkt.credits = cpu_to_le16(return_credits);
 
-	chan->ident = l2cap_get_ident(conn);
+	ident = l2cap_get_ident(conn);
 
-	l2cap_send_cmd(conn, chan->ident, L2CAP_LE_CREDITS, sizeof(pkt), &pkt);
+	l2cap_send_cmd(conn, ident, L2CAP_LE_CREDITS, sizeof(pkt), &pkt);
+
+	/* L2CAP_LE_CREDITS has no response so the ident is never released by
+	 * l2cap_put_ident() - release it right away, otherwise the tx_ida
+	 * range is exhausted after 254 packets and from then on credits are
+	 * sent with the invalid ident 0, which some remote stacks ignore,
+	 * stalling the channel.
+	 */
+	if (ident > 0)
+		ida_free(&conn->tx_ida, ident);
 }
 
 static int l2cap_ecred_recv(struct l2cap_chan *chan, struct sk_buff *skb)

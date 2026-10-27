@@ -674,8 +674,15 @@ struct l2cap_conn {
 
 	struct sk_buff		*rx_skb;
 	__u32			rx_len;
+<<<<<<< HEAD   (fce0756961dcac5d1aef84072031cc055649dc1f Revert "HID: appleir: fix UAF on pending key_up_timer in rem)
 	__u8			tx_ident;
 	struct mutex		ident_lock;
+||||||| BASE   (5673c251f35c041eec0181437f992178dd29df87 seqlock: fix scoped_seqlock_read kernel-doc)
+	struct ida		tx_ida;
+=======
+	struct ida		tx_ida;
+	__u8			tx_ident;
+>>>>>>> BRANCH (b8a32a5fc915b024c60f18d51b6cffd2bd64d4a6 Bluetooth: L2CAP: fix tx ident leak for commands without a r)
 
 	struct sk_buff_head	pending_rx;
 	struct work_struct	pending_rx_work;
