@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7a517df4_b779c383",
+        "filename": "drivers/android/vendor_hooks.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T21:10:29Z",
+      "side": 1,
+      "message": "fwiw, this is the line that is out of order.",
+      "range": {
+        "startLine": 59,
+        "startChar": 29,
+        "endLine": 59,
+        "endChar": 56
+      },
+      "revId": "763e0b171513c55f6ae7007f345499cf78145059",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "21324f70_60946592",
         "filename": "drivers/android/vendor_hooks.c",
         "patchSetId": 2
