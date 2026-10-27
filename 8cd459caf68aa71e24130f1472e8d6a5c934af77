@@ -87,6 +87,24 @@
       ],
       "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54963e9a_0f741291",
+        "filename": "include/linux/sched.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1251,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T16:11:24Z",
+      "side": 1,
+      "message": "I don\u0027t think this wouldn\u0027t work either because blocked_on_l.lock might point to a rwsem in the future.",
+      "parentUuid": "6d213402_be1c2903",
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
