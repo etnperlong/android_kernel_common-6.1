@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3308f17_d0627ec7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-27T05:25:19Z",
+      "side": 1,
+      "message": "this seems like the abi needs to be re-generated as lint is complaining it is causing abi breakage.",
+      "revId": "b89b37303a2a6fdc92b14e3d539f1f4f169c76ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
