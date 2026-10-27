@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ade6a78_420f9a51",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-27T18:42:35Z",
+      "side": 1,
+      "message": "Discussed internally. Here is the plan: We\u0027ll go with this change to avoid build breakage while still allowing for the future proxy extensions. Then we\u0027ll work to communicate with partners how to avoid pitfalls by not directly accessing the proxy fields in the task_struct and allow them to transition. Then we\u0027ll do the proxy extensions (which will change `struct mutex *blocked_on` semantics) once we\u0027re comfortable it is safe.",
+      "parentUuid": "6369f7b9_486bbc0f",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 63
+      },
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6d213402_be1c2903",
@@ -145,6 +169,24 @@
       "side": 1,
       "message": "So when I union\u0027ed them in the way you describe, I got some odd build errors building outside of bazel/kleaf, and noticed no anonymous unions are used in the task_struct proper (named unions are though).",
       "parentUuid": "54963e9a_0f741291",
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28e98f8d_3d861c17",
+        "filename": "include/linux/sched.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1251,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-27T18:42:35Z",
+      "side": 1,
+      "message": "Marking resolved as I think this way is the most safe/conservative.",
+      "parentUuid": "2149c9ce_10149348",
       "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
