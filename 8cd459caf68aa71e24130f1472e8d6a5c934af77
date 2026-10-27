@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6369f7b9_486bbc0f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-27T18:35:31Z",
+      "side": 1,
+      "message": "So, its a pointer to a mutex (or other locking primitive the task is blocked on), no actual locking is done using the blocked_on_l.lock, as that would break the mutex logic the blocked task is in when it calls schedule().\n\nNow, there is a reasonable concern that if the vendor code is reading blocked_on as a mutex and diving into that structure for its own purposes, that if we extend it to rwsems or futexes, vendor code could be confused (since the blocked_on pointer may not be a mutex anymore.",
+      "parentUuid": "c0302dba_44b37098",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 63
+      },
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6d213402_be1c2903",
         "filename": "include/linux/sched.h",
         "patchSetId": 2
@@ -103,6 +127,24 @@
       "side": 1,
       "message": "I don\u0027t think this wouldn\u0027t work either because blocked_on_l.lock might point to a rwsem in the future.",
       "parentUuid": "6d213402_be1c2903",
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2149c9ce_10149348",
+        "filename": "include/linux/sched.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1251,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-27T18:35:31Z",
+      "side": 1,
+      "message": "So when I union\u0027ed them in the way you describe, I got some odd build errors building outside of bazel/kleaf, and noticed no anonymous unions are used in the task_struct proper (named unions are though).",
+      "parentUuid": "54963e9a_0f741291",
       "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
