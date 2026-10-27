@@ -2424,7 +2424,37 @@ static bool __bpf_prog_map_compatible(struct bpf_map *map,
 		      map->owner.jited == fp->jited &&
 		      map->owner.xdp_has_frags == aux->xdp_has_frags;
 		if (ret &&
+<<<<<<< HEAD   (78d282c6b4a11cc782b6f538d5abd2c68d887945 UPSTREAM: gendwarfksyms: Skip files with no exports)
 		    map->owner.attach_func_proto != aux->attach_func_proto) {
+||||||| BASE   (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
+		    map->map_type == BPF_MAP_TYPE_PROG_ARRAY &&
+		    map->owner->expected_attach_type != fp->expected_attach_type)
+			ret = false;
+		for_each_cgroup_storage_type(i) {
+			if (!ret)
+				break;
+			cookie = aux->cgroup_storage[i] ?
+				 aux->cgroup_storage[i]->cookie : 0;
+			ret = map->owner->storage_cookie[i] == cookie ||
+			      !cookie;
+		}
+		if (ret &&
+		    map->owner->attach_func_proto != aux->attach_func_proto) {
+=======
+		    map->map_type == BPF_MAP_TYPE_PROG_ARRAY &&
+		    map->owner->expected_attach_type != fp->expected_attach_type)
+			ret = false;
+		for_each_cgroup_storage_type(i) {
+			if (!ret)
+				break;
+			cookie = aux->cgroup_storage[i] ?
+				 aux->cgroup_storage[i]->cookie : 0;
+			ret = map->owner->storage_cookie[i] == cookie ||
+			      (!cookie && !aux->tail_call_reachable);
+		}
+		if (ret &&
+		    map->owner->attach_func_proto != aux->attach_func_proto) {
+>>>>>>> BRANCH (29ac6199d3f9ad6b54816e23e631d79961d00425 soc: fsl: qe: panic on ioremap() failure in qe_reset())
 			switch (prog_type) {
 			case BPF_PROG_TYPE_TRACING:
 			case BPF_PROG_TYPE_LSM:

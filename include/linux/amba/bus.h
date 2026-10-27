@@ -72,6 +72,7 @@ struct amba_device {
 	unsigned int		cid;
 	struct amba_cs_uci_id	uci;
 	unsigned int		irq[AMBA_NR_IRQS];
+<<<<<<< HEAD   (78d282c6b4a11cc782b6f538d5abd2c68d887945 UPSTREAM: gendwarfksyms: Skip files with no exports)
 	/*
 	 * Driver name to force a match.  Do not set directly, because core
 	 * frees it.  Use driver_set_override() to set or clear it.
@@ -79,6 +80,14 @@ struct amba_device {
 	const char		*driver_override;
 
 	ANDROID_KABI_RESERVE(1);
+||||||| BASE   (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
+	/*
+	 * Driver name to force a match.  Do not set directly, because core
+	 * frees it.  Use driver_set_override() to set or clear it.
+	 */
+	const char		*driver_override;
+=======
+>>>>>>> BRANCH (29ac6199d3f9ad6b54816e23e631d79961d00425 soc: fsl: qe: panic on ioremap() failure in qe_reset())
 };
 
 struct amba_driver {

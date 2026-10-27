@@ -112,6 +112,16 @@ static int connmark_tg_check(const struct xt_tgchk_param *par)
 	return ret;
 }
 
+static int connmark_tg_check_v2(const struct xt_tgchk_param *par)
+{
+	const struct xt_connmark_tginfo2 *info = par->targinfo;
+
+	if (info->shift_dir > D_SHIFT_RIGHT || info->shift_bits >= 32)
+		return -EINVAL;
+
+	return connmark_tg_check(par);
+}
+
 static void connmark_tg_destroy(const struct xt_tgdtor_param *par)
 {
 	nf_ct_netns_put(par->net, par->family);
@@ -161,13 +171,71 @@ static struct xt_target connmark_tg_reg[] __read_mostly = {
 	{
 		.name           = "CONNMARK",
 		.revision       = 2,
+<<<<<<< HEAD   (78d282c6b4a11cc782b6f538d5abd2c68d887945 UPSTREAM: gendwarfksyms: Skip files with no exports)
 		.family         = NFPROTO_UNSPEC,
+		.checkentry     = connmark_tg_check,
+||||||| BASE   (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
+		.family         = NFPROTO_IPV4,
+		.checkentry     = connmark_tg_check,
+=======
+		.family         = NFPROTO_IPV4,
+		.checkentry     = connmark_tg_check_v2,
+>>>>>>> BRANCH (29ac6199d3f9ad6b54816e23e631d79961d00425 soc: fsl: qe: panic on ioremap() failure in qe_reset())
+		.target         = connmark_tg_v2,
+		.targetsize     = sizeof(struct xt_connmark_tginfo2),
+		.destroy        = connmark_tg_destroy,
+		.me             = THIS_MODULE,
+<<<<<<< HEAD   (78d282c6b4a11cc782b6f538d5abd2c68d887945 UPSTREAM: gendwarfksyms: Skip files with no exports)
+	}
+||||||| BASE   (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
+	},
+#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+	{
+		.name           = "CONNMARK",
+		.revision       = 1,
+		.family         = NFPROTO_IPV6,
+		.checkentry     = connmark_tg_check,
+		.target         = connmark_tg,
+		.targetsize     = sizeof(struct xt_connmark_tginfo1),
+		.destroy        = connmark_tg_destroy,
+		.me             = THIS_MODULE,
+	},
+	{
+		.name           = "CONNMARK",
+		.revision       = 2,
+		.family         = NFPROTO_IPV6,
 		.checkentry     = connmark_tg_check,
 		.target         = connmark_tg_v2,
 		.targetsize     = sizeof(struct xt_connmark_tginfo2),
 		.destroy        = connmark_tg_destroy,
 		.me             = THIS_MODULE,
-	}
+	},
+#endif
+=======
+	},
+#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+	{
+		.name           = "CONNMARK",
+		.revision       = 1,
+		.family         = NFPROTO_IPV6,
+		.checkentry     = connmark_tg_check,
+		.target         = connmark_tg,
+		.targetsize     = sizeof(struct xt_connmark_tginfo1),
+		.destroy        = connmark_tg_destroy,
+		.me             = THIS_MODULE,
+	},
+	{
+		.name           = "CONNMARK",
+		.revision       = 2,
+		.family         = NFPROTO_IPV6,
+		.checkentry     = connmark_tg_check_v2,
+		.target         = connmark_tg_v2,
+		.targetsize     = sizeof(struct xt_connmark_tginfo2),
+		.destroy        = connmark_tg_destroy,
+		.me             = THIS_MODULE,
+	},
+#endif
+>>>>>>> BRANCH (29ac6199d3f9ad6b54816e23e631d79961d00425 soc: fsl: qe: panic on ioremap() failure in qe_reset())
 };
 
 static struct xt_match connmark_mt_reg __read_mostly = {

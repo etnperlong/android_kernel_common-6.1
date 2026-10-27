@@ -380,6 +380,15 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
 			return  -EINVAL;
 		}
 
+<<<<<<< HEAD   (78d282c6b4a11cc782b6f538d5abd2c68d887945 UPSTREAM: gendwarfksyms: Skip files with no exports)
+||||||| BASE   (718f6a56b40875f19e6915799044a02df9abfd52 ALSA: seq: midi: Serialize output teardown with event_input)
+		if (rq->cfs.h_nr_queued) {
+			update_rq_clock(rq);
+=======
+		if (!cpu_online(cpu_of(rq)))
+			return -EBUSY;
+
+>>>>>>> BRANCH (29ac6199d3f9ad6b54816e23e631d79961d00425 soc: fsl: qe: panic on ioremap() failure in qe_reset())
 		update_rq_clock(rq);
 		dl_server_stop(&rq->fair_server);
 
