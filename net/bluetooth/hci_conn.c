@@ -980,8 +980,28 @@ static void cis_cleanup(struct hci_conn *conn)
 	hci_le_remove_cig(hdev, conn->iso_qos.cig);
 }
 
+<<<<<<< HEAD   (6522ae15120c718fe68920e53f63975314c2b3be Merge c73b6c5780bd ("driver core: Guard deferred probe timeo)
 struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
 			      u8 role)
+||||||| BASE   (c73b6c5780bdfc1578e543279ef7383d1f538d1d driver core: Guard deferred probe timeout extension with del)
+static int hci_conn_hash_alloc_unset(struct hci_dev *hdev)
+{
+	return ida_alloc_range(&hdev->unset_handle_ida, HCI_CONN_HANDLE_MAX + 1,
+			       U16_MAX, GFP_ATOMIC);
+}
+
+struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
+			      u8 role, u16 handle)
+=======
+static int hci_conn_hash_alloc_unset(struct hci_dev *hdev)
+{
+	return ida_alloc_range(&hdev->unset_handle_ida, HCI_CONN_HANDLE_MAX + 1,
+			       U16_MAX, GFP_ATOMIC);
+}
+
+static struct hci_conn *__hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
+				       u8 role, u16 handle)
+>>>>>>> BRANCH (dc5c83b7f5f83ea99aea5c771b1ec77458263a15 Linux 6.1.178)
 {
 	struct hci_conn *conn;
 
@@ -1077,6 +1097,47 @@ struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
 	return conn;
 }
 
+<<<<<<< HEAD   (6522ae15120c718fe68920e53f63975314c2b3be Merge c73b6c5780bd ("driver core: Guard deferred probe timeo)
+||||||| BASE   (c73b6c5780bdfc1578e543279ef7383d1f538d1d driver core: Guard deferred probe timeout extension with del)
+struct hci_conn *hci_conn_add_unset(struct hci_dev *hdev, int type,
+				    bdaddr_t *dst, u8 role)
+{
+	int handle;
+
+	bt_dev_dbg(hdev, "dst %pMR", dst);
+
+	handle = hci_conn_hash_alloc_unset(hdev);
+	if (unlikely(handle < 0))
+		return NULL;
+
+	return hci_conn_add(hdev, type, dst, role, handle);
+}
+
+=======
+struct hci_conn *hci_conn_add_unset(struct hci_dev *hdev, int type,
+				    bdaddr_t *dst, u8 role)
+{
+	int handle;
+
+	bt_dev_dbg(hdev, "dst %pMR", dst);
+
+	handle = hci_conn_hash_alloc_unset(hdev);
+	if (unlikely(handle < 0))
+		return NULL;
+
+	return __hci_conn_add(hdev, type, dst, role, handle);
+}
+
+struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
+			      u8 role, u16 handle)
+{
+	if (handle > HCI_CONN_HANDLE_MAX)
+		return ERR_PTR(-EINVAL);
+
+	return __hci_conn_add(hdev, type, dst, role, handle);
+}
+
+>>>>>>> BRANCH (dc5c83b7f5f83ea99aea5c771b1ec77458263a15 Linux 6.1.178)
 static bool hci_conn_unlink(struct hci_conn *conn)
 {
 	if (!conn->link)
