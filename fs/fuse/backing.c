@@ -1664,13 +1664,19 @@ static int fuse_rename_backing_common(
 	target_inode = d_inode(newent);
 
 	trap = lock_rename(old_backing_dir_dentry, new_backing_dir_dentry);
-	if (trap == old_backing_dentry) {
-		err = -EINVAL;
+	if (IS_ERR(trap)) {
+		err = PTR_ERR(trap);
 		goto put_parents;
 	}
+	err = -EINVAL;
+	if (old_backing_dentry->d_parent != old_backing_dir_dentry ||
+	    new_backing_dentry->d_parent != new_backing_dir_dentry ||
+	    IS_ROOT(new_backing_dentry) || trap == old_backing_dentry)
+		goto unlock;
 	if (trap == new_backing_dentry) {
-		err = -ENOTEMPTY;
-		goto put_parents;
+		if (!(flags & RENAME_EXCHANGE))
+			err = -ENOTEMPTY;
+		goto unlock;
 	}
 	err = vfs_rename(d_inode(old_backing_dir_dentry), old_backing_dentry,
 			 d_inode(new_backing_dir_dentry), new_backing_dentry,
