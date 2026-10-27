@@ -2190,13 +2190,9 @@ static void rfcomm_security_cfm(struct hci_conn *conn, u8 status, u8 encrypt)
 
 	BT_DBG("conn %p status 0x%02x encrypt 0x%02x", conn, status, encrypt);
 
-	rfcomm_lock();
-
 	s = rfcomm_session_get(&conn->hdev->bdaddr, &conn->dst);
-	if (!s) {
-		rfcomm_unlock();
+	if (!s)
 		return;
-	}
 
 	list_for_each_entry_safe(d, n, &s->dlcs, list) {
 		if (test_and_clear_bit(RFCOMM_SEC_PENDING, &d->flags)) {
@@ -2227,8 +2223,6 @@ static void rfcomm_security_cfm(struct hci_conn *conn, u8 status, u8 encrypt)
 		else
 			set_bit(RFCOMM_AUTH_REJECT, &d->flags);
 	}
-
-	rfcomm_unlock();
 
 	rfcomm_schedule();
 }
