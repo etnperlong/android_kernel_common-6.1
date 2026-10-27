@@ -1615,13 +1615,23 @@ static int fuse_rename_backing_common(
 	target_inode = d_inode(newent);
 
 	trap = lock_rename(old_backing_dir_dentry, new_backing_dir_dentry);
-	if (trap == old_backing_dentry) {
-		err = -EINVAL;
+	if (IS_ERR(trap)) {
+		err = PTR_ERR(trap);
 		goto put_parents;
 	}
+	if (old_backing_dentry->d_parent != old_backing_dir_dentry ||
+	    new_backing_dentry->d_parent != new_backing_dir_dentry ||
+	    IS_ROOT(old_backing_dentry) || IS_ROOT(new_backing_dentry)) {
+		err = -EINVAL;
+		goto unlock;
+	}
+	if (trap == old_backing_dentry) {
+		err = -EINVAL;
+		goto unlock;
+	}
 	if (trap == new_backing_dentry) {
-		err = -ENOTEMPTY;
-		goto put_parents;
+		err = (flags & RENAME_EXCHANGE) ? -EINVAL : -ENOTEMPTY;
+		goto unlock;
 	}
 	rd = (struct renamedata) {
 		.old_mnt_userns = &init_user_ns,
