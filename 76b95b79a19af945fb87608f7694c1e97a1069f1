@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c7802de2_31c11fb8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-27T09:22:29Z",
+      "side": 1,
+      "message": "There are no FROMGIT patches in the usb.git tree right now, everything is merged properly, so this tag is not correct.",
+      "parentUuid": "211a59a1_52a69c7f",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "59fdb560_b519df40",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -79,6 +103,24 @@
       "side": 1,
       "message": "As of now, there is no need of this on 6.18, i guess we can propagate later if needed.",
       "parentUuid": "59fdb560_b519df40",
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "664e07b3_37a71588",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-27T09:22:29Z",
+      "side": 1,
+      "message": "Please do it now as you will upgrade eventually.",
+      "parentUuid": "a9eb4055_19a84bb5",
       "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
