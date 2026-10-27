@@ -847,7 +847,71 @@ static void damon_do_apply_schemes(struct damon_ctx *c,
 		if (!damos_valid_target(c, t, r, s))
 			continue;
 
+<<<<<<< HEAD   (ec9578968be7fcaf5a16beb0d28be67589778fff Merge 45ef9951411c ("Bluetooth: hci_core: Enable buffer flow)
 		damos_apply_scheme(c, t, r, s);
+||||||| BASE   (45ef9951411c8fcc2888746601827fbff09efd49 Bluetooth: hci_core: Enable buffer flow control for SCO/eSCO)
+		/* Apply the scheme */
+		if (c->ops.apply_scheme) {
+			if (quota->esz &&
+					quota->charged_sz + sz > quota->esz) {
+				sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+						DAMON_MIN_REGION);
+				if (!sz)
+					goto update_stat;
+				damon_split_region_at(t, r, sz);
+			}
+			ktime_get_coarse_ts64(&begin);
+			sz_applied = c->ops.apply_scheme(c, t, r, s);
+			ktime_get_coarse_ts64(&end);
+			quota->total_charged_ns += timespec64_to_ns(&end) -
+				timespec64_to_ns(&begin);
+			quota->charged_sz += sz;
+			if (quota->esz && quota->charged_sz >= quota->esz) {
+				quota->charge_target_from = t;
+				quota->charge_addr_from = r->ar.end + 1;
+			}
+		}
+		if (s->action != DAMOS_STAT)
+			r->age = 0;
+
+update_stat:
+		s->stat.nr_tried++;
+		s->stat.sz_tried += sz;
+		if (sz_applied)
+			s->stat.nr_applied++;
+		s->stat.sz_applied += sz_applied;
+=======
+		/* Apply the scheme */
+		if (c->ops.apply_scheme) {
+			if (quota->esz &&
+					quota->charged_sz + sz > quota->esz) {
+				sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+						DAMON_MIN_REGION);
+				if (!sz)
+					goto update_stat;
+				damon_split_region_at(t, r, sz);
+			}
+			ktime_get_coarse_ts64(&begin);
+			sz_applied = c->ops.apply_scheme(c, t, r, s);
+			ktime_get_coarse_ts64(&end);
+			quota->total_charged_ns += timespec64_to_ns(&end) -
+				timespec64_to_ns(&begin);
+			quota->charged_sz += sz;
+			if (quota->esz && quota->charged_sz >= quota->esz) {
+				quota->charge_target_from = t;
+				quota->charge_addr_from = r->ar.end;
+			}
+		}
+		if (s->action != DAMOS_STAT)
+			r->age = 0;
+
+update_stat:
+		s->stat.nr_tried++;
+		s->stat.sz_tried += sz;
+		if (sz_applied)
+			s->stat.nr_applied++;
+		s->stat.sz_applied += sz_applied;
+>>>>>>> BRANCH (5673c251f35c041eec0181437f992178dd29df87 seqlock: fix scoped_seqlock_read kernel-doc)
 	}
 }
 
