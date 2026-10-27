@@ -22,6 +22,71 @@
       },
       "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d213402_be1c2903",
+        "filename": "include/linux/sched.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1251,
+      "author": {
+        "id": 1956160
+      },
+      "writtenOn": "2026-10-27T15:53:52Z",
+      "side": 1,
+      "message": "Why can\u0027t we use anonymous union? I see your comment about \"limitations placed on struct task_struct\", but what are these? I tried to use union in your change and `tools/bazel run //common:kernel_aarch64_dist` works just fine.\n\nWe also use anonymous union in `ANDROID_KABI_USE` macro, which is used and works in `task_struct` as well.",
+      "fixSuggestions": [
+        {
+          "fixId": "19ad0e3f_62cfadd6",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "include/linux/sched.h",
+              "range": {
+                "startLine": 1250,
+                "startChar": 0,
+                "endLine": 1252,
+                "endChar": 0
+              },
+              "replacement": "\tunion {\n\t\tstruct mutex\t\t\t*blocked_on;    /* left to preserve KABI */\n\t\tstruct blocked_on_lock\t\tblocked_on_l;\t/* lock we\u0027re blocked on */\n\t};\n"
+            },
+            {
+              "path": "include/linux/sched.h",
+              "range": {
+                "startLine": 2242,
+                "startChar": 0,
+                "endLine": 2243,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "include/linux/sched.h",
+              "range": {
+                "startLine": 2258,
+                "startChar": 0,
+                "endLine": 2259,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "include/linux/sched.h",
+              "range": {
+                "startLine": 2288,
+                "startChar": 0,
+                "endLine": 2289,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
