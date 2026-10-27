@@ -35,7 +35,12 @@
 
 #include "hci_request.h"
 #include "smp.h"
+<<<<<<< HEAD   (bb48e0e64647981747f8594fc08dec1bccc682a6 Revert "Bluetooth: Make handle of hci_conn be unique")
 #include "a2mp_compat.h"
+||||||| BASE   (f7e83f2278f06b577e3c92ea2f4e8e8c6fc72a8f Bluetooth: Make handle of hci_conn be unique)
+#include "a2mp.h"
+=======
+>>>>>>> BRANCH (45ef9951411c8fcc2888746601827fbff09efd49 Bluetooth: hci_core: Enable buffer flow control for SCO/eSCO)
 #include "eir.h"
 
 struct sco_param {

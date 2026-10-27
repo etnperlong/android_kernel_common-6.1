@@ -228,6 +228,13 @@ enum {
 	 */
 	HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED,
 
+	/* When this quirk is set consider Sync Flow Control as supported by
+	 * the driver.
+	 *
+	 * This quirk must be set before hci_register_dev is called.
+	 */
+	HCI_QUIRK_SYNC_FLOWCTL_SUPPORTED,
+
 	/* When this quirk is set, the controller has validated that
 	 * LE states reported through the HCI_LE_READ_SUPPORTED_STATES are
 	 * valid.  This mechanism is necessary as many controllers have
@@ -381,7 +388,12 @@ enum {
 	HCI_LIMITED_PRIVACY,
 	HCI_RPA_EXPIRED,
 	HCI_RPA_RESOLVING,
+<<<<<<< HEAD   (bb48e0e64647981747f8594fc08dec1bccc682a6 Revert "Bluetooth: Make handle of hci_conn be unique")
 	HCI_HS_ENABLED,  /* Restored for KMI stability */
+||||||| BASE   (f7e83f2278f06b577e3c92ea2f4e8e8c6fc72a8f Bluetooth: Make handle of hci_conn be unique)
+	HCI_HS_ENABLED,
+=======
+>>>>>>> BRANCH (45ef9951411c8fcc2888746601827fbff09efd49 Bluetooth: hci_core: Enable buffer flow control for SCO/eSCO)
 	HCI_LE_ENABLED,
 	HCI_ADVERTISING,
 	HCI_ADVERTISING_CONNECTABLE,
@@ -396,6 +408,7 @@ enum {
 	HCI_WIDEBAND_SPEECH_ENABLED,
 	HCI_EVENT_FILTER_CONFIGURED,
 	HCI_PA_SYNC,
+	HCI_SCO_FLOWCTL,
 
 	HCI_DUT_MODE,
 	HCI_VENDOR_DIAG,
@@ -1536,6 +1549,11 @@ struct hci_rp_read_tx_power {
 	__u8     status;
 	__le16   handle;
 	__s8     tx_power;
+} __packed;
+
+#define HCI_OP_WRITE_SYNC_FLOWCTL	0x0c2f
+struct hci_cp_write_sync_flowctl {
+	__u8     enable;
 } __packed;
 
 #define HCI_OP_READ_PAGE_SCAN_TYPE	0x0c46
