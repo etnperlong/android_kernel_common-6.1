@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0302dba_44b37098",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T15:51:25Z",
+      "side": 1,
+      "message": "But wouldn\u0027t this be problematic to use simultaneously? e.g. vendor hook uses `blocked_on` but GKI locks via `blocked_on_l.lock`?",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 63
+      },
+      "revId": "8cd459caf68aa71e24130f1472e8d6a5c934af77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
