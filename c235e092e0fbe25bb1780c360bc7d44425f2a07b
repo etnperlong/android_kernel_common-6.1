@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "f13f9b27_b756c8cf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1954115
+      },
+      "writtenOn": "2026-10-27T18:13:58Z",
+      "side": 1,
+      "message": "Please add `Bug: 571274100` to the commit message.",
+      "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "71e5086d_6276a332",
@@ -14,6 +31,23 @@
       "writtenOn": "2026-10-23T08:05:10Z",
       "side": 1,
       "message": "Hi @tkjos@google.com, could you please help me figure out how to merge this patch? It\u0027s my first time submitting, so I\u0027m not sure if I\u0027ve missed any steps. Thanks in advance!",
+      "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b5cb9c1_b1dd9ce6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1954115
+      },
+      "writtenOn": "2026-10-27T18:13:58Z",
+      "side": 1,
+      "message": "You also need to pull in https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?id\u003d2eebc31ae5f53e1066bb6238c8087c23b688ad17 which is a follow up fix to this commit. So please add that to the series as well.",
       "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
