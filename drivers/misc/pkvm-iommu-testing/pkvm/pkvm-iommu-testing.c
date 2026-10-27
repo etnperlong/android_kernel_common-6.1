@@ -13,6 +13,29 @@
 
 #include "pkvm-iommu-testing.h"
 
+/*
+ * host_stage2_idmap() calls are serialised by the hypervisor's host_mmu.lock
+ * (see kvm_iommu_host_stage2_idmap()), but domain ops are not, so all
+ * counters are atomic.
+ */
+struct iommu_testing_stats {
+	atomic64_t idmap_map_calls;	/* prot != 0 */
+	atomic64_t idmap_map_pages;
+	atomic64_t idmap_unmap_calls;	/* prot == 0 */
+	atomic64_t idmap_unmap_pages;
+	atomic64_t idmap_mmio_calls;	/* prot & IOMMU_MMIO */
+	atomic64_t complete_calls;
+};
+
+/*
+ * Snapshot-only state. The snapshot walk runs under the hypervisor's
+ * host_mmu.lock, so these are updated by one CPU at a time; the
+ * check-and-update sequence relies on that serialisation.
+ */
+static u64 snapshot_last_end;
+static u64 snapshot_skipped_pages;
+
+static struct iommu_testing_stats stats;
 const struct pkvm_module_ops *pkvm_ops;
 
 /*
@@ -34,6 +57,29 @@ static int iommu_testing_init(pkvm_handle_t drv_id)
 
 static int iommu_testing_host_stage2_idmap(phys_addr_t start, phys_addr_t end, int prot)
 {
+	u64 pages = (end - start) >> PAGE_SHIFT;
+
+	if (prot) {
+		atomic64_add(pages, &stats.idmap_map_pages);
+		atomic64_inc(&stats.idmap_map_calls);
+	} else {
+		atomic64_add(pages, &stats.idmap_unmap_pages);
+		atomic64_inc(&stats.idmap_unmap_calls);
+	}
+
+	if (prot & IOMMU_MMIO)
+		atomic64_inc(&stats.idmap_mmio_calls);
+
+	if (atomic64_read(&stats.complete_calls) == 0) {		/* still in the snapshot */
+		if (start < snapshot_last_end)
+			trace_hyp_printk("pkvm-iommu-testing: ERROR snapshot out of order: start=0x%llx last_end=0x%llx",
+					 start, snapshot_last_end);
+		else if (start > snapshot_last_end)
+			snapshot_skipped_pages += (start - snapshot_last_end) >> PAGE_SHIFT;
+
+		snapshot_last_end = end;
+	}
+
 	/* Update the IOMMU/MPU page table. */
 	return 0;
 }
@@ -114,6 +160,25 @@ static void iommu_testing_iotlb_sync(struct kvm_hyp_iommu_domain *domain,
 	/* Sync a gather list after an unmap. */
 }
 
+static void iommu_testing_host_stage2_idmap_complete(bool map)
+{
+	u64 map_pages;
+
+	/* The first call marks the end of the boot-time snapshot. */
+	if (atomic64_inc_return(&stats.complete_calls) != 1)
+		return;
+
+	map_pages = atomic64_read(&stats.idmap_map_pages);
+	if (map_pages + snapshot_skipped_pages == (snapshot_last_end >> PAGE_SHIFT))
+		trace_hyp_printk("pkvm-iommu-testing: snapshot OK: map_pages=%llu skipped_pages=%llu",
+				map_pages, snapshot_skipped_pages);
+	else
+		trace_hyp_printk("pkvm-iommu-testing: snapshot ERROR: map_pages=%llu skipped_pages=%llu last_end=%llu",
+				map_pages,
+				snapshot_skipped_pages,
+				snapshot_last_end);
+}
+
 struct kvm_iommu_ops iommu_testing_ops = {
 	/* Common ops */
 	.init                           = iommu_testing_init,
@@ -130,6 +195,7 @@ struct kvm_iommu_ops iommu_testing_ops = {
 	.map_pages			= iommu_testing_map_pages,
 	.unmap_pages			= iommu_testing_unmap_pages,
 	.iova_to_phys			= iommu_testing_iova_to_phys,
+	.host_stage2_idmap_complete	= iommu_testing_host_stage2_idmap_complete,
 };
 
 int pkvm_iommu_testing_hyp_init(const struct pkvm_module_ops *ops)
