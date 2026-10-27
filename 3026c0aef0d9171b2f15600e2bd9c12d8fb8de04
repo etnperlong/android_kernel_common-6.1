@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6be4a6f_eaeb5131",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 817,
+      "author": {
+        "id": 1930620
+      },
+      "writtenOn": "2026-10-27T23:39:43Z",
+      "side": 1,
+      "message": "We dropped the one below, and this replacement doesn\u0027t make a lot of sense to me. I think we should keep the original comment, which still applies with this different check.",
+      "range": {
+        "startLine": 817,
+        "startChar": 1,
+        "endLine": 817,
+        "endChar": 55
+      },
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
