@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "be22bb82_4a6473bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T17:05:46Z",
+      "side": 1,
+      "message": "where is the original `Bug:` number?",
+      "revId": "2bcb6db563bb542ba7ee23b09de23bf96b2bd3bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "dd52d319_5e3ea9ef",
