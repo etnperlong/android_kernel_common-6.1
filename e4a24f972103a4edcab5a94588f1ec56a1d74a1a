@@ -16,6 +16,24 @@
       "message": "Hi Giuliano,\nThank you for fixing up the Change-Id and rebasing the chain.\nAll three changes appear ready to merge, but not yet.\nCould you let me know when they are expected to be merged?",
       "revId": "e4a24f972103a4edcab5a94588f1ec56a1d74a1a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0d95634_1e9afbf8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1625880
+      },
+      "writtenOn": "2026-10-27T09:12:31Z",
+      "side": 1,
+      "message": "There was an issue with Gerrit labels and missing votes that I have not seen before. I have reported it to the relevant team.",
+      "parentUuid": "be36b44a_236a2237",
+      "revId": "e4a24f972103a4edcab5a94588f1ec56a1d74a1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ],
   "submitRequirementResults": [
