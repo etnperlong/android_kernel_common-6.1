@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d00a61c8_814295a1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-27T09:19:18Z",
+      "side": 1,
+      "message": "there are no FROMGIT patches in the usb tree right now.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59fdb560_b519df40",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-27T09:19:18Z",
+      "side": 1,
+      "message": "What about android17-6.18?",
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
