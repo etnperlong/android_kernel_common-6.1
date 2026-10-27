@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b7d53d9_dfccccf1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-27T16:04:42Z",
+      "side": 1,
+      "message": "Can you regenerate the abi.stg file? I\u0027m seeing this error:\n\n```\nundefined nodes: 0xf6722819 0x2a532e3a\n```",
+      "revId": "249cd150c2d5fb0d10e58d08460545c4b85cbd98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
