@@ -9,7 +9,6 @@ use kernel::{bindings, device, prelude::*, types::ARef, uaccess::UserSlice, uapi
 #[pin_data]
 pub(crate) struct WrapFdDevice {
     wrapping_dev: ARef<device::Device>,
-    wrap: Option<Pin<KBox<Wrap>>>,
 }
 
 #[vtable]
@@ -24,7 +23,7 @@ impl kernel::miscdevice::MiscDevice for WrapFdDevice {
 
         KBox::try_pin_init(
             try_pin_init! {
-                WrapFdDevice { wrapping_dev, wrap: None }
+                WrapFdDevice { wrapping_dev }
             },
             GFP_KERNEL,
         )
