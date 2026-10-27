@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b82db1ca_a096b049",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2073,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "These can be `kzalloc_objs()` calls instead of `kcalloc()`.",
+      "range": {
+        "startLine": 2064,
+        "startChar": 0,
+        "endLine": 2073,
+        "endChar": 0
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9a31e71_3b6f28af",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2074,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "Please fix this WARNING reported by autoreview issue finding: monitors-\u003elen * sizeof(struct wrapfd_monitor) can overflow unsigned long if monitors-\u003elen is very large. Since kcalloc handles overflow internally but copy_from_user does not, this can lead to a heap buffer overflow in the loop below.\n\nAlso, there is no upper limit on monitors-\u003elen, allowing a user to potentially exhaust kernel memory.\n\nisaacmanjarres: Not sure about the last part, but the rest of it seems reasonable. Also, if we do allow a large number, should we be using `kvmalloc()`?",
+      "range": {
+        "startLine": 2074,
+        "startChar": 0,
+        "endLine": 2074,
+        "endChar": 0
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "838fcdfb_29060f4b",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2119,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "Isn\u0027t that still possible if I open up two instances of `/dev/wrapfd` and use the add ioctl with the same wrapfd all within the same process?",
+      "range": {
+        "startLine": 2114,
+        "startChar": 0,
+        "endLine": 2119,
+        "endChar": 6
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "039359ba_d567e58b",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2204,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "Does it make sense to check if this is `NULL` here? I understand you\u0027ll fail quicker, but this will also get caught by `copy_to_user()` / is it common for syscalls to check for the validity of a given pointer themselves, or do they defer that to `copy_[to|from]_user()`?",
+      "range": {
+        "startLine": 2204,
+        "startChar": 20,
+        "endLine": 2204,
+        "endChar": 31
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "6964152d_24e21731",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/android/wrapfd.c",
+              "range": {
+                "startLine": 2204,
+                "startChar": 0,
+                "endLine": 2205,
+                "endChar": 0
+              },
+              "replacement": "\tif (!events.len)\n"
+            }
+          ]
+        }
+      ],
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48eea8a4_8cee552e",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2207,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "`kzalloc_objs()`",
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea628212_621a7f2c",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "nit: can initialize this to 0 on L2198 and eliminate this line",
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7a27c7c_4e7f5544",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2240,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "Instead of copying the whole struct, you can just use `if (put_user(i, \u0026((struct wrapfd_events __user *)arg)-\u003ecount))) { ... }` to write in the event count.",
+      "range": {
+        "startLine": 2236,
+        "startChar": 0,
+        "endLine": 2240,
+        "endChar": 2
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2260a5cc_0524a207",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2335,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "Please fix this WARNING reported by autoreview issue finding: This makes poll() non-idempotent. Standard poll should be level-triggered and not consume the state. If multiple threads call poll(), or if epoll is used in level-triggered mode, only the first call will see the event. \n\nFurthermore, if WRAPFD_DEV_IOC_QUERY_EVENTS returns with has_more\u003dtrue, subsequent polls will return 0 because this bit was already cleared here.\n\nIt should be:\nif (atomic_read(\u0026file_mon-\u003eevents_pending))\n    mask |\u003d (EPOLLIN | EPOLLRDNORM);",
+      "range": {
+        "startLine": 2335,
+        "startChar": 0,
+        "endLine": 2335,
+        "endChar": 0
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "897c4911_c8edacde",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "In the Rust port, we don\u0027t control the `vm_ops` for VMAs, so we can\u0027t implement this in the same way, unless we\u0027re fine doing it lazily like we\u0027re doing with ownership. Is that fine?\n\ncc: @elsk@google.com",
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b0605de_d019e02d",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-27T22:37:33Z",
+      "side": 1,
+      "message": "What is the rationale for having these be separate? Is it just to be able to extend them independently?",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 2
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
