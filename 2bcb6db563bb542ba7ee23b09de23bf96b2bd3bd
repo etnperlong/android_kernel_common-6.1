@@ -16,6 +16,63 @@
       "message": "Respin Bug: b/577893372",
       "revId": "2bcb6db563bb542ba7ee23b09de23bf96b2bd3bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1294f9b_a01cbcae",
+        "filename": "drivers/mmc/core/block.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T17:04:32Z",
+      "side": 1,
+      "message": "Please fix, this space issue is not on the original patch.",
+      "range": {
+        "startLine": 1108,
+        "startChar": 9,
+        "endLine": 1108,
+        "endChar": 10
+      },
+      "revId": "2bcb6db563bb542ba7ee23b09de23bf96b2bd3bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0db2eb0_151ce536",
+        "filename": "drivers/mmc/core/slot-gpio.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T17:04:32Z",
+      "side": 1,
+      "message": "why did you dropped the `ANDROID_KABI_DECLONLY(trace_eval_map);` part? That is causing KMI issues.",
+      "revId": "2bcb6db563bb542ba7ee23b09de23bf96b2bd3bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2598563e_052f3184",
+        "filename": "drivers/mmc/host/sdhci.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-10-27T17:04:32Z",
+      "side": 1,
+      "message": "same here... where is the original `ANDROID_KABI_DECLONLY(trace_eval_map);`?",
+      "revId": "2bcb6db563bb542ba7ee23b09de23bf96b2bd3bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
