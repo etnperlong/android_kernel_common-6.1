@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "211a59a1_52a69c7f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4611465
+      },
+      "writtenOn": "2026-10-27T09:21:01Z",
+      "side": 1,
+      "message": "Sorry, i didnt get you. Did the process change? I used to do it like this couple of years back",
+      "parentUuid": "d00a61c8_814295a1",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "59fdb560_b519df40",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -37,6 +61,24 @@
       "writtenOn": "2026-10-27T09:19:18Z",
       "side": 1,
       "message": "What about android17-6.18?",
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9eb4055_19a84bb5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4611465
+      },
+      "writtenOn": "2026-10-27T09:21:01Z",
+      "side": 1,
+      "message": "As of now, there is no need of this on 6.18, i guess we can propagate later if needed.",
+      "parentUuid": "59fdb560_b519df40",
       "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
