@@ -34,6 +34,24 @@
       ],
       "revId": "de973397e495c4f738e20fdc0a512b38738ef4e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "423f0aef_5bc395b0",
+        "filename": "mm/p3s/filemap.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-27T03:26:04Z",
+      "side": 1,
+      "message": "Hi Kelvin,\n\nAgreed the name was misleading, so I renamed it to vma_slice_past_eof() and noted that it returns false for other VMAs.\n\nWe still need he p3s 4K check. For other VMAs the index check right before it already covers EOF, and an unguarded byte check would wrongly SIGBUS under x86 page size emulation, where 4KB pages past EOF in the last emulated 16KB page get a zero page (VM_FAULT_NEED_ANONPAGE).\n\nThanks.",
+      "parentUuid": "c1da3af3_f6330b9d",
+      "revId": "de973397e495c4f738e20fdc0a512b38738ef4e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
