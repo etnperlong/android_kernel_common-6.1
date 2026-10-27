@@ -33,6 +33,7 @@
 #include <trace/events/iommu.h>
 #include <linux/sched/mm.h>
 #include <linux/msi.h>
+#include <linux/string.h>
 #include <uapi/linux/iommufd.h>
 #include <linux/generic_pt/iommu.h>
 
@@ -43,9 +44,12 @@ static struct kset *iommu_group_kset;
 static DEFINE_IDA(iommu_group_ida);
 static DEFINE_IDA(iommu_global_pasid_ida);
 
+#define IOMMU_PASSTHROUGH_DEVS_MAX_LEN	256
+
 static unsigned int iommu_def_domain_type __read_mostly;
 static bool iommu_dma_strict __read_mostly = IS_ENABLED(CONFIG_IOMMU_DEFAULT_DMA_STRICT);
 static u32 iommu_cmd_line __read_mostly;
+static char iommu_passthrough_devs[IOMMU_PASSTHROUGH_DEVS_MAX_LEN] __read_mostly;
 
 /* Tags used with xa_tag_pointer() in group->pasid_array */
 enum { IOMMU_PASID_ARRAY_DOMAIN = 0, IOMMU_PASID_ARRAY_HANDLE = 1 };
@@ -804,6 +808,31 @@ static int __init iommu_set_def_domain_type(char *str)
 	return 0;
 }
 early_param("iommu.passthrough", iommu_set_def_domain_type);
+
+static int __init iommu_set_passthrough_devs(char *str)
+{
+	size_t len;
+
+	if (!str || !*str)
+		return -EINVAL;
+
+	len = strlen(iommu_passthrough_devs);
+	if (len) {
+		if (len + 1 + strlen(str) >= IOMMU_PASSTHROUGH_DEVS_MAX_LEN) {
+			pr_warn("Too long list of device names for 'iommu.passthrough_devs'!\n");
+			return -EINVAL;
+		}
+		iommu_passthrough_devs[len++] = ',';
+	} else if (strlen(str) >= IOMMU_PASSTHROUGH_DEVS_MAX_LEN) {
+		pr_warn("Too long list of device names for 'iommu.passthrough_devs'!\n");
+		return -EINVAL;
+	}
+
+	strscpy(iommu_passthrough_devs + len, str,
+		IOMMU_PASSTHROUGH_DEVS_MAX_LEN - len);
+	return 0;
+}
+early_param("iommu.passthrough_devs", iommu_set_passthrough_devs);
 
 static int __init iommu_dma_setup(char *str)
 {
@@ -1872,6 +1901,20 @@ static int iommu_get_def_domain_type(struct iommu_group *group,
 	return cur_type;
 }
 
+static bool iommu_is_passthrough_dev(struct device *dev)
+{
+	if (!iommu_passthrough_devs[0])
+		return false;
+
+	for (; dev; dev = dev->parent) {
+		if (dev_name(dev) &&
+		    parse_option_str(iommu_passthrough_devs, dev_name(dev)))
+			return true;
+	}
+
+	return false;
+}
+
 /*
  * A target_type of 0 will select the best domain type. 0 can be returned in
  * this case meaning the global default should be used.
@@ -1940,6 +1983,17 @@ static int iommu_get_default_domain_type(struct iommu_group *group,
 			return -1;
 		return target_type;
 	}
+
+	if (!driver_type) {
+		for_each_group_device(group, gdev) {
+			if (iommu_is_passthrough_dev(gdev->dev)) {
+				dev_info(gdev->dev,
+					 "Setting default IOMMU domain to passthrough via command line\n");
+				return IOMMU_DOMAIN_IDENTITY;
+			}
+		}
+	}
+
 	return driver_type;
 }
 
