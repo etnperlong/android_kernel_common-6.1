@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05c094a0_0e72b136",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-27T06:21:36Z",
+      "side": 1,
+      "message": "As noted in the android-mainline patch, this seems like something that should go upstream and come in via -stable backports.  If there is a clear reason for this approach instead, please include the rationale in the commit message.",
+      "revId": "d7cb45d167dd960d6b9e5d37967ac82ff88696f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
