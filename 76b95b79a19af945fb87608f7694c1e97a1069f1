@@ -72,6 +72,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "36659a4a_672951fc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4611465
+      },
+      "writtenOn": "2026-10-27T09:23:22Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c7802de2_31c11fb8",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "59fdb560_b519df40",
@@ -121,6 +145,24 @@
       "side": 1,
       "message": "Please do it now as you will upgrade eventually.",
       "parentUuid": "a9eb4055_19a84bb5",
+      "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e185bdb_08a5b94f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4611465
+      },
+      "writtenOn": "2026-10-27T09:23:22Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "664e07b3_37a71588",
       "revId": "76b95b79a19af945fb87608f7694c1e97a1069f1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
