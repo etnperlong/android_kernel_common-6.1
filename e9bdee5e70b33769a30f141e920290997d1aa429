@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4910726_cb6cd8f7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:52:41Z",
+      "side": 1,
+      "message": "Could the body say what goes wrong without the patch, such as the `ublk_ch_mmap()` case? \"Keep P3S page-size selection and native ublk geometry unchanged\" only says what doesn\u0027t change.\n\nAlso, could the subject say \"4KB processes\" rather than \"PPPS host APIs\"? PPPS is the old abbreviation for P3S, and \"4KB processes\" would match aosp/4368076 and aosp/4368079.",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96ccf026_288784e0",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:52:41Z",
+      "side": 1,
+      "message": "It looks like `ublk_open()` is the `ub_fops` open for the block device `/dev/ublkbN`, not for the server\u0027s `/dev/ublkcN`, so this would stop a 4KB process from opening a ublk disk at all, unlike every other block device.\n\nAs far as I can see nothing on that side depends on the opener\u0027s page size: its I/O goes through the block layer as for loop or dm, and only the native server handles ublk\u0027s buffers.\n\nWould it be OK to drop this hunk?",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08b8d244_d615fd65",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1858,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:52:41Z",
+      "side": 1,
+      "message": "This check looks needed to me, and it is in the right place, before `ub-\u003emm` is claimed: `ublk_ch_mmap()` picks the queue from `vm_pgoff` and checks the length but ignores `vm_slice_off`, while since aosp/4368055 `remap_pfn_range()` starts at slice `vm_slice_off` of the buffer. So an offset that isn\u0027t 16KB-aligned maps memory past the queue\u0027s descriptor buffer, e.g. the first 4KB of the next physical page for a one-page buffer.\n\nCould it use `p3s_4k_unsupported()` (aosp/4366134) instead, as aosp/4368077 and aosp/4368079 do for the ring buffer and vCPU `mmap()`? It logs the refusal with the function name, so refusals hit in production can be identified.\n\nThe new `#include \u003clinux/p3s/mm.h\u003e` shouldn\u0027t be needed either: `\u003clinux/mm_types.h\u003e` already includes it through `\u003clinux/p3s.h\u003e`.",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f0a3dfb_9fc85b19",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 2626,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:52:41Z",
+      "side": 1,
+      "message": "It looks like a 4KB process can\u0027t reach this or `ublk_ctrl_uring_cmd()`: since aosp/4368076, `io_uring_setup()`, `io_uring_enter()` and `io_uring_register()` fail with `-EPERM` in 4KB processes, and SQPOLL and io-wq threads share the mm of the native task that created them, so `current-\u003emm` is always native here.\n\n`/dev/ublk-control` only implements `.uring_cmd`, so the same goes for the new `ublk_ctrl_open()`. This check is also on the per-I/O path.\n\nWould it be OK to drop these three hunks? If you\u0027d like a 4KB server to get a clear error early, the `ublk_ch_open()` check alone would give it.",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5865db2_bc5891ec",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 2665,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:52:41Z",
+      "side": 1,
+      "message": "I think user copy already works in a 4KB process: `ublk_copy_user_pages()` gets the pages with `iov_iter_get_pages2()`, which has taken a 4KB path in `__iov_iter_get_pages_alloc()` since aosp/4312497 (`iov_iter_extract_compat_page()` after aosp/4367612). That returns the kernel page and the slice offset in `off`, and `ublk_copy_io_pages()` copies within those pages. `ublk_map_io()` and `ublk_unmap_io()` use the same function.\n\nWould it be OK to drop this hunk? It is also on the per-I/O path of `UBLK_F_USER_COPY` servers.",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
