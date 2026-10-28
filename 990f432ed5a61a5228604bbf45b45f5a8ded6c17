@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec0ffe90_c5457827",
+        "filename": "fs/erofs/data.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:41Z",
+      "side": 1,
+      "message": "Done — replaced with the upstream cherry-pick UPSTREAM: erofs: add missing buf-\u003eoff in erofs_bread() (commit 135d84c66f85426299db01a09d93a79a87af18ba).",
+      "parentUuid": "1fc3413c_9afe2597",
+      "isAi": true,
+      "revId": "990f432ed5a61a5228604bbf45b45f5a8ded6c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96585e60_64ee5a78",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T03:43:59Z",
       "side": 1,
       "message": "If this becomes a cherry-pick of the upstream fix, would it be OK to drop this test from the P3S series? Nothing in it is P3S-specific despite the `-ppps` name, and it needs root and `mkfs.erofs` on the target.",
+      "isAi": true,
+      "revId": "990f432ed5a61a5228604bbf45b45f5a8ded6c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d61da177_fe386478",
+        "filename": "tools/testing/selftests/filesystems/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:41Z",
+      "side": 1,
+      "message": "Done — dropped the erofs-fsoffset-ppps selftest from this patch.",
+      "parentUuid": "96585e60_64ee5a78",
       "isAi": true,
       "revId": "990f432ed5a61a5228604bbf45b45f5a8ded6c17",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
