@@ -18,6 +18,7 @@
 #include <linux/pagemap.h>
 #include <linux/fuse.h>
 #include <linux/fs.h>
+#include <linux/file.h>
 #include <linux/mount.h>
 #include <linux/wait.h>
 #include <linux/list.h>
@@ -1738,6 +1739,18 @@ struct fuse_lookup_io {
 	struct fuse_entry_out feo;
 	struct fuse_entry_bpf feb;
 };
+
+static inline void fuse_entry_bpf_put(struct fuse_entry_bpf *feb)
+{
+	if (!IS_ERR_OR_NULL(feb->backing_file)) {
+		fput(feb->backing_file);
+		feb->backing_file = NULL;
+	}
+	if (!IS_ERR_OR_NULL(feb->bpf_file)) {
+		fput(feb->bpf_file);
+		feb->bpf_file = NULL;
+	}
+}
 
 int fuse_handle_backing(struct fuse_entry_bpf *feb, struct inode **backing_inode,
 			struct path *backing_path);
