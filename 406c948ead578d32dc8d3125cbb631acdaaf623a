@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b511530_e47090f7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:47:24Z",
+      "side": 1,
+      "message": "I may be missing a use case: when does a caller need a slice other than `vma_slice_offset(vma, addr)`?\n\nThe users I found pass the address slice anyway. `vm_insert_page_native()` (aosp/4367601) maps slice `s` at `addr + s * 4KB`, which `vm_insert_page()` has done since aosp/4368056, and bpf aosp/4367949 passes `offset_in_page(kaddr) \u003e\u003e 12`, which equals `vma_slice_offset(vma, uaddr)` because the value area is page aligned.\n\nWhere they do differ, code that works the slice out from the address, such as the remote access in aosp/4368035, would touch a different 4KB than the PTE maps.\n\nCould you describe the case in the commit message, or would the users be able to rely on `vm_insert_page()`?",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dabb3418_3dcb678d",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2347,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:47:24Z",
+      "side": 1,
+      "message": "Would it be possible to leave `insert_page()` as it is? Right now the slice goes through `insert_page()` and all its callers, which mostly compute `vma_slice_offset()` just to pass it back.\n\nOne option is a single-slice insert in `mm/p3s/pgtable.h` next to `vma_insert_page_slices()`, for example `vma_insert_page_slice(vma, addr, page, prot, slice)` doing `get_locked_pte()`, `insert_page_into_pte_locked()` and `pte_unmap_unlock()`.\n\n`vm_insert_page_slice()` could then call `validate_page_before_insert()` and that helper, and `mm/memory.c` would barely change.",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "166537f0_a74c1667",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2468,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:47:24Z",
+      "side": 1,
+      "message": "I\u0027m worried this reverses what aosp/4368056 did for 4KB VMAs. There, each entry is a kernel page that gets all its slices, and `*num` counts kernel pages; with this change each entry fills one 4KB PTE.\n\nA caller passing kernel pages, as the kernel-doc describes, would get slice `(s + i) \u0026 3` of page `i` at the i-th 4KB PTE and the rest of the range unmapped. As far as I can see, that affects `vm_map_pages()` until aosp/4368010, the trace ring buffer until aosp/4367959, io_uring until aosp/4367948 rejects 4KB processes, and any vendor caller indefinitely.\n\nI don\u0027t think anything in this patch needs it. Would it be OK to keep aosp/4368056\u0027s meaning here, or to move this to its own patch together with the caller that needs it?",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0ff09f0_e56907a2",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2528,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:47:24Z",
+      "side": 1,
+      "message": "This copies `vm_insert_page()`\u0027s checks, including the two `BUG_ON()`s that checkpatch flags in new code. Could the two share a small helper?\n\nIt would also be great to have kernel-doc for the new export, covering what `slice_idx` selects and that native VMAs get `-EINVAL`.",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
