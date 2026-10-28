@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1d758d7_84e88872",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:40Z",
+      "side": 1,
+      "message": "Done — updated the commit message to cover both Rust and C Binder, reflect vm_insert_page(), and use \u00274KB process\u0027 / \u002716KB\u0027 terminology.",
+      "parentUuid": "65fd516b_bbd2b22c",
+      "isAi": true,
+      "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cb038ceb_b174b757",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9bbe227e_15506e01",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:40Z",
+      "side": 1,
+      "message": "Done — added binder_alloc_nr_pages() using DIV_ROUND_UP(alloc-\u003ebuffer_size, PAGE_SIZE) and used it in all three places in binder_alloc.c.",
+      "parentUuid": "cb038ceb_b174b757",
+      "isAi": true,
+      "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "99435508_7ffcf9c9",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T00:50:58Z",
       "side": 1,
       "message": "I think `vm_insert_page()` already covers this: since aosp/4368056 it maps every slice of the page that lies in a 4KB VMA, clamped to `vm_end` (`vma_insert_page_slices()` in `mm/p3s/pgtable.h`), and Rust\u0027s `vm_insert_page()` calls straight into it.\n\nSince `vm_insert_page_native()` does the same, could Binder keep calling `vm_insert_page()`, and `vm_insert_page_native()` be dropped from `mm/memory.c`, `mm.h`, `binder_alloc.c` and `virt.rs`?\n\nThe size rounding and the zap clamp in `page_range.rs` look needed to me, since Rust\u0027s `zap_page_range_single()` silently returns when the range passes `vm_end`.",
+      "isAi": true,
+      "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "532a5b43_669a1f11",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2537,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:40Z",
+      "side": 1,
+      "message": "Done — dropped vm_insert_page_native() across mm/memory.c, include/linux/mm.h, binder_alloc.c, and rust/kernel/mm/virt.rs, keeping vm_insert_page().",
+      "parentUuid": "99435508_7ffcf9c9",
       "isAi": true,
       "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
