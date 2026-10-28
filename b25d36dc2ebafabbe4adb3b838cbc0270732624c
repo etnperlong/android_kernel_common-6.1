@@ -1,0 +1,166 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db54abf4_88786909",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "Could the subject and the new names use P3S rather than PPPS, e.g. `struct p3s_file_mapcounts`, `p3s_file_page_mapcounts()`, `smaps_p3s_file_pte_range()` and `pagemap_p3s_file_pte_range()`, and \"P3S slices\" in the comment above them? PPPS is the old abbreviation for P3S, as mentioned on aosp/4367942.",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84630718_44b78358",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "Could the message say what goes wrong without this patch, e.g. that an aliased slice makes smaps report the whole 16KB page as shared? \"instead of native folio mapcount\" doesn\u0027t quite match what aosp/4312510 does today: `vma_slice_ptes()` already discounts this mm\u0027s own slice PTEs, so the difference is the per-slice split for pages that are also mapped elsewhere.\n\nIt would also help to mention the anonymous and THP changes and the new rmap walk on every read, and to say \"4KB processes\" rather than \"compat slices\".",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75c3ce9c_2ce1922c",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "I\u0027m worried this reports anonymous pages that a 4KB process shares with its child after `fork()` as private. `DIV_ROUND_UP(folio_mapcount(folio), P3S_SLICES_PER_PAGE)` is 1 whenever the mapcount is 4 or less, so a page with one or two slices mapped in both parent and child is Private in both, where `vma_slice_ptes()` (aosp/4312510) reports it as shared. A whole private page (four slice PTEs) is already Private with full PSS today.\n\nThe same goes for pagemap: with `vma_slice_ptes()` gone from `pte_to_pagemap_entry()`, anonymous pages now need `folio_precise_page_mapcount() \u003d\u003d 1`, so a private anonymous page mapped by its four slice PTEs loses PM_MMAP_EXCLUSIVE.\n\nUnlike swap entries (aosp/4393889), present PTEs can be counted exactly, and the commit message only mentions file slices. Would it be OK to drop this hunk and keep `vma_slice_ptes()` for anonymous pages in both places?",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3698d940_c7a85ab8",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1200,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "If the per-slice counts stay, would you mind moving the rmap part out of task_mmu.c? Together with the pagemap loop, this adds about 200 lines of P3S-only code to a core file.\n\n`ppps_file_mapcount_one()` and `ppps_file_page_mapcounts()` don\u0027t depend on procfs internals and could go next to `vma_slice_ptes()` in `include/linux/p3s/proc.h` (or into `mm/p3s.c`), so that task_mmu.c keeps only the PTE loops and the dispatch.",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e76a5cc2_ffc66c7d",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1236,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "I\u0027m worried that the PSS of a file page shared by a native and a 4KB process no longer adds up to the page. Here a native PTE counts once for every slice, but the native process\u0027s own smaps still divides by `folio_precise_page_mapcount()`, which counts every slice PTE.\n\nFor example, if one native and one 4KB process both map a whole page, the native side gets 16KB / 5 \u003d 3.2KB and the 4KB side 8KB (2KB per slice): 11.2KB for a 16KB page, where aosp/4312510 gives 3.2KB + 12.8KB. System libraries mapped by both kinds of processes are shared like this.\n\nMaking the native side per-slice as well would need the same walk for native readers, which aosp/4368024 wants to avoid. Would keeping the per-page sharing of aosp/4312510 on both sides work for you?",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5068090_711328bf",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1262,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "I\u0027m worried about the cost of this walk. A page whose four slices this process maps has a `folio_mapcount()` of 4, so the fast path above only helps pages with a single slice mapped, and every smaps, smaps_rollup and pagemap read of a 4KB process takes the folio lock and walks the rmap of practically every file page it maps. For shared libraries, each walk visits every VMA of every process that maps the page, under `i_mmap_rwsem` and their PTLs.\n\nThat\u0027s the cost aosp/4368024 describes for native readers: lmkd, dumpsys and system_server contending on `i_mmap_rwsem` and other processes\u0027 page table locks, and sleeping on locked folios. Upstream never takes the folio lock in these readers, and `folio_referenced()` only uses `folio_trylock()`.\n\nIf the per-slice counts stay, could the walk at least be skipped when only this slice window maps the page (`folio_mapcount(folio) \u003c\u003d vma_slice_ptes(...)`, read under the PTL), and fall back to the `vma_slice_ptes()` accounting when `folio_trylock()` fails?",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47ffb817_4526701f",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1357,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "Agreed that aosp/4312510 is conservative here: `vma_slice_ptes()` only counts the PTEs of this slice window, so a page that is also mapped outside the window (an alias, which I think also happens at segment boundaries of 4KB-aligned libraries, or another process) is reported as shared on all four slices, loses PM_MMAP_EXCLUSIVE, and has its PSS shared per 16KB page rather than per slice (Pss 12 kB and Shared 16 kB instead of 14 kB and 4 kB in `smaps_pss_p3s`).\n\nPages that only this window maps, and whole pages shared by several 4KB processes, already get the same values as with this patch.\n\nIf no reader depends on the per-slice split, would it be OK to drop the file walk and keep `vma_slice_ptes()`, which this patch leaves without users? Otherwise, could the commit message name that reader, given the cost of the walk (next comment)?",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df9210bc_47729274",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 2452,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "This looks like a native THP fix rather than a P3S change: it restores the `page + idx` that upstream `2c1f057e5be6` (`\"fs/proc/task_mmu: properly detect PM_MMAP_EXCLUSIVE per page of PMD-mapped THPs\"`) added and `eb16876971ea` (`\"fs/proc/task_mmu: remove per-page mapcount dependency for PM_MMAP_EXCLUSIVE (CONFIG_NO_PAGE_MAPCOUNT)\"`) dropped in v6.15.\n\nI think later we can send this upstream and carry it as a separate FROMLIST: or UPSTREAM: patch rather than in this one? Here it changes native PMD-mapped THPs, which the rest of the patch is careful to leave alone.",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "379e5dbe_8838091c",
+        "filename": "tools/testing/selftests/mm/pagemap_exclusive_p3s.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:42:12Z",
+      "side": 1,
+      "message": "Could we move selftests to their own patches to keep the core logic pacts lean.\n\nCould both use `P3S_COMPAT_MAIN()` from `kselftest_p3s.h` (aosp/4396645) instead of their own `personality()` and `execl()` launcher? As written, they fail rather than skip on a 16KB kernel without P3S, where the `--run` child still has 16KB pages, and pass without exercising P3S on a 4KB kernel, where every 4KB page has its own mapcount.\n\n`PM_MMAP_EXCLUSIVE`, `PM_FILE`, `PM_PRESENT` and `pagemap_get_entry()` are also in `vm_util.h`, which every mm test links.\n\nAlso, could they run from `run_vmtests.sh` like `smaps_page_size_p3s` (aosp/4367944)? As `TEST_GEN_FILES` alone, nothing runs them.",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
