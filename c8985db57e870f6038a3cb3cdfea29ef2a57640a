@@ -1,0 +1,148 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a5888ef_f625d4cf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "If the `mm/madvise.c` hunk goes, this becomes a test-only patch, so could the subject and body say so? For example \"ANDROID: P3S: selftests: mm: Test anon VMA naming in 4KB processes\", explaining that `madvise_set_anon_name()` has followed the process page size since \"ANDROID: P3S: mm: madvise: Support 4KB alignment and vector_madvise\" (aosp/4312489).\n\nThe second sentence also reads like a note about an earlier patchset: the /dev/zero split check only arrives in aosp/4367945, and there is no other page size API here to compare with.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ff1f9370_e22fcf61",
+        "filename": "mm/madvise.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 2222,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "I\u0027m worried this reverts 8d2b747b50f4 (\"ANDROID: 16K: Prevent non-__PAGE_ALIGNED() VMA splits by anon names\") for x86_64 page size emulation: when booted with `page_shift\u003d14`, `__PAGE_MASK` is the emulated 16KB mask there, while without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` `mm_pte_mask()` is always the 4KB kernel mask.\n\nOn arm64 I think it doesn\u0027t change anything: outside x86_64, `__page_shift()` is just `PAGE_SHIFT` (`include/linux/page_size_compat_defs.h:47`), and since aosp/4312489 opted `mm/madvise.c` into `\u003clinux/p3s_user_pages.h\u003e`, that is `mm_pte_shift(p3s_current_mm())`. The only caller, `set_anon_vma_name()` (called from `prctl_set_vma()`), passes `current-\u003emm` without a remote mm context, so both masks are the same.\n\nWould it be OK to drop this hunk and the `\u003clinux/p3s/mm.h\u003e` include? As far as I can see, `anon_vma_name_ppps` should already pass without them. Did you see it fail?",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "acbb9122_ba2bf493",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "Could the new files, macros and helpers use P3S instead of PPPS, e.g. `kselftest_p3s.h`, `P3S_COMPAT_MAIN()`, `p3s_*()` and `anon_vma_name_p3s.c`? PPPS is the old abbreviation, and the rest of the series uses P3S (`\u003clinux/p3s/...\u003e`, `mm_is_p3s_4k()` and the \"ANDROID: P3S:\" prefix).\n\nThe same goes for the other `*_ppps` tests later in the chain.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00efe5f7_599bef94",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "This header adds 491 lines, but as far as I can see this patch and aosp/4367943 only use `PROCESS_PAGE_SIZE`, `NATIVE_PAGE_SIZE` and the re-exec helpers behind `PPPS_COMPAT_MAIN()`. Everything else gets its first user several topics later: `ppps_run_mode()` in aosp/4367960, `exec_native()` and the pagemap and smaps readers in aosp/4367975, and `ppps_geometry_main()`, `read_full()`/`pwrite_full()`, `ppps_status_kb()`, the fixture helpers and `AF_XDP`/`SOL_XDP` in aosp/4367986.\n\nWould you mind moving the header into its own selftests patch with only what its first users need, and letting later patches add helpers together with their first user? That would also keep this patch about anon VMA naming.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "445dd89f_f279e548",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "Nit: could you add a blank line before this comment?\n\n`checkpatch.pl --strict` also asks for `__maybe_unused` (which `kselftest.h` defines) instead of `__attribute__((unused))` on `ppps_argv0`, and for `va_list ap` in `ppps_vexec_or_die()` to line up with the open parenthesis. `NATIVE_PAGE_SIZE` in `anon_vma_name_ppps.c` is one column off as well.\n\nIts warning about the `return` in `PPPS_COMPAT_MAIN()` looks fine to me, since `TEST_HARNESS_MAIN` in `kselftest_harness.h` does the same.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df788633_76cf2fa0",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "I\u0027m worried that tests using `PPPS_COMPAT_MAIN()` fail rather than skip on kernels without P3S. `personality()` stores any value and exec ignores the bit there, so on a 16KB kernel without P3S the `--run` child is still 16KB and `ppps_require_compat()` calls `ksft_exit_fail_msg()`. On a 4KB kernel, `getpagesize() \u003d\u003d 4096` sends the test straight to `run()`, so it passes without exercising P3S, as the comment above `ppps_geometry_main()` points out.\n\nSince run_vmtests.sh runs `anon_vma_name_ppps` and `madvise_remove_ppps` unconditionally, could this skip in both cases, as `ppps_geometry_main()` does? That is, skip when the `--run` child isn\u0027t 4KB, and when the test starts as a 4KB process without `ADDR_4KB_COMPAT_PAGE_SIZE` in `personality(0xffffffff)`. That\u0027s also the skip I suggested for the AArch32 tests on aosp/4367935.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d20e0d9f_b4bd2951",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "Most of the pagemap part duplicates `tools/testing/selftests/mm/vm_util.h`: `PM_PRESENT`, `PM_SWAP`, `PM_FILE`, `PM_UFFD_WP`, `PM_MMAP_EXCLUSIVE` and `PM_SOFT_DIRTY` are the same bits, and `pagemap_get_entry()`, `pagemap_is_swapped()` and `pagemap_get_pfn()` cover the same lookups. Every mm test already links them (`$(TEST_GEN_FILES): vm_util.c`).\n\nSince all users of these readers are mm tests, could they reuse `vm_util.h` (with a page size argument added where a test reads a pagemap of the other geometry)? This top-level header would then keep only the generic re-exec helpers.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f96be3b_6275ed0b",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:16:33Z",
+      "side": 1,
+      "message": "Nit: as on aosp/4367935, could you add this test to `tools/testing/selftests/mm/.gitignore` (and the one in aosp/4367943)? At the top of the chain, only two of the P3S test binaries are listed there.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
