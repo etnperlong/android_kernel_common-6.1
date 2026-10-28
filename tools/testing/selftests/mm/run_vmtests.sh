@@ -499,6 +499,7 @@ CATEGORY="mlock" run_test ./mlock-random-test
 
 CATEGORY="mlock" run_test ./mlock2-tests
 CATEGORY="mlock" run_test ./mlock_onfault_p3s
+CATEGORY="mlock" run_test ./zero_sibling_mlock_p3s
 CATEGORY="mlock" run_test ./mlock_onfault_p3s --native
 
 CATEGORY="mlock" run_test ./mlock_large_file_p3s
@@ -572,6 +573,7 @@ CATEGORY="madv_guard" run_test ./guard-regions
 # MADV_POPULATE_READ and MADV_POPULATE_WRITE tests
 CATEGORY="madv_populate" run_test ./madv_populate
 CATEGORY="madv_populate" run_test ./madvise_remove_p3s
+CATEGORY="madv_populate" run_test ./partial_anon_reclaim_p3s
 CATEGORY="madv_populate" run_test ./madvise_willneed_p3s "$TMPDIR/madvise-willneed-p3s.bin"
 
 # PROCESS_MADV test
