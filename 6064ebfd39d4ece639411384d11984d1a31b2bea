@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fc07be4_ae560b03",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T20:57:10Z",
+      "side": 1,
+      "message": "Thanks for moving this into its own test. The first sentence reads like a note about the earlier patchset, though. Could the subject and body say which change the test covers instead?\n\nFor example \"ANDROID: P3S: selftests: mm: Test private /dev/zero slice offsets\", like aosp/4367943, explaining that a private /dev/zero mapping keeps `vm_file` without `vm_ops`, so its split and merge follow `vm_pgoff` and `vm_slice_off` as for a file (aosp/4312520, aosp/4366900), and `/proc/pid/maps` reports its byte offset (aosp/4312510).",
+      "isAi": true,
+      "revId": "6064ebfd39d4ece639411384d11984d1a31b2bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b1a9909_cea73c5a",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T20:57:10Z",
+      "side": 1,
+      "message": "Could this be a `TEST_GEN_FILES` entry next to `anon_vma_name_p3s` and `madvise_remove_p3s`, with the same `CFLAGS +\u003d -I..` and `../kselftest_p3s.h` lines below `include ../lib.mk`? aosp/4367986 moves it to `TEST_GEN_FILES` later anyway.\n\nAs `TEST_GEN_PROGS`, `make run_tests` runs it directly as well as through `run_vmtests.sh`. I also don\u0027t think `\"kselftest_p3s.h\"` is found from `mm/` without `-I..`: nothing else puts `tools/testing/selftests` on the include path, which is why the other mm tests include `\"../kselftest.h\"`. Does it build for you with `make -C tools/testing/selftests TARGETS\u003dmm`? `smaps_page_size_p3s` from aosp/4367944 looks the same.",
+      "isAi": true,
+      "revId": "6064ebfd39d4ece639411384d11984d1a31b2bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
