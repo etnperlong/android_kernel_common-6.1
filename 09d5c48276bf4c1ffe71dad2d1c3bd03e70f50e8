@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3a6d094_6b349342",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:48Z",
+      "side": 1,
+      "message": "Done — updated the commit subject to \u0027ANDROID: P3S: selftests: mm: Test MADV_REMOVE at 4KB slice offsets\u0027 and rewrote the commit message to describe the regression test for madvise_remove().",
+      "parentUuid": "51a58e57_e38441b9",
+      "isAi": true,
+      "revId": "09d5c48276bf4c1ffe71dad2d1c3bd03e70f50e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db2c413c_efb420fe",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T07:20:03Z",
       "side": 1,
       "message": "Nit: could this be `madvise_remove_p3s.c`? PPPS is the old abbreviation for P3S, as mentioned on aosp/4367942.",
+      "isAi": true,
+      "revId": "09d5c48276bf4c1ffe71dad2d1c3bd03e70f50e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f95d6473_e07bc8ca",
+        "filename": "tools/testing/selftests/mm/madvise_remove_ppps.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:48Z",
+      "side": 1,
+      "message": "Done — renamed madvise_remove_ppps.c to madvise_remove_p3s.c and added madvise_remove_p3s to .gitignore.",
+      "parentUuid": "db2c413c_efb420fe",
       "isAi": true,
       "revId": "09d5c48276bf4c1ffe71dad2d1c3bd03e70f50e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
