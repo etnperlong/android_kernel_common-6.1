@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23900d75_6b679e3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:59:56Z",
+      "side": 1,
+      "message": "It looks like the commit message doesn\u0027t quite match the diff.\n\nNothing here restores the slice on swap-in: `do_swap_page()` and `unuse_pte()` have kept it since aosp/4312507, and aosp/4379310 restores the siblings. The PTE walk is `MADV_PAGEOUT`/`MADV_COLD` batching rather than reclaim, and the smaps and `MADV_FREE` changes aren\u0027t mentioned.\n\nSince these are independent changes (madvise batching, smaps swap PSS, swapoff exclusivity), would you consider splitting them, each with its own motivation? The `MADV_FREE` hunks might fit well with aosp/4367971 to aosp/4367973.",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cb11091_802c9e37",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:59:56Z",
+      "side": 1,
+      "message": "I think `DIV_ROUND_UP(mapcount, P3S_SLICES_PER_PAGE)` is only right when every sharer maps all four slices.\n\nIf a parent and a forked child each map one slice of a swapped folio, the swap count is 2, this makes it 1, and both would report the 4KB as private swap PSS.\n\nCould this count the window\u0027s swap PTEs that hold `swpent`, the way `vma_slice_ptes()` counts present slice PTEs, and divide by that? The helper would fit nicely in `include/linux/p3s/proc.h`.",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "573c6a4e_4bc42de4",
+        "filename": "mm/madvise.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:59:56Z",
+      "side": 1,
+      "message": "Would you mind moving this loop into `mm/p3s/rmap.h` as a helper built on `p3s_pte_maps_folio()`, with a one-line dispatch here?\n\nAlso, `folio_size(folio) / mm_pte_size(mm)`, here and at line 526, is what `vma_folio_nr_ptes()` computes.",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d63e4ca_984aaa51",
+        "filename": "mm/madvise.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:59:56Z",
+      "side": 1,
+      "message": "I think this may regress small folios in 4KB VMAs.\n\n`madvise_folio_pte_batch()` stops at the first slice PTE that is none, maps another folio, or lies past `end`, so `nr \u003c folio_nr_ptes` whenever the window is partly populated, clipped by the VMA or the range, or entered mid-window. The small folio then takes this `continue` on every PTE and is never paged out or deactivated; before this patch it was handled per PTE and checked with `vma_folio_slices_exclusive()`.\n\nCould the skip stay limited to large folios, with the batch only merging young/dirty?",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b813b39e_6764b095",
+        "filename": "mm/page_io.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:59:56Z",
+      "side": 1,
+      "message": "I believe these conversions don\u0027t change anything: neither `mm/page_io.c` nor `mm/swapfile.c` opts into `\u003clinux/p3s_user_pages.h\u003e`, so `PAGE_SIZE`, `PAGE_SHIFT` and `PAGE_MASK` there are already the 16KB kernel page.\n\nThat covers `generic_swapfile_activate()` and `is_folio_zero_filled()` here, and `discard_swap()`, `swap_folio_sector()`, `discard_swap_cluster()`, `swp_swapcount()` and the swap count continuation code in `swapfile.c`.\n\nWould it be OK to drop them, along with the `const.h` include?",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70fc2177_de82d9d9",
+        "filename": "mm/swapfile.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2257,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:59:56Z",
+      "side": 1,
+      "message": "Could you share when this triggers?\n\nAs far as I know, `try_to_unmap_one()` marks a swap PTE exclusive only when a single slice mapped the folio (aosp/4390447), `p3s_swapin_free_sibling_swap()` relies on that with `VM_WARN_ON_ONCE(pte_swp_exclusive())`, and `fork()` clears the bit on both sides.\n\nIf you\u0027ve hit a case, I think the fix would belong in `try_to_unmap_one()`; otherwise, would it be OK to drop this? If it stays, a helper in `mm/p3s/anon.h` next to the swap-in helpers would be nice.",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
