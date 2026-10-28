@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a002843af3bd661e6feef7f1f8fc87f15fcb3c3c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2122397b_576cb6dd",
+        "filename": "lib/scatterlist.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:30:55Z",
+      "side": 1,
+      "message": "Done — dropped this patch, the sg_page_slices_ppps selftest, and the matching cleanup hunks from the series.",
+      "parentUuid": "1706a0f8_15a7d8ee",
+      "isAi": true,
+      "revId": "a002843af3bd661e6feef7f1f8fc87f15fcb3c3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
