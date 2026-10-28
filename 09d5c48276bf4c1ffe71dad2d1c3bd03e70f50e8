@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51a58e57_e38441b9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:20:03Z",
+      "side": 1,
+      "message": "The test looks good to me: with the old `vm_pgoff \u003c\u003c PAGE_SHIFT` offset, both cases would punch the hole at file offset 0.\n\nThe message describes a kernel change, though, and the patch only adds the test: `madvise_remove()` has taken its offset from `vma_file_offset_at()` since aosp/4366899 (\"ANDROID: P3S: mm: Fix file offsets in madvise and print_vma_addr\"), and the test is new here rather than existing.\n\nCould the subject and body say that this is a regression test for that change? Something like \"ANDROID: P3S: selftests: mm: Test MADV_REMOVE at 4KB slice offsets\".",
+      "isAi": true,
+      "revId": "09d5c48276bf4c1ffe71dad2d1c3bd03e70f50e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db2c413c_efb420fe",
+        "filename": "tools/testing/selftests/mm/madvise_remove_ppps.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:20:03Z",
+      "side": 1,
+      "message": "Nit: could this be `madvise_remove_p3s.c`? PPPS is the old abbreviation for P3S, as mentioned on aosp/4367942.",
+      "isAi": true,
+      "revId": "09d5c48276bf4c1ffe71dad2d1c3bd03e70f50e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
