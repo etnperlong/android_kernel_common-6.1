@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1c3cc72_725dc58e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:49Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series and kept the 4KB trace ring-buffer mmap refusal from aosp/4368077.",
+      "parentUuid": "4e245776_12d862ea",
+      "isAi": true,
+      "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18de9306_60ce17f9",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b70323cf_2afacdd8",
+        "filename": "kernel/trace/ring_buffer.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7296,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:49Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "18de9306_60ce17f9",
+      "isAi": true,
+      "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a105eaf2_d9c675ee",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T21:30:36Z",
       "side": 1,
       "message": "It looks like this removes the refusal that aosp/4368077 added here, so that 4KB processes can map the ring buffer.\n\nThe mapping itself looks right to me: with a 16KB-aligned offset, `vm_insert_pages()` maps the slices of each page by address since aosp/4368056, and user space finds the sub-buffers through `meta_page_size`, as `Documentation/trace/ring-buffer-map.rst` and `map_test.c` do.\n\nWould it be OK to keep the refusal, though, as I asked for BPF maps on aosp/4367949 and aosp/4367950? I may be missing a user: as far as I know, the tracefs readers on Android (Perfetto\u0027s traced_probes, atrace) are native processes, and apps can only write `trace_marker`. 4KB processes would still be able to `read()` and `splice()` `trace_pipe_raw`, and this patch wouldn\u0027t be needed.\n\nIf a 4KB process does need the mapping, could the commit message name it and say that this removes the refusal from aosp/4368077? `trace_ring_buffer_mmap_p3s.c` from aosp/4367986 could then move into this patch too.",
+      "isAi": true,
+      "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "939ee963_a9911751",
+        "filename": "kernel/trace/trace.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 8850,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:49Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series to keep the 4KB ring-buffer mmap refusal from aosp/4368077, and updated trace_ring_buffer_mmap_p3s.c in aosp/4367986 accordingly.",
+      "parentUuid": "a105eaf2_d9c675ee",
       "isAi": true,
       "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
