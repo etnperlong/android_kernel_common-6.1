@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c683f4c6_efa33283",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:38:25Z",
+      "side": 1,
+      "message": "Could the message say what fails without this patch? As far as I can see, it only affects a handler in another process with a larger address space: a native handler serving a 4KB process gets `-EINVAL` for any source above `TASK_SIZE_4KB` (1 \u003c\u003c 39), which is where native mmap() usually places its buffers. It would also help to say that the length check doesn\u0027t change.",
+      "isAi": true,
+      "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4241f14b_46f6bff2",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:38:25Z",
+      "side": 1,
+      "message": "Agreed that the source should be checked against the caller: `mfill_atomic_copy()` reads it with `copy_from_user()` from `current-\u003emm`, not from `ctx-\u003emm`.\n\nIt looks like `validate_unaligned_range()` already does the rest. Its `len \u0026 ~PAGE_MASK` check uses the destination page size, because `userfaultfd_ioctl()` runs under `P3S_CONTEXT_REMOTE_MM(ctx-\u003emm)` since aosp/4312528, so `mm_pte_size(dst_mm)` gives the same result. Would passing `current-\u003emm` to the existing call work for you?\n\n```\n\tret \u003d validate_unaligned_range(current-\u003emm, uffdio_copy.src,\n\t\t\t\t       uffdio_copy.len);\n```\n\nThat would keep the change to one line, plus a comment on why the caller\u0027s mm is used.",
+      "isAi": true,
+      "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af591df5_f629cca3",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:38:25Z",
+      "side": 1,
+      "message": "I think the untagging changes native processes too. Since `2ef5d7245d9c` (`\"mm: userfaultfd: check for start + len overflow in validate_range\"`), a tagged `src` fails with `-EINVAL` for every caller, because `validate_unaligned_range()` compares it with `task_size`.\n\nAccepting it may well match `Documentation/arch/arm64/tagged-address-abi.rst`, which only excludes `range.start`, `start` and `dst`, but it isn\u0027t specific to P3S. Would it be OK to drop it here, together with the tagged source in `userfaultfd_remote_ppps.c` (aosp/4367986), and send it upstream separately if it\u0027s needed?",
+      "isAi": true,
+      "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
