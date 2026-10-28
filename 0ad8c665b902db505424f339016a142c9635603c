@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6bbbd2f_480e5734",
+        "filename": "io_uring/io_uring.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 3514,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:40:54Z",
+      "side": 1,
+      "message": "I think aosp/4368076 already does all of this. Right after these checks, `io_uring_setup()` (through `io_uring_allowed()`), `io_uring_enter()` and `io_uring_register()` already fail with `-EPERM` for a 4KB mm, and `io_uring_get_unmapped_area()` and `io_uring_mmap()` refuse to map a ring with `-EOPNOTSUPP`. The `io_uring_enter()` check is there for a ring passed on by a native process, which is the case `io_uring_mmap_ppps.c` tests.\n\nSince the new checks run first, the only changes are `-EOPNOTSUPP` instead of `-EPERM` and no `p3s_4k_unsupported()` log. `-EPERM` is what `io_uring_allowed()` returns when `io_uring_disabled` is set, so callers that already cope with a disabled io_uring get the same error.\n\nWould it be OK to drop this patch, and have `io_uring_mmap_ppps.c` in aosp/4367986 expect `EPERM` from setup, enter and register?",
+      "isAi": true,
+      "revId": "0ad8c665b902db505424f339016a142c9635603c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "517183a5_03c25d32",
+        "filename": "io_uring/memmap.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:40:54Z",
+      "side": 1,
+      "message": "These two hunks are in the `!CONFIG_MMU` versions of `io_uring_mmap()` and `io_uring_get_unmapped_area()`, which arm64 never builds. The MMU versions above have refused 4KB mms since aosp/4368076.",
+      "isAi": true,
+      "revId": "0ad8c665b902db505424f339016a142c9635603c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
