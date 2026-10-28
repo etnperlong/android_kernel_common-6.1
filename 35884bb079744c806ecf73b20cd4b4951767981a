@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "42e2eb48_6e34d883",
+        "filename": "mm/mmap.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:50Z",
+      "side": 1,
+      "message": "Done — dropped the redundant mm/mmap.c hunk.",
+      "parentUuid": "c94b095a_8352ff1d",
+      "isAi": true,
+      "revId": "35884bb079744c806ecf73b20cd4b4951767981a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "29e9e503_3f38f25e",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T00:52:24Z",
       "side": 1,
       "message": "Nit: the fix looks right to me. With `mm/util.c` opted in, `rnd \u003c\u003c PAGE_SHIFT` is 4KB-granular, so 30 bits reach 4TB while `STACK_TOP_4KB` is 512GB.\n\nWould you consider leaving the upstream lines as they are and adding a single clamp through a P3S helper (e.g. `rnd \u0026\u003d mm_mmap_rnd_mask(current-\u003emm);`), with a `MMAP_RND_BITS_4KB` constant next to `VA_BITS_4KB` in `include/linux/p3s/const.h`?",
+      "isAi": true,
+      "revId": "35884bb079744c806ecf73b20cd4b4951767981a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52a21a03_f5247ef4",
+        "filename": "mm/util.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:50Z",
+      "side": 1,
+      "message": "Done — added MMAP_RND_BITS_4KB in include/linux/p3s/const.h and mm_mmap_rnd_mask() in include/linux/p3s/mm.h, keeping upstream lines intact in mm/util.c.",
+      "parentUuid": "29e9e503_3f38f25e",
       "isAi": true,
       "revId": "35884bb079744c806ecf73b20cd4b4951767981a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
