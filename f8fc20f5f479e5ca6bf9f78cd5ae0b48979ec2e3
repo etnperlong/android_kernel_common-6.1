@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae1bd1f5_1197934b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 24
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T21:38:39Z",
+      "side": 1,
+      "message": "Please fix commit message as noted before.",
+      "revId": "f8fc20f5f479e5ca6bf9f78cd5ae0b48979ec2e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
