@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a378a91_79a758b7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:48:56Z",
+      "side": 1,
+      "message": "Cherrypick applied cleanly, so just need to update tag to `ANDROID` and get rid of extraneous tags.",
+      "revId": "98ea893a6b2641da789949246176dca9858b6f46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
