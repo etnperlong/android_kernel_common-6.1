@@ -130,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "56ca90c7_29f87907",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:30Z",
+      "side": 1,
+      "message": "Done — updated both process_vm_readv()/process_vm_writev() (via p3s_get_user_slice_pages() in include/linux/p3s/iov_iter.h) and __access_remote_vm()/__copy_remote_vm_str() (via p3s_get_remote_page() in mm/p3s/remote_access.h, aosp/4367612) to use the captured PTE physical slice offset, and added bpf_remote_access_p3s.c in this patch to verify process_vm_readv/writev and /proc/self/mem pread/pwrite on a 4KB BPF ring buffer producer page.",
+      "parentUuid": "2bf0b7af_8e150f3e",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9baf9f1_29f7f103",
