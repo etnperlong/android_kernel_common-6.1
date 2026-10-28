@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "509a00458656478d6cf00b0a3149dfa9d9b6423d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e22c00c_24226fb0",
+        "filename": "kernel/bpf/stackmap.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:43Z",
+      "side": 1,
+      "message": "Done — moved bpf_stack_build_id_p3s.c from aosp/4367986 into this patch so the fix and its regression test land together.",
+      "parentUuid": "78bb9c61_dcc6801c",
+      "isAi": true,
+      "revId": "509a00458656478d6cf00b0a3149dfa9d9b6423d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
