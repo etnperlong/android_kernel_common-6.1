@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3229c7b_b14005d7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T01:03:14Z",
+      "side": 1,
+      "message": "Small thing in the commit message: `vma_set_range_slice()` is added in this patch, so the message describes code that isn\u0027t in the tree yet, and the other helpers aren\u0027t mentioned. Could it describe what the diff does?\n\nThe subject is also 73 characters; \"ANDROID: P3S: mm: Preserve compat VMA slice geometry on range changes\" would fit in 72 preventing the strange gerrit wrap.",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "de19805f_774d2258",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T01:03:14Z",
+      "side": 1,
+      "message": "Which caller reaches `vma_linear_page_index()` with `addr \u003c vm_start`? Nothing in this patch calls it, and for `addr \u003e\u003d vm_start` the result is unchanged.\n\nWould you mind naming that path in the commit message, or moving this change to the patch that adds the caller?",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3eb63a69_0da8160f",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T01:03:14Z",
+      "side": 1,
+      "message": "Only `vma_set_range_slice()` seems to be used in this patch. `vma_expand_downwards_range()` has no caller up to the top of the chain, so maybe it can be dropped.\n\n`copy_vma_set_range()` gets its first caller in aosp/4367608, and by then it also takes `old_addr` (this version reads the source slice at the destination address), and `vma_filter_merge_neighbor()` gets its first caller in aosp/4368008.\n\nCould both be added in their final form in the patches that use them?",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2820866d_76ab07a2",
+        "filename": "mm/vma.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1279,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T01:03:14Z",
+      "side": 1,
+      "message": "Could you point me to the path that loses the slice here?\n\nAs far as I can see, `vma_shrink()`\u0027s only caller is `relocate_vma_down()`, which passes `start \u003d\u003d vma-\u003evm_start` after `vma_expand()`, so this writes back the same `vm_slice_off`.\n\nIf it\u0027s the non-16KB stack shift from aosp/4367600, I\u0027d lean towards keeping that shift 16KB-aligned and dropping this.",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
