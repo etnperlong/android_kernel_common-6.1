@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8689257_8f51c2cb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:29:23Z",
+      "side": 1,
+      "message": "Could the message say what fails without this patch? As far as I can see, aosp/4312509 already dumps 4KB slices and writes NT_FILE in 4KB units with slice offsets, so what is left is the 16KB data alignment and `p_align` in the core of a 4KB process. The subject could say so too, e.g. \"ANDROID: P3S: coredump: Align ELF core segments to the process page size\".\n\nAlso, as on aosp/4367956, would you mind moving `elf_core_p3s.c` from aosp/4367986 into this patch? As far as I can see, its PT_LOAD alignment check is the one that fails without it.",
+      "isAi": true,
+      "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c808708_ba06170a",
+        "filename": "fs/binfmt_elf.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 2050,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:29:23Z",
+      "side": 1,
+      "message": "Agreed that the core of a 4KB process needs this: its PT_LOAD segments start at 4KB boundaries, but `ELF_EXEC_PAGESIZE` has been `PAGE_SIZE_KERNEL` on arm64 since aosp/4312470, so `p_offset` and `p_vaddr` don\u0027t always agree modulo the 16KB `p_align`.\n\nCould this and the `p_align` hunk use `ELF_MIN_ALIGN` instead of `mm_pte_size(current-\u003emm)`? With `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` it is `PAGE_SIZE`, which already follows the dumping process in this file, and otherwise it stays `ELF_EXEC_PAGESIZE`:\n\n```\n\tdataoff \u003d offset \u003d roundup(offset, ELF_MIN_ALIGN);\n\t...\n\t\tphdr.p_align \u003d ELF_MIN_ALIGN;\n```\n\nThat keeps x86_64 page size emulation as it is. There `ELF_EXEC_PAGESIZE` is the emulated `__PAGE_SIZE` (4568e574ede8, \"ANDROID: 16K: x86_64: Set ELF_EXEC_PAGESIZE to __PAGE_SIZE\"), while `mm_pte_size()` is the 4KB kernel page, so this would change the alignment of emulated 16KB cores.",
+      "isAi": true,
+      "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "408ddadb_5cc4bf2c",
+        "filename": "fs/coredump.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:29:23Z",
+      "side": 1,
+      "message": "I think the `fs/coredump.c` hunks don\u0027t change anything. aosp/4312509 opted this file into `\u003clinux/p3s_user_pages.h\u003e`, so `PAGE_SIZE` and `PAGE_SHIFT` here are already `mm_pte_size()` and `mm_pte_shift()` of `current-\u003emm` (no remote mm is set during a dump), and `size` is always `PAGE_SIZE`. `dump_user_range()` already steps by 4KB in a 4KB process and writes each slice from the `page_offset` that `get_dump_page()` returns, which also sets it to 0 first.\n\nThe same goes for `data[1]` in `fill_files_note()`: `fs/binfmt_elf.c` has opted in since aosp/4312470, so `PAGE_SIZE` there is already the page size that `m-\u003epgoff` counts in.\n\nWould it be OK to drop these hunks and keep only the alignment change in `elf_core_dump()`?",
+      "isAi": true,
+      "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
