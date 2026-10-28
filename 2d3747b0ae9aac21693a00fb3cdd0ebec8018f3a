@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0543ae4a_041f40ae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:55:56Z",
+      "side": 1,
+      "message": "Could the message say what fails without this patch? As far as I can see, `mremap()` can\u0027t move a swap PTE to another slice here: an `MREMAP_FIXED` target at another slice fails with `-EINVAL` since aosp/4312522, and once aosp/4367981 allows such moves, `p3s_mremap_prepare()` faults the swapped slices in before moving them.\n\nThe test in aosp/4367977 doesn\u0027t reach this code either: its `MREMAP_FIXED` move to `dst + PROCESS_PAGE_SIZE` fails with `-EINVAL` until aosp/4367981, and from then on it passes with or without this patch.\n\nIf you do have a case that fails, could you describe it here, saying 4KB processes rather than compat?",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "29f63d60_7c2742e9",
+        "filename": "arch/arm64/include/asm/pgtable.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 1559,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:55:56Z",
+      "side": 1,
+      "message": "Nit: if this stays, could the comment say P3S rather than PPPS, the old abbreviation, and 4KB processes rather than compat? The comment above `PTE_SWP_SLICE_SHIFT` in `pgtable-prot.h` also says compat.",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "177f8ec6_a1061651",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 5033,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:55:56Z",
+      "side": 1,
+      "message": "I may be missing a case, but I think the `vma_pte_add_slice()` call this replaces (aosp/4312507) already restores the slice that the swap PTE mapped.\n\nAs far as I can see, every path that installs an anonymous PTE in a 4KB VMA goes through `vma_pte_add_slice()`, so the slice that `try_to_unmap_one()` records is always `vma_slice_offset(vma, address)`. And nothing moves a PTE to another slice of its 16KB window: `mremap()` keeps the slice since aosp/4312522 (as on aosp/4367608), `move_pages()` rejects a UFFDIO_MOVE that starts at another slice (aosp/4312528), and `move_compat_swap_folio()` only moves whole windows (aosp/4367974). Fork copies swap PTEs to the same address, and swapoff restores them in place.\n\n`remove_migration_pte()`, `restore_exclusive_pte()` and `p3s_swapin_map_sibling_slices()` (aosp/4379310) also rebuild the slice from the address, so with this patch the faulting PTE and the sibling slices restored with it would get their slice from different places. The bits themselves look safe to me: bits 4-5 are free in every arm64 swap PTE format, and fork, `mremap()`, UFFDIO_MOVE and `mprotect()` keep them.\n\nWould it be OK to drop this patch? `p3s_uffd_swap_pte_movable()` in aosp/4368005, the only later user of `pte_swp_slice()`, could compare `vma_slice_offset(src_vma, src_addr)` with `vma_slice_offset(dst_vma, dst_addr)` instead.",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66c0ff73_f071e21d",
+        "filename": "mm/swapfile.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2269,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:55:56Z",
+      "side": 1,
+      "message": "If the patch stays, could the P3S parts go into P3S headers, as `vma_pte_add_slice()` does in `mm/p3s/pgtable.h`? `do_swap_page()` and `unuse_pte()` would then keep a one-line call instead of an `#ifdef` block each. With no-op fallbacks (e.g. in `\u003clinux/p3s/swap.h\u003e`), `include/linux/swapops.h` and `mm/internal.h` wouldn\u0027t need `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` either. And `try_to_unmap_one()` could use `vma_slice_offset(vma, address)` rather than `(pte_val(pteval) \u003e\u003e PAGE_SHIFT_4KB) \u0026 3`.",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
