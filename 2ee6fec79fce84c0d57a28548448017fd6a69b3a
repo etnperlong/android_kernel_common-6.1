@@ -16,6 +16,24 @@
       "message": "This should be `WrapfdDevFile` since it corresponds to an instance of `/dev/wrapfd`?",
       "revId": "2ee6fec79fce84c0d57a28548448017fd6a69b3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b35c027_44bcd9d1",
+        "filename": "drivers/android/wrapfd/wrapfd_device.rs",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1892347
+      },
+      "writtenOn": "2026-10-28T10:46:53Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "df909fb3_8b46399b",
+      "revId": "2ee6fec79fce84c0d57a28548448017fd6a69b3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
