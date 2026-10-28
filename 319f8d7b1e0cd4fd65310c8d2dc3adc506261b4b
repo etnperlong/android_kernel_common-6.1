@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96a99cdc_e2fae40c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:46:38Z",
+      "side": 1,
+      "message": "The patch applied cleanly, so it should be tagged as `UPSTREAM`.\n\nTo re-iterate [1], when a patch from mainline Linux applies cleanly, it should be tagged as `UPSTREAM`. If it requires any change to fix a build, or triggers a merge conflict, it should be tagged as `BACKPORT`, and the line above your signed-off-by line should state what you did to fix the build or address the merge conflict, and why.\n\nPlease let me know if [1] needs some clarification, as I\u0027m happy to propose edits so that the steps to follow are clearer.\n\n[1] https://cs.android.com/android/kernel/superproject/+/common-android-mainline:common/README.md#requirements-for-backports-from-mainline-linux-upstream-backport",
+      "revId": "319f8d7b1e0cd4fd65310c8d2dc3adc506261b4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64af56b9_3a39d9f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:46:38Z",
+      "side": 1,
+      "message": "Needs to update tag to `UPSTREAM` but LGTM otherwise.",
+      "revId": "319f8d7b1e0cd4fd65310c8d2dc3adc506261b4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
