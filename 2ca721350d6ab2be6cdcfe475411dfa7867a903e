@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b26e2661_028f290d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-28T15:44:03Z",
+      "side": 1,
+      "message": "Why do you need these so urgently in android-mainline. We should wait for them to merge in naturally when they are accepted upstream.",
+      "revId": "2ca721350d6ab2be6cdcfe475411dfa7867a903e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
