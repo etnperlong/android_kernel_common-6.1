@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3d8b9a0_779ba5c0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T23:08:48Z",
+      "side": 1,
+      "message": "Done — updated aosp/4367950 (\"ANDROID: P3S: bpf: Refuse map mmap in 4KB processes\") to centrally reject BPF map mmap() in 4KB processes via p3s_4k_unsupported() in bpf_map_mmap(), dropping the BPF array and ring buffer 4KB slice handling from aosp/4367949 and aosp/4367950 and keeping only the generic vmalloc physical-slice remap in aosp/4367949.",
+      "parentUuid": "7b368556_42bdf8a6",
+      "isAi": true,
+      "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8f4bf902_9481b0fb",
