@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ec91e39_a8f4229e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:36:42Z",
+      "side": 1,
+      "message": "Thanks for splitting this out of aosp/4367604. If the patch stays, could the body say what fails without it? \"Place this prerequisite with the later MADV_FREE coverage/drain changes\" describes where the patch sits in the series rather than why it\u0027s needed, and as far as I can see aosp/4367971 only depends on it for the re-indented context line.",
+      "isAi": true,
+      "revId": "ef5b00e225229240ce05ff1fc7796df69de7fc73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86b07be0_264da2b9",
+        "filename": "mm/madvise.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:36:42Z",
+      "side": 1,
+      "message": "It looks like these conversions don\u0027t change anything. mm/madvise.c opts into `\u003clinux/p3s_user_pages.h\u003e` since aosp/4312489, so `PAGE_SIZE` here is already `mm_pte_size(p3s_current_mm())`, and MADV_FREE only ever runs on `current-\u003emm`: madvise() passes it, process_madvise() rejects MADV_FREE for another mm in process_madvise_remote_valid() (and vector_madvise() enters the target\u0027s context with `P3S_CONTEXT_REMOTE_MM()` anyway), and io_uring, with `IORING_OP_MADVISE`, is disabled in 4KB processes since aosp/4368076. So `tlb-\u003emm` is always `p3s_current_mm()` in madvise_free_pte_range().\n\nWould it be OK to drop this patch? The re-indent of the madvise_folio_pte_batch() call fixes the continuation line that aosp/4367604 wrapped, so it could be folded there.",
+      "isAi": true,
+      "revId": "ef5b00e225229240ce05ff1fc7796df69de7fc73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
