@@ -1,0 +1,184 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7bfb172e_641e45d0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "Could the body say what fails without this patch? As far as I can see, the pin ranges don\u0027t change units with the caller today: they are in kernel pages for every caller, so a 4KB process gets `-EINVAL` from `ASHMEM_PIN` and `ASHMEM_UNPIN` for ranges that are 4KB- but not 16KB-aligned (a whole-region pin with `len \u003d\u003d 0` works).\n\nThe message also doesn\u0027t mention the `ASHMEM_GET_PIN_STATUS` change, and if the LRU fix goes (see `free_lru()`), \"update LRU accounting\" can go too. The last paragraph describes how the Rust helpers are written; could it say why they are needed instead?",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83faa3ba_35d3e57e",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "Nit: could this say P3S rather than PPPS (the old abbreviation), and \"4KB processes\" rather than \"compat\"? Since this is Rust, a `///` doc comment on the constants would also match the rest of the file better than `/* */`.\n\nThe new comments in `purge_all_caches()` say \"compat\" too, and the first one follows code without a blank line.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a8ef34f_a22cc66c",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "Is this change needed? As far as I can see, nothing fails without it: with `__page_align()` a 4KB process can map up to the 16KB-rounded size, as a native process can, and the extra 4KB pages lie in the same shmem page, so nothing beyond what a native process can map is exposed. The change only turns those mappings into `-EINVAL`, as on a 4KB kernel.\n\nIf that difference doesn\u0027t matter, would it be OK to drop it? `uapi_page_align()` would then have no user.\n\n`__page_align()` is also needed for x86_64 16K emulation.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a659c8c_3da97051",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "It looks like this fixes a bug that isn\u0027t specific to P3S: `ASHMEM_GET_PIN_STATUS` is `_IO()`, so `_IOC_SIZE(cmd)` is 0 and `reader.read()` returns `-EFAULT` for every process, native ones included (C ashmem always copied `sizeof(struct ashmem_pin)`). android17-6.18 and android-mainline still have the bug.\n\nWould you mind sending this as its own `ANDROID: ashmem:` patch to android-mainline, so that every ACK branch gets it? `pin_unpin()` could then keep taking a plain `UserSliceReader`: every caller passes `Some(...)`, so the `(0, 0)` branch is unreachable.\n\nThe `ASHMEM_GET_FILE_ID` arm above only changes formatting (to a 115-column line), so could it stay as it is?",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4f8d86e7_ccc93e24",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "I\u0027m worried `uapi_page_size()` changes this count on x86_64 with 16KB page size emulation: there it follows `__page_shift()` (14 with `page_shift\u003d14`), while `mm_pte_shift()` and the range pages stay at 4KB, so `ASHMEM_PURGE_ALL_CACHES` would return about a quarter of today\u0027s count.\n\nCould this use `mm.page_size()`, as `pin_unpin()` does with `mm.page_mask()`? Native arm64 processes would still get 16KB pages and 4KB processes 4KB pages, and `uapi_page_size()` would have no user.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0888b1b_7dd8ce74",
+        "filename": "drivers/staging/android/ashmem_range.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "Agreed that `LRU_COUNT` has to drop here, since `remove_lru()` does nothing after `pop_back()`. It looks like android17-6.18 already has the same fix, `a643c1800767` (`\"ANDROID: ashmem: decrement LRU_COUNT when purging ranges\"`), which the p3s branch should get with its next merge from android17-6.18.\n\nWould it be OK to drop this part (and \"update LRU accounting when purging a range\" from the commit message), so that the two don\u0027t conflict? Only the `ASHMEM_RANGE_PAGE_SIZE` conversion of `start` and `end` would stay here.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ff13987_94176a9c",
+        "filename": "rust/kernel/mm.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "If the mmap check and `purge_all_caches()` can do without them (see my comments in ashmem.rs), could the `uapi_*()` methods go? On other configurations they repeat `kernel::page_size_compat::__page_shift()` and `__page_align()`, and their `#[cfg(CONFIG_ARM64_PER_PROCESS_PAGE_SIZE)]` blocks put a P3S `#ifdef` into this shared file. The per-mm `page_*()` accessors would then be the only additions here.\n\nAlso, a few doc comments cite `mm_page_align()` and `mm_uapi_page_shift()`, which don\u0027t exist in C.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b697211_c10dd30c",
+        "filename": "tools/testing/selftests/mm/.gitignore",
+        "patchSetId": 15
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "It looks like `ashmem_p3s` isn\u0027t added to `tools/testing/selftests/mm/Makefile` in this patch, so the test is neither built nor run with the change it covers: its Makefile entry and the `-Wl,-z,max-page-size\u003d16384` `LDFLAGS` line only arrive in aosp/4367986. Could they move into this patch, next to `devzero_slice_p3s`?",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2a18e08_13540be8",
+        "filename": "tools/testing/selftests/mm/ashmem_p3s.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "Could the test focus on what this patch changes? As far as I can see, the default-alignment and hint checks, the 4KB-offset mapping and coherency checks and the native 4KB-offset `mmap()` check all pass without this patch: they cover the generic P3S mmap paths rather than ashmem.\n\nThe `--purge-*` modes also never run, since `compat_checks()` doesn\u0027t call them; they need `CAP_SYS_ADMIN` and purge every unpinned ashmem region on the system. Could they either run from `compat_checks()` (skipping without `CAP_SYS_ADMIN`) or go? Keeping the pin, unpin and status checks in both kinds of process and on the shared fd would make the test much smaller than 447 lines.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5ac93a9_8e59c3a8",
+        "filename": "tools/testing/selftests/mm/ashmem_p3s.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:34:37Z",
+      "side": 1,
+      "message": "I\u0027m worried this doesn\u0027t skip on kernels without P3S. On a 4KB kernel (arm64 or x86_64), `personality()` accepts `ADDR_4KB_COMPAT_PAGE_SIZE` and keeps it across `execv()`, so after `exec_compat()`, `p3s_require_compat()` passes and the 16KB alignment and native checks fail. And if the re-exec fails, `exec_compat()` reports a failure rather than a skip.\n\n`p3s_compat_main()` already handles both (`__aarch64__`, `getpagesize() !\u003d NATIVE_PAGE_SIZE`, and `EINVAL`/`EPERM` from the re-exec). Would it work to keep the `p3s_run_mode()` dispatch for the child roles and end `main()` with:\n\n```\n\treturn p3s_compat_main(argc, argv, compat_checks);\n```\n\nThis patch then wouldn\u0027t need `exec_compat()` and `p3s_vexec_or_die()` in kselftest_p3s.h, nor the double blank line before them.",
+      "isAi": true,
+      "revId": "9e095111b23b99fe6f7fd2866c5b9ff2c5a17189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
