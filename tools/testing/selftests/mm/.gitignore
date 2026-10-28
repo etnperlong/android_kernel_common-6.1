@@ -182,6 +182,8 @@ swap_badpages_loop_p3s
 swap_header_badpages_p3s
 swap_header_p3s
 swap_pss_p3s
+zero_sibling_mlock_p3s
+partial_anon_reclaim_p3s
 swap_slice_mremap_p3s
 swap_vma_readahead_p3s
 swapoff_p3s
