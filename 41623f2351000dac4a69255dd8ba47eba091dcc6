@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad9396c8_42f0fe16",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 3669,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:36:00Z",
+      "side": 1,
+      "message": "I think this branch can\u0027t run on a P3S kernel: `VM_GROWSUP` is only defined for `CONFIG_PARISC` (`include/linux/mm.h`), and everywhere else, arm64 included, it is `VM_NONE`, so the compiler drops this block. On parisc, `mm_pte_size()` is `PAGE_SIZE`, so nothing changes there either.\n\nAgreed it would be the matching value if the branch could run, but would it be OK to drop this patch, to keep the `include/linux/mm.h` diff minimal?",
+      "isAi": true,
+      "revId": "41623f2351000dac4a69255dd8ba47eba091dcc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
