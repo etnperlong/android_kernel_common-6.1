@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8a4b849_77b1318b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:03:15Z",
+      "side": 1,
+      "message": "Done — updated the subject (\u003c\u003d72 chars) and commit message to describe what this diff adds.",
+      "parentUuid": "a3229c7b_b14005d7",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "de19805f_774d2258",
@@ -50,6 +69,25 @@
       "writtenOn": "2026-10-28T01:03:14Z",
       "side": 1,
       "message": "Only `vma_set_range_slice()` seems to be used in this patch. `vma_expand_downwards_range()` has no caller up to the top of the chain, so maybe it can be dropped.\n\n`copy_vma_set_range()` gets its first caller in aosp/4367608, and by then it also takes `old_addr` (this version reads the source slice at the destination address), and `vma_filter_merge_neighbor()` gets its first caller in aosp/4368008.\n\nCould both be added in their final form in the patches that use them?",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6542500_1d5bc0f8",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:03:15Z",
+      "side": 1,
+      "message": "Done — dropped unused vma_expand_downwards_range() and moved copy_vma_set_range() and vma_filter_merge_neighbor() in their final form to the patches that first call them.",
+      "parentUuid": "3eb63a69_0da8160f",
       "isAi": true,
       "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
