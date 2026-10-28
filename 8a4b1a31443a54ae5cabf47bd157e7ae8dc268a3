@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "8a4b1a31443a54ae5cabf47bd157e7ae8dc268a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "201b5f9a_f813cc97",
+        "filename": "fs/aio.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:31Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series and updated aio_ring_p3s in aosp/4367986 to accept the native ring size.",
+      "parentUuid": "a1800c0b_ff928f0a",
+      "isAi": true,
+      "revId": "8a4b1a31443a54ae5cabf47bd157e7ae8dc268a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
