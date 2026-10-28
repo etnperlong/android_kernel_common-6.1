@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e003111b_43971872",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 13
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:46Z",
+      "side": 1,
+      "message": "Done — updated the commit subject to \u0027ANDROID: P3S: mm/shmem: Count swapped 4KB VMA bytes by file range\u0027 and rewrote the commit message to explain both the vma_pages() vs vm_pgoff mismatch in shmem_swap_usage() and the linear_page_index() rounding/wrapping in smaps_pte_hole().",
+      "parentUuid": "717ae3a9_13b04310",
+      "isAi": true,
+      "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bf1ddae2_1179606f",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T18:48:29Z",
       "side": 1,
       "message": "Nit: as in `shmem_swap_usage()`, would an early return work here, so that the native call stays as it is? Something like:\n\n```\n\tif (vma_is_p3s_4k(vma)) {\n\t\tmss-\u003eswap +\u003d vma_shmem_swap_usage(vma, addr, end);\n\t\treturn 0;\n\t}\n```\n\nNow that they are re-indented, the native arguments no longer line up with the open parenthesis.",
+      "isAi": true,
+      "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c30e377_55d7f8c6",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 1059,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:46Z",
+      "side": 1,
+      "message": "Done — used an early return for vma_is_p3s_4k(vma) in smaps_pte_hole(), leaving the native call and argument alignment untouched.",
+      "parentUuid": "bf1ddae2_1179606f",
       "isAi": true,
       "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e93483cc_d4dcf1ac",
+        "filename": "mm/shmem.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:46Z",
+      "side": 1,
+      "message": "Done — aligned the parameter list with the open parenthesis in shmem_partial_swap_usage().",
+      "parentUuid": "0af3abb1_90a850b4",
+      "isAi": true,
+      "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "13475ef8_d6a3fcf0",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-28T18:48:29Z",
       "side": 1,
       "message": "The byte-overlap counting looks right to me. A VMA that starts or ends partway through a 16KB page only counts its own slices. Two 4KB VMAs that share a swapped 16KB page split it between them, rather than both counting all of it. And rounding `xa_index` down handles a large entry that starts before `start`.\n\nOnly 4KB VMAs use it, though, so would you mind moving it out of `mm/shmem.c` into a P3S header? For example, it could be a static inline in a new `include/linux/p3s/shmem.h` that takes the VMA and works out the range with `vma_file_offset_at()`:\n\n```\nstatic inline unsigned long vma_shmem_swap_usage(struct vm_area_struct *vma,\n\t\t\t\t\t\t unsigned long start,\n\t\t\t\t\t\t unsigned long end)\n```\n\nIt only needs `i_pages` and the xarray API. `shmem_swap_usage()` and `smaps_pte_hole()` would then each need only a short call (see the comments there), and the `extern` prototype in `\u003clinux/shmem_fs.h\u003e` that checkpatch flags could go.\n\nThe new `#include \u003clinux/p3s/vma.h\u003e` lines in `mm/shmem.c` and `fs/proc/task_mmu.c` aren\u0027t needed in either case: `\u003clinux/mm_types.h\u003e` already includes that header through `\u003clinux/p3s.h\u003e`. That is how `task_mmu.c` uses `vma_file_offset()` today.",
+      "isAi": true,
+      "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "363aa69e_620f885e",
+        "filename": "mm/shmem.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 1019,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:46Z",
+      "side": 1,
+      "message": "Done — moved the 4KB byte-overlap counting into vma_shmem_swap_usage() in include/linux/p3s/shmem.h using vma_file_offset_at(), and removed the \u003clinux/p3s/vma.h\u003e includes and \u003clinux/shmem_fs.h\u003e prototype.",
+      "parentUuid": "13475ef8_d6a3fcf0",
       "isAi": true,
       "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9aa156a_aae69530",
+        "filename": "mm/shmem.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 1082,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:46Z",
+      "side": 1,
+      "message": "Done — added an early return for vma_is_p3s_4k(vma) right after the !swapped check in shmem_swap_usage(), keeping the native fast path unchanged.",
+      "parentUuid": "5e1917d5_39639a7a",
+      "isAi": true,
+      "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7baf0e41_be2f4195",
@@ -104,6 +199,25 @@
       "writtenOn": "2026-10-28T18:48:29Z",
       "side": 1,
       "message": "Would you mind moving `shmem_swap_usage_p3s.c` from aosp/4367986 into this patch, as you did with `smaps_page_size_p3s.c` in aosp/4367944? It tests exactly this change: swap outside a shared VMA, a one-slice shared VMA and a one-slice private hole. As far as I can see, all three checks fail without this patch. It uses `p3s_smaps_bytes()`, which only arrives in aosp/4367975, so that helper would need to move here too.\n\nIt might also be worth mapping one of the one-slice VMAs at an offset that isn\u0027t 16KB-aligned. At offsets 0 and 16KB, `vm_slice_off` is always 0, so it isn\u0027t covered.",
+      "isAi": true,
+      "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb772521_71a742d8",
+        "filename": "mm/shmem.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 1087,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:46Z",
+      "side": 1,
+      "message": "Done — moved shmem_swap_usage_p3s.c and p3s_smaps_bytes() (p3s_test.h) into this patch and added shared and private one-slice VMA checks at a non-16KB-aligned file offset.",
+      "parentUuid": "7baf0e41_be2f4195",
       "isAi": true,
       "revId": "ee1c29f8a67aab111e604a51523618a37698f233",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
