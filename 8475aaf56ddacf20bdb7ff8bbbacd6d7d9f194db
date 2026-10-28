@@ -21,6 +21,25 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5c6f5d7c_4fd234c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:51:37Z",
+      "side": 1,
+      "message": "I see the body has been rewritten. As far as I can see, the merge-right adjustment it describes is the one in `vmg_adjust_set_range()` that aosp/4366900 already made, and the three changes in this patch (`mm_init_pte_shift()`, `vrm_set_new_addr()` and `copy_vma()`) are no longer mentioned. Could the body describe those, once the inline threads are settled?",
+      "parentUuid": "cae7e383_6cfe2f72",
+      "isAi": true,
+      "revId": "8475aaf56ddacf20bdb7ff8bbbacd6d7d9f194db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a8429a6b_97b53e81",
         "filename": "include/linux/p3s/mm.h",
         "patchSetId": 9
