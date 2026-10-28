@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1937fed_f96310bd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:36:39Z",
+      "side": 1,
+      "message": "The first paragraph reads like a note about an earlier patchset: this patch doesn\u0027t keep or replace anything in `sys32.c`, it only adds a test.\n\nCould you say instead that aosp/4312471 opted `arch/arm64/kernel/sys32.c` into `\u003clinux/p3s_user_pages.h\u003e`, so `aarch32_mmap2()` already checks and shifts `off_4k` by the process page size, and that this patch adds a regression test for it?",
+      "isAi": true,
+      "revId": "2938864382977e3e9e2014af7c0ce70be2f99e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aeb400d0_97c988cc",
+        "filename": "tools/testing/selftests/arm64/abi/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:36:39Z",
+      "side": 1,
+      "message": "Nit: could you add `aarch32-mmap2-ppps` to `tools/testing/selftests/arm64/abi/.gitignore` (and `aarch32-vdso-pages-ppps` in aosp/4367936)?\n\nAlso, since aosp/4367936 turns this into an `AARCH32_TESTS` list with a pattern rule, would you mind starting with that form here, so that the next patch only adds a name to the list?\n\nNit: `s/ppps/p3s/g`",
+      "fixSuggestions": [
+        {
+          "fixId": "83bad838_36aebe9d",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "tools/testing/selftests/arm64/abi/Makefile",
+              "range": {
+                "startLine": 1,
+                "startChar": 0,
+                "endLine": 1,
+                "endChar": 0
+              },
+              "replacement": "AARCH32_TESTS :\u003d aarch32-mmap2-ppps\n\n"
+            },
+            {
+              "path": "tools/testing/selftests/arm64/abi/Makefile",
+              "range": {
+                "startLine": 7,
+                "startChar": 0,
+                "endLine": 8,
+                "endChar": 0
+              },
+              "replacement": "TEST_GEN_PROGS +\u003d $(AARCH32_TESTS)\n"
+            },
+            {
+              "path": "tools/testing/selftests/arm64/abi/Makefile",
+              "range": {
+                "startLine": 11,
+                "startChar": 0,
+                "endLine": 12,
+                "endChar": 0
+              },
+              "replacement": "TEST_GEN_PROGS +\u003d $(AARCH32_TESTS)\n"
+            },
+            {
+              "path": "tools/testing/selftests/arm64/abi/Makefile",
+              "range": {
+                "startLine": 19,
+                "startChar": 0,
+                "endLine": 20,
+                "endChar": 0
+              },
+              "replacement": "$(OUTPUT)/aarch32-%: aarch32-%.c\n"
+            }
+          ]
+        }
+      ],
+      "revId": "2938864382977e3e9e2014af7c0ce70be2f99e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07958d58_4b3f6cb8",
+        "filename": "tools/testing/selftests/arm64/abi/aarch32-mmap2-ppps.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:36:39Z",
+      "side": 1,
+      "message": "As far as I know, Android devices and many minimal test images don\u0027t have `/bin/busybox`, so there the test would stop at `not ok 1` without testing `mmap2()` at all.\n\nWould you mind creating the backing file in the test instead, e.g. a temporary file or a `memfd_create()` file with a different byte pattern in each 4KB block? That would also make a mapping of the wrong slice fail reliably, rather than depending on what busybox happens to contain at those offsets.",
+      "isAi": true,
+      "revId": "2938864382977e3e9e2014af7c0ce70be2f99e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0f683fe_f5b3f9f1",
+        "filename": "tools/testing/selftests/arm64/abi/aarch32-mmap2-ppps.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:36:39Z",
+      "side": 1,
+      "message": "I\u0027m worried this test only passes when it is already running as a 4KB process. AArch32 tasks don\u0027t get 4KB pages by default: `mm_init_pte_shift()` only picks them for `ADDR_PAGE_SIZE_4KB` or `p3s_4k\u003d`, and nothing here sets either.\n\nAs far as I can see, when `run_kselftest.sh` runs it directly on a 16KB kernel (P3S or not), `aarch32_mmap2()` rejects `off_4k` 1 to 3 with `-EINVAL`, so tests 2-4 report `not ok`.\n\nCould the test set `ADDR_PAGE_SIZE_4KB` and re-exec itself through `/proc/self/exe`, like `ppps_compat_main()` that aosp/4367942 adds to `tools/testing/selftests/kselftest_ppps.h`, and skip if `AT_PAGESZ` still isn\u0027t 4096 after that?\n\nBuilding it with nolibc, like `tpidr2` in this Makefile, would give you `getauxval()`, `execve()` and an `mmap()` that already goes through `__NR_mmap2` with a 4KB offset on ARM, so most of the hand-written syscall wrappers could go.",
+      "isAi": true,
+      "revId": "2938864382977e3e9e2014af7c0ce70be2f99e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
