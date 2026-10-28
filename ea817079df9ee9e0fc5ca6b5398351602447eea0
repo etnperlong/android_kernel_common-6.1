@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba98d1a9_d6b16fe7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:41:36Z",
+      "side": 1,
+      "message": "Same comment as before, and the lower part is not needed. I don\u0027t think you need a note explaining what you did differently, since it seems like the patch was applied cleanly :-)",
+      "range": {
+        "startLine": 7,
+        "startChar": 9,
+        "endLine": 7,
+        "endChar": 19
+      },
+      "revId": "ea817079df9ee9e0fc5ca6b5398351602447eea0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f9a12a6_894d3b9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:41:36Z",
+      "side": 1,
+      "message": "Just needs to fix commit msg.",
+      "revId": "ea817079df9ee9e0fc5ca6b5398351602447eea0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
