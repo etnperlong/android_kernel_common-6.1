@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65fd516b_bbd2b22c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:50:58Z",
+      "side": 1,
+      "message": "A few things in the commit message: it says the slices are inserted with `vm_insert_pages()`, but the diff adds `vm_insert_page_native()`; it mentions a binder transaction regression test that isn\u0027t in this patch; and it describes Rust Binder only, while the patch also changes C Binder and mm.\n\nNit: \"4KB process\" and \"16KB\" instead of \"4K PPPS\" and \"16K\" would match the rest of the series.",
+      "isAi": true,
+      "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb038ceb_b174b757",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:50:58Z",
+      "side": 1,
+      "message": "It looks like C Binder has the same partial-page issue. In a 4KB process the VMA can end partway through a native page (libbinder maps 1MB - 2 * 4KB), but `pages[]` is sized `buffer_size / PAGE_SIZE` here, and the loops at lines 1014 and 1091 use the same bound.\n\nSo I think a buffer in the last partial page would index past the array, and that page would never be freed. Would `DIV_ROUND_UP(alloc-\u003ebuffer_size, PAGE_SIZE)` in all three places work?",
+      "isAi": true,
+      "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99435508_7ffcf9c9",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2537,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:50:58Z",
+      "side": 1,
+      "message": "I think `vm_insert_page()` already covers this: since aosp/4368056 it maps every slice of the page that lies in a 4KB VMA, clamped to `vm_end` (`vma_insert_page_slices()` in `mm/p3s/pgtable.h`), and Rust\u0027s `vm_insert_page()` calls straight into it.\n\nSince `vm_insert_page_native()` does the same, could Binder keep calling `vm_insert_page()`, and `vm_insert_page_native()` be dropped from `mm/memory.c`, `mm.h`, `binder_alloc.c` and `virt.rs`?\n\nThe size rounding and the zap clamp in `page_range.rs` look needed to me, since Rust\u0027s `zap_page_range_single()` silently returns when the range passes `vm_end`.",
+      "isAi": true,
+      "revId": "875e42a99873a88a70dca9ec37d7856bed9c2067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
