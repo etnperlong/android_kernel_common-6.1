@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5837a74_caa6c3aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T21:10:24Z",
+      "side": 1,
+      "message": "same issues as previous commits.",
+      "revId": "95cc38139775037fd8d5892df5a63b1a12b004fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
