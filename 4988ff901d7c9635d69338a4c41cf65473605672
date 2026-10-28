@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0029ce17_f46a970a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:05Z",
+      "side": 1,
+      "message": "Done — updated the commit subject to \u0027ANDROID: P3S: vfio: Reject unsupported 4KB host mappings\u0027 and explained VFIO type1 native-page pinning/accounting and device MMIO mmap() slice offsets in the commit message.",
+      "parentUuid": "9a1ea08a_62a38ba1",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a73c649a_b75cd277",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T06:57:48Z",
       "side": 1,
       "message": "Could these checks use `p3s_4k_unsupported()` (aosp/4366134) instead of `mm_is_p3s_4k()`? It logs the refusal with the function name, so refusals hit in production can be identified, and aosp/4368076 and aosp/4368079 use it for the same kind of checks.\n\nThose patches also return `-EPERM` when refusing to open or create the object and `-EOPNOTSUPP` from `mmap()`. Would that split work here too?\n\nThe new `#include` lines shouldn\u0027t be needed either: `\u003clinux/mm_types.h\u003e` already includes `\u003clinux/p3s/mm.h\u003e` through `\u003clinux/p3s.h\u003e`.",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "70e5d0a0_7de37b2f",
+        "filename": "drivers/vfio/container.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:05Z",
+      "side": 1,
+      "message": "Done — switched to p3s_4k_unsupported() (returning -EPERM from vfio_fops_open() / vfio_group_fops_open() and -EOPNOTSUPP from container ioctl / device cdev open / device mmap()) and removed the \u003clinux/p3s/mm.h\u003e includes.",
+      "parentUuid": "a73c649a_b75cd277",
       "isAi": true,
       "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8cf48a4_64d743bf",
+        "filename": "drivers/vfio/platform/vfio_platform_common.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:05Z",
+      "side": 1,
+      "message": "Done — dropped the duplicate vfio_platform_mmap() check and includes in drivers/vfio/platform/vfio_platform_common.c.",
+      "parentUuid": "60359b11_e75028ed",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d4155ba_434ab3ce",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-28T06:57:48Z",
       "side": 1,
       "message": "As far as I can see the reads and writes don\u0027t depend on the caller\u0027s page size: `vfio_platform_read_mmio()` and `vfio_platform_write_mmio()` move 1, 2 or 4 bytes at a time with `ioread*()`/`iowrite*()` and `copy_to_user()`/`copy_from_user()`.\n\nThe same seems true for `vfio_device_fops_unl_ioctl()` and `vfio_group_fops_unl_ioctl()`, which exchange info structs, eventfds and fds. A device fd from `VFIO_GROUP_GET_DEVICE_FD` still can\u0027t be mapped because of the `vfio_device_fops_mmap()` check, and DMA mappings still go through the container ioctl check.\n\nWould it be OK to drop these four hunks?",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "775eedbc_87bfb686",
+        "filename": "drivers/vfio/vfio_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1350,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:05Z",
+      "side": 1,
+      "message": "Done — dropped the checks in vfio_device_fops_unl_ioctl(), vfio_device_fops_read(), vfio_device_fops_write(), and vfio_group_fops_unl_ioctl().",
+      "parentUuid": "3d4155ba_434ab3ce",
       "isAi": true,
       "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
