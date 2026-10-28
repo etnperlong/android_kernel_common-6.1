@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59dc1724_3df8d1f4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:48:49Z",
+      "side": 1,
+      "message": "It looks like the commit message describes more than this patch does.\n\nThe diff only changes the final `stack_top` alignment, but the text talks about `copy_strings()`/`copy_string_kernel()` chunking, faults, mapped-page reuse and kmap offsets, which this patch doesn\u0027t touch. It also says that aligning only the final stack position isn\u0027t enough, which is what the diff does.\n\nCould you update it to match?",
+      "isAi": true,
+      "revId": "558bbda8d151a47a96ec6dcfbc97eb013136ff28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c94a83a2_23050d98",
+        "filename": "fs/exec.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:48:49Z",
+      "side": 1,
+      "message": "I\u0027m not sure this is needed. `fs/exec.c` doesn\u0027t opt into `\u003clinux/p3s_user_pages.h\u003e`, so `__PAGE_ALIGN()` already gives a 16KB-aligned `stack_top`, which is valid for a 4KB process, and the arg-page walk already uses `mm_pte_size(bprm-\u003emm)` at lines 454 and 565.\n\nAligning to 4KB also makes the `relocate_vma_down()` shift 4, 8 or 12KB, which I think moves anon slices off the slice their address selects until aosp/4367983 realigns them in b17. It also drops ACK\u0027s `__PAGE_ALIGN()` for the x86_64 page size emulation.\n\nIf the goal is 4KB stack ASLR, could this move next to aosp/4367982 and aosp/4367983 so that every patch stays correct on its own? Otherwise, would you be OK dropping it?",
+      "isAi": true,
+      "revId": "558bbda8d151a47a96ec6dcfbc97eb013136ff28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
