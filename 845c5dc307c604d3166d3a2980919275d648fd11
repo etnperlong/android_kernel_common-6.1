@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fdb1c0a8_c3175ffc",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:27Z",
+      "side": 1,
+      "message": "Done — added a comment next to DIV_ROUND_UP(data_sz, PAGE_SIZE) and documented in the commit message that 4KB and 8KB rings fit twice in one native page without needing the vmap alias.",
+      "parentUuid": "6d5c070f_998ac60e",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fbd7f7b2_ac378b65",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61aafad9_0288ffc7",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:27Z",
+      "side": 1,
+      "message": "Done — simplified to mm_pte_size(current-\u003emm).",
+      "parentUuid": "fbd7f7b2_ac378b65",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "26842abf_7905e8ea",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T07:57:34Z",
       "side": 1,
       "message": "If these mappings stay, could the per-4KB insert be shared rather than open-coded here? The same `vmalloc_to_page()` plus `vm_insert_page_slice(..., offset_in_page(kaddr) \u003e\u003e PAGE_SHIFT_4KB)` loop is in `array_map_mmap_slices()` (aosp/4367949), and aosp/4368031 adds another copy to `remap_vmalloc_range_partial()`.\n\nOnly picking `kaddr` for the consumer, producer and data offsets is specific to the ring buffer. A helper in mm/ that maps vmalloc memory at `kaddr` into a 4KB VMA at `addr` would keep the slice handling out of `kernel/bpf/`.",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "056c5c2c_ccded9f8",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:27Z",
+      "side": 1,
+      "message": "Done — updated ringbuf_map_mmap_slices() to call remap_vmalloc_range_partial(vma, addr, kaddr, 0, chunk) instead of open-coding vmalloc_to_page() + vm_insert_page_slice().",
+      "parentUuid": "26842abf_7905e8ea",
       "isAi": true,
       "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -86,6 +143,25 @@
       "writtenOn": "2026-10-28T07:57:34Z",
       "side": 1,
       "message": "I\u0027m worried this reverts ACK\u0027s `\"ANDROID: 16K: bpf: Preserve 4KB page ABI for ring buffer\"` (`ac40f53b8686`) for x86_64 page size emulation: there the consumer page is mapped with the emulated 16KB `__PAGE_SIZE`, but `mm_pte_size()` is the 4KB kernel page on x86_64, so libbpf\u0027s writable consumer `mmap()` would get `-EPERM` again.\n\nAgreed that a 4KB VMA needs a 4KB size here. Would keeping `__PAGE_SIZE` for the other VMAs work for you? Something like:\n\n```\n        if (vma_file_offset(vma) ||\n            vma-\u003evm_end - vma-\u003evm_start !\u003d\n            (vma_is_p3s_4k(vma) ? PAGE_SIZE_4KB : __PAGE_SIZE))\n```",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f68fc95f_108b3911",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:27Z",
+      "side": 1,
+      "message": "Done — used vma_is_p3s_4k(vma) ? mm_pte_size(vma-\u003evm_mm) : __PAGE_SIZE to preserve x86_64 page-size emulation.",
+      "parentUuid": "e9baf9f1_29f7f103",
       "isAi": true,
       "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
