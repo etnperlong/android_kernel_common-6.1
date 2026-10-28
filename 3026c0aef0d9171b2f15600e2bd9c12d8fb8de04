@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "28a7a694_42e5ec85",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:29Z",
+      "side": 1,
+      "message": "Done — updated both dma_buf_mmap_internal() and dma_buf_mmap() to check vma_kernel_pages(vma) against (dmabuf-\u003esize \u003e\u003e PAGE_SHIFT) - pgoff without changing native size limits.",
+      "parentUuid": "ab0b4d0f_df29f34e",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6be4a6f_eaeb5131",
@@ -85,6 +104,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3eeb5493_9c65af31",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2168,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:29Z",
+      "side": 1,
+      "message": "Done — dropped vma_set_slice_off(vma, 0) in dma_buf_mmap() so the importer\u0027s slice offset is preserved and bounded by vma_kernel_pages(vma).",
+      "parentUuid": "40b40966_0ca2c690",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db70c181_9e73f543",
@@ -98,6 +136,25 @@
       "writtenOn": "2026-10-28T00:43:23Z",
       "side": 1,
       "message": "It looks like this branch and `remap_pfn_range_slice()` might not be needed anymore: since aosp/4368055, `remap_pfn_range()` in a 4KB VMA maps 4KB frames starting at the slice that `vma_slice_offset()` gives the address.\n\nAs far as I can tell, the native loop only breaks because it remaps a whole kernel page from `vm_start`, which runs into `pfn + 1` when `vm_slice_off !\u003d 0` and past `vm_end` when the last page is partial.\n\nWould clamping the size in the existing loop work for you? Something like:\n\n```\n    unsigned long off \u003d (unsigned long)vma_slice_off(vma) \u003c\u003c PAGE_SHIFT_4KB;\n    ...\n        unsigned long size \u003d min(PAGE_SIZE - off, vma-\u003evm_end - addr);\n\n        ret \u003d remap_pfn_range(vma, addr, page_to_pfn(page), size,\n                              vma-\u003evm_page_prot);\n        ...\n        addr +\u003d size;\n        off \u003d 0;\n\n```\n\nNative VMAs have `off \u003d\u003d 0` and whole pages, so they wouldn\u0027t change.",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53b9a0ad_836082b9",
+        "filename": "drivers/dma-buf/heaps/system_heap.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:29Z",
+      "side": 1,
+      "message": "Done — clamped the first and last page mapping sizes in system_heap_mmap() and reused remap_pfn_range().",
+      "parentUuid": "db70c181_9e73f543",
       "isAi": true,
       "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -153,6 +210,25 @@
       "writtenOn": "2026-10-28T00:43:23Z",
       "side": 1,
       "message": "If the system heap can use `remap_pfn_range()` (see my comment in `system_heap.c`), this wouldn\u0027t be needed here.\n\nI see that perf (aosp/4367963) and `mm/p3s.c` (aosp/4368009 and aosp/4368010) use it later. Would you mind adding it in the first patch that needs it, under `mm/p3s/` next to `vma_remap_frame()`, rather than as a new block in `mm/memory.c`?\n\nIt might also be simpler with `get_locked_pte()` and `mm_frame_pte()` instead of the open-coded page-table walk and `pte_val()` addition. The `mm.h` prototype would move with it.",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d2abc7e_6d42e16d",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 3102,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:29Z",
+      "side": 1,
+      "message": "Done — removed remap_pfn_range_slice() from this patch and moved it to its first user (aosp/4367963, perf) in mm/p3s.c using get_locked_pte() and mm_frame_pte().",
+      "parentUuid": "060dbc38_87899a30",
       "isAi": true,
       "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
