@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb9fc6c7_97c03562",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:58:54Z",
+      "side": 1,
+      "message": "Since this didn\u0027t apply cleanly, `BACKPORT` is correct, but you should also please document what you did in an effort to backport the patch or if there was a merge conflict.",
+      "revId": "1123df5eed088f9aed273f983d9154f25c261a81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
