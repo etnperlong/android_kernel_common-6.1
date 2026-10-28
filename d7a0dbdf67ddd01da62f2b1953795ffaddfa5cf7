@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2136ff5f_c87d3406",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:33Z",
+      "side": 1,
+      "message": "Done — updated the commit message to remove the outdated fast-GUP wording and explicitly document BPF ring metadata as the case where physical slice 0 is mapped at a virtual address whose VMA-derived slice phase is nonzero.",
+      "parentUuid": "98348e04_d62be425",
+      "isAi": true,
+      "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "147fbf65_2a8cb643",
