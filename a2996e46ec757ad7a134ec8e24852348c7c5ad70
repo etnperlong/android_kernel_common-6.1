@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a2996e46ec757ad7a134ec8e24852348c7c5ad70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bfb2dfab_9dfd9e9f",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1327,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:31:04Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series and updated userfaultfd_shmem_p3s.c in aosp/4367986 to expect EINVAL.",
+      "parentUuid": "ab16b96c_0572ed7b",
+      "isAi": true,
+      "revId": "a2996e46ec757ad7a134ec8e24852348c7c5ad70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
