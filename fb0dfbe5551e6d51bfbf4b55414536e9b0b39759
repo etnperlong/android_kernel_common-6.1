@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "942bc038_fe3c3806",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:10:57Z",
+      "side": 1,
+      "message": "The subject says this provides an accessor, but `vma_file_offset()` has been in `include/linux/p3s/vma.h` since aosp/4312510 (`fs/proc` and the coredump code use it). So the patch only converts two callers, and as far as I can see neither conversion changes behavior (see the inline comments).\n\nWould it be OK to drop this patch? If the `vb2_mmap()` slice check makes sense, it could take its place with a subject that describes it.",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cce6b02c_c828b133",
+        "filename": "drivers/media/common/videobuf2/videobuf2-core.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 2501,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:10:57Z",
+      "side": 1,
+      "message": "I think this doesn\u0027t change anything: `__find_plane_by_offset()` decodes the buffer and plane from `offset \u003e\u003e PAGE_SHIFT`, and this file doesn\u0027t include `\u003clinux/p3s_user_pages.h\u003e`, so the slice offset that `vma_file_offset()` adds (below 16KB) is dropped again.\n\nIf the aim is to make `vb2_mmap()` P3S-aware, I think the useful part would be rejecting a slice: offsets are page-aligned cookies, and `vma-\u003evm_pgoff \u003d 0` below doesn\u0027t reset `vm_slice_off`, so the memops would still start the mapping at that slice. Could we return `-EINVAL` for a non-zero `vma_slice_off(vma)`, as `perf_mmap()` does since aosp/4368055 (and as suggested for GEM on aosp/4367607)?\n\nOtherwise, would it be OK to drop this hunk?",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f3674f1_54236cd5",
+        "filename": "io_uring/memmap.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:10:57Z",
+      "side": 1,
+      "message": "It looks like this can\u0027t change anything: since aosp/4368076, `io_uring_mmap()` returns `-EOPNOTSUPP` a few lines below for 4KB mms, so every VMA that reaches the `switch` has `vm_slice_off \u003d\u003d 0`, and `vma_file_offset()` equals `vm_pgoff \u003c\u003c PAGE_SHIFT`. The `switch` also only looks at the `IORING_OFF_MMAP_MASK` bits.\n\nWould it be OK to drop this hunk?",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
