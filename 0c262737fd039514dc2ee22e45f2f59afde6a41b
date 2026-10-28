@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "0c262737fd039514dc2ee22e45f2f59afde6a41b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72f10c7c_f3d23f61",
+        "filename": "kernel/tsacct.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:40Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "171e82c9_be10aae6",
+      "isAi": true,
+      "revId": "0c262737fd039514dc2ee22e45f2f59afde6a41b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
