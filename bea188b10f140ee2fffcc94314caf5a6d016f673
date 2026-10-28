@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "870fd5ff_1f366bec",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:03:42Z",
+      "side": 1,
+      "message": "Done — split smaps SwapPss accounting (aosp/4393889), swapoff exclusivity (aosp/4393890), and MADV_FREE PTE walking into separate commits, keeping this patch focused on MADV_COLD/MADV_PAGEOUT PTE batching.",
+      "parentUuid": "23900d75_6b679e3a",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1cb11091_802c9e37",
@@ -50,6 +69,25 @@
       "writtenOn": "2026-10-28T00:59:56Z",
       "side": 1,
       "message": "Would you mind moving this loop into `mm/p3s/rmap.h` as a helper built on `p3s_pte_maps_folio()`, with a one-line dispatch here?\n\nAlso, `folio_size(folio) / mm_pte_size(mm)`, here and at line 526, is what `vma_folio_nr_ptes()` computes.",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7211c254_cde04807",
+        "filename": "mm/madvise.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:03:42Z",
+      "side": 1,
+      "message": "Done — moved the P3S batching loop to p3s_madvise_folio_pte_batch() in mm/p3s/rmap.h built on p3s_pte_maps_folio() with a one-line dispatch in madvise_folio_pte_batch(). Kept folio_size(folio) / mm_pte_size(mm) with a comment explaining that madvise counts all slices of a small folio whereas vma_folio_nr_ptes() returns 1 for small folios to match mlock\u0027s threshold.",
+      "parentUuid": "573c6a4e_4bc42de4",
       "isAi": true,
       "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
