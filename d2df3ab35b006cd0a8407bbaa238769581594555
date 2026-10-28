@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bc95390_08d986a3",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:03Z",
+      "side": 1,
+      "message": "Done — kept the original anonymous-branch comment in vma_slice_offset() and moved the private /dev/zero explanation into the file/offset comment below it.",
+      "parentUuid": "dd421d69_5c233a4d",
+      "isAi": true,
+      "revId": "d2df3ab35b006cd0a8407bbaa238769581594555",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "71cac30e_8be29298",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T07:31:08Z",
       "side": 1,
       "message": "This is a useful check: the split goes through `vma_set_split_offset()`, so it would catch /dev/zero taking the anonymous branch of `vma_slice_offset()`. As far as I can see, nothing else covers private /dev/zero offsets (`devzero_mthp_ppps.c` from aosp/4393905 only checks native mTHP).\n\nIt doesn\u0027t use `PR_SET_VMA_ANON_NAME`, though, so would you mind moving it into its own test, e.g. `devzero_slice_p3s.c`, rather than adding it to `anon_vma_name_ppps.c`?",
+      "isAi": true,
+      "revId": "d2df3ab35b006cd0a8407bbaa238769581594555",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d56d983_27375c1f",
+        "filename": "tools/testing/selftests/mm/anon_vma_name_ppps.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:03Z",
+      "side": 1,
+      "message": "Done — moved the private /dev/zero split/merge test into its own standalone selftest devzero_slice_p3s.c (aosp/4396646).",
+      "parentUuid": "71cac30e_8be29298",
       "isAi": true,
       "revId": "d2df3ab35b006cd0a8407bbaa238769581594555",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
