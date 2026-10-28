@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71eacd6c_ff5b431e",
+        "filename": "mm/mmap.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1797,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T21:13:30Z",
+      "side": 1,
+      "message": "Do we need this? If the driver is not enabled, we\u0027ll just compile the stub functions, no?",
+      "range": {
+        "startLine": 1797,
+        "startChar": 0,
+        "endLine": 1797,
+        "endChar": 35
+      },
+      "revId": "92484ff098938d99a964139d8df40e3fe3a12d74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
