@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e81c17fc_88e1e4f2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:49:19Z",
+      "side": 1,
+      "message": "Nit: this line is 73 columns so wraps strange on Gerrit.",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "369537fa_368f369a",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 2148,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:49:19Z",
+      "side": 1,
+      "message": "Small suggestion: would it be OK to keep the existing checks here and in `dma_buf_mmap_internal()`, and only replace `vma_pages()` with `vma_kernel_pages()`? Something like:\n\n```\n    /* check for offset overflow */\n    if (pgoff + vma_kernel_pages(vma) \u003c pgoff)\n        return -EOVERFLOW;\n\n    /* check for overflowing the buffer\u0027s size */\n    if (pgoff + vma_kernel_pages(vma) \u003e\n        dmabuf-\u003esize \u003e\u003e PAGE_SHIFT)\n        return -EINVAL;\n```\n\nAs far as I can see, `vma_kernel_pages()` is never larger than `vma_pages()`, so the sums can\u0027t wrap where they didn\u0027t before. The `dma-buf.c` change would come down to three lines, and importers would keep getting `-EOVERFLOW` for a wrapping `pgoff`.",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9a0a6d7_6cdf0417",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:49:19Z",
+      "side": 1,
+      "message": "The `vma_kernel_pages()` checks look good. It looks like `vma_aligned_size()` has no user in this patch anymore, though: the first one I can find in the chain is aosp/4367949.\n\nWould you mind moving it to the first patch that uses it, together with the two includes added for it here, as you did for `remap_pfn_range_slice()`? The `\u003clinux/overflow.h\u003e` include added to `dma-buf.c` doesn\u0027t seem to be needed anymore either.",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "542a676e_4ca979bf",
+        "filename": "tools/testing/selftests/mm/run_vmtests.sh",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:49:19Z",
+      "side": 1,
+      "message": "I think the mode change on `run_vmtests.sh` (100755 to 100644) is accidental: it\u0027s the only change to this file, and as far as I can see no later patch in the chain restores the executable bit. Would you mind dropping it?",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
