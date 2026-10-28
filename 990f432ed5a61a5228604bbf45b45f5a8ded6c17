@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1fc3413c_9afe2597",
+        "filename": "fs/erofs/data.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:43:59Z",
+      "side": 1,
+      "message": "Agreed that the in-folio offset needs `buf-\u003eoff`. This is the same one-line change as upstream `135d84c66f85` (`\"erofs: add missing buf-\u003eoff in erofs_bread()\"`), which fixes `c36ec00d7f67` (`\"erofs: add \u0027fsoffset\u0027 mount option to specify filesystem offset\"`). It looks like it has also been backported to 6.18.y as `6bf73fc588da`.\n\nIt isn\u0027t P3S-specific: any kernel hits it when `fsoffset` is block-aligned but not page-aligned (the upstream reproducer uses 512-byte blocks on a 4KB kernel), so a 16KB kernel without P3S fails the same way with `fsoffset\u003d4096`.\n\nWould it be OK to replace this patch with a cherry-pick of the upstream commit (`UPSTREAM: erofs: add missing buf-\u003eoff in erofs_bread()`, with its `(cherry picked from commit ...)` line), ideally on android17-6.18 and android17-6.18-p3s so that 16KB builds without P3S get it too?",
+      "isAi": true,
+      "revId": "990f432ed5a61a5228604bbf45b45f5a8ded6c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96585e60_64ee5a78",
+        "filename": "tools/testing/selftests/filesystems/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:43:59Z",
+      "side": 1,
+      "message": "If this becomes a cherry-pick of the upstream fix, would it be OK to drop this test from the P3S series? Nothing in it is P3S-specific despite the `-ppps` name, and it needs root and `mkfs.erofs` on the target.",
+      "isAi": true,
+      "revId": "990f432ed5a61a5228604bbf45b45f5a8ded6c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
