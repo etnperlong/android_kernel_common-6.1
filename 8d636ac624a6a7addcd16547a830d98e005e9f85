@@ -130,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "122075b1_c052ad78",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:15Z",
+      "side": 1,
+      "message": "Done — switched to mmap_read_lock_killable(), validated flags with is_valid_gup_args() so FOLL_UNLOCKABLE is set on unlocked requests, and routed 4KB range requests through __gup_longterm_locked() -\u003e __get_user_pages_locked() (advancing spans alongside pages across retries and only unlocking when lock_state remains set). Added iov_range_retry_p3s.c and futex_uffd_p3s.c (aosp/4395946) to cover UFFD retries.",
+      "parentUuid": "9a2da2bd_adc27ef1",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4d1eb3f6_c33005b8",
@@ -143,6 +162,25 @@
       "writtenOn": "2026-10-28T03:14:49Z",
       "side": 1,
       "message": "I think the spans after the first one keep the in-page offset of `start`: `__get_user_pages()` advances `start` by `PAGE_SIZE` without aligning it, `follow_page_pte()` adds `address \u0026 (mm_pte_size(mm) - 1)` for every page, and this loop only resets `offset` for native mms.\n\nFor example, `start \u003d base + 17` over two 4KB pages gives `spans[1] \u003d { slice * 4096 + 17, 17 }`, while `check_range()` in aosp/4367986 expects the start of the slice. With a middle page, `offset + length` runs into the next slice, or past the 16KB page for slice 3, where the `VM_WARN_ON_ONCE()` below fires.\n\niov_iter clamps to one page, so aosp/4367612 isn\u0027t affected, but multi-page callers of the exported API are. Would it work to record only the slice start in `follow_page_pte()` and add `in_page` in this loop for compat mms too?",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d856b574_45f3b96c",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:15Z",
+      "side": 1,
+      "message": "Done — updated p3s_capture_pte_offset() to record only the physical slice start (__pte_to_phys(pte) \u0026 (PAGE_SIZE_KERNEL - 1)), aligned the start address passed to __gup_longterm_locked() to page_size, and added in_page in the span-construction loop for both native and 4KB mms.",
+      "parentUuid": "4d1eb3f6_c33005b8",
       "isAi": true,
       "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
