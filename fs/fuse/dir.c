@@ -183,10 +183,8 @@ static bool backing_data_changed(struct fuse_inode *fi, struct dentry *entry,
 	int err;
 	bool ret = true;
 
-	if (!entry || !fi->backing_inode) {
-		ret = false;
-		goto put_backing_file;
-	}
+	if (!entry || !fi->backing_inode)
+		return false;
 
 	get_fuse_backing_path(entry, &new_backing_path);
 	new_backing_inode = fi->backing_inode;
@@ -209,9 +207,6 @@ put_bpf:
 put_inode:
 	iput(new_backing_inode);
 	path_put(&new_backing_path);
-put_backing_file:
-	if (bpf_arg->backing_file)
-		fput(bpf_arg->backing_file);
 	return ret;
 }
 #endif
@@ -231,6 +226,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
 	struct dentry *parent;
 	struct fuse_mount *fm;
 	struct fuse_inode *fi;
+	struct fuse_entry_bpf bpf_arg = {0};
 	int ret;
 
 	inode = d_inode_rcu(entry);
@@ -251,7 +247,6 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
 	if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
 		 (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET))) {
 		struct fuse_entry_out outarg;
-		struct fuse_entry_bpf bpf_arg;
 		FUSE_ARGS(args);
 		struct fuse_forget_link *forget;
 		u64 attr_version;
@@ -335,6 +330,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
 	}
 	ret = 1;
 out:
+	fuse_entry_bpf_put(&bpf_arg);
 	return ret;
 
 invalid:
@@ -645,8 +641,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
  out_put_forget:
 	kfree(forget);
  out:
-	if (bpf_arg.backing_file)
-		fput(bpf_arg.backing_file);
+	fuse_entry_bpf_put(&bpf_arg);
 	return err;
 }
 
