@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "585fb47b_f4d48403",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 13
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:57Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the stack (aosp/4368034 already keys inode futexes by vma_folio_offset()).",
+      "parentUuid": "18b7912d_e9f3fbf9",
+      "isAi": true,
+      "revId": "61d0ca67dfe5f1d9bf8d267fd5bc72d83603cc97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "19e640d1_35616c83",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T18:51:13Z",
       "side": 1,
       "message": "If the patch stays, would you mind moving this branch into `include/linux/p3s/futex.h`, in place of `p3s_futex_page_offset()`? After this patch nothing includes that header, here or at the top of the chain.\n\nA helper that calls `get_user_pages_fast()` for other mms, and `get_user_pages_range()` plus the key offset for 4KB mms, would leave `get_futex_key()` with upstream\u0027s single GUP block, including the read-only comment (which this patch drops) and the error handling, and change only the two calls, e.g. to `p3s_futex_get_page(mm, uaddr, size, FOLL_WRITE, \u0026page, key)`.",
+      "isAi": true,
+      "revId": "61d0ca67dfe5f1d9bf8d267fd5bc72d83603cc97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81220919_02d16a35",
+        "filename": "kernel/futex/core.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:57Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the stack, keeping get_futex_key() and include/linux/p3s/futex.h from aosp/4368034 unchanged.",
+      "parentUuid": "19e640d1_35616c83",
       "isAi": true,
       "revId": "61d0ca67dfe5f1d9bf8d267fd5bc72d83603cc97",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8d1495e_cb4d2ab8",
+        "filename": "kernel/futex/core.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:57Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the stack, fixed FOLL_UNLOCKABLE retry handling in gup_user_range() (aosp/4367611), and added futex_uffd_p3s.c (aosp/4395946) to cover shared futexes on userfaultfd-backed pages.",
+      "parentUuid": "f406f580_b211d376",
+      "isAi": true,
+      "revId": "61d0ca67dfe5f1d9bf8d267fd5bc72d83603cc97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e726782d_f34d0467",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-28T18:51:13Z",
       "side": 1,
       "message": "Agreed that the PTE that GUP pinned is the most direct source for the slice, but it looks like `span.offset` is the same value that aosp/4368034 already puts in inode keys. There, `p3s_futex_page_offset()` takes it from `vma_folio_offset()`, and every page cache or shmem folio that `get_futex_key()` keys by inode is mapped by a 4KB PTE at the slice that `vma_slice_offset()` gives its address (aosp/4366901, aosp/4368054, aosp/4368056).\n\nFor example, the alias case in `futex_shared_p3s.c` (aosp/4367986) maps file offset 0 at +4KB and at +8KB of a 16KB window. As far as I can see, both aliases get page 0, offset 0 of the inode with or without this patch, and so does a native process that maps the same byte. The only driver-selected slices at this point, from `vm_insert_page_slice()` (aosp/4367599) in `remap_vmalloc_range_partial()`, map vmalloc pages, which have no `-\u003emapping`, so `get_futex_key()` returns `-EFAULT` for them either way.\n\nIs there another case you hit? If so, could the futex test from aosp/4367986 move into this patch with that case? If not, would it be OK to drop this patch?",
+      "isAi": true,
+      "revId": "61d0ca67dfe5f1d9bf8d267fd5bc72d83603cc97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22db324a_9ae29ed4",
+        "filename": "kernel/futex/core.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:57Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the stack since aosp/4368034 already provides the slice offset via p3s_futex_page_offset().",
+      "parentUuid": "e726782d_f34d0467",
       "isAi": true,
       "revId": "61d0ca67dfe5f1d9bf8d267fd5bc72d83603cc97",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
