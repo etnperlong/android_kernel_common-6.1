@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ba3a45c_de507da3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:02:56Z",
+      "side": 1,
+      "message": "Could the subject say \"4KB processes\" rather than \"compat probes\", and could the body say what fails without this patch? Since aosp/4368078, probes aren\u0027t installed in 4KB processes at all, so the main change is installing them again (the `valid_vma()` hunk), which the message doesn\u0027t mention.\n\nIf `flush_dcache_page()` stays, could the body also say why it\u0027s needed?",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2651273_592c36da",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:02:56Z",
+      "side": 1,
+      "message": "Nit: I think this include isn\u0027t needed: `\u003clinux/mm_types.h\u003e` already includes `\u003clinux/p3s.h\u003e`, and this file used `vma_is_p3s_4k()` without it before this patch.",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2e82c2f_5dd124f8",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:02:56Z",
+      "side": 1,
+      "message": "This removes the refusal from aosp/4368078, so uprobes are installed in 4KB processes again. Could `uprobe_p3s.c` from aosp/4367986 move into this patch? It tests exactly this change (a probe one slice past native alignment, the reference counter, an unmatched trap and the XOL fallback) and only needs `P3S_COMPAT_MAIN()`, so the change and its test would land together.",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30feb501_2a26d5c2",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:02:56Z",
+      "side": 1,
+      "message": "Agreed that the breakpoint has to go into the slice that the PTE maps, but as I mentioned for the futex key on aosp/4367952, I think `vma_folio_offset(vma, insn_vaddr)` already gives that offset. As far as I can see, every PTE these paths reach in a 4KB VMA was built with `vma_pte_add_slice()`: page cache text and anonymous pages at fault time (aosp/4366901), their COW copies (aosp/4366901, aosp/4368036), and swapped or migrated pages (aosp/4312507). So it maps the slice that `vma_slice_offset()` gives its address.\n\nIf so, would it work to keep `get_user_pages_remote()` and `get_user_pages()` and only replace the in-page offsets with `vma_folio_offset()`, here and in `uprobe_write()`, `__update_ref_ctr()` and `is_trap_at_addr()`? Their callers already have the VMA (`rc_vma` in `update_ref_ctr()`, `vma` in `delayed_ref_ctr_inc()` and in `find_active_uprobe_rcu()`), and for native VMAs `vma_folio_offset()` is the offset in the kernel page, so no `mm_is_p3s_4k()` branches are needed.\n\nNative processes would then keep their GUP calls (with this patch, `__update_ref_ctr()` and `is_trap_at_addr()` go through `get_user_pages_range_locked()` for every mm, and `is_trap_at_addr()` moves from `get_user_pages()` to `get_user_pages_remote()`). `get_user_pages_range_locked()`, which aosp/4367611 now adds for this caller, wouldn\u0027t be needed either, and the patch wouldn\u0027t depend on the per-PTE offset capture in `follow_page_pte()` that I asked about on aosp/4367611.",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1f22af8_f8b4b42b",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:02:56Z",
+      "side": 1,
+      "message": "Is this `flush_dcache_page()` needed only for 4KB processes? It also runs for native processes and on every architecture, and upstream `__uprobe_write()` doesn\u0027t have it.\n\nIf native arm64 needs it too, could it be a separate fix, sent upstream? If only 4KB processes need it, could it be limited to them, with a comment saying why?",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
