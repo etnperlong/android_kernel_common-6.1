@@ -1,0 +1,148 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cde4fed8_47bcbca4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "Could the commit message say what fails without the patch? As far as I can see, in a 4KB process: `mmap()` of a (1 + 2^n) × 4KB ring fails with `-EINVAL`, `PERF_RECORD_MMAP` offsets miss the 4KB slice, and sampled page sizes are the kernel\u0027s (16KB for a 4KB page).\n\nIt would also help to say that the data PTEs don\u0027t follow `vma_slice_offset()`, and why that\u0027s fine. I think it is here: the VMA is `VM_PFNMAP | VM_IO` with no `-\u003eaccess`, so GUP, `__access_remote_vm()` and coredumps never read through these PTEs.\n\nAlso, could the subject say \"4KB processes\" rather than \"4K process\", as in the rest of the series?",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b2c5f77_059ceab6",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 6889,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "If the 4KB layout stays, would you mind moving this mapping out of `kernel/events/core.c`? It\u0027s about 45 lines of P3S-only code, plus the `#ifdef`ed fields and accessors in `internal.h`. A P3S header that kernel/events includes (e.g. `include/linux/p3s/perf.h`) could hold it, with a one-line dispatch left in `map_range()`.\n\nCould the new names also say P3S rather than PPPS, the old abbreviation (`perf_map_main_ppps()`, `perf_map_aux_ppps()`)?",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9fad7045_5fd0e1e8",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 6973,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "It looks like the AUX part isn\u0027t needed. `perf_mmap()` still rejects a non-zero `vm_slice_off` (aosp/4368055) and needs the AUX size in whole kernel pages, so an AUX VMA starts at slice 0 of a kernel page. The native loop below already maps that: since aosp/4368055, `remap_pfn_range()` of a kernel page maps all four of its slices in a 4KB VMA, so `perf_map_aux_ppps()` ends up with the same PTEs.\n\nFor the same reason, `vma_file_offset(vma)` is always `vm_pgoff \u003c\u003c PAGE_SHIFT` for these VMAs, so `aux_offset`, `perf_aux_offset()` and `perf_mmap_is_aux()` give the same answers as the `vm_pgoff` checks they replace.\n\nWould it be OK to drop them, and only send the main ring to the 4KB path here, e.g. `if (mm_is_p3s_4k(vma-\u003evm_mm) \u0026\u0026 !vma-\u003evm_pgoff)`?\n\nNote that `tools/perf` puts the AUX area right after the ring, at (1 + 2^n) × 4KB in a 4KB process, so it would still fail the slice check. If AUX matters in 4KB processes, I think that needs its own change.",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44892b5c_356daa56",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7087,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "I think this changes the accounting for x86_64 page size emulation. There the metadata area is `__PAGE_SIZE / PAGE_SIZE` kernel pages (4 for 16KB), and `user_extra` has counted all of them since ACK\u0027s \"ANDROID: 16K: Fixup perf_mmap check for metadata page\" (9bb7e0640feb); with this change it counts one.\n\nThat matches the data + 1 pages that `perf_mmap_close()` subtracts, so it may well be the right number, but it\u0027s an x86_64 change rather than a P3S one. Would you mind keeping `nr_pages + __PAGE_SIZE / PAGE_SIZE` here, which is `nr_pages + 1` on arm64, and fixing the imbalance in a separate patch if needed?",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a67a0ba6_ca4803c3",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7103,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "I\u0027m worried this breaks repeat mappings of a ring buffer, and every AUX mapping, under x86_64 page size emulation. Without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, `perf_mmap_page_size()` returns `__PAGE_SIZE`, the emulated 16KB, while `mm_pte_size()` is the 4KB kernel page. So this check, and the one at the top of `perf_mmap_aux()`, return `-EINVAL` there.\n\nCould the stored and the compared values come from one helper, which `metadata_size` in `perf_mmap()` and `perf_set_mmap_page_size()` would use too? Something like:\n\n```\nstatic unsigned long perf_mm_page_size(struct mm_struct *mm)\n{\n        return mm_is_p3s_4k(mm) ? mm_pte_size(mm) : __PAGE_SIZE;\n}\n```",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c219af8_10ab6eed",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7273,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "Would it be OK to refuse `mmap()` of perf events in 4KB processes with `p3s_4k_unsupported()` instead, as I asked for BPF maps on aosp/4367949 and aosp/4367950?\n\nSince aosp/4368055, a 4KB process can already map a ring buffer laid out in 16KB pages: `perf_mmap()` rejects a non-zero `vm_slice_off`, `map_range()` maps whole kernel pages, and the user page reports a `data_offset` of 16KB. Sizes that aren\u0027t a multiple of 16KB, such as (1 + 2^n) × 4KB, fail with `-EINVAL`.\n\nI may be missing a use case: simpleperf and Perfetto\u0027s traced_perf are native binaries, and simpleperf normally starts from the shell, also for `--app`. The case I can think of is a 4KB app that starts simpleperf itself (e.g. through simpleperf\u0027s `app_api`), since `ADDR_PAGE_SIZE_4KB` survives exec. Is that something P3S needs to support?\n\nThe 4KB layout costs explicit-slice PTEs from a new mapper, sub-page rings in the output path of every ring buffer, and about 200 added lines in `kernel/events/`. A refusal would be a few lines next to the `vma_slice_off()` check, `perf_event_open()` and `read()` would keep working, and `remap_pfn_range_slice()` could move to aosp/4368009, its other user.",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67bea9d1_42ddb17f",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 9732,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "These offsets look right to me, and I think they\u0027re needed whichever way the ring buffer goes. When a native simpleperf profiles a 4KB app today, `PERF_RECORD_MMAP2` reports `vm_pgoff \u003c\u003c PAGE_SHIFT` without the 4KB slice, so symbols in a library segment mapped at a 4KB offset come out wrong. The same goes for the address filters in `perf_addr_filter_vma_adjust()`, and `perf_get_pgtable_size()` walks a 4KB mm with the kernel\u0027s PMD index and page sizes.\n\nWould you mind moving these three into a separate patch, together with `perf_page_size_p3s.c` and the `PERF_RECORD_MMAP` check of `perf_mmap_offset_p3s.c` from aosp/4367986? They don\u0027t depend on the ring layout, so they could land whatever we decide for `perf_mmap()`.",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a804c05f_7e33f08f",
+        "filename": "kernel/events/ring_buffer.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:54:56Z",
+      "side": 1,
+      "message": "I\u0027m a bit worried about changing the output fast path of every ring buffer, native ones included, only for the 4KB and 8KB data areas.\n\nIf the 4KB layout stays, would it be OK to require at least 16KB of data in a 4KB process, i.e. to reject `0 \u003c data_size \u003c PAGE_SIZE` in `perf_mmap()`? `perf_data_size()` would then stay `nr_pages \u003c\u003c PAGE_SHIFT`, so `rb-\u003edata_size`, `perf_set_data_size()`, the `rb_alloc()` change, this hunk and the one in the output copy could all go. Only the 4KB user page, and so `data_offset`, would differ.",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
