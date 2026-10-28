@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b368556_42bdf8a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:52:50Z",
+      "side": 1,
+      "message": "Would it be possible to just refuse `mmap()` of BPF maps in 4KB P3S processes instead? A `p3s_4k_unsupported()` check in `bpf_map_mmap()`, as aosp/4368077 does for the tracing ring buffer, would cover every map type in one place.\n\nUnless 4KB processes need to map BPF maps, that would avoid the slice handling here and in aosp/4367950, including the ring buffer slices that don\u0027t follow `vma_slice_offset()`.",
+      "isAi": true,
+      "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f4bf902_9481b0fb",
+        "filename": "kernel/bpf/arraymap.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:52:50Z",
+      "side": 1,
+      "message": "I\u0027m worried this changes the bound for x86_64 page size emulation. ACK\u0027s `\"ANDROID: 16K: bpf: Fix array map mmap for emulated page sizes\"` (`f057a6ef8cf6`) uses `__PAGE_ALIGN()` here because an emulated 16KB process maps the value area in 16KB units, e.g. libbpf\u0027s `.bss` and `.data` maps. `vma_aligned_size()` rounds to `mm_pte_size()`, which is the 4KB kernel page on x86_64, so those `mmap()` calls would fail with `-EINVAL` again.\n\nIf the 4KB bound is worth keeping (the test in aosp/4367986 expects it), could it apply only to 4KB VMAs? Something like:\n\n```\n        u64 data_size \u003d (u64)array-\u003emap.max_entries * array-\u003eelem_size;\n\n        data_size \u003d vma_is_p3s_4k(vma) ? PAGE_ALIGN_4KB(data_size) :\n                                         __PAGE_ALIGN(data_size);\n```\n\n`offset` could then be just `vma_file_offset(vma)`, which is `vm_pgoff * PAGE_SIZE` for native VMAs.",
+      "isAi": true,
+      "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f80d12bb_9509a4fd",
+        "filename": "kernel/bpf/arraymap.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:52:50Z",
+      "side": 1,
+      "message": "It looks like `remap_vmalloc_range()` below already maps these slices for a 4KB VMA. Since aosp/4312495, `remap_vmalloc_range_partial()` accepts a 4KB-aligned `vm_start` and starts at the slice that `vma_slice_offset()` gives it, and since aosp/4368056 each `vm_insert_page()` maps every slice of the page that lies in the VMA.\n\nAs I mentioned on aosp/4367599, the value area is page aligned, so `offset_in_page(kaddr) \u003e\u003e PAGE_SHIFT_4KB` is always that same slice, and `array_map_mmap_slices()` ends up with the same PTEs.\n\nWould it be OK to drop `array_map_mmap_slices()` and keep the `remap_vmalloc_range()` call for both cases? aosp/4368031 later rewrites that loop; I think it would need to keep starting at the slice of `vm_start`, otherwise an `mmap()` at offset 4KB would map value slice 0.",
+      "isAi": true,
+      "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
