@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f98362be_eb730615",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:41:15Z",
+      "side": 1,
+      "message": "If the drain stays, could the message say what fails without it, e.g. that `LazyFree` in smaps still reads 0 right after MADV_FREE, which madvise_free_p3s.c in aosp/4367986 checks? I couldn\u0027t map \"per-slice observations\" to a failure. The subject could also say \"4KB processes\" rather than \"compat processes\".",
+      "isAi": true,
+      "revId": "33f0efe562c333ea65147e3671f8c2803c6ead6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e927773_ea165a7f",
+        "filename": "mm/madvise.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:41:15Z",
+      "side": 1,
+      "message": "If the drain stays (see aosp/4367972), could this be folded into aosp/4367972? This patch rewrites the hunk aosp/4367972 adds, and aosp/4367972 on its own also drains in native processes.\n\nAlso, could the comment get a blank line before it, and say \"4KB\" rather than \"compat\"?",
+      "isAi": true,
+      "revId": "33f0efe562c333ea65147e3671f8c2803c6ead6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
