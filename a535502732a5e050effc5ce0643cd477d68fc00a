@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c161be21_b383dd4c",
+        "filename": "mm/process_vm_access.c",
+        "patchSetId": 30
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1889140
+      },
+      "writtenOn": "2026-10-28T23:31:09Z",
+      "side": 1,
+      "message": "why only 16 entries?",
+      "range": {
+        "startLine": 66,
+        "startChar": 8,
+        "endLine": 66,
+        "endChar": 30
+      },
+      "revId": "a535502732a5e050effc5ce0643cd477d68fc00a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
