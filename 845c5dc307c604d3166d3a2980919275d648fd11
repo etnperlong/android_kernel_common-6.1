@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d5c070f_998ac60e",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:57:34Z",
+      "side": 1,
+      "message": "If 4KB processes keep BPF ring buffers, I think the 4KB and 8KB rings that `ringbuf_map_alloc()` now allows deserve a comment here. With a single data page, its second mapping in the `vmap()` starts 16KB after `rb-\u003edata`, so `rb-\u003edata + size` isn\u0027t an alias of `rb-\u003edata` as the comment above describes.\n\nAs far as I can see it still works: a record that wraps is written and read linearly from its header (`__bpf_ringbuf_reserve()` returns `hdr + 8` unmasked, and libbpf reads `len_ptr + 8`), `2 * size` fits in the page, and `ringbuf_map_mmap_slices()` maps it linearly too.\n\nCould you add a short note next to the `DIV_ROUND_UP()`, and mention the 4KB and 8KB rings in the commit message?",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbd7f7b2_ac378b65",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:57:34Z",
+      "side": 1,
+      "message": "Nit: `mm_pte_size()` already returns the kernel page size for a NULL mm, since `mm_pte_shift()` checks for it, so this could be just `mm_pte_size(current-\u003emm)`.",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26842abf_7905e8ea",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:57:34Z",
+      "side": 1,
+      "message": "If these mappings stay, could the per-4KB insert be shared rather than open-coded here? The same `vmalloc_to_page()` plus `vm_insert_page_slice(..., offset_in_page(kaddr) \u003e\u003e PAGE_SHIFT_4KB)` loop is in `array_map_mmap_slices()` (aosp/4367949), and aosp/4368031 adds another copy to `remap_vmalloc_range_partial()`.\n\nOnly picking `kaddr` for the consumer, producer and data offsets is specific to the ring buffer. A helper in mm/ that maps vmalloc memory at `kaddr` into a 4KB VMA at `addr` would keep the slice handling out of `kernel/bpf/`.",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bf0b7af_8e150f3e",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:57:34Z",
+      "side": 1,
+      "message": "I think this is the case I asked about on aosp/4367599: with libbpf\u0027s 4KB layout, the producer page at file offset 4KB and the data at 8KB both map slice 0, while `vma_slice_offset()` gives their addresses slices 1 and 2. So unlike the array map, the slices really can\u0027t follow the address here.\n\nI\u0027m worried about the code that still works the slice out from the address, though. As far as I can see, `__access_remote_vm()` (aosp/4368035) and `process_vm_readv()` (aosp/4312492) still do that at the top of the chain, so a debugger reading `producer_pos` through `ptrace()` or `/proc/pid/mem` would get offset 4KB of the producer page instead.\n\nWould failing the `mmap()` with `p3s_4k_unsupported()`, as aosp/4368077 does for the tracing ring buffer, be an option? That would leave 4KB processes without BPF ring buffers, since user space can\u0027t consume them without `mmap()` since only system processes can access these in Android.",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9baf9f1_29f7f103",
+        "filename": "kernel/bpf/ringbuf.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:57:34Z",
+      "side": 1,
+      "message": "I\u0027m worried this reverts ACK\u0027s `\"ANDROID: 16K: bpf: Preserve 4KB page ABI for ring buffer\"` (`ac40f53b8686`) for x86_64 page size emulation: there the consumer page is mapped with the emulated 16KB `__PAGE_SIZE`, but `mm_pte_size()` is the 4KB kernel page on x86_64, so libbpf\u0027s writable consumer `mmap()` would get `-EPERM` again.\n\nAgreed that a 4KB VMA needs a 4KB size here. Would keeping `__PAGE_SIZE` for the other VMAs work for you? Something like:\n\n```\n        if (vma_file_offset(vma) ||\n            vma-\u003evm_end - vma-\u003evm_start !\u003d\n            (vma_is_p3s_4k(vma) ? PAGE_SIZE_4KB : __PAGE_SIZE))\n```",
+      "isAi": true,
+      "revId": "845c5dc307c604d3166d3a2980919275d648fd11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
