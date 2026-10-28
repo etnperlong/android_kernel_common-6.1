@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b660315_5f1ff8c6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:52:55Z",
+      "side": 1,
+      "message": "Nit: could the subject say \"4KB\" rather than \"compat\"? For example \"ANDROID: P3S: mm: Add vm_insert_page_slice() for 4KB VMAs\".",
+      "isAi": true,
+      "revId": "62fccc3b52ea7f4897861d108aad654615286199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "63d15bb5_fdff0671",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:52:55Z",
+      "side": 1,
+      "message": "I\u0027m worried the selftest modules still need a module export: `page_range_mmap()` in `iov_iter_p3s_module.c` calls `vm_insert_page_slice()` unconditionally, and `vm_insert_pages_edge_case()` in `vm_map_pages_p3s_module.c` calls it whenever `CONFIG_TRIM_UNUSED_KSYMS` is off (aosp/4367986, aosp/4368012).\n\nAs far as I can see, without an `EXPORT_SYMBOL()` neither module can resolve it.\n\nWould you prefer to keep the export (the symbol lists get updated once at the end of the series), or to change those modules?",
+      "isAi": true,
+      "revId": "62fccc3b52ea7f4897861d108aad654615286199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
