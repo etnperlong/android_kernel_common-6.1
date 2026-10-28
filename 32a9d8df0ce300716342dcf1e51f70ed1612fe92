@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d41847b_00754882",
+        "filename": "drivers/media/common/videobuf2/videobuf2-memops.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:50Z",
+      "side": 1,
+      "message": "Done — replaced the videobuf2-memops frame-vector changes with direct USERPTR rejection (-EOPNOTSUPP) for 4KB processes in videobuf2-core.c, and dropped the later revert hunks.",
+      "parentUuid": "bd8504ab_529d12db",
+      "isAi": true,
+      "revId": "32a9d8df0ce300716342dcf1e51f70ed1612fe92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "206b8817_895aaaba",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T03:32:41Z",
       "side": 1,
       "message": "I\u0027m worried this builds the wrong table for a 4KB process once the buffer crosses a 16KB page. `vb2_create_framevec()` now returns one entry per 4KB page (native pages repeat, each with its own slice in the span), but `sg_alloc_table_from_pages()` only uses the first offset and treats every later entry as a whole 16KB page from offset 0.\n\nWith pages `[A, A, A, A, B, ...]`, for example, the second entry maps all of `A` again instead of `B`. Since `n_pages` counts 4KB pages, `size` also underflows partway and the remaining entries get full 16KB lengths, so DMA can land in slices outside the buffer.\n\n`vm_map_ram()` in `vb2_dma_sg_vaddr()`, and in `vb2_vmalloc_get_userptr()` which this patch doesn\u0027t touch, maps the repeated pages the same way. The `vb2_userptr_ppps` test in aosp/4367986 only uses two slices of one native page, so it wouldn\u0027t catch this. Native processes look unchanged.\n\nWith 16KB kernel pages I don\u0027t think `vm_map_ram()` can map scattered 4KB slices contiguously at all, so rejecting USERPTR for 4KB processes, as aosp/4368000 does, looks like the safer fix to me.",
+      "isAi": true,
+      "revId": "32a9d8df0ce300716342dcf1e51f70ed1612fe92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93777488_5de3b4bd",
+        "filename": "drivers/media/common/videobuf2/videobuf2-memops.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:50Z",
+      "side": 1,
+      "message": "Done — rejected videobuf2 USERPTR queue creation and active operations from 4KB processes with -EOPNOTSUPP in videobuf2-core.c instead of building multi-slice scatterlists or vm_map_ram() mappings.",
+      "parentUuid": "206b8817_895aaaba",
       "isAi": true,
       "revId": "32a9d8df0ce300716342dcf1e51f70ed1612fe92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
