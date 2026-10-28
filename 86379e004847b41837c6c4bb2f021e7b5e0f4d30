@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "789981a8_517afe2c",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:13:07Z",
+      "side": 1,
+      "message": "It looks like this patch doesn\u0027t change behaviour on its own. aosp/4368058 already bounds `dma_direct_mmap()`, `__dma_mmap_from_coherent()`, `iommu_dma_mmap()` and `dma_mmap_pages()` with `vma_kernel_pages()` and remaps `vma_size(vma)` in place. And since aosp/4368055, `remap_pfn_range()` in a 4KB VMA maps 4KB frames starting at the slice that `vma_slice_offset()` gives the address. So `dma_mmap_pfn()` mostly moves those lines around, which grows the P3S diff against upstream in five core files.\n\nAs far as I can see, the only later patch that changes `dma_mmap_pfn()` is aosp/4368011 (in p3s_6.18_b19), which adds the `vma_is_p3s_4k()` branch. The `-ENXIO` and oversized remap problems that its commit message describes also look like the ones aosp/4368058 fixed.\n\nWould it be OK to drop this patch? If aosp/4368011 is still needed, could you fold this refactor into it, so that `dma_mmap_pfn()` comes with its first user?",
+      "isAi": true,
+      "revId": "86379e004847b41837c6c4bb2f021e7b5e0f4d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03fb1070_56c682d2",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:13:07Z",
+      "side": 1,
+      "message": "Nit: if the helper stays, checkpatch asks for a blank line after the closing brace of `dma_mmap_pfn()` here.",
+      "revId": "86379e004847b41837c6c4bb2f021e7b5e0f4d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
