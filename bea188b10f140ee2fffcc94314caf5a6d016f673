@@ -91,6 +91,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a8251df_cf4a83be",
+        "filename": "mm/page_io.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:03:06Z",
+      "side": 1,
+      "message": "Done — dropped the no-op PAGE_* conversions and \u003clinux/p3s/const.h\u003e include from mm/page_io.c and mm/swapfile.c.",
+      "parentUuid": "b813b39e_6764b095",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "70fc2177_de82d9d9",
