@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "79e4f70b_5e054a9d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:19Z",
+      "side": 1,
+      "message": "Done — updated the commit message and restored kvm_no_compat_open() as the single KVM entry gate for 4KB processes.",
+      "parentUuid": "9cd7dac6_1462a318",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7dff56e4_6e5d91e2",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T06:59:33Z",
       "side": 1,
       "message": "As far as I can see this doesn\u0027t depend on the caller\u0027s page size: `kvm_gmem_fallocate()` checks `offset` and `len` in kernel pages and allocates or punches the guest_memfd page cache without touching the caller\u0027s mm. Mapping guest_memfd, which does, is already refused in `kvm_gmem_mmap()` by aosp/4368079.\n\nThe same seems true for the other checks of this kind: `kvm_vm_stats_read()` and `kvm_vcpu_stats_read()` only `copy_to_user()` counters, `pviommufd_ioctl()` only passes a stream ID to the hypervisor, and no arm64 KVM device implements `.mmap`, so `kvm_device_mmap()` already returns `-ENODEV`.\n\nWould it be OK to drop these hunks too?",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a0371fe_923db7e4",
+        "filename": "virt/kvm/guest_memfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:19Z",
+      "side": 1,
+      "message": "Done — dropped the kvm_gmem_mmap() check in virt/kvm/guest_memfd.c.",
+      "parentUuid": "7dff56e4_6e5d91e2",
       "isAi": true,
       "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4e04f4b_2c28edcc",
+        "filename": "virt/kvm/kvm_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:19Z",
+      "side": 1,
+      "message": "Done — restored kvm_no_compat_open() in virt/kvm/kvm_main.c.",
+      "parentUuid": "8ece5674_2f985575",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d99e9d8_491be9de",
@@ -73,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "73d7e9e5_c8bb4772",
+        "filename": "virt/kvm/kvm_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 4455,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:19Z",
+      "side": 1,
+      "message": "Done — dropped the check in kvm_vcpu_mmap().",
+      "parentUuid": "2d99e9d8_491be9de",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a950083_1fc372b1",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-10-28T06:59:33Z",
       "side": 1,
       "message": "I\u0027m worried this hides the refusal from aosp/4368079: a 4KB process calling `KVM_CREATE_VM` now gets `-EOPNOTSUPP` here, before `kvm_dev_ioctl_create_vm()` can return `-EPERM` and log it with `p3s_4k_unsupported()`.\n\nThe other `/dev/kvm` ioctls, such as `KVM_GET_API_VERSION` and `KVM_CHECK_EXTENSION`, don\u0027t depend on the caller\u0027s page size, and neither does opening `/dev/kvm`.\n\nWould it be OK to drop this hunk and `kvm_dev_open()`?",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6da71ff_b584e7eb",
+        "filename": "virt/kvm/kvm_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 5586,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:19Z",
+      "side": 1,
+      "message": "Done — dropped the checks in kvm_dev_ioctl(), kvm_vm_ioctl(), kvm_vcpu_ioctl(), and pviommufd_ioctl().",
+      "parentUuid": "5a950083_1fc372b1",
       "isAi": true,
       "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
