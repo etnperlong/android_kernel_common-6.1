@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3df354df_0f6fd747",
+        "filename": "mm/madvise.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:40:23Z",
+      "side": 1,
+      "message": "As far as I can see, the only observer that needs this is the `LazyFree` read in madvise_free_p3s.c (aosp/4367986): folio_mark_lazyfree() leaves small folios in the per-CPU `lru_lazyfree` batch (see folio_may_be_lru_cached()), and smaps counts a folio as `LazyFree` only once lru_lazyfree() has cleared `PG_swapbacked`.\n\nSmall folios in native processes behave the same, and upstream doesn\u0027t drain here. The P3S sibling fault path doesn\u0027t need it either, since p3s_anon_folio_unreferenced() drains for itself.\n\nWould it be OK to drop the drain and let the test flush the batch instead? For example, it could pin itself to one CPU and call `madvise(MADV_COLD)` on a scratch page before reading smaps, since madvise_cold() starts with lru_add_drain().",
+      "isAi": true,
+      "revId": "a58211d7ec046e60918a878a92e0bf898076634b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
