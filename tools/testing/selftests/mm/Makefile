@@ -47,6 +47,7 @@ CFLAGS += -U_FORTIFY_SOURCE
 # P3S (per-process page size) tests.  Those needing a kernel-side fixture get
 # it from the modules in p3s_modules/, loaded by ../p3s/p3s_run_module.sh.
 P3S_TESTS := \
+	zero_sibling_mlock_p3s partial_anon_reclaim_p3s \
 	devzero_slice_p3s \
 	access_phys_p3s \
 	aio_ring_p3s alsa_pcm_mmap_p3s anon_pageout_p3s anon_vma_name_p3s ashmem_p3s \
