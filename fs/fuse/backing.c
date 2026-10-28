@@ -1266,6 +1266,7 @@ int fuse_handle_bpf_prog(struct fuse_entry_bpf *feb, struct inode *parent,
 		if (IS_ERR(bpf_file))
 			return PTR_ERR(bpf_file);
 
+		feb->bpf_file = NULL;
 		new_bpf = fuse_get_bpf_prog(bpf_file);
 		if (IS_ERR(new_bpf))
 			return PTR_ERR(new_bpf);
@@ -1345,8 +1346,7 @@ struct dentry *fuse_lookup_finalize(struct fuse_bpf_args *fa, struct inode *dir,
 	}
 out:
 	iput(inode);
-	if (feb->backing_file)
-		fput(feb->backing_file);
+	fuse_entry_bpf_put(feb);
 	return ret;
 }
 
