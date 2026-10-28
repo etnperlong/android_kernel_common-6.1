@@ -93,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ebaa15ea_ece4826d",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 3914,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:12Z",
+      "side": 1,
+      "message": "Done — moved the zero-page sibling reuse into p3s_wp_reuse_zero_folio() called from p3s_wp_install_folio_slices() in mm/p3s/anon.h, leaving wp_page_copy() in mm/memory.c unchanged.",
+      "parentUuid": "25a9601a_b62f6d48",
+      "isAi": true,
+      "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a710b6cf_5e6a807e",
@@ -106,6 +125,25 @@
       "writtenOn": "2026-10-28T00:55:32Z",
       "side": 1,
       "message": "I think this bypasses the rmap by bumping `_mapcount` directly.\n\nIn a `VM_LOCKED` VMA the folio would then miss this slice\u0027s `mlock_folio()`, so it could be munlocked while the VMA still maps a slice of it, for example after `mlock()` of a range whose zero-page PTEs were read first (mlock populates with write faults). Batch 10 removed this kind of raw increment from `p3s_anon_folio_reuse()` for the same reason.\n\nCould this use `folio_add_anon_rmap_pte(new_folio, \u0026new_folio-\u003epage, vma, vmf-\u003eaddress, RMAP_NONE)` instead?",
+      "isAi": true,
+      "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "706f0872_7c15a784",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 3944,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:12Z",
+      "side": 1,
+      "message": "Done — replaced the raw _mapcount increment with folio_add_anon_rmap_pte(existing_folio, \u0026existing_folio-\u003epage, vma, vmf-\u003eaddress, RMAP_NONE) in p3s_wp_reuse_zero_folio(), and added zero_sibling_mlock_p3s.c (aosp/4398486) to cover mlocking the reused sibling.",
+      "parentUuid": "a710b6cf_5e6a807e",
       "isAi": true,
       "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
