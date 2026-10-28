@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8273b8c_6f11a17e",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:23:56Z",
+      "side": 1,
+      "message": "Done — updated aosp/4393889 to add vma_slice_swap_ptes() in include/linux/p3s/proc.h, counting the local window\u0027s PTEs that reference the swap entry under the PTE lock and dividing swp_swapcount(swpent) by that count instead of a fixed 4, and added test_partial_fork() in swap_pss_p3s.c (aosp/4367986).",
+      "parentUuid": "1cb11091_802c9e37",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "573c6a4e_4bc42de4",
