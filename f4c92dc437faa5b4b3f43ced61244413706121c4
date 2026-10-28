@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8de3cd5_db7c782c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:24:47Z",
+      "side": 1,
+      "message": "If only the secretmem part stays, would you mind updating the subject and body to match? Maybe something like \"ANDROID: P3S: mm: secretmem: Raise SIGBUS for 4KB pages past EOF\".\n\nCould the body also say what fails without it, in terms of 4KB processes rather than \"4K\" and \"P3S shmem slice\"? For example: a 4KB process that truncates a `memfd_secret()` file to 4KB and maps 16KB reads zeroes at offsets 4KB to 16KB instead of getting `SIGBUS`, because `secretmem_fault()` only checks the 16KB page index. It could also mention that this matches what aosp/4312526 does for `filemap_fault()` and `shmem_fault()`.",
+      "isAi": true,
+      "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "642fbc3d_cc0d28a7",
+        "filename": "mm/secretmem.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:24:47Z",
+      "side": 1,
+      "message": "Agreed that `secretmem_fault()` needs the slice check: a `memfd_secret()` file can be truncated to any byte size, and the old check only looks at the 16KB page index, so a 4KB process can map the 4KB pages past EOF in the last 16KB page instead of getting `SIGBUS`. That is the case aosp/4312526 fixed for `filemap_fault()` and `shmem_fault()`.\n\nWould you mind reusing `vma_slice_past_eof()` here, as those two do? It keeps the native check as it is:\n\n```\n\tif (((loff_t)vmf-\u003epgoff \u003c\u003c PAGE_SHIFT) \u003e\u003d i_size_read(inode) ||\n\t    vma_slice_past_eof(vmf-\u003evma, vmf-\u003eaddress, inode))\n\t\treturn vmf_error(-EINVAL);\n```\n\n`mm/internal.h` already includes `p3s/filemap.h`, and `\u003clinux/mm.h\u003e` brings in `\u003clinux/p3s/vma.h\u003e`, so the new include could go too.",
+      "isAi": true,
+      "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f40dc087_7029e30c",
+        "filename": "mm/shmem.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2807,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:24:47Z",
+      "side": 1,
+      "message": "It looks like this repeats the check just above it: `vma_slice_past_eof()` (`mm/p3s/filemap.h`, from aosp/4312526) is exactly `vma_is_p3s_4k(vma) \u0026\u0026 vma_file_offset_at(vma, addr) \u003e\u003d i_size_read(inode)`, and `shmem_fault()` already returns `VM_FAULT_SIGBUS` when it\u0027s true.\n\nAs far as I can see, no other shmem path maps a slice past EOF in a 4KB VMA either: `should_fault_around()` returns false for 4KB VMAs, so `filemap_map_pages()` isn\u0027t used there, and `vma_can_userfault()` refuses shmem userfaultfd in 4KB processes (aosp/4312484).\n\nWould it be OK to drop the `mm/shmem.c` hunk?",
+      "isAi": true,
+      "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
