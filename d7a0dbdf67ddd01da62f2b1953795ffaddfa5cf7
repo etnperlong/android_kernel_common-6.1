@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "75ba74a3_b7338093",
+        "filename": "lib/iov_iter.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:24Z",
+      "side": 1,
+      "message": "Done — documented BPF ring producer and data pages as the concrete case where physical slice 0 is mapped at virtual addresses whose VMA-derived slice phase is nonzero, and also updated __access_remote_vm() / __copy_remote_vm_str() via p3s_get_remote_page() (mm/p3s/remote_access.h) to use captured page_span offsets.",
+      "parentUuid": "147fbf65_2a8cb643",
+      "isAi": true,
+      "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1a60cd06_666b732c",
@@ -69,6 +88,25 @@
       "writtenOn": "2026-10-28T03:30:02Z",
       "side": 1,
       "message": "If the PTE slice is needed, I\u0027m worried about limiting each extraction to one 4KB page. `p3s_get_user_slice_pages()` returns whole runs of consecutive slices, so a 1MB O_DIRECT read from an anonymous buffer can be a single extraction today, but takes 256 here, each with `mmap_read_lock()` and a page table walk.\n\nWould it work to keep `p3s_iov_iter_extract_pages()` and only change the slice source in `p3s_slice_run_merge()`, e.g. `spans[i].offset \u003e\u003e PAGE_SHIFT_4KB` from the range GUP instead of `vma_slice_offset()`? That keeps the runs, avoids a new function in `lib/iov_iter.c` and an unused `p3s_iov_iter_extract_pages()`, and also covers `process_vm_readv()`/`process_vm_writev()` (aosp/4312492), which use the same helper and which the aosp/4367986 fixture checks too.\n\nThis path also hits the userfaultfd `-EFAULT` from the missing `FOLL_UNLOCKABLE` that I mentioned on aosp/4367611.",
+      "isAi": true,
+      "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5986b7ad_07dd3883",
+        "filename": "lib/iov_iter.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1065,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T20:27:24Z",
+      "side": 1,
+      "message": "Done — restored p3s_iov_iter_extract_pages() in lib/iov_iter.c and updated p3s_get_user_slice_pages() / p3s_slice_run_merge() in include/linux/p3s/iov_iter.h to merge consecutive runs from spans[i].offset \u003e\u003e PAGE_SHIFT_4KB captured by pin_user_pages_range() / get_user_pages_range(), preserving multi-page batched extraction and UFFD retry handling (covered by iov_range_retry_p3s.c in aosp/4395946).",
+      "parentUuid": "1a60cd06_666b732c",
       "isAi": true,
       "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
