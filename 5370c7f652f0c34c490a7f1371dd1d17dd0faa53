@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1fe8ec7e_7e7e0352",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:39:16Z",
+      "side": 1,
+      "message": "Could the message say what fails without this patch? As far as I can see, a partial range doesn\u0027t lose data at the parent: folio_mapcount() counts slice PTEs, so the dirty/swap-cache check (`folio_mapcount() !\u003d folio_nr_pages()`, 4 !\u003d 1) already skips a folio mapped by several slices, and for a clean folio try_to_unmap_one() puts the PTE back and sets `PG_swapbacked` again as soon as it meets an uncovered dirty slice.\n\nI think what changes is that a fully covered dirty or swap-cache folio can now be freed (the parent always skipped it), and a partly covered clean folio is no longer marked lazyfree and counted in `LazyFree`, which madvise_free_p3s.c in aosp/4367986 checks.",
+      "isAi": true,
+      "revId": "5370c7f652f0c34c490a7f1371dd1d17dd0faa53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "80351e8d_fbbefd63",
+        "filename": "mm/madvise.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 775,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:39:16Z",
+      "side": 1,
+      "message": "I\u0027m worried this stops MADV_FREE from freeing most small folios in 4KB processes, much like the MADV_COLD/MADV_PAGEOUT case on aosp/4367604. do_anonymous_page() maps only the faulting slice and p3s_anon_reuse_sibling_slice() adds the others as they fault, so a folio is mapped by just the slices the process touched, and a window clipped by the VMA never has four. For example, after writing the first two 4KB pages of a 16KB block, `madvise(block, 16K, MADV_FREE)` gets `nr \u003d\u003d 2` here and skips the folio, while the parent still marked it lazyfree when it was clean.\n\nAgreed that MADV_FREE needs more than COLD/PAGEOUT, but as far as I can see it\u0027s enough that every mapping of the folio is one of the `nr` PTEs being cleared: unmapped slices hold no data, since p3s_anon_folio_zero_slice() clears a slice before it is mapped again. That\u0027s also the rule p3s_folio_slices_in_window() uses for reclaim. Would something like this work for you?\n\n```\nif (!folio_test_large(folio)) {\n\tif (nr !\u003d folio_mapcount(folio))\n\t\tcontinue;\n} else if (nr \u003c folio_nr_ptes) {\n```\n\nThe dirty/swap-cache check below would then compare `folio_mapcount(folio)` with `nr`, which equals `folio_nr_pages()` there for native folios.",
+      "isAi": true,
+      "revId": "5370c7f652f0c34c490a7f1371dd1d17dd0faa53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
