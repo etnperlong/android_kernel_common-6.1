@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7bd7c49_7cbcf748",
+        "filename": "io_uring/io_uring.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 3514,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:31:08Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series and updated io_uring_mmap_p3s.c in aosp/4367986 to expect EPERM.",
+      "parentUuid": "a6bbbd2f_480e5734",
+      "isAi": true,
+      "revId": "0ad8c665b902db505424f339016a142c9635603c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "517183a5_03c25d32",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T07:40:54Z",
       "side": 1,
       "message": "These two hunks are in the `!CONFIG_MMU` versions of `io_uring_mmap()` and `io_uring_get_unmapped_area()`, which arm64 never builds. The MMU versions above have refused 4KB mms since aosp/4368076.",
+      "isAi": true,
+      "revId": "0ad8c665b902db505424f339016a142c9635603c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cd79380_f69d01a2",
+        "filename": "io_uring/memmap.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:31:08Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "517183a5_03c25d32",
       "isAi": true,
       "revId": "0ad8c665b902db505424f339016a142c9635603c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
