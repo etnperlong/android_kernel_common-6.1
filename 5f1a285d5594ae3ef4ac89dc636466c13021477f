@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ae78ae8_834ea850",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:03:36Z",
+      "side": 1,
+      "message": "Done — scoped this patch and its commit message strictly to reusing a sibling folio on zero-page COW, and moved allocation-tag copy support to the first tagged-slice move patch.",
+      "parentUuid": "42d514c2_04e3364d",
+      "isAi": true,
+      "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8c7a89a8_c8191005",
@@ -105,6 +124,25 @@
       "writtenOn": "2026-10-28T00:55:32Z",
       "side": 1,
       "message": "I\u0027m not sure the tag copy is needed. The only caller seems to be `UFFDIO_COPY`, whose source folio was just allocated with `__GFP_ZERO`, and upstream `UFFDIO_COPY` never carries tags either, so `mte_zero_clear_slice_tags()` should already give the same result.\n\nUnless a later patch copies from a tagged source, could we drop this hunk, `mte_copy_tags_range()` and the `mte.S` change to upstream\u0027s `mte_copy_page_tags()`?",
+      "isAi": true,
+      "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c43471a_c3be9988",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:03:36Z",
+      "side": 1,
+      "message": "Done — dropped the UFFDIO_COPY tag-copy hunk from this patch and moved mte_copy_tags_range() / mte.S to the first tagged-slice move patch.",
+      "parentUuid": "e9e5d119_59f05fd7",
       "isAi": true,
       "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
