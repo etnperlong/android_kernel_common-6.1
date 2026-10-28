@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e915c8ee_f87f4d56",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:30:52Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "789981a8_517afe2c",
+      "isAi": true,
+      "revId": "86379e004847b41837c6c4bb2f021e7b5e0f4d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03fb1070_56c682d2",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T03:13:07Z",
       "side": 1,
       "message": "Nit: if the helper stays, checkpatch asks for a blank line after the closing brace of `dma_mmap_pfn()` here.",
+      "revId": "86379e004847b41837c6c4bb2f021e7b5e0f4d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68b354ec_5cb23754",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:30:52Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "03fb1070_56c682d2",
+      "isAi": true,
       "revId": "86379e004847b41837c6c4bb2f021e7b5e0f4d30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
