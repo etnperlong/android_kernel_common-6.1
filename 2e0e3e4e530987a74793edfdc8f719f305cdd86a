@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cba1ac2b_9e58a0aa",
+        "filename": "drivers/gpu/drm/drm_gem.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1252,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T01:05:02Z",
+      "side": 1,
+      "message": "`vma_pgoff_pages()` looks like the right length, thanks.\n\nOne more case: the exact lookup only checks `vm_pgoff`, so a 4KB process could mmap at the fake offset + 4KB..12KB (`vm_slice_off` 1..3) and still match. The GEM fault handlers index the object with `(address - vm_start) \u003e\u003e PAGE_SHIFT` and ignore the slice (shmem helper, TTM), while `insert_pfn()` does add it, so I think the process would get the wrong pages.\n\nSince GEM offsets are always page aligned, could we return `-EINVAL` for a non-zero `vma_slice_off(vma)` before the lookup, as `perf_mmap()` does?",
+      "isAi": true,
+      "revId": "2e0e3e4e530987a74793edfdc8f719f305cdd86a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
