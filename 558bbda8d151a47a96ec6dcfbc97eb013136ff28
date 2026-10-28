@@ -54,6 +54,25 @@
       "isAi": true,
       "revId": "558bbda8d151a47a96ec6dcfbc97eb013136ff28",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38d7a4c8_4c44dfea",
+        "filename": "fs/exec.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:03:28Z",
+      "side": 1,
+      "message": "Done — moved this patch after the stack relocation slice realignment (aosp/4367983) and stack ASLR (aosp/4367982) patches, and kept __PAGE_ALIGN(stack_top) for non-P3S tasks (including x86_64 page-size emulation).",
+      "parentUuid": "c94a83a2_23050d98",
+      "isAi": true,
+      "revId": "558bbda8d151a47a96ec6dcfbc97eb013136ff28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
