@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0692f3b_398dea37",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:59Z",
+      "side": 1,
+      "message": "Done — updated the subject to \"ANDROID: P3S: selftests: mm: Test private /dev/zero slice offsets\" and rewrote the commit message to describe the private /dev/zero vm_file/vm_pgoff/vm_slice_off split, merge, and /proc/self/maps reporting semantics.",
+      "parentUuid": "0fc07be4_ae560b03",
+      "isAi": true,
+      "revId": "6064ebfd39d4ece639411384d11984d1a31b2bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5b1a9909_cea73c5a",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T20:57:10Z",
       "side": 1,
       "message": "Could this be a `TEST_GEN_FILES` entry next to `anon_vma_name_p3s` and `madvise_remove_p3s`, with the same `CFLAGS +\u003d -I..` and `../kselftest_p3s.h` lines below `include ../lib.mk`? aosp/4367986 moves it to `TEST_GEN_FILES` later anyway.\n\nAs `TEST_GEN_PROGS`, `make run_tests` runs it directly as well as through `run_vmtests.sh`. I also don\u0027t think `\"kselftest_p3s.h\"` is found from `mm/` without `-I..`: nothing else puts `tools/testing/selftests` on the include path, which is why the other mm tests include `\"../kselftest.h\"`. Does it build for you with `make -C tools/testing/selftests TARGETS\u003dmm`? `smaps_page_size_p3s` from aosp/4367944 looks the same.",
+      "isAi": true,
+      "revId": "6064ebfd39d4ece639411384d11984d1a31b2bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "291f2632_be67365f",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:59Z",
+      "side": 1,
+      "message": "Done — moved devzero_slice_p3s (and smaps_page_size_p3s in aosp/4367944) to TEST_GEN_FILES with CFLAGS +\u003d -I.. and the ../kselftest_p3s.h dependency.",
+      "parentUuid": "5b1a9909_cea73c5a",
       "isAi": true,
       "revId": "6064ebfd39d4ece639411384d11984d1a31b2bea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
