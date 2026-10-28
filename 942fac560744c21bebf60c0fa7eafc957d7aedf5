@@ -16,6 +16,23 @@
       "message": "Respin Bug: b/576537260",
       "revId": "942fac560744c21bebf60c0fa7eafc957d7aedf5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "420e078f_71c71398",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1572468
+      },
+      "writtenOn": "2026-10-28T16:01:35Z",
+      "side": 1,
+      "message": "Looks like you should cherry-pick the revert at aosp/4370706 as a dependency of this patch?",
+      "revId": "942fac560744c21bebf60c0fa7eafc957d7aedf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
