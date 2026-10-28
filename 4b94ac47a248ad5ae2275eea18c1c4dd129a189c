@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3692fe73_f6cf5e74",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:53:50Z",
+      "side": 1,
+      "message": "Could the subject say 4KB processes rather than compat? The body could also name aosp/4367974 and the case the test checks, rather than calling it a regression oracle to keep.",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a30630de_eba3c53e",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:53:50Z",
+      "side": 1,
+      "message": "It looks like the test is only built: `run_vmtests.sh` doesn\u0027t run it, neither here nor at the top of the chain, where `uffd_move_swapped_slice_p3s` and `uffd_move_swapcache_lock_p3s` are listed. Could you add it next to them? For example:\n\n```\nCATEGORY\u003d\"userfaultfd\" run_test ./uffd_move_retry_p3s\n```",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c6bfede_0cb3b736",
+        "filename": "tools/testing/selftests/mm/uffd_move_retry_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:53:50Z",
+      "side": 1,
+      "message": "The file name and this comment describe a retry after a lock drop, but as far as I can see nothing here contends the swap cache folio\u0027s lock, so the `wait_folio` path of aosp/4367974 only runs by chance. What the test checks is that a whole swapped window moves, and that a destination conflict reports the progress so far.\n\n`uffd_move_swapcache_lock_p3s` in aosp/4368026 is the test that contends the lock. Could the two be merged into a single `uffd_move_swap_p3s` test? Otherwise, a name and comment that say what this test checks would help, e.g. `uffd_move_swap_window_p3s`.",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66f51da5_88fc3edc",
+        "filename": "tools/testing/selftests/mm/uffd_move_retry_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:53:50Z",
+      "side": 1,
+      "message": "Nit: `p3s_test.h` already includes `vm_util.h`, so `PM_SWAP` could replace `1ULL \u003c\u003c 62` here and below, and `uffd_register()` and `uffd_unregister()` could replace the open-coded ioctls. With one `/proc/self/pagemap` fd, `pagemap_get_entry()` would also do the job of `p3s_pagemap_entry()`. No caller in the chain passes a `pid` or `page_size` to `p3s_pagemap_entry_of()`.",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9d424bf_a708a4b9",
+        "filename": "tools/testing/selftests/mm/uffd_move_retry_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:53:50Z",
+      "side": 1,
+      "message": "I\u0027m worried that `--native` re-execs forever on a kernel whose native page size isn\u0027t 16KB (4KB arm64 or x86_64). `exec_native()` succeeds there, and `sysconf(_SC_PAGESIZE)` still returns 4KB in the new image, so it takes this branch again. Nothing runs `--native` today, so this only happens when someone runs it by hand.\n\nWould it be OK to drop the `--native` mode and use `P3S_COMPAT_MAIN(run_test)`? If you\u0027d like to keep it, could it re-exec only from a 4KB process (`p3s_is_compat_process()`) and skip when the page size still isn\u0027t `NATIVE_PAGE_SIZE`? `vmalloc_align_p3s.c` and a few other tests later in the chain have the same `main()`.",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
