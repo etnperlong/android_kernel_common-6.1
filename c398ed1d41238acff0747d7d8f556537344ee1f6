@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e245776_12d862ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:30:36Z",
+      "side": 1,
+      "message": "If the patch stays, could the subject say what it enables, e.g. \"tracing: Allow ring buffer mmap in 4KB processes\"?\n\nI think the second paragraph could go: it describes the existing `vm_insert_pages()` call, which the patch doesn\u0027t change. \"Kernel pages\" and \"4KB processes\" would also match the wording in the rest of the series.",
+      "isAi": true,
+      "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18de9306_60ce17f9",
+        "filename": "kernel/trace/ring_buffer.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7296,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:30:36Z",
+      "side": 1,
+      "message": "Nit: if this stays, `IS_ALIGNED(vma_file_offset(vma), PAGE_SIZE_KERNEL)` is the same as `vma_slice_off(vma) \u003d\u003d 0`, since `vm_pgoff` counts kernel pages. Could it be `if (vma_slice_off(vma))`, as in `perf_mmap()` since aosp/4368055, with a blank line before the comment?",
+      "isAi": true,
+      "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a105eaf2_d9c675ee",
+        "filename": "kernel/trace/trace.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 8850,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:30:36Z",
+      "side": 1,
+      "message": "It looks like this removes the refusal that aosp/4368077 added here, so that 4KB processes can map the ring buffer.\n\nThe mapping itself looks right to me: with a 16KB-aligned offset, `vm_insert_pages()` maps the slices of each page by address since aosp/4368056, and user space finds the sub-buffers through `meta_page_size`, as `Documentation/trace/ring-buffer-map.rst` and `map_test.c` do.\n\nWould it be OK to keep the refusal, though, as I asked for BPF maps on aosp/4367949 and aosp/4367950? I may be missing a user: as far as I know, the tracefs readers on Android (Perfetto\u0027s traced_probes, atrace) are native processes, and apps can only write `trace_marker`. 4KB processes would still be able to `read()` and `splice()` `trace_pipe_raw`, and this patch wouldn\u0027t be needed.\n\nIf a 4KB process does need the mapping, could the commit message name it and say that this removes the refusal from aosp/4368077? `trace_ring_buffer_mmap_p3s.c` from aosp/4367986 could then move into this patch too.",
+      "isAi": true,
+      "revId": "c398ed1d41238acff0747d7d8f556537344ee1f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
