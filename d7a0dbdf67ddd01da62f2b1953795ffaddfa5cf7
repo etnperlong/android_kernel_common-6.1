@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98348e04_d62be425",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:30:02Z",
+      "side": 1,
+      "message": "I think this paragraph describes the upstream path rather than the code this patch replaces: fast GUP is already off for 4KB processes (`gup_fast_permitted()`, aosp/4312491), and aosp/4312497 takes the slice from `vma_slice_offset()`, not from the virtual address. If the patch stays, could the message name the mappings whose PTE slice differs from `vma_slice_offset()`?",
+      "isAi": true,
+      "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "147fbf65_2a8cb643",
+        "filename": "lib/iov_iter.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:30:02Z",
+      "side": 1,
+      "message": "It looks like inferring the slice from the VMA is still exact here: since aosp/4366901, aosp/4368054 and aosp/4368056, every 4KB PTE maps the slice that `vma_slice_offset()` gives its address, and aosp/4312497 reads it under `mmap_lock`, so file VMAs with `vm_slice_off !\u003d 0` already get the right bytes.\n\nAs far as I can see, the only exception is the driver-selected slices of `vm_insert_page_slice()` from aosp/4367599 (the `{ 3, 1, 0, 2 }` fixture in aosp/4367986). Is there another case you hit? If not, and those insertions can follow `vma_slice_offset()`, would it be OK to drop this patch?",
+      "isAi": true,
+      "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a60cd06_666b732c",
+        "filename": "lib/iov_iter.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1065,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:30:02Z",
+      "side": 1,
+      "message": "If the PTE slice is needed, I\u0027m worried about limiting each extraction to one 4KB page. `p3s_get_user_slice_pages()` returns whole runs of consecutive slices, so a 1MB O_DIRECT read from an anonymous buffer can be a single extraction today, but takes 256 here, each with `mmap_read_lock()` and a page table walk.\n\nWould it work to keep `p3s_iov_iter_extract_pages()` and only change the slice source in `p3s_slice_run_merge()`, e.g. `spans[i].offset \u003e\u003e PAGE_SHIFT_4KB` from the range GUP instead of `vma_slice_offset()`? That keeps the runs, avoids a new function in `lib/iov_iter.c` and an unused `p3s_iov_iter_extract_pages()`, and also covers `process_vm_readv()`/`process_vm_writev()` (aosp/4312492), which use the same helper and which the aosp/4367986 fixture checks too.\n\nThis path also hits the userfaultfd `-EFAULT` from the missing `FOLL_UNLOCKABLE` that I mentioned on aosp/4367611.",
+      "isAi": true,
+      "revId": "d7a0dbdf67ddd01da62f2b1953795ffaddfa5cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
