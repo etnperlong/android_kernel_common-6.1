@@ -40,6 +40,25 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fdacf871_15add5e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:57:43Z",
+      "side": 1,
+      "message": "Thanks for narrowing this down, the message matches the diff now. Could it also say why the reuse is needed?\n\nAs far as I can see, without it a window whose slices are read before they are written gets a new 16KB folio for every written slice, up to four, while a window written first shares one folio through `p3s_anon_reuse_sibling_slice()`.\n\nTwo small things while you\u0027re there: the last sentence, about allocation-tag copy support, describes another patch and could go, and the line ending in \"UFFD-WP bits.\" is 73 columns.",
+      "parentUuid": "3ae78ae8_834ea850",
+      "isAi": true,
+      "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8c7a89a8_c8191005",
         "filename": "/COMMIT_MSG",
         "patchSetId": 7

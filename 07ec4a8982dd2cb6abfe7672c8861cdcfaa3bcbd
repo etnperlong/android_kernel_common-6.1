@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "512560a3_af859bf5",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:57:43Z",
+      "side": 1,
+      "message": "Nit: could this comment get a blank line before it? It might also help to mention the `folio_put()` below it, which frees the unused new folio rather than the lookaround reference, e.g.:\n\n```\n\t/* The PTE keeps the lookaround reference; free the new folio. */\n```",
+      "isAi": true,
+      "revId": "07ec4a8982dd2cb6abfe7672c8861cdcfaa3bcbd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
