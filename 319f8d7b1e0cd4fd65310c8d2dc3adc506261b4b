@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d5bc0aa_33451a58",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T20:55:29Z",
+      "side": 1,
+      "message": "Note: `UPSTREAM` and `BACKPORT` are mutually exclusive tags only used for commits backported from mainline linux.",
+      "parentUuid": "96a99cdc_e2fae40c",
+      "revId": "319f8d7b1e0cd4fd65310c8d2dc3adc506261b4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "64af56b9_3a39d9f8",
