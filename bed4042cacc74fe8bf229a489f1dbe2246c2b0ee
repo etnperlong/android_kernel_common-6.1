@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03565433_d73df641",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:35:21Z",
+      "side": 1,
+      "message": "This is not needed; when porting an `ANDROID` patch to another branch, you only need to add your signed-off-by line if you needed to make any changes to fix the build or you encountered a merge conflict, and you would do that as such:\n\n```\n[andih: -insert description of what changed from the original patch and\nwhy or how you resolved a merge conflict if you encountered one-]\nSigned-off-by: Andreas Huber \u003candih@google.com\u003e\n```\n\nAdding new bug tags is fine.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 10
+      },
+      "revId": "bed4042cacc74fe8bf229a489f1dbe2246c2b0ee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c614801_f4ce7cd5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:35:21Z",
+      "side": 1,
+      "message": "Just needs the commit msg to be adjusted",
+      "revId": "bed4042cacc74fe8bf229a489f1dbe2246c2b0ee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
