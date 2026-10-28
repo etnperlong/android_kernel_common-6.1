@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6cf43368_791aeea0",
+        "filename": "drivers/media/common/videobuf2/frame_vector.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:08:32Z",
+      "side": 1,
+      "message": "Done — dropped the frame_vector hunks here, dropped the intermediate scatterlist/videobuf2 USERPTR patches, and moved the 4KB process USERPTR rejection earlier (aosp/4393893).",
+      "parentUuid": "568d1318_5fd4283c",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2595aa4b_c3624fca",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T03:14:49Z",
       "side": 1,
       "message": "Could `mm_user_range_pages()` move to `include/linux/p3s/mm.h`, next to `mm_offset_in_page()`? It\u0027s P3S unit math on `mm_pte_size()`/`mm_pte_shift()`, and the same count that `p3s_want_user_pages_array()` and `p3s_user_iov_npages()` compute in `include/linux/p3s/iov_iter.h`.\n\nThe new `#include \u003clinux/p3s/mm.h\u003e` wouldn\u0027t be needed either: `vma_pages()` in this header already uses `mm_pte_shift()` without it, since `\u003clinux/mm_types.h\u003e` includes `\u003clinux/p3s.h\u003e`.",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9310281_faa3a11f",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 2605,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:08:32Z",
+      "side": 1,
+      "message": "Done — moved mm_user_range_pages() to include/linux/p3s/mm.h next to mm_offset_in_page() and dropped the extra include from include/linux/mm.h.",
+      "parentUuid": "2595aa4b_c3624fca",
       "isAi": true,
       "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
