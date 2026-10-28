@@ -34,6 +34,24 @@
       "parentUuid": "cd7e3b66_e9fd3c05",
       "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea4c4805_af73c07b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4989578
+      },
+      "writtenOn": "2026-10-28T05:59:53Z",
+      "side": 1,
+      "message": "These hooks do not add new MMC core behavior. mmc_attach_sd(), mmc_blk_reset(), and the card-detect paths already report the failure. The part that is not upstream material is our product policy, which lives in a vendor module: after repeated SD command/data timeouts, remove the card and do not rescan it until a physical replug. That is not appropriate as default kernel behavior. A transient timeout should still be retried on other devices, and we do not want every GKI device to drop the card.\n\nOn GKI the vendor module cannot change mmc core. The android_vh_* hooks are the existing extension point for this. They are not exported in tracefs, and with no callback registered they do not change control flow. The generic error handling stays in core; only our module registers these hooks and applies the bad-card policy.",
+      "parentUuid": "3d857308_29cc2ade",
+      "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
