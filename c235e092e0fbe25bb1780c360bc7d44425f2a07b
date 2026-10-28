@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "de4ed464_29717ded",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3581334
+      },
+      "writtenOn": "2026-10-28T03:00:05Z",
+      "side": 1,
+      "message": "Done -- Bug: 571274100 added to the commit message (patch set 4).",
+      "parentUuid": "f13f9b27_b756c8cf",
+      "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "71e5086d_6276a332",
@@ -48,6 +66,24 @@
       "writtenOn": "2026-10-27T18:13:58Z",
       "side": 1,
       "message": "You also need to pull in https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?id\u003d2eebc31ae5f53e1066bb6238c8087c23b688ad17 which is a follow up fix to this commit. So please add that to the series as well.",
+      "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a777cc0c_28b54835",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3581334
+      },
+      "writtenOn": "2026-10-28T03:00:05Z",
+      "side": 1,
+      "message": "Done -- the follow-up fix 2eebc31ae5f5 (\"f2fs: allow pinning empty compressed files\") is now part of the series as change https://android-review.googlesource.com/c/kernel/common/+/4396848, based on top of this change (patch set 4). Adaptation note: the 5.15 backport of a64a3fec11e7 uses ASCII hyphens in the comment block, so the upstream patch text does not apply verbatim; the code change is identical (fio \u0026\u0026 f2fs_compressed_file(inode)), tagged BACKPORT: FROMGIT:. This should also address the pin-file presubmit test failure observed on patch set 3.",
+      "parentUuid": "3b5cb9c1_b1dd9ce6",
       "revId": "c235e092e0fbe25bb1780c360bc7d44425f2a07b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
