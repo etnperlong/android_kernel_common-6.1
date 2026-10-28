@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1706a0f8_15a7d8ee",
+        "filename": "lib/scatterlist.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:31:10Z",
+      "side": 1,
+      "message": "Agreed that the existing builders can\u0027t describe this layout: `sg_alloc_table_from_pages_segment()` only takes an offset for the first page, and `sg_alloc_append_table_from_pages()` WARNs on a non-zero offset when appending.\n\nBut as far as I can see nothing in the kernel calls `sg_alloc_table_from_page_slices()`: aosp/4367934 builds its tables with `sg_alloc_table_from_pages()`, the only caller up to the top of the chain is the `sg_page_slices_ppps` selftest module added in aosp/4367986, and aosp/4368000 removes the helper again.\n\nWould it be OK to drop this patch, together with that selftest and the matching hunks of aosp/4368000?",
+      "isAi": true,
+      "revId": "a002843af3bd661e6feef7f1f8fc87f15fcb3c3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
