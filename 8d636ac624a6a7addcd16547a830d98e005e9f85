@@ -93,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bc9573d_0f565115",
+        "filename": "mm/gup.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:28Z",
+      "side": 1,
+      "message": "Done — extracted the follow_page_pte() #ifdef block into p3s_capture_pte_offset() in mm/p3s/gup.h, leaving a single-line call in mm/gup.c (BPF ring metadata in aosp/4367950 maps physical slice 0 at virtual addresses whose vma_slice_offset() is nonzero).",
+      "parentUuid": "77af1f8f_49a19202",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9a2da2bd_adc27ef1",
