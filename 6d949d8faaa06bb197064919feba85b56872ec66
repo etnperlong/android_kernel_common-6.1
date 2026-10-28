@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b547f1b_1fbbd4da",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 2813,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T20:53:49Z",
+      "side": 1,
+      "message": "It looks like aosp/4368094 already keeps `maxrss` and `cmaxrss` in one unit across exec and mixed page sizes: `setmax_mm_hiwater_rss()` converts each mm\u0027s high-water mark to kernel pages with `mm_kernel_pages()`, in that mm\u0027s own page size, before it reaches `signal-\u003emaxrss` from `exec_mmap()`, `do_exit()` or `getrusage()`. `getrusage()` then converts kernel pages to kB, since `kernel/sys.c` doesn\u0027t opt into `\u003clinux/p3s_user_pages.h\u003e`.\n\nAs far as I can see, the only difference here is that a 4KB process\u0027s `ru_maxrss` is no longer rounded up to the next 16KB, i.e. it can be up to 12KB lower. `rusage_p3s` in aosp/4367986 allows 4MB of slack, so it should pass either way.\n\nWould it be OK to drop this patch, rather than change the unit of the `signal_struct` fields? If the rounding matters somewhere, could the commit message say where?",
+      "isAi": true,
+      "revId": "6d949d8faaa06bb197064919feba85b56872ec66",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
