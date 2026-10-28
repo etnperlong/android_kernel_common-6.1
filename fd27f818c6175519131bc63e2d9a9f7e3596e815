@@ -37,6 +37,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4715651_6c1488a6",
+        "filename": "kernel/bpf/arraymap.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:18Z",
+      "side": 1,
+      "message": "Done — used vma_is_p3s_4k(vma) ? PAGE_ALIGN_4KB(data_size) : __PAGE_ALIGN(data_size) and vma_file_offset(vma) to preserve x86_64 page-size emulation.",
+      "parentUuid": "8f4bf902_9481b0fb",
+      "isAi": true,
+      "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f80d12bb_9509a4fd",
@@ -50,6 +69,25 @@
       "writtenOn": "2026-10-28T07:52:50Z",
       "side": 1,
       "message": "It looks like `remap_vmalloc_range()` below already maps these slices for a 4KB VMA. Since aosp/4312495, `remap_vmalloc_range_partial()` accepts a 4KB-aligned `vm_start` and starts at the slice that `vma_slice_offset()` gives it, and since aosp/4368056 each `vm_insert_page()` maps every slice of the page that lies in the VMA.\n\nAs I mentioned on aosp/4367599, the value area is page aligned, so `offset_in_page(kaddr) \u003e\u003e PAGE_SHIFT_4KB` is always that same slice, and `array_map_mmap_slices()` ends up with the same PTEs.\n\nWould it be OK to drop `array_map_mmap_slices()` and keep the `remap_vmalloc_range()` call for both cases? aosp/4368031 later rewrites that loop; I think it would need to keep starting at the slice of `vm_start`, otherwise an `mmap()` at offset 4KB would map value slice 0.",
+      "isAi": true,
+      "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9821fcea_1676275f",
+        "filename": "kernel/bpf/arraymap.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:18Z",
+      "side": 1,
+      "message": "Done — removed array_map_mmap_slices() and updated remap_vmalloc_range() / remap_vmalloc_range_partial() in mm/vmalloc.c to carry vma_slice_off(vma) and insert the selected slice.",
+      "parentUuid": "f80d12bb_9509a4fd",
       "isAi": true,
       "revId": "fd27f818c6175519131bc63e2d9a9f7e3596e815",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
