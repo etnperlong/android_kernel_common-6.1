@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd421d69_5c233a4d",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:31:08Z",
+      "side": 1,
+      "message": "Nit: the /dev/zero note is accurate and explains the `!vma-\u003evm_file` half of the check, but it describes the VMAs that skip this branch, and the new first sentence drops the \"so the slice is ...\" reasoning.\n\nWould it be OK to keep the original comment here and name /dev/zero in the comment below, which covers the branch those VMAs take, with the wording from `mm/p3s/rmap.h:219`? Something like:\n\n```\n\t/*\n\t * Other VMAs (files, shmem, and private mappings of /dev/zero, which\n\t * keep vm_file but have no vm_ops) map folios by offset: vm_start\n\t * maps slice vm_slice_off of its folio. Count the 4KB pages from\n\t * vm_start to @addr on top of that slice; the low bits are the slice\n\t * of the folio that backs @addr.\n\t */\n```",
+      "isAi": true,
+      "revId": "d2df3ab35b006cd0a8407bbaa238769581594555",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71cac30e_8be29298",
+        "filename": "tools/testing/selftests/mm/anon_vma_name_ppps.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:31:08Z",
+      "side": 1,
+      "message": "This is a useful check: the split goes through `vma_set_split_offset()`, so it would catch /dev/zero taking the anonymous branch of `vma_slice_offset()`. As far as I can see, nothing else covers private /dev/zero offsets (`devzero_mthp_ppps.c` from aosp/4393905 only checks native mTHP).\n\nIt doesn\u0027t use `PR_SET_VMA_ANON_NAME`, though, so would you mind moving it into its own test, e.g. `devzero_slice_p3s.c`, rather than adding it to `anon_vma_name_ppps.c`?",
+      "isAi": true,
+      "revId": "d2df3ab35b006cd0a8407bbaa238769581594555",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
