@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "171e82c9_be10aae6",
+        "filename": "kernel/tsacct.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:27:31Z",
+      "side": 1,
+      "message": "It looks like aosp/4368094 already covers this. `__acct_update_integrals()` converts each sample to kernel pages with `mm_kernel_pages()`, using the mm the task has at that moment, so a later exec doesn\u0027t change the unit of `acct_rss_mem1` and `acct_vm_mem1`. `xacct_add_tsk()` then converts them with the kernel `PAGE_SIZE`, since `kernel/tsacct.c` doesn\u0027t opt into `\u003clinux/p3s_user_pages.h\u003e`, and it already reports the high-water marks in kB with `mm_pages_to_kb()`.\n\nAs far as I can see, the only difference for a 4KB process is that each sample is no longer rounded up to the next 16KB (12KB at most), and `taskstats_p3s` in aosp/4367986 accepts results within 25% on a 32MB workload. On the other hand, the patch changes how every architecture accumulates the integrals, and it also realigns the high-water lines and drops `MB`.\n\nWould it be OK to drop this patch? If there\u0027s a case I\u0027m missing, could the commit message say what fails without it?",
+      "isAi": true,
+      "revId": "0c262737fd039514dc2ee22e45f2f59afde6a41b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
