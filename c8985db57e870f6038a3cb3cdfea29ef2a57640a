@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6718200c_7a314a0b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — updated the commit subject and message to describe the anonymous VMA naming alignment selftest and moved the private /dev/zero slice test into its own patch (aosp/4396646).",
+      "parentUuid": "7a5888ef_f625d4cf",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ff1f9370_e22fcf61",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T07:16:33Z",
       "side": 1,
       "message": "I\u0027m worried this reverts 8d2b747b50f4 (\"ANDROID: 16K: Prevent non-__PAGE_ALIGNED() VMA splits by anon names\") for x86_64 page size emulation: when booted with `page_shift\u003d14`, `__PAGE_MASK` is the emulated 16KB mask there, while without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` `mm_pte_mask()` is always the 4KB kernel mask.\n\nOn arm64 I think it doesn\u0027t change anything: outside x86_64, `__page_shift()` is just `PAGE_SHIFT` (`include/linux/page_size_compat_defs.h:47`), and since aosp/4312489 opted `mm/madvise.c` into `\u003clinux/p3s_user_pages.h\u003e`, that is `mm_pte_shift(p3s_current_mm())`. The only caller, `set_anon_vma_name()` (called from `prctl_set_vma()`), passes `current-\u003emm` without a remote mm context, so both masks are the same.\n\nWould it be OK to drop this hunk and the `\u003clinux/p3s/mm.h\u003e` include? As far as I can see, `anon_vma_name_ppps` should already pass without them. Did you see it fail?",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e965cfd_9a417f87",
+        "filename": "mm/madvise.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 2222,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — dropped the mm/madvise.c hunk and \u003clinux/p3s/mm.h\u003e include.",
+      "parentUuid": "ff1f9370_e22fcf61",
       "isAi": true,
       "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -73,6 +111,44 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "86031ae7_6b8f9cd9",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — renamed files, macros, and helpers from ppps to p3s (kselftest_p3s.h, P3S_COMPAT_MAIN(), p3s_*(), anon_vma_name_p3s.c, etc.).",
+      "parentUuid": "acbb9122_ba2bf493",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30063c45_2fbdb248",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — split kselftest_p3s.h into its own patch (aosp/4396645) containing only the shared 4KB process launcher, and introduced optional test helpers alongside their first users.",
+      "parentUuid": "00efe5f7_599bef94",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "445dd89f_f279e548",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-10-28T07:16:33Z",
       "side": 1,
       "message": "Nit: could you add a blank line before this comment?\n\n`checkpatch.pl --strict` also asks for `__maybe_unused` (which `kselftest.h` defines) instead of `__attribute__((unused))` on `ppps_argv0`, and for `va_list ap` in `ppps_vexec_or_die()` to line up with the open parenthesis. `NATIVE_PAGE_SIZE` in `anon_vma_name_ppps.c` is one column off as well.\n\nIts warning about the `return` in `PPPS_COMPAT_MAIN()` looks fine to me, since `TEST_HARNESS_MAIN` in `kselftest_harness.h` does the same.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "513ad578_cc38fbfd",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — fixed spacing, __maybe_unused placement, and multi-line argument alignment in kselftest_p3s.h and anon_vma_name_p3s.c.",
+      "parentUuid": "445dd89f_f279e548",
       "isAi": true,
       "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -109,6 +204,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f687343d_cf297384",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — updated p3s_compat_main() to report SKIP on kernels/architectures without P3S support or when starting on a 4KB kernel without ADDR_4KB_COMPAT_PAGE_SIZE.",
+      "parentUuid": "df788633_76cf2fa0",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d20e0d9f_b4bd2951",
@@ -127,6 +241,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "56fac3ee_899bc63b",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — removed the duplicate pagemap definitions from kselftest_p3s.h and reused tools/testing/selftests/mm/vm_util.h.",
+      "parentUuid": "d20e0d9f_b4bd2951",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f96be3b_6275ed0b",
@@ -140,6 +273,25 @@
       "writtenOn": "2026-10-28T07:16:33Z",
       "side": 1,
       "message": "Nit: as on aosp/4367935, could you add this test to `tools/testing/selftests/mm/.gitignore` (and the one in aosp/4367943)? At the top of the chain, only two of the P3S test binaries are listed there.",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6039641_1d80c838",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:41Z",
+      "side": 1,
+      "message": "Done — added anon_vma_name_p3s (and subsequent P3S test binaries) to tools/testing/selftests/mm/.gitignore.",
+      "parentUuid": "1f96be3b_6275ed0b",
       "isAi": true,
       "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
