@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "568d1318_5fd4283c",
+        "filename": "drivers/media/common/videobuf2/frame_vector.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:14:49Z",
+      "side": 1,
+      "message": "aosp/4368000 reverts these frame vector changes, drops their users in aosp/4367613 and aosp/4367934, and rejects USERPTR from 4KB processes instead. Would it be OK to drop the frame vector hunks here (and those two patches), and move that rejection earlier?\n\nThe series would then not add and remove `get_vaddr_frames_range()` and the `struct frame_vector_tail` placed behind the ABI-visible `ptrs[]`.",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2595aa4b_c3624fca",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 2605,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:14:49Z",
+      "side": 1,
+      "message": "Could `mm_user_range_pages()` move to `include/linux/p3s/mm.h`, next to `mm_offset_in_page()`? It\u0027s P3S unit math on `mm_pte_size()`/`mm_pte_shift()`, and the same count that `p3s_want_user_pages_array()` and `p3s_user_iov_npages()` compute in `include/linux/p3s/iov_iter.h`.\n\nThe new `#include \u003clinux/p3s/mm.h\u003e` wouldn\u0027t be needed either: `vma_pages()` in this header already uses `mm_pte_shift()` without it, since `\u003clinux/mm_types.h\u003e` includes `\u003clinux/p3s.h\u003e`.",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77af1f8f_49a19202",
+        "filename": "mm/gup.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:14:49Z",
+      "side": 1,
+      "message": "It looks like this captures the offset that `vma_folio_offset(vma, address)` already gives: since aosp/4366901, aosp/4368054 and aosp/4368056, 4KB PTEs are built with `vma_pte_add_slice()`, so each maps the slice that `vma_slice_offset()` returns for its address. `get_dump_page()` (aosp/4312509), the iov_iter and process_vm_access helpers (aosp/4312497, aosp/4312492) and the futex key (aosp/4368034) all rely on that.\n\nAs far as I can see, only the driver-selected slices of `vm_insert_page_slice()` (aosp/4367599, the `{ 3, 1, 0, 2 }` fixture in aosp/4367986) break it, and supporting them would mean converting all of those users, not just GUP.\n\nIf those insertions can follow `vma_slice_offset()` instead, would it be OK to drop the `phys_offset` plumbing through the five `follow_*()` functions and fill the spans with `vma_folio_offset()` under `mmap_lock` in `gup_user_range()`, as `get_dump_page()` does? If they have to stay, could this `#ifdef` block become a helper in a P3S header, leaving a one-line call in `follow_page_pte()`?",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a2da2bd_adc27ef1",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:14:49Z",
+      "side": 1,
+      "message": "I\u0027m worried this branch loses the userfaultfd handling: it calls `__get_user_pages()` directly, so `FOLL_UNLOCKABLE` is never set (only `is_valid_gup_args()` adds it), `faultin_page()` doesn\u0027t pass `FAULT_FLAG_ALLOW_RETRY`, and `handle_userfault()` returns `VM_FAULT_SIGBUS`. After aosp/4367612, an O_DIRECT read into a uffd-registered range of a 4KB process would fail with `-EFAULT`.\n\naosp/4312497 fixed the same problem in `p3s_get_user_slice_pages()` by passing `\u0026locked` to `pin_user_pages_remote()` and retrying when a fault drops `mmap_lock` (it also uses `mmap_read_lock_killable()`). Could this branch do the same, or go through `__get_user_pages_locked()`, and skip the final `mmap_read_unlock()` when the lock was dropped?",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d1eb3f6_c33005b8",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:14:49Z",
+      "side": 1,
+      "message": "I think the spans after the first one keep the in-page offset of `start`: `__get_user_pages()` advances `start` by `PAGE_SIZE` without aligning it, `follow_page_pte()` adds `address \u0026 (mm_pte_size(mm) - 1)` for every page, and this loop only resets `offset` for native mms.\n\nFor example, `start \u003d base + 17` over two 4KB pages gives `spans[1] \u003d { slice * 4096 + 17, 17 }`, while `check_range()` in aosp/4367986 expects the start of the slice. With a middle page, `offset + length` runs into the next slice, or past the 16KB page for slice 3, where the `VM_WARN_ON_ONCE()` below fires.\n\niov_iter clamps to one page, so aosp/4367612 isn\u0027t affected, but multi-page callers of the exported API are. Would it work to record only the slice start in `follow_page_pte()` and add `in_page` in this loop for compat mms too?",
+      "isAi": true,
+      "revId": "8d636ac624a6a7addcd16547a830d98e005e9f85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
