@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cae7e383_6cfe2f72",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:58:17Z",
+      "side": 1,
+      "message": "If only the `get_unmapped_area()` change stays (see the inline comments), would you mind updating the subject to match? Maybe something like \"ANDROID: P3S: mm: mremap: Pass mmap page offsets to get_unmapped_area()\".\n\nCould the body also say which `get_unmapped_area()` user needs the offset in process pages? As far as I can see, the in-tree ones only use it as an alignment hint, and `__thp_get_unmapped_area()` returns early for 4KB processes.",
+      "isAi": true,
+      "revId": "8475aaf56ddacf20bdb7ff8bbbacd6d7d9f194db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8429a6b_97b53e81",
+        "filename": "include/linux/p3s/mm.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:58:17Z",
+      "side": 1,
+      "message": "It looks like fork() is already covered: since aosp/4368093, the branch just below gives a forked mm the parent\u0027s page size from the start, and `arch_dup_mmap()` sets it again with `mm_dup_mmap()` (aosp/4312467).\n\nAs far as I can see, `dup_mm()` is the only path that gets here with a non-zero `pte_shift`, and it always takes that branch (`@p` is the child and `current-\u003emm` is the mm being copied), while `mm_alloc()` zeroes the mm for `execve()`. With this check, I think that branch would become unreachable.\n\nWould it be OK to drop this hunk?",
+      "isAi": true,
+      "revId": "8475aaf56ddacf20bdb7ff8bbbacd6d7d9f194db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e1e83d7_72f41ab1",
+        "filename": "mm/mremap.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 953,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:58:17Z",
+      "side": 1,
+      "message": "Agreed that `do_mmap()` passes `__get_unmapped_area()` the offset in process pages (`arch/arm64/kernel/sys.c` shifts it by the per-process `PAGE_SHIFT`), so this keeps `mremap()` consistent with `mmap()`.\n\nWould you mind moving the conversion into a helper next to `vma_file_offset_at()` in `include/linux/p3s/vma.h`, so that `vrm_set_new_addr()` keeps a one-line change? Something like:\n\n```\n    pgoff_t pgoff \u003d vma_mmap_pgoff(vma, vrm-\u003eaddr);\n```\n\nI think `vma-\u003evm_file` alone would do for the file check, since `__get_unmapped_area()` zeroes `pgoff` when there is no file.",
+      "isAi": true,
+      "revId": "8475aaf56ddacf20bdb7ff8bbbacd6d7d9f194db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6162a98_5a759abc",
+        "filename": "mm/vma.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1946,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:58:17Z",
+      "side": 1,
+      "message": "It looks like the line this replaces already keeps the source slice: since aosp/4312522, an `mremap()` destination in a 4KB process is always at the same slice of its 16KB window as the source (`mm_mremap_fixed_keeps_slice()` rejects other `MREMAP_FIXED` targets, and `mm_mremap_get_unmapped_area()` picks one at that slice for the rest). So `vma_slice_offset(vma, addr)` gives the same slice as `vma_slice_offset(vma, old_addr)`.\n\nThe merge path relies on the same thing: `VMG_VMA_STATE()` fills `vmg.slice_off` from the destination address as well (aosp/4366900).\n\nWould it be OK to keep `copy_vma()` and the `vma_set_slice_off()` line as they are? Then `old_addr` wouldn\u0027t be needed in `copy_vma()`, `mm/vma.h` and `mm/mremap.c`, and neither would the new `copy_vma_slice_off()` and `copy_vma_set_range()` helpers.",
+      "isAi": true,
+      "revId": "8475aaf56ddacf20bdb7ff8bbbacd6d7d9f194db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
