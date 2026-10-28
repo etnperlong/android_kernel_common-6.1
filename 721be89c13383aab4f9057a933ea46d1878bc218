@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9cd7dac6_1462a318",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:59:33Z",
+      "side": 1,
+      "message": "If part of this patch stays, could the body say what fails without it, and how it relates to aosp/4368079? \"while retaining P3S page-size selection and native KVM mapping geometry\" only says what doesn\u0027t change.\n\nAlso, could the subject say \"4KB processes\" rather than \"PPPS host APIs\"? PPPS is the old abbreviation for P3S, and \"4KB processes\" would match aosp/4368079.",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7dff56e4_6e5d91e2",
+        "filename": "virt/kvm/guest_memfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:59:33Z",
+      "side": 1,
+      "message": "As far as I can see this doesn\u0027t depend on the caller\u0027s page size: `kvm_gmem_fallocate()` checks `offset` and `len` in kernel pages and allocates or punches the guest_memfd page cache without touching the caller\u0027s mm. Mapping guest_memfd, which does, is already refused in `kvm_gmem_mmap()` by aosp/4368079.\n\nThe same seems true for the other checks of this kind: `kvm_vm_stats_read()` and `kvm_vcpu_stats_read()` only `copy_to_user()` counters, `pviommufd_ioctl()` only passes a stream ID to the hypervisor, and no arm64 KVM device implements `.mmap`, so `kvm_device_mmap()` already returns `-ENODEV`.\n\nWould it be OK to drop these hunks too?",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ece5674_2f985575",
+        "filename": "virt/kvm/kvm_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:59:33Z",
+      "side": 1,
+      "message": "`CONFIG_KVM_COMPAT` depends on `!(S390 || ARM64 || RISCV)` (`virt/kvm/Kconfig:75`), so on arm64 this branch, `kvm_vcpu_compat_ioctl()` and `kvm_vm_compat_ioctl()` are never built, and the checks added to them can\u0027t run. The new `.open` here only changes the other architectures, where `mm_is_p3s_4k()` is always false.\n\n`.open` is also only called for `/dev/kvm`: the VM, vCPU and device fds are anon inode files, which never call it.\n\nWould it be OK to drop these hunks and keep `kvm_no_compat_open()` as it is?",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d99e9d8_491be9de",
+        "filename": "virt/kvm/kvm_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 4455,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:59:33Z",
+      "side": 1,
+      "message": "I think the existing `vcpu-\u003ekvm-\u003emm !\u003d current-\u003emm` check just below already covers this: since aosp/4368079, `KVM_CREATE_VM` fails in 4KB processes, so `kvm-\u003emm` is always a native mm, and an mm keeps its page size for its whole life (chosen at exec, inherited on fork since aosp/4368093). A 4KB process holding a passed-on vCPU fd already gets `-EIO`.\n\nThe same goes for `kvm_vm_ioctl()` and `kvm_device_ioctl()`. Here it also adds a load and a branch to every `KVM_RUN`.\n\nWould it be OK to drop these three hunks?",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a950083_1fc372b1",
+        "filename": "virt/kvm/kvm_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 5586,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:59:33Z",
+      "side": 1,
+      "message": "I\u0027m worried this hides the refusal from aosp/4368079: a 4KB process calling `KVM_CREATE_VM` now gets `-EOPNOTSUPP` here, before `kvm_dev_ioctl_create_vm()` can return `-EPERM` and log it with `p3s_4k_unsupported()`.\n\nThe other `/dev/kvm` ioctls, such as `KVM_GET_API_VERSION` and `KVM_CHECK_EXTENSION`, don\u0027t depend on the caller\u0027s page size, and neither does opening `/dev/kvm`.\n\nWould it be OK to drop this hunk and `kvm_dev_open()`?",
+      "isAi": true,
+      "revId": "721be89c13383aab4f9057a933ea46d1878bc218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
