@@ -21,6 +21,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2c15f660_cffed480",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:38:01Z",
+      "side": 1,
+      "message": "Hi @zhangkelvin@google.com do we need to test 32-bit? 16KB is a 64-bit only feature. So perhaps we can drop this test?",
+      "revId": "2938864382977e3e9e2014af7c0ce70be2f99e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "aeb400d0_97c988cc",
         "filename": "tools/testing/selftests/arm64/abi/Makefile",
         "patchSetId": 9
