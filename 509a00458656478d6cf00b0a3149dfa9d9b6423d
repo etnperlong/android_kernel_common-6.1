@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78bb9c61_dcc6801c",
+        "filename": "kernel/bpf/stackmap.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:28:11Z",
+      "side": 1,
+      "message": "This looks right to me: `kernel/bpf/stackmap.c` doesn\u0027t opt into `\u003clinux/p3s_user_pages.h\u003e`, so `vm_pgoff \u003c\u003c PAGE_SHIFT` drops `vm_slice_off` in a 4KB VMA, while `vma_file_offset_at()` adds it and gives the same offset as before for native VMAs.\n\nWould you mind moving `bpf_stack_build_id_p3s.c` from aosp/4367986 into this patch, as you did with `smaps_page_size_p3s.c` in aosp/4367944? It maps the code at file offset 4KB, so it would fail without this change, and the change and its test would land together.",
+      "isAi": true,
+      "revId": "509a00458656478d6cf00b0a3149dfa9d9b6423d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
