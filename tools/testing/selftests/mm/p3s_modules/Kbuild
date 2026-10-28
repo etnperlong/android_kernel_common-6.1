@@ -25,3 +25,5 @@ endif
 obj-m += anon_exclusive_probe_p3s_module.o
 obj-m += vmalloc_align_p3s_module.o
 obj-m += xdp_pin_probe_p3s_module.o
+
+obj-m += iov_range_retry_p3s_module.o

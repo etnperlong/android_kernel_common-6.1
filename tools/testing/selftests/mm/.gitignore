@@ -102,11 +102,13 @@ fork_dontfork_slice_p3s
 fork_filemap_p3s
 fork_page_size_p3s
 futex_shared_p3s
+futex_uffd_p3s
 gup_retry_p3s
 hole_anon_p3s
 io_uring_mmap_p3s
 iommu_dma_mmap_p3s
 iov_iter_p3s
+iov_range_retry_p3s
 kcov_p3s
 madv_cold_large_file_p3s
 madvise_free_p3s
