@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f889128_4ff4a7cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:41:38Z",
+      "side": 1,
+      "message": "The change itself looks right and minimal to me.\n\nCould the commit message say what goes wrong without it, though? As far as I can see, both mappings still work as 16KB VMAs in a 4KB process: the kuser helpers are copied just below `0xffff1000` (`vdso.c:197`), and `get_unmapped_area()` returns a 16KB-aligned address for the sigpage (`p3s_adjust_unmapped_area_info()`), so the sigreturn code copied to the start of the page (`vdso.c:216`) is where `context.sigpage` points.\n\nIf the goal is the 4KB `[vectors]` and `[sigpage]` layout that AArch32 code sees on a 4KB kernel, I\u0027m not sure do we need to support it?",
+      "isAi": true,
+      "revId": "4165ae3fdc0fad1c7f8908ce6a18400f14c31c83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a71a0789_bde847c4",
+        "filename": "tools/testing/selftests/arm64/abi/aarch32-vdso-pages-ppps.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:41:38Z",
+      "side": 1,
+      "message": "Same concern as on aosp/4367935: both checks expect exactly 4096, which only holds when the test already runs as a 4KB process (or on a 4KB kernel). Run directly on a 16KB kernel, `[vectors]` and `[sigpage]` are 16KB, so tests 2 and 3 fail.\n\nCould this use the same re-exec with `ADDR_PAGE_SIZE_4KB`, and compare against `AT_PAGESZ` instead of a hard-coded 4096? Then \"uses one process page\" would also be checked in native processes.",
+      "isAi": true,
+      "revId": "4165ae3fdc0fad1c7f8908ce6a18400f14c31c83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
