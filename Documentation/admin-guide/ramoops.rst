@@ -54,7 +54,10 @@ on restart (i.e. new dumps after the restart will overwrite old ones).
 Ramoops also supports software ECC protection of persistent memory regions.
 This might be useful when a hardware reset was used to bring the machine back
 to life (i.e. a watchdog triggered). In such cases, RAM may be somewhat
-corrupt, but usually it is restorable.
+corrupt, but usually it is restorable. Software ECC can be configured via the
+``ecc-size`` Device Tree property or ``.ecc_info.ecc_size`` in platform data,
+and can be overridden via the ``ramoops.ecc`` kernel command-line / module
+parameter (where ``0`` disables ECC).
 
 Setting the parameters
 ----------------------
@@ -101,7 +104,9 @@ Setting the ramoops parameters can be done in several different manners:
         .mem_type               = <...>,
         .record_size            = <...>,
         .max_reason             = <...>,
-        .ecc                    = <...>,
+        .ecc_info               = {
+                .ecc_size       = <...>,
+        },
   };
 
   static struct platform_device ramoops_dev = {

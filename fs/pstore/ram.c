@@ -69,12 +69,11 @@ module_param_named(max_reason, ramoops_max_reason, int, 0400);
 MODULE_PARM_DESC(max_reason,
 		 "maximum reason for kmsg dump (default 2: Oops and Panic) ");
 
-static int ramoops_ecc;
+static int ramoops_ecc = -1;
+static int ramoops_ecc_param = -1;
 module_param_named(ecc, ramoops_ecc, int, 0400);
-MODULE_PARM_DESC(ramoops_ecc,
-		"if non-zero, the option enables ECC support and specifies "
-		"ECC buffer size in bytes (1 is a special value, means 16 "
-		"bytes ECC)");
+MODULE_PARM_DESC(ecc,
+		"if positive, the option enables ECC support and specifies ECC buffer size in bytes (1 is a special value, means 16 bytes ECC; 0 disables ECC)");
 
 static int ramoops_dump_oops = -1;
 module_param_named(dump_oops, ramoops_dump_oops, int, 0400);
@@ -781,6 +780,15 @@ static int ramoops_probe(struct platform_device *pdev)
 	cxt->pmsg_size = pdata->pmsg_size;
 	cxt->flags = pdata->flags;
 	cxt->ecc_info = pdata->ecc_info;
+	/*
+	 * If "ramoops.ecc" was explicitly specified on the kernel command line
+	 * or module load options, let it override the Device Tree "ecc-size"
+	 * property or platform data (with 1 mapped to 16 bytes for backwards
+	 * compatibility, and 0 disabling ECC).
+	 */
+	if (ramoops_ecc_param >= 0)
+		cxt->ecc_info.ecc_size =
+			ramoops_ecc_param == 1 ? 16 : ramoops_ecc_param;
 
 	paddr = cxt->phys_addr;
 
@@ -864,6 +872,8 @@ static int ramoops_probe(struct platform_device *pdev)
 	ramoops_console_size = pdata->console_size;
 	ramoops_pmsg_size = pdata->pmsg_size;
 	ramoops_ftrace_size = pdata->ftrace_size;
+	mem_type = pdata->mem_type;
+	ramoops_ecc = cxt->ecc_info.ecc_size;
 
 	pr_info("using 0x%lx@0x%llx, ecc: %d\n",
 		cxt->size, (unsigned long long)cxt->phys_addr,
@@ -962,7 +972,8 @@ static void __init ramoops_register_dummy(void)
 	 * For backwards compatibility ramoops.ecc=1 means 16 bytes ECC
 	 * (using 1 byte for ECC isn't much of use anyway).
 	 */
-	pdata.ecc_info.ecc_size = ramoops_ecc == 1 ? 16 : ramoops_ecc;
+	pdata.ecc_info.ecc_size = ramoops_ecc < 0 ? 0 :
+				  (ramoops_ecc == 1 ? 16 : ramoops_ecc);
 
 	dummy = platform_device_register_data(NULL, "ramoops", -1,
 			&pdata, sizeof(pdata));
@@ -977,6 +988,7 @@ static int __init ramoops_init(void)
 {
 	int ret;
 
+	ramoops_ecc_param = ramoops_ecc;
 	ramoops_register_dummy();
 	ret = platform_driver_register(&ramoops_driver);
 	if (ret != 0)
