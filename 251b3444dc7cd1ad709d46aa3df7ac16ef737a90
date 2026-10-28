@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "251b3444dc7cd1ad709d46aa3df7ac16ef737a90",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b534cca_4a10b2b4",
+        "filename": "drivers/block/zram/zram_ioctl.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:11:25Z",
+      "side": 1,
+      "message": "Done — replaced the 4KB target rejection with stepping zram_process_walker() by mm_pte_size(walk-\u003emm), skipping adjacent PTEs that map the same swap entry, stopping before the next distinct entry when the scan budget is exhausted, and aligning start_addr to mm_pte_size(mm).",
+      "parentUuid": "9a92ffda_41c65e44",
+      "isAi": true,
+      "revId": "251b3444dc7cd1ad709d46aa3df7ac16ef737a90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
