@@ -40,6 +40,25 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b8f1dc6c_0dade0b1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:59:26Z",
+      "side": 1,
+      "message": "Thanks for splitting these out. Could the message also say what fails without this patch?\n\nAs far as I can see, `folio_pte_batch_flags()` stops after one slice PTE, so `MADV_COLD` and `MADV_PAGEOUT` try to split every large folio in a 4KB VMA, and a file folio mapped by more than one slice PTE is always skipped because `vma_folio_slices_exclusive()` only accepts anonymous folios. The file-folio mapcount change isn\u0027t mentioned yet.\n\nWhile you\u0027re there, as on aosp/4367599, could the subject say \"4KB\" rather than \"compat\"?",
+      "parentUuid": "870fd5ff_1f366bec",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1cb11091_802c9e37",
         "filename": "fs/proc/task_mmu.c",
         "patchSetId": 7

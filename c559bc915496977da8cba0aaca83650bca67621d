@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9cc1bb17_aad25b26",
+        "filename": "mm/madvise.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:59:26Z",
+      "side": 1,
+      "message": "Nit: `mm/internal.h` already includes `p3s/rmap.h`, so I think this include can go.",
+      "isAi": true,
+      "revId": "c559bc915496977da8cba0aaca83650bca67621d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39d0c13d_ea436aea",
+        "filename": "mm/madvise.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:59:26Z",
+      "side": 1,
+      "message": "Thanks, gating the split on `folio_test_large()` fixes the skip. I\u0027m worried, though, that this test now lets through a small file folio that another process still maps.\n\nA clipped window now reaches it with `nr \u003c folio_nr_ptes`: if this VMA maps two slices of a 16KB file folio and another 4KB process maps the other two, the mapcount is 4 and `MADV_COLD`/`MADV_PAGEOUT` treat the folio as exclusive.\n\nWould comparing with the batch work for you? Something like:\n\n```\n\t\tif (!folio_test_lru(folio) ||\n\t\t    (folio_mapcount(folio) !\u003d nr \u0026\u0026\n\t\t     !vma_folio_slices_exclusive(vma, folio)))\n\t\t\tcontinue;\n```\n\n`folio_mapcount() \u003d\u003d nr` means every mapping is one of the PTEs just batched. Native folios have `nr \u003d\u003d folio_nr_pages()` at this point, so they wouldn\u0027t change.",
+      "isAi": true,
+      "revId": "c559bc915496977da8cba0aaca83650bca67621d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
