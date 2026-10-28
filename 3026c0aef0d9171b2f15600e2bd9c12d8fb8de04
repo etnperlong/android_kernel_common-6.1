@@ -22,6 +22,31 @@
       },
       "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bb07260_32234821",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 817,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T00:11:22Z",
+      "side": 1,
+      "message": "Done — restored the original /* check for overflowing the buffer\u0027s size */ comment in both dma_buf_mmap_internal() and dma_buf_mmap().",
+      "parentUuid": "c6be4a6f_eaeb5131",
+      "range": {
+        "startLine": 817,
+        "startChar": 1,
+        "endLine": 817,
+        "endChar": 55
+      },
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
