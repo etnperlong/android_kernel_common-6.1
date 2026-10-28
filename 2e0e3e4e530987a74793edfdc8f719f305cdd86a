@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "2e0e3e4e530987a74793edfdc8f719f305cdd86a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c0100a0_0bd50649",
+        "filename": "drivers/gpu/drm/drm_gem.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1252,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:03:48Z",
+      "side": 1,
+      "message": "Done — added an early `if (vma_slice_off(vma)) return -EINVAL;` check before the exact lookup in drm_gem_mmap().",
+      "parentUuid": "cba1ac2b_9e58a0aa",
+      "isAi": true,
+      "revId": "2e0e3e4e530987a74793edfdc8f719f305cdd86a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
