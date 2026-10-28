@@ -52,6 +52,24 @@
       "parentUuid": "3d857308_29cc2ade",
       "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "470724f4_16426945",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-28T13:24:01Z",
+      "side": 1,
+      "message": "This is a new kernel feature, and as such should be sent upstream, no need for a hook for this.",
+      "parentUuid": "ea4c4805_af73c07b",
+      "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
