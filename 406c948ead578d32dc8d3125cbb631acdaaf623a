@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9757a078_cc05477e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:37Z",
+      "side": 1,
+      "message": "Done — updated the commit message to document the BPF ring-buffer case where consecutive 4KB consumer and producer pages each start at physical slice 0 of separate native pages, and updated bpf arraymap (aosp/4367949) to use vm_insert_page() since its value area is page-aligned.",
+      "parentUuid": "4b511530_e47090f7",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dabb3418_3dcb678d",
@@ -69,6 +88,25 @@
       "writtenOn": "2026-10-28T00:47:24Z",
       "side": 1,
       "message": "I\u0027m worried this reverses what aosp/4368056 did for 4KB VMAs. There, each entry is a kernel page that gets all its slices, and `*num` counts kernel pages; with this change each entry fills one 4KB PTE.\n\nA caller passing kernel pages, as the kernel-doc describes, would get slice `(s + i) \u0026 3` of page `i` at the i-th 4KB PTE and the rest of the range unmapped. As far as I can see, that affects `vm_map_pages()` until aosp/4368010, the trace ring buffer until aosp/4367959, io_uring until aosp/4367948 rejects 4KB processes, and any vendor caller indefinitely.\n\nI don\u0027t think anything in this patch needs it. Would it be OK to keep aosp/4368056\u0027s meaning here, or to move this to its own patch together with the caller that needs it?",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1c48ad1_fa70db60",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2468,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T07:10:37Z",
+      "side": 1,
+      "message": "Done — restored the baseline native-page array semantics of vm_insert_pages() and vma_insert_pages_slices() from aosp/4368056, and updated tracing ring_buffer (aosp/4367959) to pass its native page array directly.",
+      "parentUuid": "166537f0_a74c1667",
       "isAi": true,
       "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
