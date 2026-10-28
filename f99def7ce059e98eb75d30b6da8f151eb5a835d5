@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4261049_2c65b2ff",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1529,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:27:41Z",
+      "side": 1,
+      "message": "Would you mind moving `smaps_page_size_ppps.c`, which checks exactly this, from aosp/4367986 into this patch, as aosp/4367942 and aosp/4367943 do with their tests? Then the change and its test land together.",
+      "isAi": true,
+      "revId": "f99def7ce059e98eb75d30b6da8f151eb5a835d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7640f056_5af5ca08",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1531,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:27:41Z",
+      "side": 1,
+      "message": "Agreed that `MMUPageSize` should be the 4KB process page here while `KernelPageSize` stays 16KB, which matches how `Documentation/filesystems/proc.rst` describes the two fields. Until now, both report 16 kB in a 4KB process.\n\nNit: could you use `vma_page_size(vma)` (`include/linux/p3s/vma.h:33`) instead of `mm_pte_size(vma-\u003evm_mm)`? It already comes in through `\u003clinux/p3s_user_pages.h\u003e`, so the new `#include \u003clinux/p3s/mm.h\u003e` can go too.",
+      "isAi": true,
+      "revId": "f99def7ce059e98eb75d30b6da8f151eb5a835d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
