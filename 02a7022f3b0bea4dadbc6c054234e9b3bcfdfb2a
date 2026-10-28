@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cc684c0_aaa52a9e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:46Z",
+      "side": 1,
+      "message": "Done — updated the subject to \"ANDROID: P3S: coredump: Align ELF core segments to the process page size\", updated the commit message to explain the PT_LOAD segment offset/p_align mismatch without this change, and moved elf_core_p3s.c into this patch.",
+      "parentUuid": "f8689257_8f51c2cb",
+      "isAi": true,
+      "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1c808708_ba06170a",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "179ffb24_ce08d7f1",
+        "filename": "fs/binfmt_elf.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 2050,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:46Z",
+      "side": 1,
+      "message": "Done — switched both dataoff alignment and phdr.p_align in elf_core_dump() to ELF_MIN_ALIGN so x86_64 page-size emulation is preserved.",
+      "parentUuid": "1c808708_ba06170a",
+      "isAi": true,
+      "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "408ddadb_5cc4bf2c",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T21:29:23Z",
       "side": 1,
       "message": "I think the `fs/coredump.c` hunks don\u0027t change anything. aosp/4312509 opted this file into `\u003clinux/p3s_user_pages.h\u003e`, so `PAGE_SIZE` and `PAGE_SHIFT` here are already `mm_pte_size()` and `mm_pte_shift()` of `current-\u003emm` (no remote mm is set during a dump), and `size` is always `PAGE_SIZE`. `dump_user_range()` already steps by 4KB in a 4KB process and writes each slice from the `page_offset` that `get_dump_page()` returns, which also sets it to 0 first.\n\nThe same goes for `data[1]` in `fill_files_note()`: `fs/binfmt_elf.c` has opted in since aosp/4312470, so `PAGE_SIZE` there is already the page size that `m-\u003epgoff` counts in.\n\nWould it be OK to drop these hunks and keep only the alignment change in `elf_core_dump()`?",
+      "isAi": true,
+      "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "648d26a1_9b5f91c9",
+        "filename": "fs/coredump.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:46Z",
+      "side": 1,
+      "message": "Done — dropped the redundant fs/coredump.c and fill_files_note() hunks and kept only the ELF_MIN_ALIGN change in elf_core_dump().",
+      "parentUuid": "408ddadb_5cc4bf2c",
       "isAi": true,
       "revId": "02a7022f3b0bea4dadbc6c054234e9b3bcfdfb2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
