@@ -111,6 +111,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "54993441_9551bd0e",
+        "filename": "mm/madvise.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:22Z",
+      "side": 1,
+      "message": "Done — gated the nr \u003c folio_nr_ptes split/skip block on folio_test_large(folio) so partially mapped order-0 folios are still deactivated/paged out, and added partial_anon_reclaim_p3s.c (aosp/4398486) to cover partial anonymous reclaim.",
+      "parentUuid": "9d63e4ca_984aaa51",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b813b39e_6764b095",
@@ -161,6 +180,25 @@
       "writtenOn": "2026-10-28T00:59:56Z",
       "side": 1,
       "message": "Could you share when this triggers?\n\nAs far as I know, `try_to_unmap_one()` marks a swap PTE exclusive only when a single slice mapped the folio (aosp/4390447), `p3s_swapin_free_sibling_swap()` relies on that with `VM_WARN_ON_ONCE(pte_swp_exclusive())`, and `fork()` clears the bit on both sides.\n\nIf you\u0027ve hit a case, I think the fix would belong in `try_to_unmap_one()`; otherwise, would it be OK to drop this? If it stays, a helper in `mm/p3s/anon.h` next to the swap-in helpers would be nice.",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ead8ec2_740ec704",
+        "filename": "mm/swapfile.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2257,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:22Z",
+      "side": 1,
+      "message": "Done — dropped the mm/swapfile.c swapoff aliasing change (aosp/4393890 removed from the stack).",
+      "parentUuid": "70fc2177_de82d9d9",
       "isAi": true,
       "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
