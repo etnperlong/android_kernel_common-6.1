@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "6d949d8faaa06bb197064919feba85b56872ec66",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd82a104_ff94d8fb",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 2813,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:35Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series and kept signal_struct maxrss/cmaxrss in kernel-page units.",
+      "parentUuid": "5b547f1b_1fbbd4da",
+      "isAi": true,
+      "revId": "6d949d8faaa06bb197064919feba85b56872ec66",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
