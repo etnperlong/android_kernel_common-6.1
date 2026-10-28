@@ -37,6 +37,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8674d2e1_ee7342c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:59Z",
+      "side": 1,
+      "message": "Done — dropped the Fixes: tag.",
+      "parentUuid": "8c7a89a8_c8191005",
+      "isAi": true,
+      "revId": "5f1a285d5594ae3ef4ac89dc636466c13021477f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "25a9601a_b62f6d48",
