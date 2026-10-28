@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "134087aa_36065a99",
+        "filename": "gki/aarch64/symbols/pixel",
+        "patchSetId": 7
+      },
+      "lineNbr": 2983,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:45:11Z",
+      "side": 1,
+      "message": "Would you mind dropping the `abi.stg` and symbol list changes from this patch?\n\nWe\u0027d like to update the ABI and the symbol lists once, at the end of the P3S series, so the individual patches stay focused on the code. Thanks!",
+      "isAi": true,
+      "revId": "15d0d072420a4b3a22d406864b4dff38aa64c7bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e21cebd_05462d66",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2643,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:45:11Z",
+      "side": 1,
+      "message": "Small suggestion: this open-codes `vma_pte_add_slice()` with a raw `pte_val()` addition, and aosp/4367599 (`insert_page_into_pte_locked()`) and `remap_pfn_range_slice()` in aosp/4367597 add two more copies.\n\nIf an explicit slice is really needed, could `vma_pte_add_slice()` take the slice index instead of the address? That way the encoding stays in one place and goes through `pte_advance_phys()`.",
+      "isAi": true,
+      "revId": "15d0d072420a4b3a22d406864b4dff38aa64c7bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "edcceac2_aafb70d6",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2715,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:45:11Z",
+      "side": 1,
+      "message": "If this does stay, one concern: since aosp/4368057, `generic_access_phys()` gets the physical address from `vma_pfnmap_phys()`, which works the slice out from the address (\"as set up by `remap_pfn_range()` and `insert_pfn()`\").\n\nWith an explicit slice the PTE could map a different 4KB, so I think ptrace or `/proc/pid/mem` through `generic_access_phys()` would access a 4KB the process never mapped.",
+      "isAi": true,
+      "revId": "15d0d072420a4b3a22d406864b4dff38aa64c7bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77c3cedf_d479843a",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2763,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:45:11Z",
+      "side": 1,
+      "message": "I couldn\u0027t find a caller of `vmf_insert_pfn_slice()` or `vmf_insert_pfn_prot_slice()` up to the top of the chain; only the KMI files list them.\n\nSince aosp/4368054, `insert_pfn()` already maps the slice that `vma_slice_offset()` gives the address (following `vm_pgoff`/`vm_slice_off`), so I believe fault handlers already work through `vmf_insert_pfn()`/`vmf_insert_mixed()`.\n\nWhich module needs a different slice? If it\u0027s a vendor module, could you name it in the commit message? Otherwise, would it make sense to hold this patch until there\u0027s a user?",
+      "isAi": true,
+      "revId": "15d0d072420a4b3a22d406864b4dff38aa64c7bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
