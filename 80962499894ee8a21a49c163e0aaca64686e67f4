@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2fa876dd_4473f31e",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T20:55:47Z",
+      "side": 1,
+      "message": "Nit: since the test moved to aosp/4396646, this patch only adds a blank line here and one in `run_vmtests.sh`. Could those two hunks go, so that the patch only touches `include/linux/p3s/vma.h`?",
+      "isAi": true,
+      "revId": "80962499894ee8a21a49c163e0aaca64686e67f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
