@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88da8962_90a0634e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:55:32Z",
+      "side": 1,
+      "message": "The body now covers both Binders, thanks. Could it also say what fails without this patch? As far as I can see, Rust Binder\u0027s `mmap()` fails with `-EINVAL` for libbinder\u0027s 1MB - 8KB mapping, and C Binder indexes past `pages[]` for a buffer in the last partial page.",
+      "isAi": true,
+      "revId": "8bf877e167adfbefbfa420c082c1775273dd1f8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1dce83a_419a5297",
+        "filename": "rust/kernel/mm/virt.rs",
+        "patchSetId": 12
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:55:32Z",
+      "side": 1,
+      "message": "Now that Binder keeps calling `vm_insert_page()`, would it be OK to drop the `virt.rs` hunk?\n\nThe call below is the same as before, only split over three lines (left over from `vm_insert_page_native()`, I think). The new paragraph also doesn\u0027t quite match the partial last page this patch is about: there, `vma_insert_page_slices()` stops at `vm_end` instead of mapping the whole native page.",
+      "isAi": true,
+      "revId": "8bf877e167adfbefbfa420c082c1775273dd1f8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
