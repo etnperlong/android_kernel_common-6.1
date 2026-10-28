@@ -379430,6 +379430,16 @@ function {
   parameter_id: 0x33756485
 }
 function {
+  id: 0x9fc4230e
+  return_type_id: 0x6720d32f
+  parameter_id: 0x0a134144
+  parameter_id: 0x33756485
+  parameter_id: 0x33756485
+  parameter_id: 0x4585663f
+  parameter_id: 0x33756485
+  parameter_id: 0x9cf21ab5
+}
+function {
   id: 0x9fc54954
   return_type_id: 0x6720d32f
   parameter_id: 0x0a134144
@@ -450783,6 +450793,15 @@ elf_symbol {
   full_name: "remap_pfn_range"
 }
 elf_symbol {
+  id: 0x62037dae
+  name: "remap_pfn_range_slice"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x8303b58d
+  type_id: 0x9fc4230e
+  full_name: "remap_pfn_range_slice"
+}
+elf_symbol {
   id: 0x195b028a
   name: "remap_vmalloc_range"
   is_defined: true
@@ -478897,6 +478916,7 @@ interface {
   symbol_id: 0xe7e7ab1a
   symbol_id: 0x9cb108b5
   symbol_id: 0xdfdf59f8
+  symbol_id: 0x62037dae
   symbol_id: 0x195b028a
   symbol_id: 0x78126b2c
   symbol_id: 0x5153378f
