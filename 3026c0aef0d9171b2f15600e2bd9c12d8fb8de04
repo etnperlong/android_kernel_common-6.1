@@ -3,6 +3,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ab0b4d0f_df29f34e",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:43:23Z",
+      "side": 1,
+      "message": "Agreed that the bounds check needs fixing, since `vma_pages()` counts 4KB pages. aosp/4368058 already uses a pattern for this in kernel/dma: `vm_pgoff + vma_kernel_pages(vma)` against the size in kernel pages, where `vma_kernel_pages()` includes `vm_slice_off`.\n\nWould using `vma_kernel_pages()` in the existing checks, here and in `dma_buf_mmap()`, be enough? \n\nThat would avoid `vma_aligned_size()` here.\n\nOne more thing I noticed: rounding dmabuf-\u003esize up to the VMA page size also changes native behaviour, since a native process could now map the partial last page of an unaligned dma-buf, which the old size \u003e\u003e PAGE_SHIFT check refused.",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c6be4a6f_eaeb5131",
         "filename": "drivers/dma-buf/dma-buf.c",
         "patchSetId": 7
@@ -44,6 +62,78 @@
         "endLine": 817,
         "endChar": 55
       },
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40b40966_0ca2c690",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2168,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:43:23Z",
+      "side": 1,
+      "message": "Could you help me understand why `vm_slice_off` is reset here?\n\n`@pgoff` is in kernel pages and can\u0027t carry the 4KB offset the process passed to the importer\u0027s `mmap()`, so I think this maps the buffer up to 12KB before the requested offset.\n\nWould it work to keep `vma_slice_off(vma)`, which `vma_kernel_pages()` then bounds, or to return `-EINVAL` for a non-zero slice as `perf_mmap()` does?",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db70c181_9e73f543",
+        "filename": "drivers/dma-buf/heaps/system_heap.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:43:23Z",
+      "side": 1,
+      "message": "It looks like this branch and `remap_pfn_range_slice()` might not be needed anymore: since aosp/4368055, `remap_pfn_range()` in a 4KB VMA maps 4KB frames starting at the slice that `vma_slice_offset()` gives the address.\n\nAs far as I can tell, the native loop only breaks because it remaps a whole kernel page from `vm_start`, which runs into `pfn + 1` when `vm_slice_off !\u003d 0` and past `vm_end` when the last page is partial.\n\nWould clamping the size in the existing loop work for you? Something like:\n\n```\n    unsigned long off \u003d (unsigned long)vma_slice_off(vma) \u003c\u003c PAGE_SHIFT_4KB;\n    ...\n        unsigned long size \u003d min(PAGE_SIZE - off, vma-\u003evm_end - addr);\n\n        ret \u003d remap_pfn_range(vma, addr, page_to_pfn(page), size,\n                              vma-\u003evm_page_prot);\n        ...\n        addr +\u003d size;\n        off \u003d 0;\n\n```\n\nNative VMAs have `off \u003d\u003d 0` and whole pages, so they wouldn\u0027t change.",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e5689c8_67e6d076",
+        "filename": "gki/aarch64/symbols/pixel",
+        "patchSetId": 7
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:43:23Z",
+      "side": 1,
+      "message": "Would you mind dropping the `abi.stg` and symbol list changes from this patch?\n\nWe\u0027d like to update the ABI and the symbol lists once, at the end of the P3S series, so the individual patches stay focused on the code. Thanks!",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "060dbc38_87899a30",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 3102,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T00:43:23Z",
+      "side": 1,
+      "message": "If the system heap can use `remap_pfn_range()` (see my comment in `system_heap.c`), this wouldn\u0027t be needed here.\n\nI see that perf (aosp/4367963) and `mm/p3s.c` (aosp/4368009 and aosp/4368010) use it later. Would you mind adding it in the first patch that needs it, under `mm/p3s/` next to `vma_remap_frame()`, rather than as a new block in `mm/memory.c`?\n\nIt might also be simpler with `get_locked_pte()` and `mm_frame_pte()` instead of the open-coded page-table walk and `pte_val()` addition. The `mm.h` prototype would move with it.",
       "isAi": true,
       "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
