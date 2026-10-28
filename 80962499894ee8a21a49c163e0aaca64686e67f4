@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "80962499894ee8a21a49c163e0aaca64686e67f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c61cfd29_5d515163",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T22:30:28Z",
+      "side": 1,
+      "message": "Done — removed the stray blank-line hunks in tools/testing/selftests/mm/Makefile and run_vmtests.sh so this patch only touches include/linux/p3s/vma.h.",
+      "parentUuid": "2fa876dd_4473f31e",
+      "isAi": true,
+      "revId": "80962499894ee8a21a49c163e0aaca64686e67f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
