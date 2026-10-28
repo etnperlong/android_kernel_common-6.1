@@ -33,6 +33,42 @@
       "message": "Please fix this ERROR reported by KernelCommit: Please **add an open respin request bug** to the commit message. Do not remove e...\n\nPlease **add an open respin request bug** to the commit message. Do not remove existing bug references.\nRefer to the following link for more information:\nhttps://source.android.com/docs/core/architecture/kernel/gki-respin\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
       "revId": "b1da195c125659eb12d23d695a79fb009ed74d2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f823c41_5547f502",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3434411
+      },
+      "writtenOn": "2026-10-28T01:48:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6ad2de3_6b72e66f",
+      "revId": "b1da195c125659eb12d23d695a79fb009ed74d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aefe4bb0_c3eea509",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3434411
+      },
+      "writtenOn": "2026-10-28T01:48:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24de6ab5_c2641607",
+      "revId": "b1da195c125659eb12d23d695a79fb009ed74d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
