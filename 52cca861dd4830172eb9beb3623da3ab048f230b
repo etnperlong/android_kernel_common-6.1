@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d512432b_a854b971",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:56:14Z",
+      "side": 1,
+      "message": "Same formatting related comments as previous commit message.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 10
+      },
+      "revId": "52cca861dd4830172eb9beb3623da3ab048f230b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17d9aa8b_27cea1b6",
+        "filename": "rust/kernel/alloc/kvec.rs",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:56:14Z",
+      "side": 1,
+      "message": "Why does the placement of this need to change?",
+      "revId": "52cca861dd4830172eb9beb3623da3ab048f230b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af440b75_0998e20c",
+        "filename": "rust/kernel/dma.rs",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:56:14Z",
+      "side": 1,
+      "message": "Perhaps we should backport [1] instead?\n\n[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id\u003dad2907b4e308a93deac93ff408f8bbbcac333905",
+      "revId": "52cca861dd4830172eb9beb3623da3ab048f230b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
