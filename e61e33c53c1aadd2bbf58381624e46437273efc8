@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52452763_393d0a44",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T21:55:44Z",
+      "side": 1,
+      "message": "Agreed: `pinned_vm` is charged in kernel pages (e.g. by `perf_mmap()`), so with the 4KB page shift that `SEQ_PUT_DEC()` uses under `P3S_CONTEXT_REMOTE_MM()`, VmPin showed a quarter of it.\n\nNit: since this line now differs on purpose from the `SEQ_PUT_DEC()` lines around it, could you add a short comment (with a blank line before it)? Something like:\n\n```\n\t/* pinned_vm counts kernel pages, e.g. from perf_mmap(). */\n```",
+      "isAi": true,
+      "revId": "e61e33c53c1aadd2bbf58381624e46437273efc8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
