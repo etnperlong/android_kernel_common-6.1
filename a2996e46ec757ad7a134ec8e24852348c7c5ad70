@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab16b96c_0572ed7b",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1327,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:32:49Z",
+      "side": 1,
+      "message": "It looks like aosp/4312484 already covers this. `vma_can_userfault()` returns false for a non-anonymous VMA of a 4KB mm, so the check a few lines below already fails the registration for the same VMAs, including a range that mixes anonymous and file VMAs, before any VMA is changed. It also logs the refusal with `p3s_4k_unsupported()`.\n\nSo as far as I can see, this hunk only turns `-EINVAL` into `-EOPNOTSUPP` and skips the log. `-EINVAL` is also what upstream returns for the other VMAs it can\u0027t register, such as a regular file mapping.\n\nWould it be OK to drop this patch, and have `userfaultfd_shmem_ppps.c` in aosp/4367986 expect `EINVAL`?",
+      "isAi": true,
+      "revId": "a2996e46ec757ad7a134ec8e24852348c7c5ad70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
