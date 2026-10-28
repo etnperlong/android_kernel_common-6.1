@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a1ea08a_62a38ba1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:57:48Z",
+      "side": 1,
+      "message": "Could the body say what goes wrong without the patch? As far as I can see there are two cases.\n\nThe type1 backend, which GKI builds in because `VFIO_CONTAINER` selects `VFIO_IOMMU_TYPE1` on arm64, pins `current-\u003emm` in `vfio_pin_pages_remote()` and maps a whole kernel page for each pinned page in `vfio_iommu_map()`, but the 4KB pages of a 16KB range can map slices of different kernel pages. And `vfio_platform_mmap_mmio()` maps MMIO past the end of a region when `vm_slice_off !\u003d 0`.\n\nThat would also explain why the container ioctl and device `mmap()` are checked: they cover fds that a native process passes on. \"Keep P3S page-size selection and native VFIO MMIO geometry unchanged\" only says what doesn\u0027t change.\n\nAlso, could the subject say \"4KB processes\" rather than \"PPPS host APIs\"? PPPS is the old abbreviation for P3S, and \"4KB processes\" would match aosp/4368079.",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a73c649a_b75cd277",
+        "filename": "drivers/vfio/container.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:57:48Z",
+      "side": 1,
+      "message": "Could these checks use `p3s_4k_unsupported()` (aosp/4366134) instead of `mm_is_p3s_4k()`? It logs the refusal with the function name, so refusals hit in production can be identified, and aosp/4368076 and aosp/4368079 use it for the same kind of checks.\n\nThose patches also return `-EPERM` when refusing to open or create the object and `-EOPNOTSUPP` from `mmap()`. Would that split work here too?\n\nThe new `#include` lines shouldn\u0027t be needed either: `\u003clinux/mm_types.h\u003e` already includes `\u003clinux/p3s/mm.h\u003e` through `\u003clinux/p3s.h\u003e`.",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60359b11_e75028ed",
+        "filename": "drivers/vfio/platform/vfio_platform_common.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:57:48Z",
+      "side": 1,
+      "message": "Agreed that 4KB processes shouldn\u0027t map these regions: `vfio_platform_mmap_mmio()` checks `req_start + req_len` against the region in kernel pages and ignores `vm_slice_off`, while since aosp/4368055 `remap_pfn_range()` starts at slice `vm_slice_off` of the first page. For example, mapping 16KB at offset 4KB of a 16KB region passes the check and maps the 4KB of MMIO after the region.\n\nBut as far as I can see `vfio_platform_mmap()` is only reached through `device-\u003eops-\u003emmap()` from `vfio_device_fops_mmap()`, which this patch already checks. Would it be OK to drop this hunk and the includes in this file?",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d4155ba_434ab3ce",
+        "filename": "drivers/vfio/vfio_main.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1350,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T06:57:48Z",
+      "side": 1,
+      "message": "As far as I can see the reads and writes don\u0027t depend on the caller\u0027s page size: `vfio_platform_read_mmio()` and `vfio_platform_write_mmio()` move 1, 2 or 4 bytes at a time with `ioread*()`/`iowrite*()` and `copy_to_user()`/`copy_from_user()`.\n\nThe same seems true for `vfio_device_fops_unl_ioctl()` and `vfio_group_fops_unl_ioctl()`, which exchange info structs, eventfds and fds. A device fd from `VFIO_GROUP_GET_DEVICE_FD` still can\u0027t be mapped because of the `vfio_device_fops_mmap()` check, and DMA mappings still go through the container ioctl check.\n\nWould it be OK to drop these four hunks?",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
