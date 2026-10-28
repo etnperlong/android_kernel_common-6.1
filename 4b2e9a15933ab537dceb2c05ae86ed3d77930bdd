@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa9fba62_c6c4dddb",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:30:48Z",
+      "side": 1,
+      "message": "Done — dropped this standalone patch and folded vma_set_range_slice() into aosp/4367608, deriving the merge-right pgoff and slice from middle rather than next at an address below its start (so signed below-start arithmetic in vma_linear_page_index() is no longer needed).",
+      "parentUuid": "de19805f_774d2258",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3eb63a69_0da8160f",
@@ -106,6 +125,25 @@
       "writtenOn": "2026-10-28T01:03:14Z",
       "side": 1,
       "message": "Could you point me to the path that loses the slice here?\n\nAs far as I can see, `vma_shrink()`\u0027s only caller is `relocate_vma_down()`, which passes `start \u003d\u003d vma-\u003evm_start` after `vma_expand()`, so this writes back the same `vm_slice_off`.\n\nIf it\u0027s the non-16KB stack shift from aosp/4367600, I\u0027d lean towards keeping that shift 16KB-aligned and dropping this.",
+      "isAi": true,
+      "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c2403bd_4c2de537",
+        "filename": "mm/vma.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1279,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T21:30:48Z",
+      "side": 1,
+      "message": "Done — dropped the vma_shrink() change and folded the remaining VMA slice helpers into aosp/4367608.",
+      "parentUuid": "2820866d_76ab07a2",
       "isAi": true,
       "revId": "4b2e9a15933ab537dceb2c05ae86ed3d77930bdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
