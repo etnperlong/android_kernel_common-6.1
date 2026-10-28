@@ -237,7 +237,7 @@ endif
 
 TEST_GEN_PROGS += drm_gem_slice_p3s
 
-TEST_GEN_PROGS += bpf_remote_access_p3s
+TEST_GEN_PROGS += bpf_remote_access_p3s futex_uffd_p3s iov_range_retry_p3s
 
 include ../lib.mk
 
@@ -274,6 +274,7 @@ $(eval $(call p3s_test_hdrs,fault_in_p3s,fault_in_p3s.h))
 $(eval $(call p3s_test_hdrs,folio_within_range_p3s,folio_within_range_p3s.h))
 $(eval $(call p3s_test_hdrs,gup_retry_p3s,gup_retry_p3s.h))
 $(eval $(call p3s_test_hdrs,iov_iter_p3s,iov_iter_p3s.h))
+$(eval $(call p3s_test_hdrs,iov_range_retry_p3s,iov_range_retry_p3s.h))
 $(eval $(call p3s_test_hdrs,page_range_p3s,iov_iter_p3s.h page_range_p3s.h))
 $(eval $(call p3s_test_hdrs,file_cow_refs_p3s,iov_iter_p3s.h page_range_p3s.h))
 $(eval $(call p3s_test_hdrs,mmu_notifier_p3s,mmu_notifier_p3s.h))
