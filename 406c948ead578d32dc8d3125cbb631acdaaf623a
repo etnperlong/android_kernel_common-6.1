@@ -37,6 +37,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c706b3f2_41ffee09",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2347,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:21Z",
+      "side": 1,
+      "message": "Done — left insert_page() unchanged and added vma_insert_page_slice() in mm/p3s/pgtable.h next to vma_insert_page_slices().",
+      "parentUuid": "dabb3418_3dcb678d",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "166537f0_a74c1667",
@@ -68,6 +87,25 @@
       "writtenOn": "2026-10-28T00:47:24Z",
       "side": 1,
       "message": "This copies `vm_insert_page()`\u0027s checks, including the two `BUG_ON()`s that checkpatch flags in new code. Could the two share a small helper?\n\nIt would also be great to have kernel-doc for the new export, covering what `slice_idx` selects and that native VMAs get `-EINVAL`.",
+      "isAi": true,
+      "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f16e5969_2e793575",
+        "filename": "mm/memory.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2528,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:21Z",
+      "side": 1,
+      "message": "Done — extracted prepare_vm_insert_page() to share the VM_MIXEDMAP preparation and added kernel-doc for vm_insert_page_slice().",
+      "parentUuid": "d0ff09f0_e56907a2",
       "isAi": true,
       "revId": "406c948ead578d32dc8d3125cbb631acdaaf623a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
