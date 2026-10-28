@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecf47098_736e2ed8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:12Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain a native handler copying from above TASK_SIZE_4KB (1UL \u003c\u003c 40) into a 4KB target mm while preserving destination page-size alignment.",
+      "parentUuid": "c683f4c6_efa33283",
+      "isAi": true,
+      "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4241f14b_46f6bff2",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b408d24_e993badf",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:12Z",
+      "side": 1,
+      "message": "Done — simplified to validate_unaligned_range(current-\u003emm, uffdio_copy.src, uffdio_copy.len) with a concise comment.",
+      "parentUuid": "4241f14b_46f6bff2",
+      "isAi": true,
+      "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "af591df5_f629cca3",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T07:38:25Z",
       "side": 1,
       "message": "I think the untagging changes native processes too. Since `2ef5d7245d9c` (`\"mm: userfaultfd: check for start + len overflow in validate_range\"`), a tagged `src` fails with `-EINVAL` for every caller, because `validate_unaligned_range()` compares it with `task_size`.\n\nAccepting it may well match `Documentation/arch/arm64/tagged-address-abi.rst`, which only excludes `range.start`, `start` and `dst`, but it isn\u0027t specific to P3S. Would it be OK to drop it here, together with the tagged source in `userfaultfd_remote_ppps.c` (aosp/4367986), and send it upstream separately if it\u0027s needed?",
+      "isAi": true,
+      "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b3c9433_423eec0e",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:12:12Z",
+      "side": 1,
+      "message": "Done — dropped the untagged_addr_remote() change on uffdio_copy.src.",
+      "parentUuid": "af591df5_f629cca3",
       "isAi": true,
       "revId": "4e1a562b2b2d5d8af8efffde39cb18443cbc32c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
