@@ -110,6 +110,25 @@
       "isAi": true,
       "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "413f120c_2f050021",
+        "filename": "io_uring/memmap.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T23:50:30Z",
+      "side": 1,
+      "message": "The `vma_file_offset()` conversion is gone, thanks. It looks like a parentheses-only change is still left on this line, though, so `io_uring/memmap.c` is still in the patch. Would you mind restoring the original line and dropping the io_uring clause at the end of the commit message along with it?",
+      "parentUuid": "e635a49c_fb1d025f",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
