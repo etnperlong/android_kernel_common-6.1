@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd8504ab_529d12db",
+        "filename": "drivers/media/common/videobuf2/videobuf2-memops.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:32:41Z",
+      "side": 1,
+      "message": "I think aosp/4368000 later in the chain undoes this patch: at the top of the chain `videobuf2-memops.c` and `videobuf2-memops.h` match their content before this patch, and `videobuf2-dma-contig.c` and `videobuf2-dma-sg.c` differ only in whitespace. Instead, it rejects USERPTR from 4KB processes with `-EOPNOTSUPP` in `videobuf2-core.c`.\n\nWould it be OK to drop this patch and move that rejection here? It only needs `mm_is_p3s_4k()` from `\u003clinux/p3s/mm.h\u003e`, so it should work at this point in the chain, and 4KB processes would get a clear error from the start.\n\nAs far as I can see, without this patch a 4KB process gets `-ENOSPC` from `get_vaddr_frames()` here, but only because of the frame vector part of aosp/4367611, which aosp/4368000 reverts as well.",
+      "isAi": true,
+      "revId": "32a9d8df0ce300716342dcf1e51f70ed1612fe92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "206b8817_895aaaba",
+        "filename": "drivers/media/common/videobuf2/videobuf2-memops.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T03:32:41Z",
+      "side": 1,
+      "message": "I\u0027m worried this builds the wrong table for a 4KB process once the buffer crosses a 16KB page. `vb2_create_framevec()` now returns one entry per 4KB page (native pages repeat, each with its own slice in the span), but `sg_alloc_table_from_pages()` only uses the first offset and treats every later entry as a whole 16KB page from offset 0.\n\nWith pages `[A, A, A, A, B, ...]`, for example, the second entry maps all of `A` again instead of `B`. Since `n_pages` counts 4KB pages, `size` also underflows partway and the remaining entries get full 16KB lengths, so DMA can land in slices outside the buffer.\n\n`vm_map_ram()` in `vb2_dma_sg_vaddr()`, and in `vb2_vmalloc_get_userptr()` which this patch doesn\u0027t touch, maps the repeated pages the same way. The `vb2_userptr_ppps` test in aosp/4367986 only uses two slices of one native page, so it wouldn\u0027t catch this. Native processes look unchanged.\n\nWith 16KB kernel pages I don\u0027t think `vm_map_ram()` can map scattered 4KB slices contiguously at all, so rejecting USERPTR for 4KB processes, as aosp/4368000 does, looks like the safer fix to me.",
+      "isAi": true,
+      "revId": "32a9d8df0ce300716342dcf1e51f70ed1612fe92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
