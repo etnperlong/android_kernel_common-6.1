@@ -121,6 +121,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2510830_668d7144",
+        "filename": "gki/aarch64/symbols/pixel",
+        "patchSetId": 7
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T02:02:11Z",
+      "side": 1,
+      "message": "Done — dropped abi.stg and symbol list changes from this patch and moved the arm64 symbol/ABI update to a single patch at the end of the P3S series.",
+      "parentUuid": "0e5689c8_67e6d076",
+      "isAi": true,
+      "revId": "3026c0aef0d9171b2f15600e2bd9c12d8fb8de04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "060dbc38_87899a30",
