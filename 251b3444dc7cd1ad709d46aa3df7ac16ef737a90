@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a92ffda_41c65e44",
+        "filename": "drivers/block/zram/zram_ioctl.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T07:06:10Z",
+      "side": 1,
+      "message": "I\u0027m not sure the walker is wrong for a 4KB target. Since aosp/4312517, `walk_page_range()` walks the target in its own geometry (`P3S_CONTEXT_REMOTE_MM(walk-\u003emm)` in `walk_pgd_range()`), and since aosp/4312473, `pte_offset_map_lock()` indexes the 4KB PTE table through `__mm_pte_offset_map()`. Reclaim leaves the folio\u0027s swap entry in every slice PTE of its 16KB window (aosp/4312525, aosp/4379310), so `swp_offset()` gives the 16KB zram slot, as for a native process.\n\nAs far as I can see, only the 16KB stride doesn\u0027t fit. `addr +\u003d PAGE_SIZE` reads one slice PTE per window, so a window is skipped when that slice is a hole. Also, a `next_addr` in a VMA that isn\u0027t 16KB-aligned fails the `IS_ALIGNED(start_addr, PAGE_SIZE)` check when it\u0027s passed back.\n\nWould it work to step by `mm_pte_size(walk-\u003emm)`, skip a swap entry equal to the last one queued, and check `start_addr` against `mm_pte_size(mm)` instead? Per-process writeback and prefetch would then keep working for 4KB apps, and native processes wouldn\u0027t change.",
+      "isAi": true,
+      "revId": "251b3444dc7cd1ad709d46aa3df7ac16ef737a90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
