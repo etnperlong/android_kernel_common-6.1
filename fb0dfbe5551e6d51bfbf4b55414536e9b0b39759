@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cc05fd0_6e65fb3b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:08:26Z",
+      "side": 1,
+      "message": "Done — repurposed this patch to reject non-zero vma_slice_off(vma) in vb2_mmap() and updated the subject and commit message accordingly.",
+      "parentUuid": "942bc038_fe3c3806",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cce6b02c_c828b133",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba147f37_792b90e7",
+        "filename": "drivers/media/common/videobuf2/videobuf2-core.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 2501,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:08:26Z",
+      "side": 1,
+      "message": "Done — added `if (vma_slice_off(vma)) return -EINVAL;` at the start of vb2_mmap() and dropped the vma_file_offset() conversion.",
+      "parentUuid": "cce6b02c_c828b133",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9f3674f1_54236cd5",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T03:10:57Z",
       "side": 1,
       "message": "It looks like this can\u0027t change anything: since aosp/4368076, `io_uring_mmap()` returns `-EOPNOTSUPP` a few lines below for 4KB mms, so every VMA that reaches the `switch` has `vm_slice_off \u003d\u003d 0`, and `vma_file_offset()` equals `vm_pgoff \u003c\u003c PAGE_SHIFT`. The `switch` also only looks at the `IORING_OFF_MMAP_MASK` bits.\n\nWould it be OK to drop this hunk?",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e635a49c_fb1d025f",
+        "filename": "io_uring/memmap.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T05:08:26Z",
+      "side": 1,
+      "message": "Done — dropped the vma_file_offset() conversion in io_uring_mmap().",
+      "parentUuid": "9f3674f1_54236cd5",
       "isAi": true,
       "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
