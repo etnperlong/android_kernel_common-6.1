@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9971029f_52b20d9f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:48:52Z",
+      "side": 1,
+      "message": "Could the message say what fails without this patch? As far as I can see, UFFDIO_MOVE can\u0027t currently move any slice of a swapped-out window that more than one slice mapped. `try_to_unmap_one()` marks none of its swap PTEs exclusive (`p3s_folio_mapped_by_slices()`, aosp/4390447), and `move_pages_ptes()` returns `-EBUSY` for a swap PTE that isn\u0027t exclusive.\n\nSo moving a fully written window after it was swapped out returns `-EBUSY`, or `-EAGAIN` with only the bytes before it moved. I think that\u0027s what the complete case of `uffd_move_retry_p3s` in aosp/4367975 would see without this patch. No data is lost, and userspace falls back to UFFDIO_COPY, as aosp/4312528 documents for slices that can\u0027t move.\n\nIf that\u0027s right, the patch saves that fallback rather than fixing a failure. Is there a user that needs swapped-out windows to move. If so, could the message say so? The comment above `move_compat_swap_folio()` could then say the same: none of the swap PTEs is exclusive, so the single-PTE path already refuses the first slice, not only the second.",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18854f46_73e8a38a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:48:52Z",
+      "side": 1,
+      "message": "I think the second sentence reads like a note about how the work was split between patches, and it doesn\u0027t quite match this one. The swap move copies no tags: they stay with the swap entry, and `arch_swap_restore()` puts them back at swap-in. The new `mte_copy_tags_range()` call in `mm/p3s/anon.h` can\u0027t run either (see my comment there). If those hunks go, the sentence can go too, which also fixes the 74-column line.\n\nCould the subject and body also say 4KB processes rather than compat? For example:\n\n`ANDROID: P3S: userfaultfd: Move swapped 16KB windows of 4KB processes`",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "150187ea_7249dffd",
+        "filename": "arch/arm64/lib/mte.S",
+        "patchSetId": 16
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:48:52Z",
+      "side": 1,
+      "message": "Agreed that the later callers need a new primitive: `mte_copy_page_tags()` only copies whole pages, and `mte_set_mem_tag_range()` (used by `mte_zero_clear_slice_tags()`) only sets one tag. The loop looks right to me for 4KB slices, and `mte_copy_page_tags()` still copies the whole page as before.\n\nLDGM and STGM work on naturally aligned blocks of `4 \u003c\u003c GMID_EL1.BS` bytes (up to 256), though. The start is rounded down to a block, and the loop copies whole blocks until it reaches or passes `x0 + x2`. Could the comment say that both addresses and the size must be multiples of 256 bytes, so that a later caller doesn\u0027t copy tags outside the range?",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "424bd554_57a30ecb",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:48:52Z",
+      "side": 1,
+      "message": "As far as I can see, this branch can\u0027t run. `folio` is the copy that `mfill_atomic_pte_copy()` just allocated, without `__GFP_ZEROTAGS`, and it isn\u0027t mapped yet, so `page_mte_tagged(\u0026folio-\u003epage)` is false. The reused slice therefore still gets `mte_zero_clear_slice_tags()`, as before. That is also what a native process gets, because UFFDIO_COPY doesn\u0027t copy tags from the user buffer.\n\nWould it be OK to drop this hunk and the `\u003casm/mte.h\u003e` include, and add `mte_copy_tags_range()` together with its first real user instead? That looks like `p3s_mremap_copy_slice()` in aosp/4367984, then aosp/4367997. A separate arm64 patch just before aosp/4367984 would also make the `mte.S` change easy to review on its own.",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e706324_b09ef61c",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:48:52Z",
+      "side": 1,
+      "message": "The locking looks right to me: the folio lock is taken before the PTLs, the wait happens with the PTEs unmapped, and `swp_swapcount()` runs under the PTLs. But I think most of this function repeats the swap branch of `move_pages_ptes()` and `move_swap_pte()`: `get_swap_device()`, the swap cache lookup, the folio lock and its retry, the `pmd_same()`/`pte_same()` recheck, the `SWAP_HAS_CACHE` check and the PTE move. Only the choice of which PTEs move with the entry is specific to 4KB processes.\n\nWould it work to keep the generic path, let non-exclusive swap PTEs of 4KB VMAs through its `pte_swp_exclusive()` check, and have `move_swap_pte()` ask a helper in `mm/p3s/anon.h`, next to `p3s_uffd_move_nr_slices()`, how many PTEs to move? Under both locks, it could count the PTEs from `src_pte` within the window and the range that hold `entry`, as `p3s_swapin_free_sibling_swap()` does with `vma_folio_slice_bounds()`. It would return that count only if it equals `swp_swapcount(entry)`, the destination PTEs are none, and the swap cache folio, if any, is unmapped and unpinned.\n\nThat would leave only a few lines in `mm/userfaultfd.c`, where aosp/4367997 adds another ~230, and avoid a second copy of the lock and retry handling. It would also move windows that were only partly mapped at swap-out. Here, a none PTE in the window makes the code fall back to the generic path, which still returns `-EBUSY`. If that doesn\u0027t work out, could this function at least move to `mm/p3s/anon.h` as a `p3s_uffd_*()` helper, with a one-line call here?",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7eedbec_6dbe3c53",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:48:52Z",
+      "side": 1,
+      "message": "Nit: if this function stays, `P3S_SLICES_PER_PAGE` (`include/linux/p3s/const.h`), as used in `move_present_ptes()`, could replace `PAGE_SIZE_KERNEL / PAGE_SIZE_4KB` here and in the `src[]` declaration. `src` could also be a single `pte_t`, since each entry is only used in its own iteration.\n\nIn the caller, the two `vm_end` checks look redundant with `len \u003e\u003d PAGE_SIZE_KERNEL`, since `move_pages()` already checks both ranges against their VMAs. The comment before the new block also needs a blank line after the `}` above it.",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
