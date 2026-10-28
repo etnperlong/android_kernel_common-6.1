@@ -24,6 +24,52 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf8e464e_2f38aef2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:46:42Z",
+      "side": 1,
+      "message": "Please do not duplicate Change-Id.",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 52
+      },
+      "revId": "bed4042cacc74fe8bf229a489f1dbe2246c2b0ee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09f16ea1_e8440aa1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-28T17:46:42Z",
+      "side": 1,
+      "message": "Not required",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 68
+      },
+      "revId": "bed4042cacc74fe8bf229a489f1dbe2246c2b0ee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "7c614801_f4ce7cd5",
