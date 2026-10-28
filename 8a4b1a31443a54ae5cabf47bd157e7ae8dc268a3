@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1800c0b_ff928f0a",
+        "filename": "fs/aio.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T20:54:52Z",
+      "side": 1,
+      "message": "As far as I can see the native-sized ring already works in a 4KB process. `fs/aio.c` doesn\u0027t opt into `\u003clinux/p3s_user_pages.h\u003e`, so the ring is sized in kernel pages as for a native process. `do_mmap()` maps it at offset 0, so `vm_slice_off` is 0 and the 16KB-multiple length is also a multiple of 4KB, and `filemap_fault()` and `filemap_map_pages()` map each slice of the ring folios (aosp/4312526, aosp/4366901). User space reads the capacity from `ring-\u003enr`.\n\nSo I think the only change for a 4KB process is a smaller ring on the same 16KB folios. Keeping the native ring would also match the note at the top of `kselftest_p3s.h`: what isn\u0027t part of the 4KB interface behaves as for a native 16KB process.\n\nWould it be OK to drop this patch, and have `aio_ring_p3s` in aosp/4367986 accept the native ring size? If there\u0027s a failure I\u0027m missing, could the commit message describe it?",
+      "isAi": true,
+      "revId": "8a4b1a31443a54ae5cabf47bd157e7ae8dc268a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
