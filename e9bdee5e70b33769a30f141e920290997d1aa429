@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f0a1ae3_b5f85b6d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:54Z",
+      "side": 1,
+      "message": "Done — updated the commit subject to \u0027ANDROID: P3S: ublk: Reject 4KB server mappings\u0027 and explained ublk_ch_mmap() exposing bytes beyond a native-page request buffer when vm_slice_off is nonzero.",
+      "parentUuid": "d4910726_cb6cd8f7",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96ccf026_288784e0",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T06:52:41Z",
       "side": 1,
       "message": "It looks like `ublk_open()` is the `ub_fops` open for the block device `/dev/ublkbN`, not for the server\u0027s `/dev/ublkcN`, so this would stop a 4KB process from opening a ublk disk at all, unlike every other block device.\n\nAs far as I can see nothing on that side depends on the opener\u0027s page size: its I/O goes through the block layer as for loop or dm, and only the native server handles ublk\u0027s buffers.\n\nWould it be OK to drop this hunk?",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84d048ea_1373e307",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:54Z",
+      "side": 1,
+      "message": "Done — dropped the ublk_open() block-device check.",
+      "parentUuid": "96ccf026_288784e0",
       "isAi": true,
       "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb952ca3_36743e37",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1858,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:54Z",
+      "side": 1,
+      "message": "Done — switched ublk_ch_open() and ublk_ch_mmap() to p3s_4k_unsupported() and removed the \u003clinux/p3s/mm.h\u003e include.",
+      "parentUuid": "08b8d244_d615fd65",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f0a3dfb_9fc85b19",
@@ -73,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf0936b0_ed49bf56",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 2626,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:54Z",
+      "side": 1,
+      "message": "Done — dropped the ublk_ch_uring_cmd(), ublk_ctrl_uring_cmd(), and ublk_ctrl_open() checks.",
+      "parentUuid": "1f0a3dfb_9fc85b19",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a5865db2_bc5891ec",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-10-28T06:52:41Z",
       "side": 1,
       "message": "I think user copy already works in a 4KB process: `ublk_copy_user_pages()` gets the pages with `iov_iter_get_pages2()`, which has taken a 4KB path in `__iov_iter_get_pages_alloc()` since aosp/4312497 (`iov_iter_extract_compat_page()` after aosp/4367612). That returns the kernel page and the slice offset in `off`, and `ublk_copy_io_pages()` copies within those pages. `ublk_map_io()` and `ublk_unmap_io()` use the same function.\n\nWould it be OK to drop this hunk? It is also on the per-I/O path of `UBLK_F_USER_COPY` servers.",
+      "isAi": true,
+      "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88180814_d5072516",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 2665,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-28T19:10:54Z",
+      "side": 1,
+      "message": "Done — dropped the ublk_check_and_get_req() (UBLK_F_USER_COPY) check.",
+      "parentUuid": "a5865db2_bc5891ec",
       "isAi": true,
       "revId": "e9bdee5e70b33769a30f141e920290997d1aa429",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
