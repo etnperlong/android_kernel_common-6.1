@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db0ffa3f_944fb450",
+        "filename": "mm/shmem.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2918,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-28T22:35:08Z",
+      "side": 1,
+      "message": "Agreed that `pgoff` is in 4KB pages here for a 4KB process, so the shift is right, and it has to go with the `inflated_len` change. But as far as I can see, the alignment can\u0027t help a 4KB process: since aosp/4312481, `vma_thp_disabled()` and `thp_vma_suitable_order()` return early for 4KB VMAs, so a 4KB VMA fault never allocates a huge shmem folio or maps one with a PMD (`do_set_pmd()` falls back), and `finish_fault()` maps one PTE at a time there.\n\nI also don\u0027t think valid 4KB hints are rejected today: since aosp/4312485, `vm_unmapped_area()` returns 16KB-aligned areas in 4KB processes (`p3s_adjust_unmapped_area_info()`), so `addr \u0026 ~PAGE_MASK` is only non-zero when `addr` is a free 4KB-aligned hint, and the `uaddr \u003d\u003d addr` check returns such a hint as it is anyway. With `pgoff \u003d\u003d 0`, as in `shmem_thp_mmap_p3s.c` (aosp/4367986), the mapping already comes back PMD-aligned.\n\nWould it be OK to drop this patch? If you\u0027d rather skip the padded search in 4KB processes, an early return, as `__thp_get_unmapped_area()` has since aosp/4312481, would do it:\n\n```\n\tif (mm_is_p3s_4k(current-\u003emm))\n\t\treturn addr;\n```\n\nI think the same question applies to aosp/4367988, which removes that early return later in the chain.",
+      "isAi": true,
+      "revId": "bfe15ed2689b93d2a4cd04259638140bbaaf2286",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
