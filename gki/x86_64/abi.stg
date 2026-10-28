@@ -302306,6 +302306,14 @@ function {
   parameter_id: 0x31b5a66f
 }
 function {
+  id: 0xad477ae4
+  return_type_id: 0x0258f96e
+  parameter_id: 0x0258f96e
+  parameter_id: 0x3e10b518
+  parameter_id: 0x18bd6530
+  parameter_id: 0x06433852
+}
+function {
   id: 0xad478cf0
   return_type_id: 0x0258f96e
   parameter_id: 0x0258f96e
@@ -313679,6 +313687,15 @@ elf_symbol {
   crc: 0x766b63ae
   type_id: 0x5f272d07
   full_name: "devm_gpiod_get_optional"
+}
+elf_symbol {
+  id: 0xb73538bc
+  name: "devm_hwmon_device_register_with_groups"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xd316d0db
+  type_id: 0xad477ae4
+  full_name: "devm_hwmon_device_register_with_groups"
 }
 elf_symbol {
   id: 0x29f9a7c2
@@ -342791,6 +342808,7 @@ interface {
   symbol_id: 0x097ab520
   symbol_id: 0xd0f2d980
   symbol_id: 0xf6b9516e
+  symbol_id: 0xb73538bc
   symbol_id: 0x29f9a7c2
   symbol_id: 0xa29138c1
   symbol_id: 0x4e9c460b
