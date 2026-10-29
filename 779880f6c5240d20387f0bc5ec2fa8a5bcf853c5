@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58df169b_16c8e610",
+        "filename": "mm/fadvise.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:19:12Z",
+      "side": 1,
+      "message": "If the rounding stays, would you mind moving it into a helper in `mm/p3s/filemap.h`, so that `generic_fadvise()` keeps upstream\u0027s code and comments and only gets a hook after `__filemap_fdatawrite_range()`? Something like:\n\n```\n\t\tif (mm_is_p3s_4k(current-\u003emm))\n\t\t\tp3s_fadvise_widen_dontneed(inode, \u0026offset, \u0026endbyte);\n```\n\nwhere `p3s_fadvise_widen_dontneed(struct inode *inode, loff_t *offset, loff_t *endbyte)` widens the range to the 16KB pages that hold its first and last whole 4KB page (and leaves it alone if there is none), so the upstream rounding below computes the same indices as this patch.\n\nThat keeps the new locals, the 4KB/16KB comment and the rewritten rounding out of mm/fadvise.c, so upstream changes there don\u0027t conflict with it. (`mm_is_p3s_4k()` and `mm_pte_size()` already handle a NULL `mm`, so the `current-\u003emm ?` check isn\u0027t needed.)",
+      "isAi": true,
+      "revId": "779880f6c5240d20387f0bc5ec2fa8a5bcf853c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0dcd7ded_cb588cbf",
+        "filename": "mm/fadvise.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:19:12Z",
+      "side": 1,
+      "message": "I\u0027m worried this drops cached data the caller didn\u0027t ask to drop. Converting the 4KB-rounded bounds with `\u003e\u003e PAGE_SHIFT` rounds the start down and the end up to whole 16KB pages, so a hint that covers one 4KB page invalidates the whole 16KB folio around it, up to 12KB on each side of the range. `mapping_evict_folio()` skips dirty, writeback and mapped folios, so nothing is lost, but clean data that this or another process still reads has to come back from storage. For example, a 4KB process that reads a file 4KB at a time and drops each chunk behind it would read every 16KB page four times.\n\nToday, since mm/fadvise.c doesn\u0027t include `\u003clinux/p3s_user_pages.h\u003e`, a 4KB process gets the same rounding as a native one: every 16KB page that the range covers completely is dropped, and partial pages are kept, which upstream does on purpose (\"it is better to preserve needed memory than to discard unneeded memory\"). The native path doesn\u0027t change with this patch, which is good.\n\nSince `POSIX_FADV_DONTNEED` is only a hint, would it be OK to drop this patch (and its test, aosp/4367980) and keep upstream\u0027s rounding? I may be missing a use case: if a 4KB app depends on 4KB hints dropping the page cache, could the message name it and say that a hint now also drops the rest of each 16KB page at both ends?",
+      "isAi": true,
+      "revId": "779880f6c5240d20387f0bc5ec2fa8a5bcf853c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
