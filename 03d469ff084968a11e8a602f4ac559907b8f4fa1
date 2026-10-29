@@ -22,6 +22,30 @@
       },
       "revId": "03d469ff084968a11e8a602f4ac559907b8f4fa1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b03c7a1e_73067262",
+        "filename": "drivers/usb/gadget/udc/core.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 4531441
+      },
+      "writtenOn": "2026-10-29T05:47:52Z",
+      "side": 1,
+      "message": "Thanks for pointing this out. https://android-review.git.corp.google.com/c/kernel/common/+/4200205 was reverted in 6.1 and 5.15 LTS merges because it was breaking ABI. I\u0027ll backport it to to 6.1, 5.15, and 5.10 and stack these changes on top of it.",
+      "parentUuid": "1501f009_84fd7cc7",
+      "range": {
+        "startLine": 1112,
+        "startChar": 12,
+        "endLine": 1112,
+        "endChar": 26
+      },
+      "revId": "03d469ff084968a11e8a602f4ac559907b8f4fa1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
