@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b119b8d_bbf36dd7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 and documented aosp/4368095 in README.p3s.",
+      "parentUuid": "ae3b8037_d60980e2",
+      "isAi": true,
+      "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db19924d_2122f91b",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4de60063_b64ef97f",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — added exec_env_p3s to run_vmtests.sh in aosp/4367986.",
+      "parentUuid": "db19924d_2122f91b",
+      "isAi": true,
+      "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1a96c685_01405718",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-29T20:23:55Z",
       "side": 1,
       "message": "This is useful coverage: as far as I can see, no other P3S test checks argv and environment contents after a 4KB exec.\n\nI\u0027m worried it passes without P3S on 4KB kernels, though. `main()` re-execs with `exec_compat()` without checking that it starts as a native 16KB process. On a 4KB arm64 kernel, or on x86_64, `personality()` takes `ADDR_PAGE_SIZE_4KB` like any other bit, so the child has 4KB pages and the bit set, `p3s_require_compat()` lets it through, and both checks pass.\n\nCould `main()` skip in that case, as `p3s_compat_main()` does before its re-exec? For example, before setting the variables:\n\n```\n\tif (getpagesize() !\u003d NATIVE_PAGE_SIZE) {\n\t\tksft_print_header();\n\t\tksft_exit_skip(\"native exec does not use 16K pages\\n\");\n\t}\n```",
+      "isAi": true,
+      "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3d4305b_915c588a",
+        "filename": "tools/testing/selftests/mm/exec_env_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — added p3s_require_native_compat() in main() of exec_env_p3s.c (in aosp/4367986) to skip when native exec does not use 16KB pages or lacks P3S.",
+      "parentUuid": "1a96c685_01405718",
       "isAi": true,
       "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
