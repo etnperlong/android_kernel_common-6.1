@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f8beab2_3b91c6ad",
+        "filename": "mm/process_vm_access.c",
+        "patchSetId": 30
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T21:07:13Z",
+      "side": 1,
+      "message": "Good point, the header has a single includer. Done: `process_vm_rw_pages()` stays `static`, and `mm/p3s/process_vm_access.h` declares it `static`.",
+      "parentUuid": "a64b1e36_47799c65",
+      "isAi": true,
+      "revId": "a535502732a5e050effc5ce0643cd477d68fc00a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c161be21_b383dd4c",
