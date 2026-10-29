@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "564950ba_d2b9d074",
+        "filename": "mm/vmalloc.c",
+        "patchSetId": 33
+      },
+      "lineNbr": 4590,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T22:59:29Z",
+      "side": 1,
+      "message": "A few issues with this change and its position in the stack:\n\n1. **Stack ordering / bisectability**: This patch sits at the bottom of `p3s_6.18_b9` (before aosp/4368054, aosp/4368055, and aosp/4368056) and advances `uaddr +\u003d PAGE_SIZE - uoff` (`16KB`) while calling `vm_insert_page(vma, uaddr, page)` once per 16KB page. However, `vm_insert_page()` only populates a single 4KB PTE until aosp/4368056 introduces `vma_insert_page_slices()`, and `vma_slice_offset()` only checks `!vma-\u003evm_ops` (missing `!vma-\u003evm_file`) until aosp/4368055, leaving 3 out of every 4 slices unmapped at this point in the series.\n2. **Over-mapping outside `[uaddr, uaddr + size)` in `remap_vmalloc_range_partial()`**: Even with aosp/4368056 applied, `vm_insert_page()` delegates to `vma_insert_page_slices()`, which clamps its slice loop to `[vma-\u003evm_start, vma-\u003evm_end)` rather than the `[uaddr, uaddr + size)` subrange requested by `remap_vmalloc_range_partial()`. When a caller maps multiple discontiguous chunks into a single VMA (e.g. `fs/proc/vmcore.c`) and a subrange starts at a non-zero slice (`uoff !\u003d 0`) or ends mid-16KB page, `vma_insert_page_slices()` populates PTEs outside `[uaddr, uaddr + size)`, causing subsequent `remap_vmalloc_range_partial()` calls on adjacent subranges of the VMA to fail with `-EBUSY`.\n3. **Non-zero `vm_slice_off` when `pgoff \u003d\u003d 0` (`remap_vmalloc_range(vma, kaddr, 0)`)**: Drivers that encode a buffer selector or cookie in `mmap`\u0027s `pgoff` and then call `remap_vmalloc_range(vma, kaddr, 0)` (`videobuf2-vmalloc`, `snd_pcm_lib_mmap_vmalloc`, `xsk_mmap`, `rxe_mmap`, etc.) expect `vma-\u003evm_start` to map byte 0 (slice 0) of `kaddr`. Using `vma_slice_offset(vma, uaddr)` reads `vma-\u003evm_slice_off` (which retains the low 2 bits of the 4KB `mmap` cookie), starting at slice `vm_slice_off` of `kaddr` instead of slice 0 and inflating `size \u003d PAGE_ALIGN(size + uoff)` so full-buffer mappings fail `end_index \u003e get_vm_area_size(area)` with `-EINVAL`.\n\n**Recommendation**: Please move this patch after aosp/4368056 and squash aosp/4367599 (`p3s_6.18_b11`) and aosp/4367949 (`p3s_6.18_b12`) into this change (and aosp/4368056) so `remap_vmalloc_range_partial()` maps slice-by-slice via `vm_insert_page_slice()`.",
+      "isAi": true,
+      "revId": "d72d69d3133e2e175e67639e18a816c888f491dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
