@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "06c41fb4_033c9dd8",
+        "filename": "tools/testing/selftests/mm/anon_pageout_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:45Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 and updated swapin_after_uffd_wp_mode_change() in anon_pageout_p3s.c to page out the whole 16KB window before registering UFFD WP without locking a sibling slice.",
+      "parentUuid": "7e6f326e_f0e4bdda",
+      "isAi": true,
+      "revId": "0ef1d7e6138abbf57a98588879f1b87de23508c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b54d5032_6a21f284",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T18:14:56Z",
       "side": 1,
       "message": "I\u0027m worried this reports PASS rather than SKIP: `passed` is still declared `bool`, so `passed \u003d -1` stores `true`, the function returns 1, and `run_test()` never sees a negative value. Without swapout, the subtest then passes without having checked anything.\n\nCould `passed` be an `int`? The other assignments and the `!passed` checks work as they are:\n\n```\n\tint passed \u003d 0;\n```\n\nAlso, `ksft_test_result_skip()` already prints `# SKIP`, so the message in `run_test()` could drop its own, which would also shorten that 146-column line.",
+      "isAi": true,
+      "revId": "0ef1d7e6138abbf57a98588879f1b87de23508c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4dcefae2_b5d0bc2e",
+        "filename": "tools/testing/selftests/mm/anon_pageout_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:45Z",
+      "side": 1,
+      "message": "Done — changed passed to \u0027int passed \u003d 0;\u0027 and dropped the duplicate \u0027# SKIP\u0027 in anon_pageout_p3s.c (now in aosp/4367986).",
+      "parentUuid": "b54d5032_6a21f284",
       "isAi": true,
       "revId": "0ef1d7e6138abbf57a98588879f1b87de23508c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
