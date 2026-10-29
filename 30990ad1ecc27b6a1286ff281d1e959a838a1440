@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b12b497_50a01f6c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:30Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain that 4KB page tables are selected at exec (so tests must set the personality and re-exec) and removed the trailing review note sentence.",
+      "parentUuid": "ddd51f6f_1467e7f3",
+      "isAi": true,
+      "revId": "30990ad1ecc27b6a1286ff281d1e959a838a1440",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "714ecc0c_719e6ac9",
