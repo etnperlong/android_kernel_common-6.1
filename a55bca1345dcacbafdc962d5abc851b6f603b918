@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "be2c2243_da665f44",
+        "filename": "MAINTAINERS",
+        "patchSetId": 26
+      },
+      "lineNbr": 1821,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:12Z",
+      "side": 1,
+      "message": "Done — dropped the MAINTAINERS change from the series.",
+      "parentUuid": "ea762680_a87e3741",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7243e9a7_99ed14d7",
@@ -217,6 +236,25 @@
       "writtenOn": "2026-10-29T20:27:00Z",
       "side": 1,
       "message": "I\u0027m worried this doesn\u0027t skip on kernels without P3S. `personality()` accepts `ADDR_PAGE_SIZE_4KB` on any kernel, so `exec_compat()` always re-execs. On a 16KB kernel without P3S, the `--run` child still has 16KB pages and this check fails. On a 4KB kernel, all five checks pass without exercising P3S (the hint is only misaligned against the hard-coded `NATIVE_PAGE_SIZE`).\n\nCould `run_in_private_binderfs()` skip unless `getpagesize() \u003d\u003d NATIVE_PAGE_SIZE`, as `p3s_compat_main()` from aosp/4396645 does, and the `--run` path call `p3s_require_compat()` before `run_test()`?",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c642a2e2_111ad742",
+        "filename": "tools/testing/selftests/filesystems/binderfs/binder_alloc_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:12Z",
+      "side": 1,
+      "message": "Done — added p3s_require_native_compat() before run_in_private_binderfs() and p3s_require_compat() in run_test() in binder_alloc_p3s.c (now in aosp/4367986).",
+      "parentUuid": "524fff2b_cb83eeb0",
       "isAi": true,
       "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
