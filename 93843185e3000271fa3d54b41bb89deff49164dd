@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae3b8037_d60980e2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:23:55Z",
+      "side": 1,
+      "message": "Could the message name the change this covers? Now that the stack relocation patches have left the series, I think this is a regression test for aosp/4368095, which made `copy_strings()` fault in every 4KB page of the new stack. Something like:\n\n```\nCheck that long environment strings reach a 4KB process intact through\nexecve(). Before \"ANDROID: P3S: exec: Copy arguments a page of the new\nmm at a time\", only one 4KB slice of each kernel page of the new stack\nwas faulted in, so strings copied to the other slices read back as\nzeros.\n```",
+      "isAi": true,
+      "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db19924d_2122f91b",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:23:55Z",
+      "side": 1,
+      "message": "As on aosp/4367986, nothing runs this test: `P3S_TESTS` only adds it to `TEST_GEN_FILES`, and `run_vmtests.sh` doesn\u0027t list it, here or at the top of the chain. Could it get an entry, e.g. next to `elf_core_p3s`?\n\n```\nCATEGORY\u003d\"mmap\" run_test ./exec_env_p3s\n```",
+      "isAi": true,
+      "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a96c685_01405718",
+        "filename": "tools/testing/selftests/mm/exec_env_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:23:55Z",
+      "side": 1,
+      "message": "This is useful coverage: as far as I can see, no other P3S test checks argv and environment contents after a 4KB exec.\n\nI\u0027m worried it passes without P3S on 4KB kernels, though. `main()` re-execs with `exec_compat()` without checking that it starts as a native 16KB process. On a 4KB arm64 kernel, or on x86_64, `personality()` takes `ADDR_PAGE_SIZE_4KB` like any other bit, so the child has 4KB pages and the bit set, `p3s_require_compat()` lets it through, and both checks pass.\n\nCould `main()` skip in that case, as `p3s_compat_main()` does before its re-exec? For example, before setting the variables:\n\n```\n\tif (getpagesize() !\u003d NATIVE_PAGE_SIZE) {\n\t\tksft_print_header();\n\t\tksft_exit_skip(\"native exec does not use 16K pages\\n\");\n\t}\n```",
+      "isAi": true,
+      "revId": "93843185e3000271fa3d54b41bb89deff49164dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
