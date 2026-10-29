@@ -57,6 +57,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f429b19_874d2f29",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:25Z",
+      "side": 1,
+      "message": "Done — rewrote the commit message to remove references to earlier patchsets.",
+      "parentUuid": "1c0c417a_6c0cec80",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ff1f9370_e22fcf61",
