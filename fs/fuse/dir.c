@@ -1839,7 +1839,7 @@ static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
 	args.out_args[0].value = &outarg;
 	err = fuse_simple_request(fm, &args);
 	if (!err)
-		err = finalize_attr(inode, &outarg, attr_version, stat);
+		err = finalize_attr(idmap, inode, &outarg, attr_version, stat);
 	return err;
 }
 

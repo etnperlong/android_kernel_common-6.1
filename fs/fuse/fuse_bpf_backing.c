@@ -2170,7 +2170,8 @@ void *fuse_getattr_finalize(struct fuse_bpf_args *fa,
 	if (fa->error_in)
 		return ERR_PTR(fa->error_in);
 
-	return ERR_PTR(finalize_attr(inode, outarg, attr_version, stat));
+	return ERR_PTR(finalize_attr(&nop_mnt_idmap, inode, outarg,
+				     attr_version, stat));
 }
 
 static void fattr_to_iattr(struct fuse_conn *fc,
