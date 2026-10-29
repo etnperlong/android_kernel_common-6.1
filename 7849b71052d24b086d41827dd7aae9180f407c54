@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9b072a7_9d0d6f6f",
+        "filename": "mm/gup.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1528,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:19Z",
+      "side": 1,
+      "message": "Done — simplified to spans[i + j].offset \u003d phys_offset;.",
+      "parentUuid": "3a2d3701_2c3cd8f0",
+      "isAi": true,
+      "revId": "7849b71052d24b086d41827dd7aae9180f407c54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "189b779a_07d59473",
@@ -69,6 +88,25 @@
       "writtenOn": "2026-10-29T00:04:19Z",
       "side": 1,
       "message": "Nit: could you add a blank line before this comment?",
+      "isAi": true,
+      "revId": "7849b71052d24b086d41827dd7aae9180f407c54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28a2ec06_6c40d0d9",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:19Z",
+      "side": 1,
+      "message": "Done — added a blank line before the comment.",
+      "parentUuid": "189b779a_07d59473",
       "isAi": true,
       "revId": "7849b71052d24b086d41827dd7aae9180f407c54",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
