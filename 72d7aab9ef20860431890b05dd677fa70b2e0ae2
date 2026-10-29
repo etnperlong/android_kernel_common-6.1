@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "604d3d7b_291eef70",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:08Z",
+      "side": 1,
+      "message": "Done — reworded to \u0027Keep batched extraction\u0027 and wrapped within 72 columns.",
+      "parentUuid": "34aa2547_d0bfed9c",
+      "isAi": true,
+      "revId": "72d7aab9ef20860431890b05dd677fa70b2e0ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2da1535_9d2b877c",
