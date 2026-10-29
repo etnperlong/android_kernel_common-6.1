@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d846ac5a_98f9aa19",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 and documented aosp/4312528 in README.p3s.",
+      "parentUuid": "e73734f0_c0df4413",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b8b38c5e_453a0344",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T20:28:46Z",
       "side": 1,
       "message": "As on aosp/4367991, nothing runs this test yet. Could it get a `run_vmtests.sh` entry next to `userfaultfd_mixed_p3s`? Something like:\n\n```\nCATEGORY\u003d\"userfaultfd\" run_test ./uffd_sigbus_anon_p3s\n```",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc835017_ce1a359e",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — added uffd_sigbus_anon_p3s to run_vmtests.sh in aosp/4367986.",
+      "parentUuid": "b8b38c5e_453a0344",
       "isAi": true,
       "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b4a62a0_500d8098",
+        "filename": "tools/testing/selftests/mm/uffd_sigbus_anon_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — updated sigbus_handler() in uffd_sigbus_anon_p3s.c (in aosp/4367986) to call _exit(KSFT_FAIL) if UFFDIO_COPY fails.",
+      "parentUuid": "d3b45ebb_474f933b",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18133002_0a982a10",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-29T20:28:46Z",
       "side": 1,
       "message": "I\u0027m worried this fails instead of skipping without P3S, as on aosp/4367986. `main()` returns `EXIT_FAILURE` without any TAP output when `p3s_execl()` fails; a 16KB kernel that ignores the personality flag runs `run_test()` with 16KB pages, where the first subtest fails and the handler\u0027s 4KB `UFFDIO_COPY` gets `-EINVAL` (so the access loops, see my other comment); and a 4KB kernel passes without P3S.\n\nCould it use `P3S_COMPAT_MAIN(run_test)`, as `dontneed_refault_p3s.c` does? `p3s_require_compat()` would then replace the \"process uses 4K compatibility pages\" subtest.",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a19629dc_d0408c70",
+        "filename": "tools/testing/selftests/mm/uffd_sigbus_anon_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:47Z",
+      "side": 1,
+      "message": "Done — switched uffd_sigbus_anon_p3s.c (in aosp/4367986) to use P3S_COMPAT_MAIN(run_test).",
+      "parentUuid": "18133002_0a982a10",
       "isAi": true,
       "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
