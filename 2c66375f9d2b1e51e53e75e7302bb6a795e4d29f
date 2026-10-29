@@ -16,6 +16,24 @@
       "message": "Please use the same Change-id `I32d6911379b47bf37ff185f29b39b42dfde4ddbf` as the patch on 6.12 ACK kernel (https://r.android.com/4389784) . This way it is easy to track the changes across branches.",
       "revId": "2c66375f9d2b1e51e53e75e7302bb6a795e4d29f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd78a0da_52c847d6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3060917
+      },
+      "writtenOn": "2026-10-29T12:57:44Z",
+      "side": 1,
+      "message": "Done. Re-uploaded as https://r.android.com/4400048 with Change-Id\nI32d6911379b47bf37ff185f29b39b42dfde4ddbf to match the 6.12 change.\nI will abandon this one.",
+      "parentUuid": "84027409_5dbd5b67",
+      "revId": "2c66375f9d2b1e51e53e75e7302bb6a795e4d29f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
