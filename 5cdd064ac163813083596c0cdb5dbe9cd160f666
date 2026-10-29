@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "910b1b47_5e7307dd",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2280,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T23:02:42Z",
+      "side": 1,
+      "message": "Making `validate_page_before_insert()` and `insert_page_into_pte_locked()` non-`static` exports two generic unprefixed symbols into the global kernel namespace solely so `mm/p3s/pgtable.h` can call them. Since `vma_insert_page_slices()` and `vma_insert_pages_slices()` are only called from `mm/memory.c`, consider keeping those two helpers in `mm/memory.c` (or prefixing the exported helpers with `p3s_` if external linkage is needed).",
+      "isAi": true,
+      "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cbc238f8_2a8e3846",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2539,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T23:02:42Z",
+      "side": 1,
+      "message": "`vm_map_pages_zero(vma, pages, num)` passes `offset \u003d 0` to `__vm_map_pages()` for drivers that encode a fake offset cookie in `vma-\u003evm_pgoff` during `mmap` and want `vma-\u003evm_start` to map byte 0 (slice 0) of `pages[0]`. However, `__vm_map_pages()` checks `count \u003d vma_kernel_pages(vma)` (which adds `vma_slice_off(vma)`) and calls `vma_insert_pages_slices()` (which offsets into `pages[0]` by `vma_slice_offset(vma, addr)`). If the driver\u0027s 4KB `mmap` cookie had non-zero low bits `(pgoff_4k \u0026 3) !\u003d 0`, `vma-\u003evm_slice_off` is non-zero, causing `count \u003e num` (`-ENXIO`) or starting the mapping mid-page.\n\n**Recommendation**: Please squash aosp/4368010 (`p3s_6.18_b16`: `ANDROID: P3S: mm: Map 4KB-aligned page arrays in vm_map_pages()`) into this change (along with aosp/4367599 from `p3s_6.18_b11` if squashing the `vm_insert_page_slice()` rework).",
+      "isAi": true,
+      "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90ae50c8_146d7f4b",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T23:02:42Z",
+      "side": 1,
+      "message": "`vma_insert_pages_slices()` advances `addr +\u003d PAGE_SIZE_KERNEL` (`16KB`) on every iteration even when the initial `addr` has a non-zero slice offset `off \u003d vma_slice_offset(vma, addr) \u003c\u003c PAGE_SHIFT_4KB`.\n\nWhen `off \u003e 0` (for example, `addr \u003d vma-\u003evm_start` with `vma-\u003evm_slice_off \u003d 3`, so `off \u003d 12KB`):\n- Iteration 0 (`pages[0]`, `addr \u003d vm_start`) maps only `PAGE_SIZE_KERNEL - off` (`4KB`, `[vm_start, vm_start + 4KB)`).\n- Iteration 1 (`pages[1]`) jumps to `addr \u003d vm_start + 16KB` instead of `vm_start + 4KB`. Inside `vma_insert_page_slices()`, `target` is set to `vm_start + 16KB` while `addr` backs up by `min(off, addr - vma-\u003evm_start)`. If the VMA is 8KB or 12KB (`vm_end \u003c vm_start + 16KB`, `vma_kernel_pages \u003d 2`), `target` lies outside `[vm_start + 4KB, vm_end)`. Consequently, `addr !\u003d target` is true for every slice of `pages[1]`, so if the PTE at `vm_start + 4KB` is already populated (`-EBUSY`), `if (ret \u003d\u003d -EBUSY \u0026\u0026 addr !\u003d target) ret \u003d 0;` silently swallows `-EBUSY` instead of returning `-EBUSY` with the remaining `*num`.\n\nAdvancing `addr` to the start of the next kernel page\u0027s slice window (`addr +\u003d PAGE_SIZE_KERNEL - off` on the first iteration, or stepping by the actual bytes mapped) keeps `target` aligned to the first slice of each page.",
+      "isAi": true,
+      "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
