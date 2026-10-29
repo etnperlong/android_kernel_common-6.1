@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "deb095f4_26136b05",
+        "filename": "tools/testing/selftests/mm/swap_slice_mremap_p3s.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:17:33Z",
+      "side": 1,
+      "message": "I\u0027m worried this `MREMAP_FIXED` move fails with `-EINVAL` at this point in the series: `src` is 16KB-aligned and `dst + PROCESS_PAGE_SIZE` is at slice 1, which `mm_mremap_fixed_keeps_slice()` (aosp/4312522) rejects in 4KB processes.\n\nNow that aosp/4367976 is out of the series, what this checks is the copy in aosp/4367981, which swaps the source slices in before repacking them. I\u0027ve asked there to keep the `-EINVAL` instead, since a copy would leave DMA pins on the old folios behind. Would it be OK to drop this test too? The comment at the top of the file also still describes the approach of aosp/4367976.",
+      "isAi": true,
+      "revId": "49243a08a2729628861c689594a53940e0ed2dce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
