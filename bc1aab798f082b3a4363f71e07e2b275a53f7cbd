@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "802a7bf8_abdfee59",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T23:04:54Z",
+      "side": 1,
+      "message": "Optional: `vma_pfnmap_phys()` assumes the mapped PTE slice matches `vma_slice_offset(vma, addr)`, which holds for linear `remap_pfn_range()` mappings here but is later replaced in aosp/4368007 (`p3s_6.18_b15`) by `p3s_pfnmap_phys(\u0026args)` (reading the slice bits directly from the PTE). Consider squashing aosp/4368007 into this change to avoid introducing and then replacing `vma_pfnmap_phys()`.",
+      "isAi": true,
+      "revId": "bc1aab798f082b3a4363f71e07e2b275a53f7cbd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
