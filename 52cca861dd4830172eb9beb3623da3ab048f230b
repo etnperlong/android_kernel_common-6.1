@@ -116,6 +116,24 @@
       "parentUuid": "af440b75_0998e20c",
       "revId": "52cca861dd4830172eb9beb3623da3ab048f230b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ea72e5b_eedc6159",
+        "filename": "rust/kernel/dma.rs",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-29T20:54:17Z",
+      "side": 1,
+      "message": "I was under the impression that the `dma.rs` file was close to what was in that patch from a cursory glance, but it\u0027s not. This is fine then.",
+      "parentUuid": "e96a11fc_a4ba2989",
+      "revId": "52cca861dd4830172eb9beb3623da3ab048f230b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
