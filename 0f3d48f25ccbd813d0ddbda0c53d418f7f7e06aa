@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "0f3d48f25ccbd813d0ddbda0c53d418f7f7e06aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9877aa3_f119c18a",
+        "filename": "virt/kvm/vfio.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:39Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "ccfaf04a_c109dd86",
+      "isAi": true,
+      "revId": "0f3d48f25ccbd813d0ddbda0c53d418f7f7e06aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
