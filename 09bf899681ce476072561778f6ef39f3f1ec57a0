@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6a93b38_8a76b07b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:13Z",
+      "side": 1,
+      "message": "Done — rewrote the paragraph to describe why page-based scatterlists and vm_map_ram() cannot represent a USERPTR buffer made of scattered 4KB slices.",
+      "parentUuid": "262effe5_e88e3987",
+      "isAi": true,
+      "revId": "09bf899681ce476072561778f6ef39f3f1ec57a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5e3855a8_00efeca3",
