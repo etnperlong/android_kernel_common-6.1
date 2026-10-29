@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a98aacb_f26c1000",
+        "filename": "drivers/dma-buf/dma-buf.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 2148,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:40:54Z",
+      "side": 1,
+      "message": "Done — kept the existing overflow/size checks in dma_buf_mmap() and dma_buf_mmap_internal() and only replaced vma_pages(vma) with vma_kernel_pages(vma).",
+      "parentUuid": "369537fa_368f369a",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a9a0a6d7_6cdf0417",
@@ -74,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "398369fb_1af63245",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:40:54Z",
+      "side": 1,
+      "message": "Done — moved vma_aligned_size() and its includes to aosp/4367949 (its first caller) and dropped \u003clinux/overflow.h\u003e from dma-buf.c.",
+      "parentUuid": "a9a0a6d7_6cdf0417",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "542a676e_4ca979bf",
@@ -87,6 +125,25 @@
       "writtenOn": "2026-10-28T23:49:19Z",
       "side": 1,
       "message": "I think the mode change on `run_vmtests.sh` (100755 to 100644) is accidental: it\u0027s the only change to this file, and as far as I can see no later patch in the chain restores the executable bit. Would you mind dropping it?",
+      "isAi": true,
+      "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "49edd667_6cfd4d3d",
+        "filename": "tools/testing/selftests/mm/run_vmtests.sh",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:40:54Z",
+      "side": 1,
+      "message": "Done — dropped the accidental mode change on run_vmtests.sh.",
+      "parentUuid": "542a676e_4ca979bf",
       "isAi": true,
       "revId": "6ef37ec70efe21caf75d5df8885b5cfdd466b4b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
