@@ -54,6 +54,25 @@
       "isAi": true,
       "revId": "5370c7f652f0c34c490a7f1371dd1d17dd0faa53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84563dcb_94ba5742",
+        "filename": "mm/madvise.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 775,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:13:03Z",
+      "side": 1,
+      "message": "Done. Updated `madvise_free_pte_range()` to check `nr !\u003d folio_mapcount(folio)` for small folios and `folio_mapcount(folio) !\u003d nr` after locking so partially populated 16KB windows can be marked lazyfree when all mapped slices are covered.",
+      "parentUuid": "80351e8d_fbbefd63",
+      "isAi": true,
+      "revId": "5370c7f652f0c34c490a7f1371dd1d17dd0faa53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
