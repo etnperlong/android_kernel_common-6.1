@@ -780,3 +780,31 @@ int copy_file_range_test_filter(struct fuse_bpf_args *fa)
 		return FUSE_BPF_BACKING;
 	}
 }
+
+SEC("test_mount_gate")
+int mount_gate_test(struct fuse_bpf_args *fa)
+{
+	switch (fa->opcode) {
+	case FUSE_LOOKUP | FUSE_PREFILTER: {
+		const char *name = fa->in_args[0].value;
+
+		if (strcmp(name, "test") == 0 || strcmp(name, "folder1") == 0 ||
+		    strcmp(name, "folder2") == 0)
+			return 0;
+
+		return FUSE_BPF_BACKING;
+	}
+
+	case FUSE_GETATTR | FUSE_PREFILTER:
+		if (fa->nodeid == 1)
+			return 0;
+		return FUSE_BPF_BACKING;
+
+	case FUSE_READDIR | FUSE_PREFILTER:
+	case FUSE_READDIRPLUS | FUSE_PREFILTER:
+		return 0;
+
+	default:
+		return FUSE_BPF_BACKING;
+	}
+}

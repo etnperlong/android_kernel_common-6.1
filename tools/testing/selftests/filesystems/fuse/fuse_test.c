@@ -2499,6 +2499,297 @@ static int parse_options(int argc, char *const *argv, bool *run_test,
 	return 0;
 }
 
+static int canonical_path_empty_reply_test(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *test_name = "test_empty_canonical";
+	int result = TEST_FAILURE;
+	int fuse_dev = -1;
+	char *filename = NULL;
+	int inotify_fd = -1;
+	int watch = -1;
+
+	TESTEQUAL(mount_fuse(mount_dir, -1, -1, &fuse_dev), 0);
+	FUSE_START_DAEMON();
+	if (action) {
+		filename = concat_file_name(mount_dir, test_name);
+		TESTNE(filename, NULL);
+		TEST(inotify_fd = inotify_init1(IN_CLOEXEC), inotify_fd != -1);
+
+		errno = 0;
+		watch = inotify_add_watch(inotify_fd, filename, IN_MODIFY);
+		TESTEQUAL(watch, -1);
+		TESTEQUAL(errno, EBADMSG);
+	} else {
+		TESTFUSELOOKUP(test_name, 0);
+		TESTFUSEOUT1(fuse_entry_out, ((struct fuse_entry_out) {
+			.nodeid		= 2,
+			.generation	= 1,
+			.attr.ino	= 100,
+			.attr.size	= 0,
+			.attr.blksize	= 512,
+			.attr.mode	= S_IFREG | 0777,
+		}));
+
+		TESTFUSEINNULL(FUSE_CANONICAL_PATH);
+		TESTFUSEOUTREAD("", 0);
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	close(fuse_dev);
+	close(inotify_fd);
+	free(filename);
+	umount(mount_dir);
+	return result;
+}
+
+static int bpf_test_concurrent_create_excl(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *folder1 = "folder1";
+	const char *race_file = "race_file";
+	int result = TEST_FAILURE;
+	int fuse_dev = -1;
+	int src_fd = -1;
+	int mount_bpf_fd = -1;
+
+	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+	     src_fd != -1);
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_mount_gate",
+				  &mount_bpf_fd, NULL, NULL), 0);
+	TESTSYSCALL(s_mkdir(s_path(s(ft_src), s(folder1)), 0777));
+	TESTEQUAL(mount_fuse_no_init(mount_dir, mount_bpf_fd, src_fd,
+				     &fuse_dev), 0);
+
+	FUSE_START_DAEMON();
+	if (action) {
+		const int num_children = 20;
+		pid_t pids[20];
+		int barrier_pipe[2] = { -1, -1 };
+		int spawned = 0;
+		int success_count = 0;
+		int eexist_count = 0;
+		int other_err_count = 0;
+		struct stat st;
+		int i;
+
+		/*
+		 * Pre-warm folder1 via the single-lookup daemon before the
+		 * barrier so all 20 children race directly on backed
+		 * O_CREAT | O_EXCL in fuse_create_open_backing().
+		 */
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(folder1)), &st));
+
+		TESTSYSCALL(pipe(barrier_pipe));
+		fflush(NULL);
+
+		for (i = 0; i < num_children; i++) {
+			pids[i] = fork();
+			if (pids[i] < 0)
+				break;
+			if (pids[i] == 0) {
+				char c;
+				int fd;
+				int err;
+				ssize_t rd __maybe_unused;
+
+				alarm(FUSE_TEST_TIMEOUT_SEC);
+				close(barrier_pipe[1]);
+				rd = read(barrier_pipe[0], &c, 1);
+				close(barrier_pipe[0]);
+
+				fd = s_open(s_pathn(3, s(mount_dir), s(folder1),
+						    s(race_file)),
+					    O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC,
+					    0777);
+				if (fd != -1) {
+					close(fd);
+					_exit(100);
+				}
+				err = errno;
+				_exit(err == EEXIST ? 101 : (err ? err : 102));
+			}
+			spawned++;
+		}
+
+		close(barrier_pipe[0]);
+		close(barrier_pipe[1]);
+
+		for (i = 0; i < spawned; i++) {
+			int child_status = 0;
+			pid_t wpid;
+
+			do {
+				wpid = waitpid(pids[i], &child_status, 0);
+			} while (wpid == -1 && errno == EINTR &&
+				 !__atomic_load_n(&test_timed_out,
+						  __ATOMIC_RELAXED));
+
+			if (wpid == pids[i] && WIFEXITED(child_status)) {
+				int code = WEXITSTATUS(child_status);
+
+				if (code == 100) {
+					success_count++;
+				} else if (code == 101) {
+					eexist_count++;
+				} else {
+					ksft_print_msg("child %d errno=%d\n",
+						       i, code);
+					other_err_count++;
+				}
+			} else {
+				ksft_print_msg("child %d status=0x%x\n",
+					       i, child_status);
+				other_err_count++;
+			}
+		}
+
+		TESTEQUAL(spawned, num_children);
+		TESTEQUAL(success_count, 1);
+		TESTEQUAL(eexist_count, num_children - 1);
+		TESTEQUAL(other_err_count, 0);
+	} else {
+		struct fuse_attr attr = {};
+		int backing_fd = -1;
+
+		TESTFUSEINIT();
+		TESTFUSELOOKUP(folder1, 0);
+		TESTSYSCALL(s_fuse_attr(s_path(s(ft_src), s(folder1)), &attr));
+		TEST(backing_fd = s_open(s_path(s(ft_src), s(folder1)),
+					 O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+		     backing_fd != -1);
+		TESTFUSEOUT2(fuse_entry_out, ((struct fuse_entry_out) {
+				.nodeid = attr.ino,
+				.generation = 0,
+				.entry_valid = UINT64_MAX,
+				.attr_valid = UINT64_MAX,
+				.entry_valid_nsec = UINT32_MAX,
+				.attr_valid_nsec = UINT32_MAX,
+				.attr = attr,
+			     }), fuse_entry_bpf_out, ((struct fuse_entry_bpf_out) {
+				.backing_action = FUSE_ACTION_REPLACE,
+				.backing_fd = backing_fd,
+			     }));
+		TESTSYSCALL(close(backing_fd));
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	close(fuse_dev);
+	close(src_fd);
+	close(mount_bpf_fd);
+	umount(mount_dir);
+	return result;
+}
+
+static int bpf_test_stack_depth_limit(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *folder1 = "folder1";
+	const char *loop_name = "test";
+	const char *mount_nested_name = "ft-dst-nested";
+	char *mount_nested_dir = NULL;
+	int result = TEST_FAILURE;
+	int fuse_dev = -1;
+	int src_fd = -1;
+	int mount_bpf_fd = -1;
+
+	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+	     src_fd != -1);
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_mount_gate",
+				  &mount_bpf_fd, NULL, NULL), 0);
+	TESTSYSCALL(s_mkdir(s_path(s(ft_src), s(folder1)), 0777));
+	TESTEQUAL(mount_fuse_no_init(mount_dir, mount_bpf_fd, src_fd,
+				     &fuse_dev), 0);
+
+	FUSE_START_DAEMON();
+	if (action) {
+		int nested_dir_fd = -1;
+		int nested_fuse_dev = -1;
+		int mount_nested_err;
+		struct stat st;
+
+		TEST(mount_nested_dir = setup_mount_dir(mount_nested_name),
+		     mount_nested_dir != NULL);
+
+		TESTERR(nested_dir_fd = s_open(s_path(s(mount_dir), s(folder1)),
+					       O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+			nested_dir_fd != -1);
+
+		/* F12: OPT_ROOT_DIR rejects FUSE fd / excessive stack depth with EINVAL */
+		errno = 0;
+		mount_nested_err = mount_fuse_no_init(mount_nested_dir, -1,
+						      nested_dir_fd,
+						      &nested_fuse_dev);
+		TESTEQUAL(mount_nested_err, TEST_FAILURE);
+		TESTEQUAL(errno, EINVAL);
+
+		/* F11: dynamic backing_fd pointing to FUSE is rejected with ELOOP */
+		errno = 0;
+		TESTEQUAL(s_stat(s_path(s(mount_dir), s(loop_name)), &st), -1);
+		TESTEQUAL(errno, ELOOP);
+
+		TESTSYSCALL(close(nested_dir_fd));
+		nested_dir_fd = -1;
+		delete_dir_tree(mount_nested_dir, true);
+		free(mount_nested_dir);
+		mount_nested_dir = NULL;
+	} else {
+		struct fuse_attr attr = {};
+		int backing_fd = -1;
+		int fuse_backing_fd = -1;
+
+		TESTFUSEINIT();
+		TESTFUSELOOKUP(folder1, 0);
+		TESTSYSCALL(s_fuse_attr(s_path(s(ft_src), s(folder1)), &attr));
+		TEST(backing_fd = s_open(s_path(s(ft_src), s(folder1)),
+					 O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+		     backing_fd != -1);
+		TESTFUSEOUT2(fuse_entry_out, ((struct fuse_entry_out) {
+				.nodeid = attr.ino,
+				.generation = 0,
+				.entry_valid = UINT64_MAX,
+				.attr_valid = UINT64_MAX,
+				.entry_valid_nsec = UINT32_MAX,
+				.attr_valid_nsec = UINT32_MAX,
+				.attr = attr,
+			     }), fuse_entry_bpf_out, ((struct fuse_entry_bpf_out) {
+				.backing_action = FUSE_ACTION_REPLACE,
+				.backing_fd = backing_fd,
+			     }));
+		TESTSYSCALL(close(backing_fd));
+
+		/* Attempt to attach a FUSE directory fd as backing_fd -> ELOOP */
+		TESTFUSELOOKUP(loop_name, 0);
+		TEST(fuse_backing_fd = open(mount_dir,
+					    O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+		     fuse_backing_fd != -1);
+		TESTFUSEOUT2(fuse_entry_out, ((struct fuse_entry_out) {
+				.nodeid = 200,
+				.generation = 1,
+				.entry_valid = UINT64_MAX,
+				.attr_valid = UINT64_MAX,
+				.attr.ino = 200,
+				.attr.mode = S_IFDIR | 0755,
+			     }), fuse_entry_bpf_out, ((struct fuse_entry_bpf_out) {
+				.backing_action = FUSE_ACTION_REPLACE,
+				.backing_fd = fuse_backing_fd,
+			     }));
+		TESTSYSCALL(close(fuse_backing_fd));
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	if (mount_nested_dir) {
+		umount2(mount_nested_dir, MNT_FORCE);
+		delete_dir_tree(mount_nested_dir, true);
+		free(mount_nested_dir);
+	}
+	close(fuse_dev);
+	close(src_fd);
+	close(mount_bpf_fd);
+	umount(mount_dir);
+	return result;
+}
+
 struct test_case {
 	int (*pfunc)(const char *dir);
 	const char *name;
@@ -2590,6 +2881,9 @@ int main(int argc, char *argv[])
 		MAKE_TEST(splice_test),
 		MAKE_TEST(bpf_test_follow_mounts),
 		MAKE_TEST(copy_file_range_test),
+		MAKE_TEST(canonical_path_empty_reply_test),
+		MAKE_TEST(bpf_test_concurrent_create_excl),
+		MAKE_TEST(bpf_test_stack_depth_limit),
 	};
 #undef MAKE_TEST
 
