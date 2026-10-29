@@ -665,8 +665,15 @@ struct l2cap_conn {
 
 	struct sk_buff		*rx_skb;
 	__u32			rx_len;
+<<<<<<< HEAD   (45d7dcb2a60e6a1620926388231cb58ca0a2b91e Revert "Bluetooth: L2CAP: Fix use-after-free in l2cap_sock_n)
 	__u8			tx_ident;
 	struct mutex		ident_lock;
+||||||| BASE   (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
+	struct ida		tx_ida;
+=======
+	struct ida		tx_ida;
+	__u8			tx_ident;
+>>>>>>> BRANCH (0fdd40630ea1ca5eb0bb70113cdac90d5788511a Linux 6.12.97)
 
 	struct sk_buff_head	pending_rx;
 	struct work_struct	pending_rx_work;
