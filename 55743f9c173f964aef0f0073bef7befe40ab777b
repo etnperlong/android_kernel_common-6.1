@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1cf8932_3f99d640",
+        "filename": "tools/testing/selftests/mm/hole_anon_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:41Z",
+      "side": 1,
+      "message": "Since this changes `hole_anon_p3s.c` from aosp/4367986, could it be folded into the anonymous-tuple test patch when that one is split (see my comment there)? The write-after-DONTNEED check also repeats what `dontneed_refault_p3s` from aosp/4367991 checks for every slice, so the new accounting check may be all that needs to move.",
+      "isAi": true,
+      "revId": "55743f9c173f964aef0f0073bef7befe40ab777b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
