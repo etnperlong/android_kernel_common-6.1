@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0fc932e7_efc555fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:49Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 and documented the baseline changes (aosp/4312529 and aosp/4367603) in README.p3s.",
+      "parentUuid": "4cade2c4_de4fb9c1",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef3e43f6_3bd3a619",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T20:22:42Z",
       "side": 1,
       "message": "As on aosp/4367986, nothing runs this test yet: `P3S_TESTS` only adds it to `TEST_GEN_FILES`, and `run_vmtests.sh` has no entry for it, here or later in the chain. Could it get one next to the other anonymous P3S tests? Something like:\n\n```\nCATEGORY\u003d\"mmap\" run_test ./dontneed_refault_p3s\n```",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6cb5a89_e74ee48d",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:49Z",
+      "side": 1,
+      "message": "Done — added dontneed_refault_p3s to run_vmtests.sh in aosp/4367986.",
+      "parentUuid": "ef3e43f6_3bd3a619",
       "isAi": true,
       "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27ef26dd_ec630812",
+        "filename": "tools/testing/selftests/mm/dontneed_refault_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:49Z",
+      "side": 1,
+      "message": "Done — switched to FORCE_READ(*slice) in dontneed_refault_p3s.c (in aosp/4367986).",
+      "parentUuid": "31eaaa4f_86694387",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9983678f_d01d2abd",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-29T20:22:42Z",
       "side": 1,
       "message": "As far as I can see, each case also passes when the fault doesn\u0027t reuse the sibling folio, since a new folio is zero-filled anyway, so the test can\u0027t tell whether it reached `p3s_anon_folio_zero_slice()` (from aosp/4312529 for a write fault, and from aosp/4367603 for a write after a zero-page read).\n\nCould `check_refault()` also check, for the DONTNEED cases, that the touched slice shares the native page of the untouched ones, e.g. with `same_present_pfns()` when the PFNs are visible?",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9ab42ba_adec7ffc",
+        "filename": "tools/testing/selftests/mm/dontneed_refault_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:49Z",
+      "side": 1,
+      "message": "Done — updated check_refault() in dontneed_refault_p3s.c (in aosp/4367986) to verify that the refaulted slice reuses the sibling native PFN.",
+      "parentUuid": "9983678f_d01d2abd",
       "isAi": true,
       "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
