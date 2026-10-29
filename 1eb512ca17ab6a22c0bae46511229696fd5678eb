@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c95beb8_771ac953",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 17
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:47Z",
+      "side": 1,
+      "message": "Done — added LOCAL_HDRS +\u003d ../kselftest_p3s.h for anon_vma_name_p3s (and madvise_remove_p3s in aosp/4367943).",
+      "parentUuid": "e12bf084_2e6fe4af",
+      "isAi": true,
+      "revId": "1eb512ca17ab6a22c0bae46511229696fd5678eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "64d8019c_b016a3de",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T00:15:28Z",
       "side": 1,
       "message": "I\u0027m worried this clashes with `hugepage-vmemmap.c`, which includes `vm_util.h` and then defines its own `PM_PFRAME_MASK` as `~((1UL \u003c\u003c PM_PFRAME_BITS) - 1)`, the inverse mask. That test now builds with a macro redefinition warning, and `PAGEMAP_PFN()` at the end of this header already masks the PFN.\n\nThanks for moving the pagemap reader into `vm_util.h`. As far as I can see, though, nothing in this patch uses these additions yet: `p3s_test.h` is first used in aosp/4367951, `pagemap_read_entry()` in aosp/4367975 and `PM_PFRAME_MASK` in aosp/4367986. Would you mind adding them (with the include guard) in those patches, so that this one only adds the test?",
+      "isAi": true,
+      "revId": "1eb512ca17ab6a22c0bae46511229696fd5678eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94bb3ee3_6b579947",
+        "filename": "tools/testing/selftests/mm/vm_util.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:47Z",
+      "side": 1,
+      "message": "Done — dropped PM_PFRAME_MASK (using PAGEMAP_PFN() instead), moved p3s_test.h to aosp/4367951, and moved pagemap_read_entry() with the include guard to its first caller.",
+      "parentUuid": "64d8019c_b016a3de",
       "isAi": true,
       "revId": "1eb512ca17ab6a22c0bae46511229696fd5678eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
