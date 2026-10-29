@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd6dbaba_44cef33c",
+        "filename": "BUILD.bazel",
+        "patchSetId": 26
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:15Z",
+      "side": 1,
+      "message": "I think this is already covered in kernel/build: aosp/4338060 enables `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` and aosp/4353009 disables `CONFIG_COMPAT` in `kleaf/impl/defconfig/arm64_16k_defconfig`, which Kleaf applies to `page_size \u003d \"16k\"` targets such as `kernel_aarch64_16k`. Both are merged, so this fragment repeats them. Would it be OK to drop this patch?",
+      "isAi": true,
+      "revId": "5a3807cbd762eaf63f39638598465b53d9bf04ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
