@@ -1956,7 +1956,7 @@ static inline int fuse_bpf_run(struct bpf_prog *prog, struct fuse_bpf_args *fba)
 	ssize_t res;							\
 	void *err;							\
 	int i;								\
-	bool initialized = false;					\
+	bool backed = false;						\
 									\
 	do {								\
 		if (!fuse_inode || !fuse_inode->backing_inode)		\
@@ -1970,7 +1970,6 @@ static inline int fuse_bpf_run(struct bpf_prog *prog, struct fuse_bpf_args *fba)
 			};						\
 			break;						\
 		}							\
-		initialized = true;					\
 									\
 		fa_backup = fa;						\
 		fa.opcode |= FUSE_PREFILTER;				\
@@ -2021,6 +2020,7 @@ static inline int fuse_bpf_run(struct bpf_prog *prog, struct fuse_bpf_args *fba)
 			};						\
 		fa.out_numargs = fa_backup.out_numargs;			\
 									\
+		backed = true;						\
 		fer = (struct fuse_err_ret) {				\
 			ERR_PTR(backing(&fa, args)),			\
 			true,						\
@@ -2039,6 +2039,7 @@ static inline int fuse_bpf_run(struct bpf_prog *prog, struct fuse_bpf_args *fba)
 				};					\
 		ext_flags = fuse_bpf_run(fuse_inode->bpf, &fa);		\
 		if (ext_flags < 0) {					\
+			fa.error_in = ext_flags;			\
 			fer = (struct fuse_err_ret) {			\
 				ERR_PTR(ext_flags),			\
 				true,					\
@@ -2055,12 +2056,13 @@ static inline int fuse_bpf_run(struct bpf_prog *prog, struct fuse_bpf_args *fba)
 		res = fuse_bpf_simple_request(fm, &fa);			\
 		fuse_unlock_inode(inode, locked);			\
 		if (res < 0) {						\
+			fa.error_in = res;				\
 			fer.result = ERR_PTR(res);			\
 			break;						\
 		}							\
 	} while (false);						\
 									\
-	if (initialized && fer.ret) {					\
+	if (backed) {							\
 		err = finalize(&fa, args);				\
 		if (err)						\
 			fer.result = err;				\
