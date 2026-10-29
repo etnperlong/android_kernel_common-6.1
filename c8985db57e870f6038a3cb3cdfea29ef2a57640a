@@ -40,6 +40,25 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1c0c417a_6c0cec80",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:15:28Z",
+      "side": 1,
+      "message": "Thanks, the new subject and the pointer to aosp/4312489 look good. I think \"No production alignment change is needed.\" and \"Keep /dev/zero offset checks separate from anonymous VMA naming.\" still describe earlier patchsets rather than this patch, though. Would something like this work?\n\n```\nmadvise_set_anon_name() has followed the process page size since\naosp/4312489. Check that PR_SET_VMA_ANON_NAME in a 4KB process accepts\na 4KB-only-aligned address and a 4KB length, and names exactly that\nrange.\n```",
+      "parentUuid": "6718200c_7a314a0b",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ff1f9370_e22fcf61",
         "filename": "mm/madvise.c",
         "patchSetId": 10
@@ -181,6 +200,25 @@
       "side": 1,
       "message": "Done — fixed spacing, __maybe_unused placement, and multi-line argument alignment in kselftest_p3s.h and anon_vma_name_p3s.c.",
       "parentUuid": "445dd89f_f279e548",
+      "isAi": true,
+      "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff172511_c4e349ff",
+        "filename": "tools/testing/selftests/kselftest_ppps.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:15:28Z",
+      "side": 1,
+      "message": "Thanks! One is left: `NATIVE_PAGE_SIZE` in `run_test()` still sits one column to the right of the open parenthesis of `align_up()`. checkpatch doesn\u0027t catch it because of the cast.",
+      "parentUuid": "513ad578_cc38fbfd",
       "isAi": true,
       "revId": "c8985db57e870f6038a3cb3cdfea29ef2a57640a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
