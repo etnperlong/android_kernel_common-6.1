@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb76f5e5_57604f20",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "It looks like the message describes a bit more than the diff: the pages are still mapped with `vm_insert_page()` in `binder_page_insert()`, and the test sends a 1MB - 12KB payload rather than one across five 4KB pages.\n\nCould you update it to match, and move the test sentence to the test patch once it\u0027s split out?",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea762680_a87e3741",
+        "filename": "MAINTAINERS",
+        "patchSetId": 26
+      },
+      "lineNbr": 1821,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "Would it be OK to drop the `MAINTAINERS` change? I think checkpatch\u0027s \"does MAINTAINERS need updating?\" warning fires for any added file, and `binder_alloc_p3s.c` goes into an existing directory.\n\nWhether the binderfs selftests belong to the Android drivers entry is a question for upstream rather than for a P3S patch, and a local change here could conflict with upstream `MAINTAINERS` updates.",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7243e9a7_99ed14d7",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "Agreed that a Binder VMA starting inside a 16KB page breaks the absolute `PAGE_MASK` math: for the first buffer, `start` lands below `vm_start`, so its index wraps far past `pages[]`.\n\nAs far as I can see, though, only an address hint or `MAP_FIXED` gets there. libbinder maps with a NULL address, and since aosp/4312485 `vm_unmapped_area()` aligns those mappings to 16KB in 4KB processes (`p3s_adjust_unmapped_area_info()`).\n\nWould refusing the other mappings in `binder_mmap()` work for you? Then `binder_alloc.c` could keep upstream\u0027s math, and P3S would only add a hook there:\n\n```\n\tif (!vma_starts_at_kernel_page(vma))\n\t\treturn -EINVAL;\n```\n\nwith the helper next to `vma_slice_off()` in `include/linux/p3s/vma.h`:\n\n```\nstatic inline bool vma_starts_at_kernel_page(const struct vm_area_struct *vma)\n{\n\treturn PAGE_ALIGNED_KERNEL(vma-\u003evm_start) \u0026\u0026 !vma_slice_off(vma);\n}\n```\n\nNative VMAs always pass, and the `vm_slice_off` part also covers the offset case in my comment on `binder_install_buffer_pages()`. A misaligned hint would make `mmap()` fail, though; if such mappings need to work, could the three helpers move into a P3S header such as `include/linux/p3s/binder.h` instead?",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ee7b08bf_c4e9f4a1",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "I think indexing from `vm_start` still assumes that `vm_start` maps the start of `pages[0]`. Binder ignores `vm_pgoff`, but an `mmap()` offset of 4KB in a 4KB process sets `vm_slice_off` to 1, and `vm_insert_page()` then maps slice 1 of each page at the address this loop computes (`vma_insert_page_slices()`, aosp/4368056).\n\nThe process would then read every buffer 4KB off. Worse, `vma_insert_page_slices()` maps slice 0 of each page 4KB below that address, and `binder_alloc_free_page()` only zaps the 16KB from the page\u0027s address (taking slice 0 of the next page instead) before `binder_free_page()` frees it. So the process keeps a PTE to a freed page. As far as I can see that already happens before this patch, since `mmap(NULL)` gives a 16KB-aligned `vm_start` either way.\n\nCould `binder_mmap()` reject a non-zero `vma_slice_off(vma)` with `-EINVAL`, as `perf_mmap()` does since aosp/4368055? The helper suggested on `binder_alloc_page_start()` would cover it.",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ad538d1_bf6c3301",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 1046,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "Nit: the `int` to `size_t` changes here and in `binder_alloc_print_pages()` (with the `%zu`) don\u0027t seem related to indexing from `vm_start`, and the loop bound is at most `SZ_4M / PAGE_SIZE`. Would it be OK to drop them to keep the `binder_alloc.c` diff small?",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9fb9257d_50ce9a39",
+        "filename": "tools/testing/selftests/filesystems/binderfs/binder_alloc_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "Would you mind moving the test (`binder_alloc_p3s.c` with its `Makefile` and `.gitignore` lines) into its own patch after this one, e.g. `\"ANDROID: P3S: selftests: binderfs: Test Binder mappings in 4KB processes\"`? Selftests are separate patches in the P3S series.\n\nIts message could then name the changes it covers: the partial last page from aosp/4367601 (the page count check) and this patch\u0027s handling of a mapping that starts inside a native page.",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "524fff2b_cb83eeb0",
+        "filename": "tools/testing/selftests/filesystems/binderfs/binder_alloc_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:27:00Z",
+      "side": 1,
+      "message": "I\u0027m worried this doesn\u0027t skip on kernels without P3S. `personality()` accepts `ADDR_PAGE_SIZE_4KB` on any kernel, so `exec_compat()` always re-execs. On a 16KB kernel without P3S, the `--run` child still has 16KB pages and this check fails. On a 4KB kernel, all five checks pass without exercising P3S (the hint is only misaligned against the hard-coded `NATIVE_PAGE_SIZE`).\n\nCould `run_in_private_binderfs()` skip unless `getpagesize() \u003d\u003d NATIVE_PAGE_SIZE`, as `p3s_compat_main()` from aosp/4396645 does, and the `--run` path call `p3s_require_compat()` before `run_test()`?",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
