@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc304833_dfbdd051",
+        "filename": "kernel/futex/core.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T19:10:00Z",
+      "side": 1,
+      "message": "`key-\u003eboth.offset` is initialized once before the `again:` label (`key-\u003eboth.offset \u003d address % PAGE_SIZE;` at line 570). Overwriting `key-\u003eboth.offset` here before the `goto again;` checks at lines 756 and 764 means that if `goto again;` is taken and the mapping is concurrently replaced by an anonymous page (line 718) or unmapped (so `p3s_futex_page_offset()` returns its fallback `offset` parameter), `key-\u003eboth.offset` will retain the stale slice offset from the previous attempt rather than `address % PAGE_SIZE`.\n\nConsider storing the result of `p3s_futex_page_offset()` in a local variable and assigning `key-\u003eboth.offset \u003d page_offset | FUT_OFF_INODE;` at line 767 after the retry checks succeed.",
+      "isAi": true,
+      "revId": "ec4bbd67210957f7b7d1327ad639bf82118379bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
