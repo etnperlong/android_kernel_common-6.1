@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7447ac2f_687216c5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1984890
+      },
+      "writtenOn": "2026-10-29T14:27:07Z",
+      "side": 1,
+      "message": "the change-id above has a different vales than the on found in the original patch. They shall be identical. Please fix",
+      "revId": "9623b7f0a688ecca80a958eb0b287fe23888b85f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
