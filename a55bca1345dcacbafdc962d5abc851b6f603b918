@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "289f1f7a_0a5702d2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:09Z",
+      "side": 1,
+      "message": "Done — updated the commit message to match the new vma_starts_at_kernel_page(vma) check in C and Rust binder_mmap(), and moved the test out of this patch.",
+      "parentUuid": "cb76f5e5_57604f20",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea762680_a87e3741",
@@ -55,6 +74,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3b98f26_4e155936",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:09Z",
+      "side": 1,
+      "message": "Done — dropped the binder_alloc.c indexing changes and added vma_starts_at_kernel_page(vma) in include/linux/p3s/vma.h, checked in both C and Rust binder_mmap().",
+      "parentUuid": "7243e9a7_99ed14d7",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ee7b08bf_c4e9f4a1",
@@ -68,6 +106,25 @@
       "writtenOn": "2026-10-29T20:27:00Z",
       "side": 1,
       "message": "I think indexing from `vm_start` still assumes that `vm_start` maps the start of `pages[0]`. Binder ignores `vm_pgoff`, but an `mmap()` offset of 4KB in a 4KB process sets `vm_slice_off` to 1, and `vm_insert_page()` then maps slice 1 of each page at the address this loop computes (`vma_insert_page_slices()`, aosp/4368056).\n\nThe process would then read every buffer 4KB off. Worse, `vma_insert_page_slices()` maps slice 0 of each page 4KB below that address, and `binder_alloc_free_page()` only zaps the 16KB from the page\u0027s address (taking slice 0 of the next page instead) before `binder_free_page()` frees it. So the process keeps a PTE to a freed page. As far as I can see that already happens before this patch, since `mmap(NULL)` gives a 16KB-aligned `vm_start` either way.\n\nCould `binder_mmap()` reject a non-zero `vma_slice_off(vma)` with `-EINVAL`, as `perf_mmap()` does since aosp/4368055? The helper suggested on `binder_alloc_page_start()` would cover it.",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "189b8a9b_263bcf28",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:09Z",
+      "side": 1,
+      "message": "Done — binder_mmap() now rejects mappings where !vma_starts_at_kernel_page(vma) (covering both misaligned vm_start and non-zero vma_slice_off(vma)) with -EINVAL.",
+      "parentUuid": "ee7b08bf_c4e9f4a1",
       "isAi": true,
       "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +148,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e512da5e_a021b7e5",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 1046,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:09Z",
+      "side": 1,
+      "message": "Done — dropped all drivers/android/binder_alloc.c changes.",
+      "parentUuid": "0ad538d1_bf6c3301",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9fb9257d_50ce9a39",
@@ -104,6 +180,25 @@
       "writtenOn": "2026-10-29T20:27:00Z",
       "side": 1,
       "message": "Would you mind moving the test (`binder_alloc_p3s.c` with its `Makefile` and `.gitignore` lines) into its own patch after this one, e.g. `\"ANDROID: P3S: selftests: binderfs: Test Binder mappings in 4KB processes\"`? Selftests are separate patches in the P3S series.\n\nIts message could then name the changes it covers: the partial last page from aosp/4367601 (the page count check) and this patch\u0027s handling of a mapping that starts inside a native page.",
+      "isAi": true,
+      "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a63589c0_72d1017d",
+        "filename": "tools/testing/selftests/filesystems/binderfs/binder_alloc_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:09Z",
+      "side": 1,
+      "message": "Done — moved binder_alloc_p3s.c out of this patch into the selftests commit (aosp/4367986).",
+      "parentUuid": "9fb9257d_50ce9a39",
       "isAi": true,
       "revId": "a55bca1345dcacbafdc962d5abc851b6f603b918",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
