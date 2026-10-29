@@ -179,6 +179,42 @@ static void iommu_testing_host_stage2_idmap_complete(bool map)
 				snapshot_last_end);
 }
 
+void iommu_testing_hcall_get_stat(struct user_pt_regs *regs)
+{
+	u64 val;
+
+	switch (regs->regs[1]) {
+	case IOMMU_TESTING_STAT_MAP_CALLS:
+		val = atomic64_read(&stats.idmap_map_calls);
+		break;
+	case IOMMU_TESTING_STAT_MAP_PAGES:
+		val = atomic64_read(&stats.idmap_map_pages);
+		break;
+	case IOMMU_TESTING_STAT_UNMAP_CALLS:
+		val = atomic64_read(&stats.idmap_unmap_calls);
+		break;
+	case IOMMU_TESTING_STAT_UNMAP_PAGES:
+		val = atomic64_read(&stats.idmap_unmap_pages);
+		break;
+	case IOMMU_TESTING_STAT_MMIO_CALLS:
+		val = atomic64_read(&stats.idmap_mmio_calls);
+		break;
+	case IOMMU_TESTING_STAT_COMPLETE_CALLS:
+		val = atomic64_read(&stats.complete_calls);
+		break;
+	case IOMMU_TESTING_STAT_SKIPPED_PAGES:
+		val = snapshot_skipped_pages;
+		break;
+	default:
+		regs->regs[0] = SMCCC_RET_INVALID_PARAMETER;
+		return;
+	}
+
+	regs->regs[1] = val;
+	regs->regs[0] = SMCCC_RET_SUCCESS;
+}
+
+
 struct kvm_iommu_ops iommu_testing_ops = {
 	/* Common ops */
 	.init                           = iommu_testing_init,
