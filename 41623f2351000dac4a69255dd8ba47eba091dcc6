@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "41623f2351000dac4a69255dd8ba47eba091dcc6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "08215d67_224200c5",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 3669,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:00Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "ad9396c8_42f0fe16",
+      "isAi": true,
+      "revId": "41623f2351000dac4a69255dd8ba47eba091dcc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
