@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57cb7110_6a166352",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 3118,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T23:00:35Z",
+      "side": 1,
+      "message": "If a driver exposes a 4KB-aligned (non-16KB-aligned) physical range via `vm_iomap_memory(vma, start, len)` with `vma-\u003evm_pgoff \u003d\u003d 0` and `vma-\u003evm_slice_off \u003d\u003d 0`, `pfn \u003d start \u003e\u003e PAGE_SHIFT_KERNEL` discards bits `[13:12]` of `start` and maps slice 0 of the enclosing 16KB frame instead of the subpage slice at `start \u0026 ~PAGE_MASK_KERNEL`. In addition, if a driver resets `vma-\u003evm_pgoff \u003d 0` without clearing `vma-\u003evm_slice_off` (e.g. after using `vm_pgoff` as an `mmap` cookie), `vma_kernel_pages(vma)` and `vma_remap_frame()` will use the stale `vm_slice_off`.\n\n**Recommendation**: Please squash aosp/4368009 (`p3s_6.18_b16`: `ANDROID: P3S: mm: Map 4KB-aligned physical ranges in vm_iomap_memory()`) into this change.",
+      "isAi": true,
+      "revId": "24c78fe0cb8b5bc528cb446d63adcabb8a4c4a22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
