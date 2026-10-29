@@ -15,15 +15,20 @@ ifneq ($(ACL_CFLAGS),)
 TEST_GEN_PROGS += fuse_acl_cache_test
 endif
 
-EXTRA_CLEAN := *.bpf
-BPF_FLAGS = -Wall -Werror -O2 -g -emit-llvm \
-	    -I ../../../../../include \
-	    -idirafter /usr/local/include \
-	    -idirafter /usr/include/x86_64-linux-gnu \
-	    -idirafter /usr/include \
-	    -idirafter ../../../../../arch/x86/include
+EXTRA_CLEAN := *.bpf *.ir
 
 include ../../lib.mk
+
+BPF_ARCH := $(if $(ARCH),$(ARCH),$(shell uname -m))
+SRCARCH := $(shell echo $(BPF_ARCH) | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+					  -e s/aarch64.*/arm64/ -e s/arm.*/arm/)
+MULTIARCH := $(shell $(CC) -print-multiarch 2>/dev/null)
+BPF_FLAGS = -Wall -Werror -O2 -g -emit-llvm \
+	    -I $(top_srcdir)/include \
+	    -idirafter /usr/local/include \
+	    $(if $(MULTIARCH),-idirafter /usr/include/$(MULTIARCH)) \
+	    -idirafter /usr/include \
+	    -idirafter $(top_srcdir)/arch/$(SRCARCH)/include
 
 $(OUTPUT)/write_extend_eof_test: LDLIBS += -lpthread
 
@@ -45,8 +50,8 @@ $(OUTPUT)/fuse_acl_cache_test: LDLIBS += $(ACL_LDLIBS)
 
 FUSE_BPF_PROGS := $(OUTPUT)/fuse_test $(OUTPUT)/fuse_daemon
 $(FUSE_BPF_PROGS): bpf_loader.c
-$(FUSE_BPF_PROGS): CFLAGS += -D_FILE_OFFSET_BITS=64 -I../.. -I../../../../.. \
-			     -I../../../../include
+$(FUSE_BPF_PROGS): CFLAGS += -D_FILE_OFFSET_BITS=64 -I$(selfdir) -I$(top_srcdir) \
+			     -I$(top_srcdir)/tools/include
 $(FUSE_BPF_PROGS): LDLIBS += -lpthread -lelf
 
 $(OUTPUT)/%.ir: %.c

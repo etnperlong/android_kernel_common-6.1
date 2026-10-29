@@ -11,6 +11,7 @@
 #include "test_framework.h"
 
 #include <dirent.h>
+#include <signal.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
 #include <sys/types.h>
@@ -308,22 +309,36 @@ int delete_dir_tree(const char *dir_path, bool remove_root);
 	uint8_t bytes_in[FUSE_MIN_READ_BUFFER] __maybe_unused;		\
 	uint8_t bytes_out[FUSE_MIN_READ_BUFFER]	__maybe_unused
 
+#define FUSE_TEST_TIMEOUT_SEC 60
+
 #define FUSE_START_DAEMON()						\
 	do {								\
+		fflush(NULL);						\
 		TEST(daemon = fork(), daemon != -1);			\
+		if (!daemon)						\
+			alarm(FUSE_TEST_TIMEOUT_SEC);			\
 		action = daemon != 0;					\
 	} while (false)
 
 #define FUSE_END_DAEMON()						\
 	do {								\
 		TESTEQUAL(waitpid(daemon, &status, 0), daemon);		\
+		daemon = -1;						\
 		TESTEQUAL(status, TEST_SUCCESS);			\
 		result = TEST_SUCCESS;					\
 out:									\
-		if (!daemon)						\
-			exit(TEST_FAILURE);				\
+		if (!daemon) {						\
+			fuse_abort_connections();			\
+			_exit(TEST_FAILURE);				\
+		}							\
+		if (daemon > 0) {					\
+			fuse_abort_connections();			\
+			kill(daemon, SIGKILL);				\
+			waitpid(daemon, &status, 0);			\
+		}							\
 	} while (false)
 
+void fuse_abort_connections(void);
 
 struct map_relocation {
 	char *name;

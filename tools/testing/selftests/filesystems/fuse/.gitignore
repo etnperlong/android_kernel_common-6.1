@@ -2,5 +2,11 @@
 fuse_mnt
 fusectl_test
 write_extend_eof_test
+fuse_acl_cache_test
+fuse_daemon
 fuse_test
+fd.sh
+*.bpf
+*.ir
+*.o
 *.raw

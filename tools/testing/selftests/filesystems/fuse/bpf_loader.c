@@ -17,6 +17,7 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
+#include <sys/syscall.h>
 #include <sys/xattr.h>
 
 #include <linux/unistd.h>
@@ -619,6 +620,64 @@ int mount_fuse_no_init(const char *mount_dir, int bpf_fd, int dir_fd,
 {
 	return mount_fuse_maybe_init(mount_dir, bpf_fd, dir_fd, fuse_dev_ptr,
 				     false);
+}
+
+struct fuse_dirent64_local {
+	uint64_t d_ino;
+	int64_t d_off;
+	unsigned short d_reclen;
+	unsigned char d_type;
+	char d_name[];
+};
+
+void fuse_abort_connections(void)
+{
+	int saved_errno = errno;
+	char buf[1024];
+	int ctl_fd;
+
+	ctl_fd = open("/sys/fs/fuse/connections",
+		      O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+	if (ctl_fd < 0) {
+		errno = saved_errno;
+		return;
+	}
+
+	for (;;) {
+		long nread = syscall(SYS_getdents64, ctl_fd, buf, sizeof(buf));
+		long pos = 0;
+
+		if (nread <= 0)
+			break;
+		while (pos < nread) {
+			struct fuse_dirent64_local *d =
+				(struct fuse_dirent64_local *)(buf + pos);
+
+			if (d->d_name[0] >= '0' && d->d_name[0] <= '9') {
+				char abort_rel[64];
+				size_t len = strlen(d->d_name);
+				int afd;
+
+				if (len + sizeof("/abort") <= sizeof(abort_rel)) {
+					memcpy(abort_rel, d->d_name, len);
+					memcpy(abort_rel + len, "/abort",
+					       sizeof("/abort"));
+					afd = openat(ctl_fd, abort_rel,
+						     O_WRONLY | O_CLOEXEC);
+					if (afd >= 0) {
+						ssize_t wr __maybe_unused;
+
+						wr = write(afd, "1", 1);
+						close(afd);
+					}
+				}
+			}
+			pos += d->d_reclen;
+		}
+	}
+
+	close(ctl_fd);
+	errno = saved_errno;
 }
 
 struct fuse_bpf_map {

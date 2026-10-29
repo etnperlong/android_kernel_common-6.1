@@ -27,6 +27,7 @@
 
 static const char *ft_src = "ft-src";
 static const char *ft_dst = "ft-dst";
+static sig_atomic_t test_timed_out;
 
 static void fill_buffer(uint8_t *data, size_t len, int file, int block)
 {
@@ -774,10 +775,12 @@ static int bpf_test_file_late_close(const char *mount_dir)
 static int bpf_test_alter_errcode_bpf(const char *mount_dir)
 {
 	const char *dir_name = "dir";
+	const char *child_name = "child";
 	int result = TEST_FAILURE;
 	int src_fd = -1;
 	int bpf_fd = -1;
 	int fuse_dev = -1;
+	int child_fd = -1;
 	struct stat st;
 
 	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
@@ -787,14 +790,33 @@ static int bpf_test_alter_errcode_bpf(const char *mount_dir)
 	TESTEQUAL(mount_fuse(mount_dir, bpf_fd, src_fd, &fuse_dev), 0);
 
 	TESTSYSCALL(s_mkdir(s_path(s(mount_dir), s(dir_name)), 0777));
-	//TESTEQUAL(bpf_test_trace("mkdir"), 0);
+	TESTEQUAL(bpf_test_trace("mkdir"), 0);
 	TESTSYSCALL(s_stat(s_path(s(ft_src), s(dir_name)), &st));
-	TESTEQUAL(s_mkdir(s_path(s(mount_dir), s(dir_name)), 0777), -EPERM);
+
+	/*
+	 * Populate a child directly in backing ft_src/dir so VFS reaches
+	 * fuse_rmdir -> fuse_rmdir_backing (-ENOTEMPTY) and BPF postfilter
+	 * rewrites -ENOTEMPTY to -EXDEV (distinct from -1 syscall return).
+	 */
+	TEST(child_fd = s_creat(s_pathn(3, s(ft_src), s(dir_name),
+					s(child_name)), 0644),
+	     child_fd != -1);
+	TESTSYSCALL(close(child_fd));
+	child_fd = -1;
+
+	errno = 0;
+	TESTEQUAL(s_rmdir(s_path(s(mount_dir), s(dir_name))), -1);
+	TESTEQUAL(errno, EXDEV);
+	TESTEQUAL(bpf_test_trace("rmdir postfilter"), 0);
+
+	TESTSYSCALL(s_unlink(s_pathn(3, s(ft_src), s(dir_name),
+				     s(child_name))));
 	TESTSYSCALL(s_rmdir(s_path(s(mount_dir), s(dir_name))));
 	TESTEQUAL(s_stat(s_path(s(ft_src), s(dir_name)), &st), -1);
 	TESTEQUAL(errno, ENOENT);
 	result = TEST_SUCCESS;
 out:
+	close(child_fd);
 	close(fuse_dev);
 	umount(mount_dir);
 	close(bpf_fd);
@@ -1871,7 +1893,7 @@ static int bpf_test_revalidate_handle_backing_fd(const char *mount_dir)
 	if (action) {
 		int dst_folder1_fd = -1;
 		int dst_content_fd = -1;
-		char content_buffer[9] = {0};
+		char content_buffer[12] = {0};
 		// Step 1: Lookup folder1
 		TESTERR(dst_folder1_fd = s_open(s_path(s(mount_dir), s(folder1)),
 			O_RDONLY | O_CLOEXEC), dst_folder1_fd != -1);
@@ -2482,11 +2504,37 @@ struct test_case {
 	const char *name;
 };
 
+static void test_timeout_handler(int sig __maybe_unused)
+{
+	__atomic_store_n(&test_timed_out, 1, __ATOMIC_RELAXED);
+	fuse_abort_connections();
+}
+
 static void run_one_test(const char *mount_dir,
 			 const struct test_case *test_case)
 {
+	struct sigaction sa = {
+		.sa_handler = test_timeout_handler,
+	};
+	int rc;
+
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGALRM, &sa, NULL);
+	__atomic_store_n(&test_timed_out, 0, __ATOMIC_RELAXED);
+	alarm(FUSE_TEST_TIMEOUT_SEC);
+
 	ksft_print_msg("Running %s\n", test_case->name);
-	if (test_case->pfunc(mount_dir) == TEST_SUCCESS)
+	rc = test_case->pfunc(mount_dir);
+	alarm(0);
+
+	if (__atomic_load_n(&test_timed_out, __ATOMIC_RELAXED)) {
+		ksft_print_msg("Timed out after %ds: %s\n",
+			       FUSE_TEST_TIMEOUT_SEC, test_case->name);
+		umount2(mount_dir, MNT_FORCE);
+		rc = TEST_FAILURE;
+	}
+
+	if (rc == TEST_SUCCESS)
 		ksft_test_result_pass("%s\n", test_case->name);
 	else
 		ksft_test_result_fail("%s\n", test_case->name);
@@ -2567,6 +2615,8 @@ int main(int argc, char *argv[])
 
 	if (geteuid() != 0)
 		ksft_print_msg("Not a root, might fail to mount.\n");
+
+	mount("fusectl", "/sys/fs/fuse/connections", "fusectl", 0, NULL);
 
 	if (tracing_on() != TEST_SUCCESS)
 		ksft_exit_fail_msg("Can't turn on tracing\n");
