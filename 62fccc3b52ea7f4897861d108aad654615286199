@@ -54,6 +54,25 @@
       "isAi": true,
       "revId": "62fccc3b52ea7f4897861d108aad654615286199",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6fdd769_3cb8c159",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:30Z",
+      "side": 1,
+      "message": "Done. Updated the selftest modules (`iov_iter_p3s_module.c` in aosp/4367986 and `vm_map_pages_p3s_module.c` in aosp/4368012) to use `vm_map_pages()` and `vm_insert_page()` instead of `vm_insert_page_slice()`, so `vm_insert_page_slice()` is only called by built-in `mm/` code and needs no symbol export.",
+      "parentUuid": "63d15bb5_fdff0671",
+      "isAi": true,
+      "revId": "62fccc3b52ea7f4897861d108aad654615286199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
