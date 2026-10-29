@@ -204,6 +204,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "24041b94_50c0614c",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7273,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:58Z",
+      "side": 1,
+      "message": "Done. Updated `perf_mmap()` to reject nonempty data rings smaller than `PAGE_SIZE` (16KB) and dropped `rb-\u003edata_size` and all producer output-path changes.",
+      "parentUuid": "2c219af8_10ab6eed",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "67bea9d1_42ddb17f",
@@ -254,6 +273,25 @@
       "writtenOn": "2026-10-28T21:54:56Z",
       "side": 1,
       "message": "I\u0027m a bit worried about changing the output fast path of every ring buffer, native ones included, only for the 4KB and 8KB data areas.\n\nIf the 4KB layout stays, would it be OK to require at least 16KB of data in a 4KB process, i.e. to reject `0 \u003c data_size \u003c PAGE_SIZE` in `perf_mmap()`? `perf_data_size()` would then stay `nr_pages \u003c\u003c PAGE_SHIFT`, so `rb-\u003edata_size`, `perf_set_data_size()`, the `rb_alloc()` change, this hunk and the one in the output copy could all go. Only the 4KB user page, and so `data_offset`, would differ.",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa9ce497_83ac4faa",
+        "filename": "kernel/events/ring_buffer.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:58Z",
+      "side": 1,
+      "message": "Done. Requiring `data_size \u003e\u003d PAGE_SIZE` (16KB) allows keeping the native `__perf_output_begin()` and `PERF_OUTPUT_COPY` fast paths unchanged.",
+      "parentUuid": "a804c05f_7e33f08f",
       "isAi": true,
       "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
