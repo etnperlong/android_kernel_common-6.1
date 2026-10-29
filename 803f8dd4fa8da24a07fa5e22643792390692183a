@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "888813a4_9eaaf691",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T03:35:14Z",
+      "side": 1,
+      "message": "Could we use a header with the prototypes instead of including a .c file?",
+      "range": {
+        "startLine": 3,
+        "startChar": 38,
+        "endLine": 3,
+        "endChar": 68
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f1af9889_6f1606df",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "mm/gup_p3s.c",
+              "range": {
+                "startLine": 1,
+                "startChar": 0,
+                "endLine": 1,
+                "endChar": 0
+              },
+              "replacement": "\nlong pin_user_pages_range_locked(struct mm_struct *mm, unsigned long start,\n\t\t\t\t size_t length, unsigned long capacity,\n\t\t\t\t unsigned int gup_flags, struct page **pages,\n\t\t\t\t struct page_span *spans)\n{\n\treturn gup_user_range(mm, start, length, capacity, gup_flags, pages,\n\t\t\t      spans, true, true);\n}\n"
+            }
+          ]
+        }
+      ],
+      "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
