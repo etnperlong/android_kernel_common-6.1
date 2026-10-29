@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "093309e8_2b452256",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:08Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367972 and updated the commit subject and message.",
+      "parentUuid": "f98362be_eb730615",
+      "isAi": true,
+      "revId": "33f0efe562c333ea65147e3671f8c2803c6ead6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1e927773_ea165a7f",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:41:15Z",
       "side": 1,
       "message": "If the drain stays (see aosp/4367972), could this be folded into aosp/4367972? This patch rewrites the hunk aosp/4367972 adds, and aosp/4367972 on its own also drains in native processes.\n\nAlso, could the comment get a blank line before it, and say \"4KB\" rather than \"compat\"?",
+      "isAi": true,
+      "revId": "33f0efe562c333ea65147e3671f8c2803c6ead6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c6aa49f_c5504f60",
+        "filename": "mm/madvise.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:08Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367972 with a blank line before the comment and \u00274KB\u0027 wording.",
+      "parentUuid": "1e927773_ea165a7f",
       "isAi": true,
       "revId": "33f0efe562c333ea65147e3671f8c2803c6ead6e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
