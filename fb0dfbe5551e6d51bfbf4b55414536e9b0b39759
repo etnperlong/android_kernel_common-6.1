@@ -129,6 +129,25 @@
       "isAi": true,
       "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1a5db65_fa20a87f",
+        "filename": "io_uring/memmap.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:14Z",
+      "side": 1,
+      "message": "Done — restored the original line in io_uring/memmap.c so the file is no longer modified by this patch.",
+      "parentUuid": "413f120c_2f050021",
+      "isAi": true,
+      "revId": "fb0dfbe5551e6d51bfbf4b55414536e9b0b39759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
