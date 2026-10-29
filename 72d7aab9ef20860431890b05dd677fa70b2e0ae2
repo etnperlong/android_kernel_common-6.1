@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "15c0f842_0fb12a85",
+        "filename": "include/linux/p3s/iov_iter.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:44Z",
+      "side": 1,
+      "message": "Done. Reduced `spans` (and `slots`) from 64 to 16 entries in `p3s_get_user_slice_pages()` to keep stack usage small.",
+      "parentUuid": "a2da1535_9d2b877c",
+      "isAi": true,
+      "revId": "72d7aab9ef20860431890b05dd677fa70b2e0ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d9a1a3c2_a9781148",
