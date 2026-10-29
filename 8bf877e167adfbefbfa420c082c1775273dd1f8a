@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0da9a199_ef972ae3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:40:45Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain that without rounding, Rust Binder\u0027s mmap() rejects libbinder\u0027s 1MB - 8KB mapping with -EINVAL, while C Binder can index past pages[] for a buffer in the final partial page.",
+      "parentUuid": "88da8962_90a0634e",
+      "isAi": true,
+      "revId": "8bf877e167adfbefbfa420c082c1775273dd1f8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c1dce83a_419a5297",
