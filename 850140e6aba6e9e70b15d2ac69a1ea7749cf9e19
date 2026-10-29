@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f63ce199_49e4a72b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:08:05Z",
+      "side": 1,
+      "message": "The walker changes look right to me: the `mm_pte_size()` stride, skipping repeats of the last swap entry, stopping at the next distinct entry and the `start_addr` alignment check all fit how reclaim fills the slice PTEs.\n\nCould the body say what goes wrong without the patch, though? \"This keeps per-process writeback and prefetch available for 4KB target processes\" reads as if they were refused before, which was only the case in earlier patch sets. Something like:\n\n```\nStepping by PAGE_SIZE reads one slice PTE per 16KB of a 4KB target,\nso a swapped-out page is missed when that slice is a hole, and a\nnext_addr in a VMA that isn\u0027t 16KB-aligned fails the start_addr check\nwhen it is passed back.\n```",
+      "isAi": true,
+      "revId": "850140e6aba6e9e70b15d2ac69a1ea7749cf9e19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39b649cb_a6a6d783",
+        "filename": "drivers/block/zram/zram_ioctl.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:08:05Z",
+      "side": 1,
+      "message": "Nit: the blank line left at the start of the loop body can go. Also, the blank line removed before `if (start_addr \u003e\u003d mm-\u003etask_size)` in `zram_ioctl_process_scan()` looks unrelated; would you mind restoring it?",
+      "isAi": true,
+      "revId": "850140e6aba6e9e70b15d2ac69a1ea7749cf9e19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
