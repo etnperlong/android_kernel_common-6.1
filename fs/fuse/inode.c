@@ -254,7 +254,7 @@ static void fuse_fill_attr_from_inode(struct fuse_attr *attr,
 		.nlink		= fi->inode.i_nlink,
 		.uid		= __kuid_val(fi->inode.i_uid),
 		.gid		= __kgid_val(fi->inode.i_gid),
-		.rdev		= fi->inode.i_rdev,
+		.rdev		= new_encode_dev(fi->inode.i_rdev),
 		.blksize	= 1u << fi->inode.i_blkbits,
 	};
 }
@@ -472,7 +472,8 @@ static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr,
 	else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
 		 S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
 		fuse_init_common(inode);
-		init_special_inode(inode, inode->i_mode, attr->rdev);
+		init_special_inode(inode, inode->i_mode,
+				   new_decode_dev(attr->rdev));
 	} else
 		BUG();
 	/*
