@@ -13,8 +13,14 @@ struct vm_area_struct;
 struct mempolicy;
 
 /* Helper macro to avoid gfp flags if they are the default one */
+<<<<<<< HEAD   (815f36e3050a885dedbff621d4dd16c17dc81a0b Merge 3668aedc95f0 ("selinux: fix incorrect execmem checks o)
 #define __default_gfp(a,...) a
 #define default_gfp(...) __default_gfp(__VA_ARGS__ __VA_OPT__(,) GFP_KERNEL)
+||||||| BASE   (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
+=======
+#define __default_gfp(a,b,...) b
+#define default_gfp(...) __default_gfp(,##__VA_ARGS__,GFP_KERNEL)
+>>>>>>> BRANCH (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
 
 /* Convert GFP flags to their corresponding migrate type */
 #define GFP_MOVABLE_MASK (__GFP_RECLAIMABLE|__GFP_MOVABLE)

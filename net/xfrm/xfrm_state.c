@@ -2886,8 +2886,14 @@ int xfrm_user_policy(struct sock *sk, int optname, sockptr_t optval, int optlen)
 	if (IS_ERR(data))
 		return PTR_ERR(data);
 
+<<<<<<< HEAD   (815f36e3050a885dedbff621d4dd16c17dc81a0b Merge 3668aedc95f0 ("selinux: fix incorrect execmem checks o)
 	/* Use the 64-bit / untranslated format on Android, even for compat */
 	if (!IS_ENABLED(CONFIG_GKI_NET_XFRM_HACKS) && in_compat_syscall()) {
+||||||| BASE   (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
+	if (in_compat_syscall()) {
+=======
+	if (IS_ENABLED(CONFIG_COMPAT_FOR_U64_ALIGNMENT) && in_compat_syscall()) {
+>>>>>>> BRANCH (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
 		struct xfrm_translator *xtr = xfrm_get_translator();
 
 		if (!xtr) {

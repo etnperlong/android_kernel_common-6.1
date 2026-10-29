@@ -157,6 +157,34 @@ unsigned short swap_cgroup_clear(swp_entry_t ent, unsigned int nr_ents)
  */
 unsigned short lookup_swap_cgroup_id(swp_entry_t ent)
 {
+<<<<<<< HEAD   (815f36e3050a885dedbff621d4dd16c17dc81a0b Merge 3668aedc95f0 ("selinux: fix incorrect execmem checks o)
+||||||| BASE   (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
+	if (mem_cgroup_disabled())
+		return 0;
+	return lookup_swap_cgroup(ent, NULL)->id;
+}
+
+int swap_cgroup_swapon(int type, unsigned long max_pages)
+{
+	void *array;
+	unsigned long length;
+=======
+	struct swap_cgroup_ctrl *ctrl;
+
+	if (mem_cgroup_disabled())
+		return 0;
+
+	ctrl = &swap_cgroup_ctrl[swp_type(ent)];
+	if (unlikely(!ctrl->map))
+		return 0;
+	return lookup_swap_cgroup(ent, NULL)->id;
+}
+
+int swap_cgroup_swapon(int type, unsigned long max_pages)
+{
+	void *array;
+	unsigned long length;
+>>>>>>> BRANCH (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
 	struct swap_cgroup_ctrl *ctrl;
 
 	if (mem_cgroup_disabled())

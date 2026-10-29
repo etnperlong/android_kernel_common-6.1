@@ -1205,10 +1205,19 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 	tsk->mm_cid_active = 0;
 	tsk->migrate_from_cpu = -1;
 #endif
+<<<<<<< HEAD   (815f36e3050a885dedbff621d4dd16c17dc81a0b Merge 3668aedc95f0 ("selinux: fix incorrect execmem checks o)
 	android_init_vendor_data(tsk, 1);
 	android_init_oem_data(tsk, 1);
 	android_init_dynamic_vendor_data(tsk);
 	trace_android_vh_dup_task_struct(tsk, orig);
+||||||| BASE   (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
+=======
+
+#ifdef CONFIG_BPF_SYSCALL
+	RCU_INIT_POINTER(tsk->bpf_storage, NULL);
+	tsk->bpf_ctx = NULL;
+#endif
+>>>>>>> BRANCH (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
 	return tsk;
 
 free_stack:
@@ -2389,10 +2398,6 @@ __latent_entropy struct task_struct *copy_process(
 #ifdef CONFIG_BCACHE
 	p->sequential_io	= 0;
 	p->sequential_io_avg	= 0;
-#endif
-#ifdef CONFIG_BPF_SYSCALL
-	RCU_INIT_POINTER(p->bpf_storage, NULL);
-	p->bpf_ctx = NULL;
 #endif
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
