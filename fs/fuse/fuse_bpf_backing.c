@@ -2467,10 +2467,6 @@ int fuse_readdir_initialize(struct fuse_bpf_args *fa, struct fuse_read_io *frio,
 			    bool *force_again, bool *allow_force, bool is_continued)
 {
 	struct fuse_file *ff = file->private_data;
-	u8 *page = (u8 *)__get_free_page(GFP_KERNEL);
-
-	if (!page)
-		return -ENOMEM;
 
 	*fa = (struct fuse_bpf_args) {
 		.nodeid = ff->nodeid,
@@ -2488,7 +2484,7 @@ int fuse_readdir_initialize(struct fuse_bpf_args *fa, struct fuse_read_io *frio,
 		},
 		.out_args[1] = (struct fuse_bpf_arg) {
 			.size = PAGE_SIZE,
-			.value = page,
+			.value = NULL,
 		},
 	};
 
@@ -2576,17 +2572,19 @@ int fuse_readdir_backing(struct fuse_bpf_args *fa,
 	struct fuse_file *ff = file->private_data;
 	struct file *backing_dir = ff->backing_file;
 	struct fuse_read_out *fro = fa->out_args[0].value;
+	u8 *page = (u8 *)__get_free_page(GFP_KERNEL);
 	struct extfuse_ctx ec;
 	int err;
 
+	if (!page)
+		return -ENOMEM;
+
+	fa->out_args[1].value = page;
 	ec = (struct extfuse_ctx) {
 		.ctx.actor = filldir,
 		.ctx.pos = ctx->pos,
-		.addr = fa->out_args[1].value,
+		.addr = page,
 	};
-
-	if (!ec.addr)
-		return -ENOMEM;
 
 	if (!is_continued)
 		backing_dir->f_pos = file->f_pos;
@@ -2610,14 +2608,20 @@ void *fuse_readdir_finalize(struct fuse_bpf_args *fa,
 	struct file *backing_dir = ff->backing_file;
 	int err = 0;
 
-	err = parse_dirfile(fa->out_args[1].value, fa->out_args[1].size, ctx, fro->offset);
-	*force_again = !!fro->again;
-	if (*force_again && !*allow_force)
-		err = -EINVAL;
+	if (!fa->out_args[1].value)
+		return NULL;
 
-	backing_dir->f_pos = ctx->pos;
+	if (!fa->error_in) {
+		err = parse_dirfile(fa->out_args[1].value, fa->out_args[1].size,
+				    ctx, fro->offset);
+		*force_again = !!fro->again;
+		if (*force_again && !*allow_force)
+			err = -EINVAL;
 
-	free_page((unsigned long) fa->out_args[1].value);
+		backing_dir->f_pos = ctx->pos;
+	}
+
+	free_page((unsigned long)fa->out_args[1].value);
 	return ERR_PTR(err);
 }
 
