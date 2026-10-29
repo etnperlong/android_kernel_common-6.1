@@ -1390,6 +1390,8 @@ retry:
 				if (folio_maybe_dma_pinned(folio))
 					goto keep_locked;
 				if (folio_test_large(folio)) {
+					bool bypass = false;
+
 					/* cannot split folio, skip it */
 					if (!can_split_folio(folio, 1, NULL))
 						goto activate_locked;
@@ -1397,8 +1399,10 @@ retry:
 					 * Split partially mapped folios right away.
 					 * We can free the unmapped pages without IO.
 					 */
-					if (data_race(!list_empty(&folio->_deferred_list) &&
-					    folio_test_partially_mapped(folio)) &&
+					trace_android_vh_split_large_folio_bypass(&bypass);
+					if (!bypass &&
+					    data_race(!list_empty(&folio->_deferred_list) &&
+						      folio_test_partially_mapped(folio)) &&
 					    split_folio_to_list(folio, folio_list))
 						goto activate_locked;
 				}
