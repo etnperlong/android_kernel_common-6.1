@@ -16,6 +16,24 @@
       "message": "Could you please rebase this right before submit and regenerate ABI file? Other changes in `-kminext` may affect CRCs in your change.",
       "revId": "a566c6de5914a32764a2addd061f9deb86ba609f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65217eeb_e946da2c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-10-29T00:59:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a0d0773_c68e193a",
+      "revId": "a566c6de5914a32764a2addd061f9deb86ba609f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
