@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f511aaa9_b594f619",
+        "filename": "arch/arm64/mm/context.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T23:37:31Z",
+      "side": 1,
+      "message": "Done — moved the sequence and comment into mm_switch_tcr(mm) in arch/arm64/include/asm/p3s/mmu.h, and ordered mm_switch_tcr(mm) before the TTBR1/TTBR0 writes in cpu_do_switch_mm() as well.",
+      "parentUuid": "6e124416_88ec72fb",
+      "isAi": true,
+      "revId": "cecda88f21ed66989e27c41d26435e14336a1d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2da80623_3314a6a6",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T20:16:03Z",
       "side": 1,
       "message": "I\u0027m worried about the cost of this `local_flush_tlb_all()`: it now runs on every switch between a 4KB and a native task, e.g. on both legs of a binder call between a 4KB app and a 16KB service, and `TLBI VMALLE1` drops the entries of every ASID, global kernel entries included.\n\nAs far as I can see, once the reserved TTBR0 is in place no entries can be created from the old tables, and each ASID only ever gets entries under its own mm\u0027s geometry, which is fixed when the mm is created. What\u0027s left is the stretch until `cpu_switch_mm()`, where the previous mm\u0027s ASID is still in TTBR1 and its entries could be hit under the new TCR.\n\nIs the full flush needed beyond that? If not, would switching TTBR1 to the reserved ASID along with TTBR0, as `__uaccess_ttbr0_disable()` does on kernel entry when PAN is emulated, be enough? Either way, could the commit message say why the flush is needed?",
+      "isAi": true,
+      "revId": "cecda88f21ed66989e27c41d26435e14336a1d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e26fe318_938f1d10",
+        "filename": "arch/arm64/mm/context.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T23:37:31Z",
+      "side": 1,
+      "message": "Done — replaced local_flush_tlb_all() with switching TTBR1_EL1 to the reserved ASID alongside cpu_set_reserved_ttbr0_nosync() followed by an ISB before updating TCR_EL1, updated the commit message to explain why, and extended mixed_context_switch_p3s.c to verify same-address private canaries and ASID churn.",
+      "parentUuid": "2da80623_3314a6a6",
       "isAi": true,
       "revId": "cecda88f21ed66989e27c41d26435e14336a1d99",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
