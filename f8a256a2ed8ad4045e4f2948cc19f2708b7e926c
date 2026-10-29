@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5db60e8b_59daa1d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1984890
+      },
+      "writtenOn": "2026-10-29T14:28:44Z",
+      "side": 1,
+      "message": "is this an ANDROID/FROMLIST/FROMGIT patch? please prepend subject with relevant info",
+      "revId": "f8a256a2ed8ad4045e4f2948cc19f2708b7e926c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
