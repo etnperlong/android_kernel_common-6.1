@@ -57,6 +57,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a602efb_a3731e8d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:40:53Z",
+      "side": 1,
+      "message": "Done — updated the subject to use \u00274KB\u0027 and updated the commit message to explain why native PTE batching and mapcount checks fail for 4KB VMAs (including file folios mapped by multiple slices).",
+      "parentUuid": "b8f1dc6c_0dade0b1",
+      "isAi": true,
+      "revId": "bea188b10f140ee2fffcc94314caf5a6d016f673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1cb11091_802c9e37",
