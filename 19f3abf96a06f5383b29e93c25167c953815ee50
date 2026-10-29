@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "874f31c4_32c5e466",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 14
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:01:50Z",
+      "side": 1,
+      "message": "Could the body also mention the `vma_pgoff_pages()` change? I think it\u0027s still needed: with `vma_pages()`, the exact lookup gets the length in 4KB pages, so a 4KB process can\u0027t map more than a quarter of an object.\n\nNit: \"4KB process\" rather than \"4KB task\" would match the rest of the series, and this line is 73 columns.",
+      "isAi": true,
+      "revId": "19f3abf96a06f5383b29e93c25167c953815ee50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
