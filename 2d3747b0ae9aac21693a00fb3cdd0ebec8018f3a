@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "384e8ba2_1706a49d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:18Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "0543ae4a_041f40ae",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "29f63d60_7c2742e9",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:55:56Z",
       "side": 1,
       "message": "Nit: if this stays, could the comment say P3S rather than PPPS, the old abbreviation, and 4KB processes rather than compat? The comment above `PTE_SWP_SLICE_SHIFT` in `pgtable-prot.h` also says compat.",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "510c8abd_593c4f1c",
+        "filename": "arch/arm64/include/asm/pgtable.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 1559,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:18Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "29f63d60_7c2742e9",
       "isAi": true,
       "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "38a99238_0fd1006c",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 5033,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:18Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "177f8ec6_a1061651",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66c0ff73_f071e21d",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-28T22:55:56Z",
       "side": 1,
       "message": "If the patch stays, could the P3S parts go into P3S headers, as `vma_pte_add_slice()` does in `mm/p3s/pgtable.h`? `do_swap_page()` and `unuse_pte()` would then keep a one-line call instead of an `#ifdef` block each. With no-op fallbacks (e.g. in `\u003clinux/p3s/swap.h\u003e`), `include/linux/swapops.h` and `mm/internal.h` wouldn\u0027t need `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` either. And `try_to_unmap_one()` could use `vma_slice_offset(vma, address)` rather than `(pte_val(pteval) \u003e\u003e PAGE_SHIFT_4KB) \u0026 3`.",
+      "isAi": true,
+      "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "260c4ecb_cdbcb85b",
+        "filename": "mm/swapfile.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2269,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:18Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "66c0ff73_f071e21d",
       "isAi": true,
       "revId": "2d3747b0ae9aac21693a00fb3cdd0ebec8018f3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
