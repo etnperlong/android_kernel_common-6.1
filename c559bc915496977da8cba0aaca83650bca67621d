@@ -54,6 +54,25 @@
       "isAi": true,
       "revId": "c559bc915496977da8cba0aaca83650bca67621d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c6cbd06_d4e7999d",
+        "filename": "mm/madvise.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:36Z",
+      "side": 1,
+      "message": "Done. Simplified the mapcount check in `madvise_cold_or_pageout_pte_range()` to compare `folio_mapcount(folio) !\u003d nr` directly.",
+      "parentUuid": "39d0c13d_ea436aea",
+      "isAi": true,
+      "revId": "c559bc915496977da8cba0aaca83650bca67621d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
