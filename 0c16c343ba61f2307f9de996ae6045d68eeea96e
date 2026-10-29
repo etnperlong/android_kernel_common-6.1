@@ -54,6 +54,25 @@
       "isAi": true,
       "revId": "0c16c343ba61f2307f9de996ae6045d68eeea96e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5529a30_4e087e97",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 1101,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:41Z",
+      "side": 1,
+      "message": "Done. Replaced `vma_slice_swap_ptes()` with native-page swap PSS sharing (`(u64)PAGE_SIZE_KERNEL \u003c\u003c PSS_SHIFT` divided by `mapcount`, capped at `(u64)PAGE_SIZE \u003c\u003c PSS_SHIFT`), matching resident PSS accounting without scanning sibling swap PTEs.",
+      "parentUuid": "dd683682_2ea45d7a",
+      "isAi": true,
+      "revId": "0c16c343ba61f2307f9de996ae6045d68eeea96e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
