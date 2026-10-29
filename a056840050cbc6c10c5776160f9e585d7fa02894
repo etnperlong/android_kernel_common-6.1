@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2a6fcf5_b36821dd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:28:40Z",
+      "side": 1,
+      "message": "Could the message name the change this covers? As far as I can see, the anonymous cases check the copy in aosp/4367981, which I\u0027ve asked to drop (see my comment there), so they would fail with the `-EINVAL` kept. The private file case would still apply: `copy_vma()` carries a file VMA\u0027s slice, so no copy is needed. Could the test keep just that case, with a message along these lines?\n\n```\nCheck that a private file mapping of a 4KB process keeps its contents\nand file offsets when mremap() moves it to another slice of a native\npage, and that a COW write after fork() doesn\u0027t reach sibling slices.\n```",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43be8460_9c3cb0e9",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:28:40Z",
+      "side": 1,
+      "message": "It looks like nothing runs this test: as a `TEST_GEN_FILES` entry it\u0027s only built, and `run_vmtests.sh` doesn\u0027t list it, here or at the top of the chain (aosp/4367986 only moves it to `TEST_GEN_PROGS`). Could you add it to `run_vmtests.sh`, as on aosp/4367975? For example:\n\n```\nCATEGORY\u003d\"mremap\" run_test ./mremap_slice_cow_p3s\n```",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7eab8ee6_1f1b64a7",
+        "filename": "tools/testing/selftests/mm/mremap_slice_cow_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:28:40Z",
+      "side": 1,
+      "message": "I think this include isn\u0027t found when building from `mm/`: `kselftest_p3s.h` sits in `tools/testing/selftests/`, and unlike `devzero_slice_p3s` and the other P3S targets, `mremap_slice_cow_p3s` gets no `CFLAGS +\u003d -I..`, so the mm build stops with \"kselftest_p3s.h: No such file or directory\". aosp/4367986 moves the test to `TEST_GEN_PROGS` but doesn\u0027t add the flag either.\n\nCould this include `\"../kselftest_p3s.h\"`, as `bpf_map_mmap_p3s.c` and `p3s_test.h` do? Or, if you prefer the per-target lines, with the `LOCAL_HDRS` one so that clang builds keep working:\n\n```\n$(OUTPUT)/mremap_slice_cow_p3s: CFLAGS +\u003d -I..\n$(OUTPUT)/mremap_slice_cow_p3s: LOCAL_HDRS +\u003d ../kselftest_p3s.h\n$(OUTPUT)/mremap_slice_cow_p3s: ../kselftest_p3s.h\n```",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "657895be_394e2f77",
+        "filename": "tools/testing/selftests/mm/mremap_slice_cow_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:28:40Z",
+      "side": 1,
+      "message": "The private file case is a nice addition. As far as I can see, though, it can\u0027t notice a wrong file offset after the move: the memfd holds `0x20` everywhere, and every slice is dirtied before `mremap()`, so all four PTEs are anonymous COW pages. aosp/4367981 also carries the source slice through `copy_vma()` so that a moved file VMA keeps its file offset.\n\nWould it be worth writing a different byte into each 4KB slice of the memfd, dropping one slice with `MADV_DONTNEED` after the move, and checking that it faults back in with its own file byte?",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
