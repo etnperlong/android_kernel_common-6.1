@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "ec4bbd67210957f7b7d1327ad639bf82118379bb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2dbaf430_83c3c353",
+        "filename": "kernel/futex/core.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T21:08:58Z",
+      "side": 1,
+      "message": "Thanks, agreed; the offset has to survive `goto again`.\n\nUpdated so that `p3s_futex_page_offset()`\u0027s result goes into a local, and `key-\u003eboth.offset` is only set after the retry checks, together with `FUT_OFF_INODE`.",
+      "parentUuid": "fc304833_dfbdd051",
+      "isAi": true,
+      "revId": "ec4bbd67210957f7b7d1327ad639bf82118379bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
