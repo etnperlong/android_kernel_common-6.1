@@ -54,6 +54,25 @@
       "isAi": true,
       "revId": "850140e6aba6e9e70b15d2ac69a1ea7749cf9e19",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "70294796_13a2f9f9",
+        "filename": "drivers/block/zram/zram_ioctl.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:43Z",
+      "side": 1,
+      "message": "Done — removed the blank line at the start of the loop body and restored the blank line before if (start_addr \u003e\u003d mm-\u003etask_size).",
+      "parentUuid": "39b649cb_a6a6d783",
+      "isAi": true,
+      "revId": "850140e6aba6e9e70b15d2ac69a1ea7749cf9e19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
