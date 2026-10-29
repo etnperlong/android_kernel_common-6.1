@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e08a147_4409a948",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:11Z",
+      "side": 1,
+      "message": "Done — updated the commit message and code comment to explain that a swapped window mapped by several 4KB PTEs has no exclusive swap PTE, and that moving the whole window is an optimization over falling back to UFFDIO_COPY.",
+      "parentUuid": "9971029f_52b20d9f",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18854f46_73e8a38a",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:48:52Z",
       "side": 1,
       "message": "I think the second sentence reads like a note about how the work was split between patches, and it doesn\u0027t quite match this one. The swap move copies no tags: they stay with the swap entry, and `arch_swap_restore()` puts them back at swap-in. The new `mte_copy_tags_range()` call in `mm/p3s/anon.h` can\u0027t run either (see my comment there). If those hunks go, the sentence can go too, which also fixes the 74-column line.\n\nCould the subject and body also say 4KB processes rather than compat? For example:\n\n`ANDROID: P3S: userfaultfd: Move swapped 16KB windows of 4KB processes`",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eade355b_09acdc27",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:11Z",
+      "side": 1,
+      "message": "Done — updated the subject and body to use \u00274KB processes\u0027, explained that swap-in restores tags from the swap entry, and wrapped within 72 columns.",
+      "parentUuid": "18854f46_73e8a38a",
       "isAi": true,
       "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4eab96c_d1ab5c35",
+        "filename": "arch/arm64/lib/mte.S",
+        "patchSetId": 16
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:11Z",
+      "side": 1,
+      "message": "Done — split mte_copy_tags_range() into a separate commit (aosp/4399070) and documented the 256-byte alignment requirement on both addresses and size.",
+      "parentUuid": "150187ea_7249dffd",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "424bd554_57a30ecb",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-28T22:48:52Z",
       "side": 1,
       "message": "As far as I can see, this branch can\u0027t run. `folio` is the copy that `mfill_atomic_pte_copy()` just allocated, without `__GFP_ZEROTAGS`, and it isn\u0027t mapped yet, so `page_mte_tagged(\u0026folio-\u003epage)` is false. The reused slice therefore still gets `mte_zero_clear_slice_tags()`, as before. That is also what a native process gets, because UFFDIO_COPY doesn\u0027t copy tags from the user buffer.\n\nWould it be OK to drop this hunk and the `\u003casm/mte.h\u003e` include, and add `mte_copy_tags_range()` together with its first real user instead? That looks like `p3s_mremap_copy_slice()` in aosp/4367984, then aosp/4367997. A separate arm64 patch just before aosp/4367984 would also make the `mte.S` change easy to review on its own.",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d8729aa_1f1cad13",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:11Z",
+      "side": 1,
+      "message": "Done — dropped the mte_copy_tags_range() call and \u003casm/mte.h\u003e include from this patch and split mte_copy_tags_range() into aosp/4399070.",
+      "parentUuid": "424bd554_57a30ecb",
       "isAi": true,
       "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "65ab65dd_cf548fbf",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:11Z",
+      "side": 1,
+      "message": "Done — replaced move_compat_swap_folio() with p3s_uffd_swap_nr() in mm/p3s/anon.h called from the generic move_pages_ptes() / move_swap_pte() path.",
+      "parentUuid": "6e706324_b09ef61c",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b7eedbec_6dbe3c53",
@@ -104,6 +199,25 @@
       "writtenOn": "2026-10-28T22:48:52Z",
       "side": 1,
       "message": "Nit: if this function stays, `P3S_SLICES_PER_PAGE` (`include/linux/p3s/const.h`), as used in `move_present_ptes()`, could replace `PAGE_SIZE_KERNEL / PAGE_SIZE_4KB` here and in the `src[]` declaration. `src` could also be a single `pte_t`, since each entry is only used in its own iteration.\n\nIn the caller, the two `vm_end` checks look redundant with `len \u003e\u003d PAGE_SIZE_KERNEL`, since `move_pages()` already checks both ranges against their VMAs. The comment before the new block also needs a blank line after the `}` above it.",
+      "isAi": true,
+      "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec5e3eb6_ee43658a",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:11Z",
+      "side": 1,
+      "message": "Done — used P3S_SLICES_PER_PAGE in p3s_uffd_swap_nr() and dropped the separate move_compat_swap_folio() function and redundant caller checks.",
+      "parentUuid": "b7eedbec_6dbe3c53",
       "isAi": true,
       "revId": "a19600eed357ed5fd1784a877ec41b0a2c5c72a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
