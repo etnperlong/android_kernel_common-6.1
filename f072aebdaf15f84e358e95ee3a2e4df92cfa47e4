@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f704b42_dc9682bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-29T16:06:51Z",
+      "side": 1,
+      "message": "Please fix this WARNING reported by KernelCommit: The cherry pick line does not point to the correct original commit on the base b...\n\nThe cherry pick line does not point to the correct original commit on the base branch.\n\nExpected commit: 01e38901cbb78b4569bfb5b6ec45dd8ef39a555f\nFound commit: 053f0d5591f9d06738c8e2a1ddd75d3c544c5086\n\nPlease cherry-pick using: `git cherry-pick -s -x 01e38901cbb78b4569bfb5b6ec45dd8ef39a555f`.\n\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
+      "revId": "f072aebdaf15f84e358e95ee3a2e4df92cfa47e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
