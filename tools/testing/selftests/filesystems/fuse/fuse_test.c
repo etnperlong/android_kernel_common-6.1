@@ -3006,6 +3006,233 @@ out:
 	return result;
 }
 
+static int lookup_malformed_reply_size_test(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *bad_name = "bad_lookup_len";
+	int result = TEST_FAILURE;
+	int fuse_dev = -1;
+	struct stat st;
+
+	TESTEQUAL(mount_fuse(mount_dir, -1, -1, &fuse_dev), 0);
+	FUSE_START_DAEMON();
+	if (action) {
+		errno = 0;
+		TESTEQUAL(s_stat(s_path(s(mount_dir), s(bad_name)), &st), -1);
+		TESTEQUAL(errno, EIO);
+	} else {
+		struct {
+			struct fuse_out_header oh;
+			struct fuse_entry_out feo;
+			uint8_t partial_bpf[8];
+		} __packed bad_reply = {
+			.oh = {
+				.len = sizeof(bad_reply),
+				.error = 0,
+			},
+			.feo = {
+				.nodeid = 2,
+				.generation = 1,
+				.attr.ino = 2,
+				.attr.mode = S_IFREG | 0644,
+			},
+		};
+
+		TESTFUSELOOKUP(bad_name, 0);
+		bad_reply.oh.unique = ((struct fuse_in_header *)bytes_in)->unique;
+		TESTEQUAL(write(fuse_dev, &bad_reply, sizeof(bad_reply)),
+			  sizeof(bad_reply));
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	close(fuse_dev);
+	umount(mount_dir);
+	return result;
+}
+
+static int bpf_test_link_after_no_link(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *unbacked_src = "test";
+	const char *unbacked_link1 = "unbacked_link1";
+	const char *unbacked_link2 = "unbacked_link2";
+	const char *backed_src = "backed_src";
+	const char *backed_dst = "backed_dst";
+	int result = TEST_FAILURE;
+	int src_fd = -1;
+	int bpf_fd = -1;
+	int fuse_dev = -1;
+	int fd = -1;
+	struct stat st;
+
+	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+	     src_fd != -1);
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_mount_gate",
+				  &bpf_fd, NULL, NULL), 0);
+	TESTEQUAL(mount_fuse_no_init(mount_dir, bpf_fd, src_fd, &fuse_dev), 0);
+
+	FUSE_START_DAEMON();
+	if (action) {
+		/* 1. Unbacked link hits daemon (-ENOSYS), setting fc->no_link = 1 */
+		errno = 0;
+		TESTEQUAL(s_link(s_path(s(mount_dir), s(unbacked_src)),
+				 s_path(s(mount_dir), s(unbacked_link1))), -1);
+		TESTEQUAL(errno, EPERM);
+
+		/* 2. Second unbacked link short-circuits in kernel with EPERM */
+		errno = 0;
+		TESTEQUAL(s_link(s_path(s(mount_dir), s(unbacked_src)),
+				 s_path(s(mount_dir), s(unbacked_link2))), -1);
+		TESTEQUAL(errno, EPERM);
+
+		/* 3. G1: Backed link still succeeds even with fc->no_link == 1 */
+		TEST(fd = s_creat(s_path(s(mount_dir), s(backed_src)), 0644),
+		     fd != -1);
+		TESTSYSCALL(close(fd));
+		fd = -1;
+		TESTSYSCALL(s_link(s_path(s(mount_dir), s(backed_src)),
+				   s_path(s(mount_dir), s(backed_dst))));
+		TESTSYSCALL(s_stat(s_path(s(ft_src), s(backed_dst)), &st));
+		TESTEQUAL((int)st.st_nlink, 2);
+	} else {
+		DECL_FUSE_IN(link);
+
+		TESTFUSEINIT();
+		TESTFUSELOOKUP(unbacked_src, 0);
+		TESTFUSEOUT1(fuse_entry_out, ((struct fuse_entry_out) {
+			.nodeid = 2,
+			.generation = 1,
+			.entry_valid = UINT64_MAX,
+			.attr_valid = UINT64_MAX,
+			.attr.ino = 2,
+			.attr.nlink = 1,
+			.attr.mode = S_IFREG | 0644,
+		}));
+
+		TESTFUSEINEXT(FUSE_LINK, link_in, strlen(unbacked_link1) + 1);
+		TESTFUSEOUTERROR(-ENOSYS);
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	close(fd);
+	close(fuse_dev);
+	umount(mount_dir);
+	close(bpf_fd);
+	close(src_fd);
+	return result;
+}
+
+static int bpf_test_revalidate_lower_dops(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *sysfs_alias1 = "alias_prog_type";
+	const char *sysfs_alias2 = "alias_feature";
+	const char *proc_alias = "alias_hostname";
+	const char *sysfs_target1 = "/sys/fs/fuse/bpf_prog_type_fuse";
+	const char *sysfs_target2 = "/sys/fs/fuse/features/fuse_bpf";
+	const char *proc_target = "/proc/sys/kernel/hostname";
+	int result = TEST_FAILURE;
+	int fuse_dev = -1;
+
+	/*
+	 * G2: Unbacked FUSE root (backing_inode == NULL) with daemon-installed
+	 * backing files on sysfs/kernfs (s_stack_depth == 0, sets
+	 * DCACHE_OP_REVALIDATE with distinct parent & d_name from FUSE), plus
+	 * negative ELOOP check on procfs (s_stack_depth == max).
+	 */
+	TESTEQUAL(mount_fuse_no_init(mount_dir, -1, -1, &fuse_dev), 0);
+	FUSE_START_DAEMON();
+	if (action) {
+		char buf1[64] = {};
+		char buf2[64] = {};
+		int fd1 = -1, fd2 = -1;
+		struct stat st;
+
+		/* Repeated walks exercise RCU (-ECHILD on kernfs) + ref-walk */
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(sysfs_alias1)), &st));
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(sysfs_alias1)), &st));
+		TEST(fd1 = s_open(s_path(s(mount_dir), s(sysfs_alias1)),
+				  O_RDONLY | O_CLOEXEC),
+		     fd1 != -1);
+		TESTGE(read(fd1, buf1, sizeof(buf1) - 1), (ssize_t)1);
+		TESTSYSCALL(close(fd1));
+
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(sysfs_alias2)), &st));
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(sysfs_alias2)), &st));
+		TEST(fd2 = s_open(s_path(s(mount_dir), s(sysfs_alias2)),
+				  O_RDONLY | O_CLOEXEC),
+		     fd2 != -1);
+		TESTGE(read(fd2, buf2, sizeof(buf2) - 1), (ssize_t)9);
+		TESTCOND(strncmp(buf2, "supported", 9) == 0);
+		TESTSYSCALL(close(fd2));
+
+		/* procfs sets s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH -> ELOOP */
+		errno = 0;
+		TESTEQUAL(s_stat(s_path(s(mount_dir), s(proc_alias)), &st), -1);
+		TESTEQUAL(errno, ELOOP);
+	} else {
+		struct fuse_attr attr = {};
+		int sysfs_fd1 = -1;
+		int sysfs_fd2 = -1;
+		int proc_fd = -1;
+
+		TESTFUSEINIT();
+
+		TESTFUSELOOKUP(sysfs_alias1, 0);
+		TESTSYSCALL(s_fuse_attr(s(sysfs_target1), &attr));
+		TEST(sysfs_fd1 = open(sysfs_target1, O_RDONLY | O_CLOEXEC),
+		     sysfs_fd1 != -1);
+		TESTFUSEOUT2(fuse_entry_out, ((struct fuse_entry_out) {
+				.nodeid = 10,
+				.generation = 1,
+				.entry_valid = UINT64_MAX,
+				.attr_valid = UINT64_MAX,
+				.attr = attr,
+			     }), fuse_entry_bpf_out, ((struct fuse_entry_bpf_out) {
+				.backing_action = FUSE_ACTION_REPLACE,
+				.backing_fd = sysfs_fd1,
+			     }));
+		TESTSYSCALL(close(sysfs_fd1));
+
+		TESTFUSELOOKUP(sysfs_alias2, 0);
+		TESTSYSCALL(s_fuse_attr(s(sysfs_target2), &attr));
+		TEST(sysfs_fd2 = open(sysfs_target2, O_RDONLY | O_CLOEXEC),
+		     sysfs_fd2 != -1);
+		TESTFUSEOUT2(fuse_entry_out, ((struct fuse_entry_out) {
+				.nodeid = 11,
+				.generation = 1,
+				.entry_valid = UINT64_MAX,
+				.attr_valid = UINT64_MAX,
+				.attr = attr,
+			     }), fuse_entry_bpf_out, ((struct fuse_entry_bpf_out) {
+				.backing_action = FUSE_ACTION_REPLACE,
+				.backing_fd = sysfs_fd2,
+			     }));
+		TESTSYSCALL(close(sysfs_fd2));
+
+		TESTFUSELOOKUP(proc_alias, 0);
+		TESTSYSCALL(s_fuse_attr(s(proc_target), &attr));
+		TEST(proc_fd = open(proc_target, O_RDONLY | O_CLOEXEC),
+		     proc_fd != -1);
+		TESTFUSEOUT2(fuse_entry_out, ((struct fuse_entry_out) {
+				.nodeid = 12,
+				.generation = 1,
+				.entry_valid = UINT64_MAX,
+				.attr_valid = UINT64_MAX,
+				.attr = attr,
+			     }), fuse_entry_bpf_out, ((struct fuse_entry_bpf_out) {
+				.backing_action = FUSE_ACTION_REPLACE,
+				.backing_fd = proc_fd,
+			     }));
+		TESTSYSCALL(close(proc_fd));
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	close(fuse_dev);
+	umount(mount_dir);
+	return result;
+}
+
 struct test_case {
 	int (*pfunc)(const char *dir);
 	const char *name;
@@ -3103,6 +3330,9 @@ int main(int argc, char *argv[])
 		MAKE_TEST(bpf_test_epoch_stamping),
 		MAKE_TEST(bpf_test_no_daemon_missing_rootmode),
 		MAKE_TEST(bpf_test_no_daemon),
+		MAKE_TEST(lookup_malformed_reply_size_test),
+		MAKE_TEST(bpf_test_link_after_no_link),
+		MAKE_TEST(bpf_test_revalidate_lower_dops),
 	};
 #undef MAKE_TEST
 
