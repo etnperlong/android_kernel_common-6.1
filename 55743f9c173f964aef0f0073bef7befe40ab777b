@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "55743f9c173f964aef0f0073bef7befe40ab777b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5143e66_b4fb498c",
+        "filename": "tools/testing/selftests/mm/hole_anon_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:44Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986.",
+      "parentUuid": "c1cf8932_3f99d640",
+      "isAi": true,
+      "revId": "55743f9c173f964aef0f0073bef7befe40ab777b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
