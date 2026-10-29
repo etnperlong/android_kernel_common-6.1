@@ -1249,6 +1249,17 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
 	}
 	f2fs_up_read(&F2FS_I(inode)->i_sem);
 
+	f2fs_down_read(&F2FS_I(inode)->i_sem);
+	if (f2fs_is_cow_file(inode)) {
+		atomic_inode = igrab(F2FS_I(inode)->atomic_inode);
+		if (!atomic_inode) {
+			f2fs_up_read(&F2FS_I(inode)->i_sem);
+			return -EBUSY;
+		}
+		mapping = atomic_inode->i_mapping;
+	}
+	f2fs_up_read(&F2FS_I(inode)->i_sem);
+
 	folio = f2fs_grab_cache_folio(mapping, index, true);
 	if (IS_ERR(folio)) {
 		err = PTR_ERR(folio);
@@ -1362,6 +1373,17 @@ static int move_data_block(struct inode *inode, block_t bidx,
 						      off, &err, &bypass);
 	if (bypass)
 		return err;
+
+	f2fs_down_read(&F2FS_I(inode)->i_sem);
+	if (f2fs_is_cow_file(inode)) {
+		atomic_inode = igrab(F2FS_I(inode)->atomic_inode);
+		if (!atomic_inode) {
+			f2fs_up_read(&F2FS_I(inode)->i_sem);
+			return -EBUSY;
+		}
+		mapping = atomic_inode->i_mapping;
+	}
+	f2fs_up_read(&F2FS_I(inode)->i_sem);
 
 	f2fs_down_read(&F2FS_I(inode)->i_sem);
 	if (f2fs_is_cow_file(inode)) {
@@ -1507,7 +1529,16 @@ up_out:
 put_out:
 	f2fs_put_dnode(&dn);
 out:
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 	f2fs_folio_put(folio, true);
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+=======
+	if (!folio_test_uptodate(folio))
+		__folio_set_dropbehind(folio);
+	folio_unlock(folio);
+	folio_end_dropbehind(folio);
+	folio_put(folio);
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 out_iput:
 	if (atomic_inode)
 		iput(atomic_inode);

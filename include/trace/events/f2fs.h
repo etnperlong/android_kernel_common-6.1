@@ -184,6 +184,7 @@ TRACE_DEFINE_ENUM(CP_PHASE_FINISH_CHECKPOINT);
 		{ CP_PHASE_FINISH_BLOCK_OPS,	"finish block_ops" },			\
 		{ CP_PHASE_FINISH_CHECKPOINT,	"finish checkpoint" })
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 #define show_lock_name(lock)						\
 	__print_symbolic(lock,						\
 		{ LOCK_NAME_CP_RWSEM,		"cp_rwsem" },		\
@@ -194,6 +195,9 @@ TRACE_DEFINE_ENUM(CP_PHASE_FINISH_CHECKPOINT);
 		{ LOCK_NAME_IO_RWSEM,		"io_rwsem" },		\
 		{ LOCK_NAME_NAT_TREE_LOCK,	"nat_tree_lock" })
 
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+=======
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 struct f2fs_sb_info;
 struct f2fs_io_info;
 struct extent_info;

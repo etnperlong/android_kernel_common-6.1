@@ -451,7 +451,13 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
 	f2fs_submit_merged_write(sbi, DATA);
 	f2fs_submit_all_merged_ipu_writes(sbi);
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 	if (test_opt(sbi, GC_MERGE) && sbi->gc_thread.f2fs_gc_task) {
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+=======
+	if (test_opt(sbi, GC_MERGE) && sbi->gc_thread &&
+				sbi->gc_thread->f2fs_gc_task) {
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 		DEFINE_WAIT(wait);
 
 		prepare_to_wait(&sbi->gc_thread.fggc_wq, &wait,
@@ -469,7 +475,12 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
 			.err_gc_skipped = false,
 			.nr_free_secs = 1 };
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 		f2fs_down_write_trace(&sbi->gc_lock, &gc_control.lc);
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+=======
+		f2fs_down_write(&sbi->gc_lock);
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 		stat_inc_gc_call_count(sbi, FOREGROUND);
 		f2fs_gc(sbi, &gc_control);
 	}
@@ -3570,7 +3581,13 @@ next:
 			blk_finish_plug(&plug);
 			mutex_unlock(&dcc->cmd_lock);
 			trimmed += __wait_all_discard_cmd(sbi, NULL);
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 			f2fs_schedule_timeout(DEFAULT_DISCARD_INTERVAL);
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+			f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+=======
+			f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 			goto next;
 		}
 skip:

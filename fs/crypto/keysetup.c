@@ -260,7 +260,12 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
 		return 0;
 	}
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 	new_node = kzalloc(sizeof(*new_node), GFP_KERNEL);
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+=======
+	new_node = kzalloc_obj(*new_node);
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 	if (!new_node)
 		return -ENOMEM;
 	new_node->hkdf_context = hkdf_context;

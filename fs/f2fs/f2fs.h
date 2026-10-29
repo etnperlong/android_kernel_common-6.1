@@ -717,10 +717,18 @@ enum {
 
 #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 #define MAX_FLUSH_RETRY_COUNT	3	/* maximum flush retry count in f2fs_enable_checkpoint() */
 
 /* IO/non-IO congestion wait timeout value, default: 1 jiffies */
 #define	DEFAULT_SCHEDULE_TIMEOUT	1
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+/* congestion wait timeout value, default: 20ms */
+#define	DEFAULT_IO_TIMEOUT	(msecs_to_jiffies(20))
+=======
+/* IO/non-IO congestion wait timeout value, default: 20ms */
+#define	DEFAULT_SCHEDULE_TIMEOUT	(msecs_to_jiffies(20))
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 
 /* timeout value injected, default: 1000ms */
 #define DEFAULT_FAULT_TIMEOUT	(msecs_to_jiffies(1000))
@@ -5166,14 +5174,33 @@ static inline void __f2fs_schedule_timeout(long timeout, bool io)
 #define f2fs_schedule_timeout(timeout)			\
 			__f2fs_schedule_timeout(timeout, false)
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 static inline void f2fs_schedule_timeout_killable(long timeout, bool io)
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+=======
+static inline void f2fs_io_schedule_timeout_killable(long timeout)
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 {
 	unsigned long last_time = jiffies + timeout;
 
 	while (jiffies < last_time) {
 		if (fatal_signal_pending(current))
 			return;
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 		__f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT, io);
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+		set_current_state(TASK_UNINTERRUPTIBLE);
+		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+		if (timeout <= DEFAULT_IO_TIMEOUT)
+			return;
+		timeout -= DEFAULT_IO_TIMEOUT;
+=======
+		set_current_state(TASK_UNINTERRUPTIBLE);
+		io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+		if (timeout <= DEFAULT_SCHEDULE_TIMEOUT)
+			return;
+		timeout -= DEFAULT_SCHEDULE_TIMEOUT;
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 	}
 }
 

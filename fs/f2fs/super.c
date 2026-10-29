@@ -2789,7 +2789,19 @@ static int f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
 
 	start = ktime_get();
 
+<<<<<<< HEAD   (af988a9f55be67a8c6a932440a33a15ac662bf97 Merge android17-6.18 into android17-6.18-lts)
 	set_sbi_flag(sbi, SBI_ENABLE_CHECKPOINT);
+||||||| BASE   (e46dc0adfe39724bcf52cea47b8f9c9aed86a394 Linux 6.18.38)
+	/* we should flush all the data to keep data consistency */
+	while (get_pages(sbi, F2FS_DIRTY_DATA)) {
+		writeback_inodes_sb_nr(sbi->sb, nr_pages, WB_REASON_SYNC);
+		f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+=======
+	/* we should flush all the data to keep data consistency */
+	while (get_pages(sbi, F2FS_DIRTY_DATA)) {
+		writeback_inodes_sb_nr(sbi->sb, nr_pages, WB_REASON_SYNC);
+		f2fs_io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+>>>>>>> BRANCH (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
 
 	/* we should flush all the data to keep data consistency */
 	do {
