@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9b1d372_60b1c969",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:04:19Z",
+      "side": 1,
+      "message": "Could the first paragraph say why a VMA lookup isn\u0027t enough, as aosp/4367612 now does? In 4KB processes, the driver-selected slices from `vm_insert_page_slice()` (aosp/4367599), such as the BPF ring buffer pages, aren\u0027t the slice that `vma_slice_offset()` gives their address. As far as I can see, the message doesn\u0027t mention 4KB processes yet.\n\nNit: the second paragraph has a 75-column line.",
+      "isAi": true,
+      "revId": "7849b71052d24b086d41827dd7aae9180f407c54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a2d3701_2c3cd8f0",
+        "filename": "mm/gup.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1528,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:04:19Z",
+      "side": 1,
+      "message": "Nit: I think `j` is always 0 when `spans` is set: only 4KB mms pass spans, and with THP off in 4KB VMAs (`vma_thp_disabled()`), `follow_page_mask()` only returns PTE-mapped pages there, with `page_mask` 0. For a native page, `j * PAGE_SIZE` would be masked off anyway.\n\nCould this be just `spans[i + j].offset \u003d phys_offset;`? That would also avoid the redefined `PAGE_SIZE` in new code.",
+      "isAi": true,
+      "revId": "7849b71052d24b086d41827dd7aae9180f407c54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "189b779a_07d59473",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:04:19Z",
+      "side": 1,
+      "message": "Nit: could you add a blank line before this comment?",
+      "isAi": true,
+      "revId": "7849b71052d24b086d41827dd7aae9180f407c54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
