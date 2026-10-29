@@ -3,6 +3,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a64b1e36_47799c65",
+        "filename": "mm/process_vm_access.c",
+        "patchSetId": 30
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T19:09:55Z",
+      "side": 1,
+      "message": "Since `mm/p3s/process_vm_access.h` is only included by `mm/process_vm_access.c`, `process_vm_rw_pages()` does not need to be made non-`static` (which exports an unprefixed global symbol across `vmlinux`). You can keep `static int process_vm_rw_pages(...)` here and either forward-declare it as `static` in `mm/p3s/process_vm_access.h` or `#include \"p3s/process_vm_access.h\"` right after `process_vm_rw_pages()`.",
+      "isAi": true,
+      "revId": "a535502732a5e050effc5ce0643cd477d68fc00a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c161be21_b383dd4c",
         "filename": "mm/process_vm_access.c",
         "patchSetId": 30
