@@ -70,6 +70,24 @@
       "parentUuid": "ea4c4805_af73c07b",
       "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bac7dbd8_97443c7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4989578
+      },
+      "writtenOn": "2026-10-29T02:25:37Z",
+      "side": 1,
+      "message": "This policy is intentionally not MMC core behavior. The core already reports the command and data failure. What we add is a product policy in a vendor module: after repeated SD timeouts, remove the card and do not rescan it until a physical replug. That must not be the default. A transient timeout should still be retried, and we do not want every device to drop the card.\n\nOn GKI the vendor module cannot change mmc or sdhci. The android_vh_* hooks are the existing extension point for this. They are not exported in tracefs. With no callback registered they do not change control flow. Only our module registers them and applies the bad-card policy.\n\nWe have used the same hooks for this on the android14/15 6.6 and android16 6.12 GKI trees for that reason. If an optional, default-off quirk is preferred upstream, we can propose that separately. This change only adds the hook point so a GKI vendor module can opt in without making the policy the default.\nThanks",
+      "parentUuid": "470724f4_16426945",
+      "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
