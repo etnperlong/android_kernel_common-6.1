@@ -2005,9 +2005,12 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
 	struct fuse_mount *fm;
 	int err;
 
+	if (!ctx->rootmode_present)
+		return -EINVAL;
+
 	if (!ctx->no_daemon) {
-		if (!ctx->fud || !ctx->rootmode_present ||
-		    !ctx->user_id_present || !ctx->group_id_present)
+		if (!ctx->fud || !ctx->user_id_present ||
+		    !ctx->group_id_present)
 			return -EINVAL;
 	}
 
