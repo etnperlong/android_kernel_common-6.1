@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60eac57d_62d9ca58",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:26:40Z",
+      "side": 1,
+      "message": "I think this patch isn\u0027t needed if the copy in aosp/4367981 goes (see my comment there): nothing would copy slices, so there would be no tags to carry.\n\nAs far as I can see, the message also describes the code without aosp/4367981\u0027s `VM_MTE` check: at the parent, `p3s_mremap_prepare()` refuses a `VM_MTE` source with `-EOPNOTSUPP`, so nothing faults. The \"Keep the reslice transaction private to MM\" sentence also seems left over from the `mm/vma_exec.c` hunk that this patch no longer has. Would it be OK to drop this patch?\n\nIf it stays, could the two `#ifdef CONFIG_ARM64_MTE` blocks go? `\u003casm/mte.h\u003e` already comes in through `\u003casm/pgtable.h\u003e`, and it has `!CONFIG_ARM64_MTE` stubs for `page_mte_tagged()` and, since aosp/4399090, `mte_copy_tags_range()`, so the include and the call can stay unconditional.",
+      "isAi": true,
+      "revId": "a7800cf218e14ea74baf6b1e7a78c04ed9ddee28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
