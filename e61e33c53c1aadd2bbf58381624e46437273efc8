@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "e61e33c53c1aadd2bbf58381624e46437273efc8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2055261_d9c2c36a",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:39Z",
+      "side": 1,
+      "message": "Done — added a blank line and comment explaining that pinned_vm counts kernel pages.",
+      "parentUuid": "52452763_393d0a44",
+      "isAi": true,
+      "revId": "e61e33c53c1aadd2bbf58381624e46437273efc8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
