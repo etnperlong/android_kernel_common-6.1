@@ -16,6 +16,24 @@
       "message": "This seems to have applied cleanly, so should be `UPSTREAM`",
       "revId": "34790be529eb3cbc0891c2fecc0e907d71e56fc2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "116d3917_095c03c5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-29T19:38:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4a90cca8_7f26ef63",
+      "revId": "34790be529eb3cbc0891c2fecc0e907d71e56fc2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
