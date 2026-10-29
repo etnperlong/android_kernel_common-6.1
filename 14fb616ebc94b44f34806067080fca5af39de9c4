@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4cade2c4_de4fb9c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:22:42Z",
+      "side": 1,
+      "message": "Could the message name the change this covers? As far as I can see, that\u0027s the slice zeroing of aosp/4312529 and aosp/4367603, both earlier in the series, so this is regression coverage rather than a test for a fix in this batch.",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef3e43f6_3bd3a619",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:22:42Z",
+      "side": 1,
+      "message": "As on aosp/4367986, nothing runs this test yet: `P3S_TESTS` only adds it to `TEST_GEN_FILES`, and `run_vmtests.sh` has no entry for it, here or later in the chain. Could it get one next to the other anonymous P3S tests? Something like:\n\n```\nCATEGORY\u003d\"mmap\" run_test ./dontneed_refault_p3s\n```",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31eaaa4f_86694387",
+        "filename": "tools/testing/selftests/mm/dontneed_refault_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:22:42Z",
+      "side": 1,
+      "message": "Nit: `FORCE_READ(slice[0])` from `vm_util.h`, which `p3s_test.h` already includes, does the same read without the checkpatch `volatile` warning.",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9983678f_d01d2abd",
+        "filename": "tools/testing/selftests/mm/dontneed_refault_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:22:42Z",
+      "side": 1,
+      "message": "As far as I can see, each case also passes when the fault doesn\u0027t reuse the sibling folio, since a new folio is zero-filled anyway, so the test can\u0027t tell whether it reached `p3s_anon_folio_zero_slice()` (from aosp/4312529 for a write fault, and from aosp/4367603 for a write after a zero-page read).\n\nCould `check_refault()` also check, for the DONTNEED cases, that the touched slice shares the native page of the untouched ones, e.g. with `same_present_pfns()` when the PFNs are visible?",
+      "isAi": true,
+      "revId": "14fb616ebc94b44f34806067080fca5af39de9c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
