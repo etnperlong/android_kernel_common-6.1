@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b00c2e5a_9b78934c",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 1614,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:04:47Z",
+      "side": 1,
+      "message": "`p3s_4k_unsupported()` looks good here. Since this refuses an open, would `-EPERM` work, as for `vfio_fops_open()` and `vfio_group_fops_open()` in aosp/4367939 and `io_uring_setup()` in aosp/4368076? `-EOPNOTSUPP` from `ublk_ch_mmap()` looks right to me.",
+      "isAi": true,
+      "revId": "ce7099260d978fc1389414c8b78678690c3b93dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
