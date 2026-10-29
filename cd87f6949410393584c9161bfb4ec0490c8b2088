@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9470ec0_7a613843",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-10-29T20:13:54Z",
+      "side": 1,
+      "message": "What entity consumes these nodes? Can\u0027t you export sysfs nodes directly from your drivers (eg, /sys/moculde/mydriver/)? Why do they need to be /proc nodes?\n\nNew /proc nodes should be sent upstream",
+      "revId": "cd87f6949410393584c9161bfb4ec0490c8b2088",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
