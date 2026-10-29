@@ -128,6 +128,24 @@
       "parentUuid": "4e8a71ba_d21f989a",
       "revId": "c5597e98335eca1bcaf7ad3530e091f1b141f913",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d4b5c92_e39c44e7",
+        "filename": "rust/kernel/module_param.rs",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-29T22:37:01Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "bcb906b0_b7db2764",
+      "revId": "c5597e98335eca1bcaf7ad3530e091f1b141f913",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
