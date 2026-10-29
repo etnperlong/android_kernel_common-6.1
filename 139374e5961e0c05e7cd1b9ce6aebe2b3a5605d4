@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "139374e5961e0c05e7cd1b9ce6aebe2b3a5605d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1dd05d6e_0d84ecc6",
+        "filename": "drivers/vfio/device_cdev.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:49Z",
+      "side": 1,
+      "message": "Done. Dropped the `drivers/vfio/device_cdev.c` hunk.",
+      "parentUuid": "6e84101d_b8c2dd2b",
+      "isAi": true,
+      "revId": "139374e5961e0c05e7cd1b9ce6aebe2b3a5605d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
