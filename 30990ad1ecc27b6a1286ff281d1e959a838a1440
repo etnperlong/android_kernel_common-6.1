@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ddd51f6f_1467e7f3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:16:51Z",
+      "side": 1,
+      "message": "Could the body say why the tests need a launcher? For example, that a process only gets 4KB pages when it execs with `ADDR_PAGE_SIZE_4KB` in its personality (aosp/4312457), so each test sets the flag and re-execs itself before running its checks.\n\nThe last sentence reads like a note about the review rather than about this patch, so I think it could go.",
+      "isAi": true,
+      "revId": "30990ad1ecc27b6a1286ff281d1e959a838a1440",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "714ecc0c_719e6ac9",
+        "filename": "tools/testing/selftests/kselftest_p3s.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:16:51Z",
+      "side": 1,
+      "message": "Could this use the uapi name, `ADDR_PAGE_SIZE_4KB` (aosp/4312457)? The comment says `\u003clinux/personality.h\u003e` carries the flag, but there it\u0027s called `ADDR_PAGE_SIZE_4KB`, so grepping for the kernel flag doesn\u0027t find the tests.\n\nThe macro itself makes sense, for the reason the comment gives. aosp/4367962 and aosp/4367993 add their own copies to `pagemap_exclusive_p3s.c`, `smaps_pss_p3s.c` and `binder_alloc_p3s.c`, and those could then reuse this one.",
+      "isAi": true,
+      "revId": "30990ad1ecc27b6a1286ff281d1e959a838a1440",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae2da2a3_a7adcac0",
+        "filename": "tools/testing/selftests/kselftest_p3s.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:16:51Z",
+      "side": 1,
+      "message": "Nit: `checkpatch.pl --strict` asks to line `getpagesize()` up with the open parenthesis here. It flags the `argc \u003d\u003d 1 ? ...` line in `p3s_geometry_main()` and the double blank line above that function too, if they stay in this patch.",
+      "isAi": true,
+      "revId": "30990ad1ecc27b6a1286ff281d1e959a838a1440",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ccb30287_c1e3cfbc",
+        "filename": "tools/testing/selftests/kselftest_p3s.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:16:51Z",
+      "side": 1,
+      "message": "Thanks for splitting this out, it\u0027s much easier to follow now. As far as I can see, the tests that use it first (aosp/4367942, aosp/4367943, aosp/4367944 and aosp/4396646) only need `P3S_COMPAT_MAIN()`, `PROCESS_PAGE_SIZE` and `NATIVE_PAGE_SIZE`.\n\n`p3s_geometry_exec()` and `p3s_geometry_main()` are first used in aosp/4367950, `p3s_argv0` (the `NULL` `argv0` case of `p3s_execl()`) in aosp/4367960 next to `p3s_run_mode()`, and `P3S_SLICES` in aosp/4367985. Would you mind adding them in those patches? The header comments that mention `p3s_run_mode()` and `mm/p3s_test.h` could move with them.",
+      "isAi": true,
+      "revId": "30990ad1ecc27b6a1286ff281d1e959a838a1440",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
