@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "262effe5_e88e3987",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:09:14Z",
+      "side": 1,
+      "message": "Could this paragraph describe the problem rather than how the patch evolved? \"Do not introduce and later remove frame-vector spans ...\" only makes sense next to the earlier patch sets. Something like:\n\n```\nvideobuf2 pins USERPTR buffers as whole kernel pages and maps them with\npage-based scatterlists or vm_map_ram(), which can\u0027t describe a buffer\nmade of scattered 4KB slices of 16KB pages, as in a 4KB process.\n```",
+      "isAi": true,
+      "revId": "09bf899681ce476072561778f6ef39f3f1ec57a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e3855a8_00efeca3",
+        "filename": "drivers/media/common/videobuf2/videobuf2-core.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 874,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:09:14Z",
+      "side": 1,
+      "message": "As far as I can see, the caller\u0027s memory is only used when `__prepare_userptr()` pins it through `get_userptr`, and `vb2_core_prepare_buf()`, `vb2_core_qbuf()` and `vb2_req_prepare()` all get there through `__buf_prepare()`. `vb2_core_dqbuf()` and `vb2_core_streamon()` only handle buffers that are already pinned, so they don\u0027t depend on the caller\u0027s page size.\n\nWould a single check at the top of `__prepare_userptr()` work instead of this helper and its five callers? It would refuse exactly where a 4KB mm would get pinned, and the REQBUFS and CREATE_BUFS checks would still give the early error.",
+      "isAi": true,
+      "revId": "09bf899681ce476072561778f6ef39f3f1ec57a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f0c24bd_89f97d32",
+        "filename": "drivers/media/common/videobuf2/videobuf2-core.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:09:14Z",
+      "side": 1,
+      "message": "Could these checks use `p3s_4k_unsupported()` (aosp/4366134), as aosp/4367938 and aosp/4367939 now do? It logs the refusal with the function name, so refusals hit in production can be identified.\n\nThe `current-\u003emm \u0026\u0026` test shouldn\u0027t be needed: `mm_pte_shift()` already treats a NULL mm as native, so `p3s_4k_unsupported(current-\u003emm)` is false in kernel threads. The new `#include \u003clinux/p3s/mm.h\u003e` isn\u0027t needed either, since `\u003clinux/mm.h\u003e` brings it in through `\u003clinux/mm_types.h\u003e`.",
+      "isAi": true,
+      "revId": "09bf899681ce476072561778f6ef39f3f1ec57a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
