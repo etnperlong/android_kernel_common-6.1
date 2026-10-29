@@ -16,6 +16,24 @@
       "message": "Please document why this is tagged as `BACKPORT`.",
       "revId": "4c4da8f461f37250679bb263e757941f3a19d9aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d54cd88b_ff8c2da2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-29T19:37:56Z",
+      "side": 1,
+      "message": "Changed to UPSTREAM.",
+      "parentUuid": "5b3caa52_7d90f774",
+      "revId": "4c4da8f461f37250679bb263e757941f3a19d9aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
