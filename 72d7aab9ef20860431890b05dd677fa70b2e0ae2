@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34aa2547_d0bfed9c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:12:24Z",
+      "side": 1,
+      "message": "Nit: I think \"restore batched iov extraction\" compares with an earlier patch set; the parent already batches, so \"keep\" might fit better. The last line of this paragraph is also 73 columns.",
+      "isAi": true,
+      "revId": "72d7aab9ef20860431890b05dd677fa70b2e0ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2da1535_9d2b877c",
+        "filename": "include/linux/p3s/iov_iter.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:12:24Z",
+      "side": 1,
+      "message": "I\u0027m a bit worried about the 1KB that `spans[64]` and `slots[64]` put on the stack. This frame stays live while GUP faults the pages in, which can enter direct reclaim, on top of the filesystem frames of every O_DIRECT read or write in a 4KB process. aosp/4312497 avoided that by taking `slots` from the unused tail of `pages`.\n\nWould a smaller cap, e.g. 16 entries (256 bytes, 64KB per GUP call), work as well?",
+      "isAi": true,
+      "revId": "72d7aab9ef20860431890b05dd677fa70b2e0ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d9a1a3c2_a9781148",
+        "filename": "lib/iov_iter.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 1077,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:12:24Z",
+      "side": 1,
+      "message": "Nit: these two hunks only rewrap the `p3s_iov_iter_extract_pages()` calls from aosp/4312497. Would it be OK to drop them, so that the patch doesn\u0027t touch `lib/iov_iter.c`?",
+      "isAi": true,
+      "revId": "72d7aab9ef20860431890b05dd677fa70b2e0ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
