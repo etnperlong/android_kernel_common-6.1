@@ -351720,6 +351720,11 @@ function {
   parameter_id: 0x0d7ce7cc
 }
 function {
+  id: 0x7539ecdc
+  return_type_id: 0x1d19a9d5
+  parameter_id: 0x39d1288c
+}
+function {
   id: 0x754e9079
   return_type_id: 0x249959de
   parameter_id: 0x6720d32f
@@ -357426,6 +357431,13 @@ function {
   parameter_id: 0x0e04e400
   parameter_id: 0x0cbf60eb
   parameter_id: 0x07247593
+}
+function {
+  id: 0x924037ff
+  return_type_id: 0x6720d32f
+  parameter_id: 0x3e10b518
+  parameter_id: 0x1253769c
+  parameter_id: 0x36d130d1
 }
 function {
   id: 0x924108e7
@@ -451426,6 +451438,24 @@ elf_symbol {
   full_name: "proc_symlink"
 }
 elf_symbol {
+  id: 0x73ebccd2
+  name: "proc_tgid_get_task"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x287bda66
+  type_id: 0x7539ecdc
+  full_name: "proc_tgid_get_task"
+}
+elf_symbol {
+  id: 0x9bef3388
+  name: "proc_tgid_register"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xcd93ae00
+  type_id: 0x924037ff
+  full_name: "proc_tgid_register"
+}
+elf_symbol {
   id: 0x34a73ce1
   name: "profile_event_register"
   is_defined: true
@@ -482418,6 +482448,8 @@ interface {
   symbol_id: 0x1561afad
   symbol_id: 0x7ba3baed
   symbol_id: 0xceb41cae
+  symbol_id: 0x73ebccd2
+  symbol_id: 0x9bef3388
   symbol_id: 0x34a73ce1
   symbol_id: 0xedc563f7
   symbol_id: 0xcd3326fb
