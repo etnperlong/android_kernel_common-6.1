@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0acd36c_9fe09bf6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 25
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:06Z",
+      "side": 1,
+      "message": "Done — dropped mm/p3s_mremap.c repacking, kept -EINVAL for cross-slice fixed moves of anonymous VMAs (!vma-\u003evm_file \u0026\u0026 !vma-\u003evm_ops) in check_prep_vma(), and updated the anonymous cross-slice mremap tests in aosp/4367986 to expect -EINVAL.",
+      "parentUuid": "ec618212_50cc65e4",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "86dca629_cd957628",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T18:25:30Z",
       "side": 1,
       "message": "If the repacking goes (see my comment on the commit message), this hint handling would need to go back too, at least for anonymous VMAs. Otherwise a hint at another slice would move the PTEs without fixing their slices. Before this patch, such a hint made the search start from its 16KB window and keep the source slice. A hint isn\u0027t binding, so that\u0027s still valid, and `mremap_hint_p3s` in aosp/4367986 would then expect the slice-preserving address rather than the hint.",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c8cefe6_466f3670",
+        "filename": "include/linux/p3s/mremap.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:06Z",
+      "side": 1,
+      "message": "Done — restored mm_mremap_get_unmapped_area() to keep nonbinding hints at the source slice phase, and updated mremap_hint_p3s.c in aosp/4367986 accordingly.",
+      "parentUuid": "86dca629_cd957628",
       "isAi": true,
       "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a33495f_5fdc25f0",
+        "filename": "mm/mremap.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 1778,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:06Z",
+      "side": 1,
+      "message": "Done — restored the original __offset_in_page_log(), __offset_in_page(), and __PAGE_ALIGN() checks in mm/mremap.c.",
+      "parentUuid": "1ae47521_6f015988",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7ee58841_077339a0",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-29T18:25:30Z",
       "side": 1,
       "message": "Agreed that file and shmem VMAs need the source slice here once `mremap()` can move them to another slice, so my earlier comment on aosp/4367608 no longer applies.\n\nWould you mind moving the choice into a helper next to `vma_slice_offset()` in `include/linux/p3s/vma.h`, so that `copy_vma()` keeps one-line hooks? Something like:\n\n```\n\tunsigned short slice_off \u003d vma_mremap_slice_off(vma, old_addr, addr);\n\t...\n\tvmg_set_slice_off(\u0026vmg, slice_off);\n```\n\nThe helper would carry the comment. It would return `vma_slice_offset(vma, old_addr)` for VMAs with `vm_file` or `vm_ops`, and `vma_slice_offset(vma, addr)` otherwise. For anonymous VMAs that\u0027s the value `VMG_VMA_STATE()` already set, so the second line changes nothing for them.",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e301c47d_81346d9b",
+        "filename": "mm/vma.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 1895,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:06Z",
+      "side": 1,
+      "message": "Done — moved the slice choice into vma_mremap_slice_off(vma, old_addr, new_addr) in include/linux/p3s/vma.h so copy_vma() keeps one-line hooks.",
+      "parentUuid": "7ee58841_077339a0",
       "isAi": true,
       "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
