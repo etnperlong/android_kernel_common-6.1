@@ -1048,7 +1048,7 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
 	BUG_ON((mode & S_IFMT) != S_IFREG);
 
 #ifdef CONFIG_FUSE_BPF
-	{
+	if (opcode == FUSE_CREATE) {
 		struct fuse_err_ret fer;
 
 		fer = fuse_bpf_backing(dir, struct fuse_create_open_io,
@@ -1058,6 +1058,8 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
 				       dir, entry, file, flags, mode);
 		if (fer.ret)
 			return PTR_ERR(fer.result);
+	} else if (get_fuse_inode(dir)->backing_inode) {
+		return -EOPNOTSUPP;
 	}
 #endif
 	epoch = atomic_read(&fm->fc->epoch);
