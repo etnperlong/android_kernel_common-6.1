@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e124416_88ec72fb",
+        "filename": "arch/arm64/mm/context.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:16:03Z",
+      "side": 1,
+      "message": "Agreed that the geometry switch needs the reserved TTBR0 first: since aosp/4312469, `check_and_switch_context()` changes TG0/T0SZ while TTBR0 still points at the previous mm\u0027s tables, unless CnP or PAN emulation has already installed the reserved one. `mm_tcr_needs_switch()` and its stub also sit in the right `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block.\n\nWould you mind moving the sequence, comment included, into `mm_switch_tcr()` in `arch/arm64/include/asm/p3s/mmu.h`? Then `check_and_switch_context()` keeps its existing one-line `mm_switch_tcr(mm);` hook and `context.c` doesn\u0027t change at all. Something like:\n\n```\n#define mm_switch_tcr(mm)\t\t\t\t\t\t\\\ndo {\t\t\t\t\t\t\t\t\t\\\n\tif (mm_tcr_needs_switch(mm)) {\t\t\t\t\t\\\n\t\tcpu_set_reserved_ttbr0();\t\t\t\t\\\n\t\tlocal_flush_tlb_all();\t\t\t\t\t\\\n\t\t__cpu_set_tcr_geometry(mm_tcr_geometry(mm));\t\t\\\n\t}\t\t\t\t\t\t\t\t\\\n} while (0)\n```\n\nIt needs to stay a macro, since `\u003casm/mmu_context.h\u003e` includes this header before it defines `cpu_set_reserved_ttbr0()`. The call in `cpu_do_switch_mm()` would get the same ordering too: there the TCR write only follows `cpu_set_reserved_ttbr0_nosync()`, which as far as I know isn\u0027t ordered against it without an ISB (upstream `b9293d457ff3` only relies on TTBR0/TTBR1 writes being ordered among themselves).",
+      "isAi": true,
+      "revId": "cecda88f21ed66989e27c41d26435e14336a1d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2da80623_3314a6a6",
+        "filename": "arch/arm64/mm/context.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:16:03Z",
+      "side": 1,
+      "message": "I\u0027m worried about the cost of this `local_flush_tlb_all()`: it now runs on every switch between a 4KB and a native task, e.g. on both legs of a binder call between a 4KB app and a 16KB service, and `TLBI VMALLE1` drops the entries of every ASID, global kernel entries included.\n\nAs far as I can see, once the reserved TTBR0 is in place no entries can be created from the old tables, and each ASID only ever gets entries under its own mm\u0027s geometry, which is fixed when the mm is created. What\u0027s left is the stretch until `cpu_switch_mm()`, where the previous mm\u0027s ASID is still in TTBR1 and its entries could be hit under the new TCR.\n\nIs the full flush needed beyond that? If not, would switching TTBR1 to the reserved ASID along with TTBR0, as `__uaccess_ttbr0_disable()` does on kernel entry when PAN is emulated, be enough? Either way, could the commit message say why the flush is needed?",
+      "isAi": true,
+      "revId": "cecda88f21ed66989e27c41d26435e14336a1d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
