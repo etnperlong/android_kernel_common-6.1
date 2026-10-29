@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "97e9a827_74a19449",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:30Z",
+      "side": 1,
+      "message": "Done — updated the commit subject, comments, and identifiers to use P3S instead of PPPS.",
+      "parentUuid": "db54abf4_88786909",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "84630718_44b78358",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T21:42:12Z",
       "side": 1,
       "message": "Could the message say what goes wrong without this patch, e.g. that an aliased slice makes smaps report the whole 16KB page as shared? \"instead of native folio mapcount\" doesn\u0027t quite match what aosp/4312510 does today: `vma_slice_ptes()` already discounts this mm\u0027s own slice PTEs, so the difference is the per-slice split for pages that are also mapped elsewhere.\n\nIt would also help to mention the anonymous and THP changes and the new rmap walk on every read, and to say \"4KB processes\" rather than \"compat slices\".",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4aff3c2d_c8ff9ee7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:30Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain that the local-window estimate reports all 16KB as shared when one slice is aliased, noted the rmap walk and rounded anonymous mapcount estimate, and used \u00274KB VMAs\u0027.",
+      "parentUuid": "84630718_44b78358",
       "isAi": true,
       "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -68,6 +106,25 @@
       "writtenOn": "2026-10-28T21:42:12Z",
       "side": 1,
       "message": "If the per-slice counts stay, would you mind moving the rmap part out of task_mmu.c? Together with the pagemap loop, this adds about 200 lines of P3S-only code to a core file.\n\n`ppps_file_mapcount_one()` and `ppps_file_page_mapcounts()` don\u0027t depend on procfs internals and could go next to `vma_slice_ptes()` in `include/linux/p3s/proc.h` (or into `mm/p3s.c`), so that task_mmu.c keeps only the PTE loops and the dispatch.",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "721e38b1_88ca68ff",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1200,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:30Z",
+      "side": 1,
+      "message": "Done — moved struct p3s_file_mapcounts, p3s_file_mapcount_one(), and p3s_file_page_mapcounts() to include/linux/p3s/proc.h.",
+      "parentUuid": "3698d940_c7a85ab8",
       "isAi": true,
       "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -145,6 +202,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "108b5c0c_e92d47f2",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 2452,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:30Z",
+      "side": 1,
+      "message": "Done — split the PMD-mapped THP page + idx exclusivity fix into its own commit (aosp/4399066).",
+      "parentUuid": "df9210bc_47729274",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "379e5dbe_8838091c",
@@ -158,6 +234,25 @@
       "writtenOn": "2026-10-28T21:42:12Z",
       "side": 1,
       "message": "Could we move selftests to their own patches to keep the core logic pacts lean.\n\nCould both use `P3S_COMPAT_MAIN()` from `kselftest_p3s.h` (aosp/4396645) instead of their own `personality()` and `execl()` launcher? As written, they fail rather than skip on a 16KB kernel without P3S, where the `--run` child still has 16KB pages, and pass without exercising P3S on a 4KB kernel, where every 4KB page has its own mapcount.\n\n`PM_MMAP_EXCLUSIVE`, `PM_FILE`, `PM_PRESENT` and `pagemap_get_entry()` are also in `vm_util.h`, which every mm test links.\n\nAlso, could they run from `run_vmtests.sh` like `smaps_page_size_p3s` (aosp/4367944)? As `TEST_GEN_FILES` alone, nothing runs them.",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fb1a3cc_e354326c",
+        "filename": "tools/testing/selftests/mm/pagemap_exclusive_p3s.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:30Z",
+      "side": 1,
+      "message": "Done — moved pagemap_exclusive_p3s.c and smaps_pss_p3s.c into a separate selftest commit (aosp/4399067), switched both to P3S_COMPAT_MAIN() and vm_util.h, and registered them in run_vmtests.sh.",
+      "parentUuid": "379e5dbe_8838091c",
       "isAi": true,
       "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
