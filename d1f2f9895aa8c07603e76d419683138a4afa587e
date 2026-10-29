@@ -136,6 +136,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d4b7b86_7aa732f2",
+        "filename": "drivers/android/tests/wrapfd_kunit.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:24:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b779cb6f_ac0d658b",
+      "range": {
+        "startLine": 200,
+        "startChar": 0,
+        "endLine": 207,
+        "endChar": 0
+      },
+      "revId": "d1f2f9895aa8c07603e76d419683138a4afa587e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a0be624d_5c9af385",
@@ -173,6 +197,30 @@
       "side": 1,
       "message": "No, this is not to test empty_wrapfd() API. It\u0027s to actually to create an empty `test_data.empty_file`.",
       "parentUuid": "a0be624d_5c9af385",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 212,
+        "endChar": 27
+      },
+      "revId": "d1f2f9895aa8c07603e76d419683138a4afa587e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd052c57_c4b0a8ba",
+        "filename": "drivers/android/tests/wrapfd_kunit.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:24:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cee610b_3670c20a",
       "range": {
         "startLine": 209,
         "startChar": 0,
