@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ccfaf04a_c109dd86",
+        "filename": "virt/kvm/vfio.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:02:30Z",
+      "side": 1,
+      "message": "It looks like, after the earlier rounds, the only change left in this patch is this `#include \u003clinux/mm.h\u003e`, and nothing new in `virt/kvm/vfio.c` uses it (`\u003clinux/kvm_host.h\u003e` and `\u003clinux/vfio.h\u003e` already include it).\n\nThe refusals the commit message describes (`KVM_CREATE_VM`, `kvm_vcpu_mmap()` and `kvm_gmem_mmap()`) are the ones aosp/4368079 added, and `kvm_no_compat_open()` is unchanged. Would it be OK to abandon this patch?",
+      "isAi": true,
+      "revId": "0f3d48f25ccbd813d0ddbda0c53d418f7f7e06aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
