@@ -1,0 +1,56 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa43159e_fae983bf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-29T21:33:41Z",
+      "side": 1,
+      "message": "Looks like the subject line was not preserved properly: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id\u003d5967f4df55521de596cbe34e0c0c96e962ef3f2e",
+      "revId": "f4e05cd87147b5010221e5eee54ccfe06736fbd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "093134f1_b05396ff",
+        "filename": "rust/kernel/sync/lock/spinlock.rs",
+        "patchSetId": 5
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-29T21:33:41Z",
+      "side": 1,
+      "message": "Does this print out the test name? if not, maybe the message should be more informative like `spinlock_irq_condvar test failed`?",
+      "fixSuggestions": [
+        {
+          "fixId": "d49ac1b8_465d6b62",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "rust/kernel/sync/lock/spinlock.rs",
+              "range": {
+                "startLine": 388,
+                "startChar": 0,
+                "endLine": 389,
+                "endChar": 0
+              },
+              "replacement": "        spinlock_irq_condvar().expect(\"test_spinlock_irq_condvar failed\");\n"
+            }
+          ]
+        }
+      ],
+      "revId": "f4e05cd87147b5010221e5eee54ccfe06736fbd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
