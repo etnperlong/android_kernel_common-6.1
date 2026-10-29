@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e6f326e_f0e4bdda",
+        "filename": "tools/testing/selftests/mm/anon_pageout_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:14:56Z",
+      "side": 1,
+      "message": "Agreed that the native folio has to stay resident here: as for a native page in a `VM_LOCKED` VMA, a small folio is mlocked from its first slice PTE (aosp/4390444), and aosp/4367603 keeps one mlock reference per slice so that unlocking one slice doesn\u0027t make it evictable.\n\nAs far as I can see, though, no patch between aosp/4367986 and this one changes mlock. aosp/4367603 is already earlier in the chain, so the swapout step could never succeed, and with this change the subtest always skips. Could this be folded into aosp/4367986 (or into the reclaim test patch, if that one gets split out)?\n\nIf the stale-WP check is still worth having, could the fixture reach the swapped state without locking a sibling, for example by paging out the whole 16KB window before changing the registration? Otherwise, would it be OK to drop the subtest?",
+      "isAi": true,
+      "revId": "0ef1d7e6138abbf57a98588879f1b87de23508c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b54d5032_6a21f284",
+        "filename": "tools/testing/selftests/mm/anon_pageout_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:14:56Z",
+      "side": 1,
+      "message": "I\u0027m worried this reports PASS rather than SKIP: `passed` is still declared `bool`, so `passed \u003d -1` stores `true`, the function returns 1, and `run_test()` never sees a negative value. Without swapout, the subtest then passes without having checked anything.\n\nCould `passed` be an `int`? The other assignments and the `!passed` checks work as they are:\n\n```\n\tint passed \u003d 0;\n```\n\nAlso, `ksft_test_result_skip()` already prints `# SKIP`, so the message in `run_test()` could drop its own, which would also shorten that 146-column line.",
+      "isAi": true,
+      "revId": "0ef1d7e6138abbf57a98588879f1b87de23508c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
