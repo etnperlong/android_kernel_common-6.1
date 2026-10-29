@@ -14,6 +14,7 @@
 #include <linux/rcupdate.h>
 #include <linux/rcupdate_trace.h>
 #include <linux/rcupdate_wait.h>
+#include <linux/hardirq.h>
 
 #define BPF_LOCAL_STORAGE_CREATE_FLAG_MASK (BPF_F_NO_PREALLOC | BPF_F_CLONE)
 
@@ -77,6 +78,9 @@ bpf_selem_alloc(struct bpf_local_storage_map *smap, void *owner,
 
 	selem = bpf_map_kmalloc_nolock(&smap->map, smap->elem_size,
 				       __GFP_ZERO, NUMA_NO_NODE);
+	if (!selem && !in_nmi())
+		selem = bpf_map_kzalloc(&smap->map, smap->elem_size,
+					GFP_ATOMIC | __GFP_NOWARN);
 
 	if (selem) {
 		RCU_INIT_POINTER(SDATA(selem)->smap, smap);
@@ -489,6 +493,9 @@ int bpf_local_storage_alloc(void *owner,
 
 	storage = bpf_map_kmalloc_nolock(&smap->map, sizeof(*storage),
 					 __GFP_ZERO, NUMA_NO_NODE);
+	if (!storage && !in_nmi())
+		storage = bpf_map_kzalloc(&smap->map, sizeof(*storage),
+					  GFP_ATOMIC | __GFP_NOWARN);
 	if (!storage) {
 		err = -ENOMEM;
 		goto uncharge;
