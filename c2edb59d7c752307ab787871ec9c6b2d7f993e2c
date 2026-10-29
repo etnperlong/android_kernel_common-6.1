@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7b94ed0_eed48296",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T23:04:02Z",
+      "side": 1,
+      "message": "Rounding `count \u003d PAGE_ALIGN(size) \u003e\u003e PAGE_SHIFT` to 16KB kernel pages and checking `vma_kernel_pages(vma) \u003e count - vma-\u003evm_pgoff` across the DMA `mmap` helpers (`dma_mmap_pages`, `dma_direct_mmap`, `dma_common_mmap`, `__dma_mmap_from_coherent`, `iommu_dma_mmap`, `iommu_dma_mmap_noncontiguous`) has two edge cases for 4KB processes:\n\n1. **Sub-16KB DMA allocations**: When `size` is a multiple of 4KB but not 16KB (e.g. `4KB` or `8KB`, so `count \u003d 1`), a 4KB process can `mmap` a full `16KB` (`vma_kernel_pages(vma) \u003d 1 \u003c\u003d count`), mapping the trailing 8KB–12KB of the kernel page beyond `size` (which in `__dma_mmap_from_coherent()` can cross into adjacent coherent pool allocations if the pool order is smaller than `PAGE_SHIFT_KERNEL`).\n2. **Non-zero `vm_slice_off` from driver `mmap` cookies**: If a driver uses `vma-\u003evm_pgoff` as a cookie and resets `vma-\u003evm_pgoff \u003d 0` before calling `dma_mmap_*` without clearing `vma-\u003evm_slice_off`, `vma_kernel_pages(vma)` rounds `vma_slice_off(vma) + vma_pages(vma)` up to an extra kernel page (`\u003e count`), rejecting a valid full-buffer mapping with `-ENXIO`.\n\n**Recommendation**: Please squash aosp/4368011 (`p3s_6.18_b16`: `ANDROID: P3S: dma-mapping: Bound 4KB user mappings in bytes`) and aosp/4367610 (`p3s_6.18_b11`: `ANDROID: P3S: iommu/dma: Honor VMA slice offsets in iommu_dma_mmap()`) into this change.",
+      "isAi": true,
+      "revId": "c2edb59d7c752307ab787871ec9c6b2d7f993e2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
