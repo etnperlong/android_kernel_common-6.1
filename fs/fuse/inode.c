@@ -1047,30 +1047,45 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
 		ctx->blksize = result.uint_32;
 		break;
 
-	case OPT_ROOT_BPF:
-		ctx->root_bpf = bpf_prog_get_type_dev(result.uint_32,
-						BPF_PROG_TYPE_FUSE, false);
-		if (IS_ERR(ctx->root_bpf)) {
-			ctx->root_bpf = NULL;
+	case OPT_ROOT_BPF: {
+		struct bpf_prog *prog;
+
+		if (!IS_ENABLED(CONFIG_FUSE_BPF))
+			return invalfc(fsc, "fuse-bpf not supported");
+		prog = bpf_prog_get_type_dev(result.uint_32,
+					     BPF_PROG_TYPE_FUSE, false);
+		if (IS_ERR(prog))
 			return invalfc(fsc, "Unable to open bpf program");
-		}
+		if (ctx->root_bpf)
+			bpf_prog_put(ctx->root_bpf);
+		ctx->root_bpf = prog;
 		break;
+	}
 
 	case OPT_ROOT_DIR: {
-		struct file *rd = fget(result.uint_32);
+		struct file *rd;
 
+		if (!IS_ENABLED(CONFIG_FUSE_BPF))
+			return invalfc(fsc, "fuse-bpf not supported");
+		rd = fget(result.uint_32);
 		if (!rd)
 			return invalfc(fsc, "Unable to open root directory");
 		if (rd->f_inode->i_sb->s_magic == FUSE_SUPER_MAGIC ||
-		    rd->f_inode->i_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH) {
+		    rd->f_inode->i_sb->s_stack_depth >=
+		    FILESYSTEM_MAX_STACK_DEPTH) {
 			fput(rd);
-			return invalfc(fsc, "Invalid root directory (FUSE or too deep)");
+			return invalfc(fsc,
+				       "Invalid root directory (FUSE or too deep)");
 		}
+		if (ctx->root_dir)
+			fput(ctx->root_dir);
 		ctx->root_dir = rd;
 		break;
 	}
 
 	case OPT_NO_DAEMON:
+		if (!IS_ENABLED(CONFIG_FUSE_BPF))
+			return invalfc(fsc, "fuse-bpf not supported");
 		ctx->no_daemon = true;
 		break;
 
