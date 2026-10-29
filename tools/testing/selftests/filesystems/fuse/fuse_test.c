@@ -2790,6 +2790,222 @@ static int bpf_test_stack_depth_limit(const char *mount_dir)
 	return result;
 }
 
+static int bpf_test_epoch_stamping(const char *mount_dir)
+{
+	FUSE_DECLARE_DAEMON;
+	const char *pre_file = "pre_lookup";
+	const char *creat_file = "created_file";
+	const char *fifo_name = "created_fifo";
+	const char *dir_name = "created_dir";
+	const char *link_name = "created_link";
+	const char *sym_name = "created_sym";
+	const char *inflight_name = "inflight_postfilter";
+	int result = TEST_FAILURE;
+	int src_fd = -1;
+	int bpf_fd = -1;
+	int fuse_dev = -1;
+	int pre_fd = -1;
+	int open_fd = -1;
+	struct stat st;
+	char link_buf[PATH_MAX] = {};
+	char fd_proc[64];
+	struct fuse_out_header notify_oh = {
+		.len = sizeof(notify_oh),
+		.error = FUSE_NOTIFY_INC_EPOCH,
+		.unique = 0,
+	};
+
+	/* Part A: All 6 BPF dentry instantiation sites stamp current epoch */
+	TEST(pre_fd = s_creat(s_path(s(ft_src), s(pre_file)), 0644),
+	     pre_fd != -1);
+	TESTSYSCALL(close(pre_fd));
+	pre_fd = -1;
+
+	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+	     src_fd != -1);
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_trace",
+				  &bpf_fd, NULL, NULL), 0);
+	TESTEQUAL(mount_fuse(mount_dir, bpf_fd, src_fd, &fuse_dev), 0);
+
+	/* 1. lookup, 2. create_open, 3. mknod, 4. mkdir, 5. link, 6. symlink */
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(pre_file)), &st));
+	TEST(open_fd = s_open(s_path(s(mount_dir), s(creat_file)),
+			      O_CREAT | O_RDWR | O_CLOEXEC, 0644),
+	     open_fd != -1);
+	TESTSYSCALL(s_mkfifo(s_path(s(mount_dir), s(fifo_name)), 0644));
+	TESTSYSCALL(s_mkdir(s_path(s(mount_dir), s(dir_name)), 0755));
+	TESTSYSCALL(s_link(s_path(s(mount_dir), s(creat_file)),
+			   s_path(s(mount_dir), s(link_name))));
+	TESTSYSCALL(s_symlink(s(creat_file),
+			      s_path(s(mount_dir), s(sym_name))));
+
+	/* Second path walk hits fuse_dentry_revalidate; open fd must not go stale */
+	snprintf(fd_proc, sizeof(fd_proc), "/proc/self/fd/%d", open_fd);
+	TESTNE(readlink(fd_proc, link_buf, sizeof(link_buf) - 1), -1);
+	TESTCOND(strstr(link_buf, " (deleted)") == NULL);
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(pre_file)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(creat_file)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(fifo_name)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(dir_name)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(link_name)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(sym_name)), &st));
+
+	/* Bump fc->epoch via FUSE_NOTIFY_INC_EPOCH; subsequent walks re-lookup cleanly */
+	TESTEQUAL(write(fuse_dev, &notify_oh, sizeof(notify_oh)),
+		  sizeof(notify_oh));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(pre_file)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(creat_file)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(fifo_name)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(dir_name)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(link_name)), &st));
+	TESTSYSCALL(s_stat(s_path(s(mount_dir), s(sym_name)), &st));
+
+	TESTSYSCALL(close(open_fd));
+	open_fd = -1;
+	TESTSYSCALL(umount(mount_dir));
+	TESTSYSCALL(close(fuse_dev));
+	fuse_dev = -1;
+	TESTSYSCALL(close(bpf_fd));
+	bpf_fd = -1;
+
+	/*
+	 * Part B (S4-R1): FUSE_NOTIFY_INC_EPOCH arriving while FUSE_LOOKUP |
+	 * FUSE_POSTFILTER is in flight must leave the instantiated dentry with
+	 * the pre-lookup epoch so the next path walk invalidates and re-looks up.
+	 */
+	TEST(pre_fd = s_creat(s_path(s(ft_src), s(inflight_name)), 0644),
+	     pre_fd != -1);
+	TESTSYSCALL(close(pre_fd));
+	pre_fd = -1;
+
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_lookup_postfilter",
+				  &bpf_fd, NULL, NULL), 0);
+	TESTEQUAL(mount_fuse(mount_dir, bpf_fd, src_fd, &fuse_dev), 0);
+
+	FUSE_START_DAEMON();
+	if (action) {
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(inflight_name)), &st));
+		/* Must invalidate pre-notify dentry and trigger second lookup */
+		TESTSYSCALL(s_stat(s_path(s(mount_dir), s(inflight_name)), &st));
+	} else {
+		struct fuse_entry_out *feo;
+		struct fuse_entry_bpf_out *febo;
+
+		TESTFUSELOOKUP(inflight_name, FUSE_POSTFILTER);
+		/* Increment fc->epoch BEFORE replying to in-flight lookup */
+		TESTEQUAL(write(fuse_dev, &notify_oh, sizeof(notify_oh)),
+			  sizeof(notify_oh));
+		feo = (struct fuse_entry_out *)(bytes_in +
+			sizeof(struct fuse_in_header) + strlen(inflight_name) + 1);
+		febo = (struct fuse_entry_bpf_out *)((char *)feo + sizeof(*feo));
+		feo->entry_valid = UINT64_MAX;
+		TESTFUSEOUT2(fuse_entry_out, *feo, fuse_entry_bpf_out, *febo);
+
+		/* Second lookup proves stale epoch triggered invalidation */
+		TESTFUSELOOKUP(inflight_name, FUSE_POSTFILTER);
+		feo = (struct fuse_entry_out *)(bytes_in +
+			sizeof(struct fuse_in_header) + strlen(inflight_name) + 1);
+		febo = (struct fuse_entry_bpf_out *)((char *)feo + sizeof(*feo));
+		TESTFUSEOUT2(fuse_entry_out, *feo, fuse_entry_bpf_out, *febo);
+		exit(TEST_SUCCESS);
+	}
+	FUSE_END_DAEMON();
+	close(pre_fd);
+	close(open_fd);
+	close(fuse_dev);
+	umount(mount_dir);
+	close(bpf_fd);
+	close(src_fd);
+	return result;
+}
+
+static int bpf_test_no_daemon_missing_rootmode(const char *mount_dir)
+{
+	int result = TEST_FAILURE;
+	int src_fd = -1;
+	int bpf_fd = -1;
+	char opts[256];
+
+	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+	     src_fd != -1);
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_mount_gate",
+				  &bpf_fd, NULL, NULL), 0);
+
+	/* R3: no_daemon without rootmode= must return -EINVAL (not BUG_ON) */
+	snprintf(opts, sizeof(opts), "no_daemon,root_dir=%d,root_bpf=%d",
+		 src_fd, bpf_fd);
+	errno = 0;
+	TESTEQUAL(mount("ABC", mount_dir, "fuse", 0, opts), -1);
+	TESTEQUAL(errno, EINVAL);
+
+	result = TEST_SUCCESS;
+out:
+	umount(mount_dir);
+	close(bpf_fd);
+	close(src_fd);
+	return result;
+}
+
+static int bpf_test_no_daemon(const char *mount_dir)
+{
+	const char *backed_file = "backed.txt";
+	const char *backed_dir = "sub";
+	const char *daemon_only = "test";
+	const char *payload = "no-daemon-ok";
+	int result = TEST_FAILURE;
+	int src_fd = -1;
+	int bpf_fd = -1;
+	int fd = -1;
+	bool mounted = false;
+	char opts[256];
+	char buf[32] = {};
+	struct stat st;
+
+	TEST(src_fd = open(ft_src, O_DIRECTORY | O_RDONLY | O_CLOEXEC),
+	     src_fd != -1);
+	TESTEQUAL(install_elf_bpf("test_bpf.bpf", "test_mount_gate",
+				  &bpf_fd, NULL, NULL), 0);
+
+	/* Mount with no /dev/fuse fd at all */
+	snprintf(opts, sizeof(opts),
+		 "no_daemon,rootmode=0040000,user_id=0,group_id=0,root_dir=%d,root_bpf=%d",
+		 src_fd, bpf_fd);
+	TESTSYSCALL(mount("ABC", mount_dir, "fuse", 0, opts));
+	mounted = true;
+
+	/* Backed file + directory operations succeed with no daemon */
+	TEST(fd = s_open(s_path(s(mount_dir), s(backed_file)),
+			 O_CREAT | O_RDWR | O_CLOEXEC, 0644),
+	     fd != -1);
+	TESTEQUAL(write(fd, payload, strlen(payload)), strlen(payload));
+	TESTEQUAL(lseek(fd, 0, SEEK_SET), 0);
+	TESTEQUAL(read(fd, buf, sizeof(buf) - 1), strlen(payload));
+	TESTCOND(strcmp(buf, payload) == 0);
+	TESTSYSCALL(close(fd));
+	fd = -1;
+
+	TESTSYSCALL(s_mkdir(s_path(s(mount_dir), s(backed_dir)), 0755));
+	TESTSYSCALL(s_stat(s_path(s(ft_src), s(backed_dir)), &st));
+	TESTSYSCALL(s_rmdir(s_path(s(mount_dir), s(backed_dir))));
+	TESTSYSCALL(s_unlink(s_path(s(mount_dir), s(backed_file))));
+
+	/* Unbacked lookup ("test" -> return 0 in test_mount_gate) fails fast with ECONNREFUSED */
+	errno = 0;
+	TESTEQUAL(s_open(s_path(s(mount_dir), s(daemon_only)), O_RDONLY), -1);
+	TESTEQUAL(errno, ECONNREFUSED);
+
+	TESTSYSCALL(umount(mount_dir));
+	mounted = false;
+	result = TEST_SUCCESS;
+out:
+	close(fd);
+	if (mounted)
+		umount(mount_dir);
+	close(bpf_fd);
+	close(src_fd);
+	return result;
+}
+
 struct test_case {
 	int (*pfunc)(const char *dir);
 	const char *name;
@@ -2884,6 +3100,9 @@ int main(int argc, char *argv[])
 		MAKE_TEST(canonical_path_empty_reply_test),
 		MAKE_TEST(bpf_test_concurrent_create_excl),
 		MAKE_TEST(bpf_test_stack_depth_limit),
+		MAKE_TEST(bpf_test_epoch_stamping),
+		MAKE_TEST(bpf_test_no_daemon_missing_rootmode),
+		MAKE_TEST(bpf_test_no_daemon),
 	};
 #undef MAKE_TEST
 
