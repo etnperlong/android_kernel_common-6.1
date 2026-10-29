@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a240fec_1d69df28",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:43Z",
+      "side": 1,
+      "message": "Done — updated the subject to \u00274KB processes\u0027 and updated the commit message to explain re-enabling uprobes in 4KB VMAs and why flush_dcache_page() is needed for 4KB VMAs.",
+      "parentUuid": "0ba3a45c_de507da3",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e2651273_592c36da",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:02:56Z",
       "side": 1,
       "message": "Nit: I think this include isn\u0027t needed: `\u003clinux/mm_types.h\u003e` already includes `\u003clinux/p3s.h\u003e`, and this file used `vma_is_p3s_4k()` without it before this patch.",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93870a9b_94d1ea49",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:43Z",
+      "side": 1,
+      "message": "Done — removed the redundant #include \u003clinux/p3s/vma.h\u003e.",
+      "parentUuid": "e2651273_592c36da",
       "isAi": true,
       "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c84bda98_1d7dfed6",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:43Z",
+      "side": 1,
+      "message": "Done — moved uprobe_p3s.c (using P3S_COMPAT_MAIN()) and its Makefile/run_vmtests.sh entries into this patch.",
+      "parentUuid": "c2e82c2f_5dd124f8",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "30feb501_2a26d5c2",
@@ -73,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "54958fc7_8211491b",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:43Z",
+      "side": 1,
+      "message": "Done — kept get_user_pages_remote() and get_user_pages() and used vma_folio_offset() in __uprobe_write(), uprobe_write(), __update_ref_ctr(), and is_trap_at_addr().",
+      "parentUuid": "30feb501_2a26d5c2",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c1f22af8_f8b4b42b",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-10-28T22:02:56Z",
       "side": 1,
       "message": "Is this `flush_dcache_page()` needed only for 4KB processes? It also runs for native processes and on every architecture, and upstream `__uprobe_write()` doesn\u0027t have it.\n\nIf native arm64 needs it too, could it be a separate fix, sent upstream? If only 4KB processes need it, could it be limited to them, with a comment saying why?",
+      "isAi": true,
+      "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d65d0eb2_5e250160",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:43Z",
+      "side": 1,
+      "message": "Done — gated flush_dcache_page(fw-\u003epage) on vma_is_p3s_4k(vma) with a comment.",
+      "parentUuid": "c1f22af8_f8b4b42b",
       "isAi": true,
       "revId": "8665129a6c8af58a58334fa98b9d1d0a4998349e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
