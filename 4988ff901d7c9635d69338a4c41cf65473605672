@@ -57,6 +57,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e80f70a_b8a8f6d2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:17Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain what goes wrong in both VFIO type1 (mapping whole kernel pages can expose memory outside a 4KB range) and device MMIO mmap() handlers (ignoring vm_slice_off can map past the end of a region).",
+      "parentUuid": "09729e2f_8cc0b27e",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a73c649a_b75cd277",
