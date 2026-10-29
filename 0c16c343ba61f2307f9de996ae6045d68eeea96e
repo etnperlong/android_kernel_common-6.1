@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db27c2b8_caa13c6b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:01:17Z",
+      "side": 1,
+      "message": "I think this paragraph compares with an earlier patch set of this patch rather than with its parent: the parent doesn\u0027t divide by four, it divides `PAGE_SIZE` by the raw `swp_swapcount()` (see my comment in `smaps_pte_entry()`). Could the message describe what the parent reports instead?",
+      "isAi": true,
+      "revId": "0c16c343ba61f2307f9de996ae6045d68eeea96e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd683682_2ea45d7a",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 1101,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T00:01:17Z",
+      "side": 1,
+      "message": "Agreed that SwapPss needs fixing for 4KB processes: at the parent, each of the four swap PTEs of a private 16KB entry adds `PAGE_SIZE / 4`, so SwapPss is a quarter of Swap.\n\nFor resident pages, `smaps_account()` already shares the 16KB page among all the PTEs that map it, capped at the 4KB that each one maps (aosp/4312510). Would the same work for swap, with `swp_swapcount()` as the count? Something like:\n\n```\nif (mapcount \u003e\u003d 2) {\n        u64 pss_delta \u003d (u64)PAGE_SIZE_KERNEL \u003c\u003c PSS_SHIFT;\n\n        do_div(pss_delta, mapcount);\n        mss-\u003eswap_pss +\u003d min(pss_delta, (u64)PAGE_SIZE \u003c\u003c PSS_SHIFT);\n}\n```\n\nThat needs no PTE scan or new helper, leaves native processes unchanged (`PAGE_SIZE` is `PAGE_SIZE_KERNEL` there), and a page then reports the same PSS whether it\u0027s resident or swapped out. It also gives a parent and child that keep disjoint slices (say 0-1 and 2-3) 8KB each, where the local count halves them. The single-slice case from the commit message would get 4KB in each process, as it does while resident.\n\nAt the top of the chain, aosp/4367962 switches resident anonymous pages to the fixed four, which runs into the single-slice problem this message describes, so I think keeping the formula of aosp/4312510 on both sides would be the most consistent.\n\nIf the scan stays, could this comment get a blank line before it?",
+      "isAi": true,
+      "revId": "0c16c343ba61f2307f9de996ae6045d68eeea96e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
