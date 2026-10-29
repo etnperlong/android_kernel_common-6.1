@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5bad378f_ba1f30d8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:27Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "3ec91e39_a8f4229e",
+      "isAi": true,
+      "revId": "ef5b00e225229240ce05ff1fc7796df69de7fc73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "86b07be0_264da2b9",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:36:42Z",
       "side": 1,
       "message": "It looks like these conversions don\u0027t change anything. mm/madvise.c opts into `\u003clinux/p3s_user_pages.h\u003e` since aosp/4312489, so `PAGE_SIZE` here is already `mm_pte_size(p3s_current_mm())`, and MADV_FREE only ever runs on `current-\u003emm`: madvise() passes it, process_madvise() rejects MADV_FREE for another mm in process_madvise_remote_valid() (and vector_madvise() enters the target\u0027s context with `P3S_CONTEXT_REMOTE_MM()` anyway), and io_uring, with `IORING_OP_MADVISE`, is disabled in 4KB processes since aosp/4368076. So `tlb-\u003emm` is always `p3s_current_mm()` in madvise_free_pte_range().\n\nWould it be OK to drop this patch? The re-indent of the madvise_folio_pte_batch() call fixes the continuation line that aosp/4367604 wrapped, so it could be folded there.",
+      "isAi": true,
+      "revId": "ef5b00e225229240ce05ff1fc7796df69de7fc73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2bdbb7b6_4e6712ac",
+        "filename": "mm/madvise.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:27Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series.",
+      "parentUuid": "86b07be0_264da2b9",
       "isAi": true,
       "revId": "ef5b00e225229240ce05ff1fc7796df69de7fc73",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
