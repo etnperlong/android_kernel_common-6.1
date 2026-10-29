@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2bc47a4_82df30ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:22Z",
+      "side": 1,
+      "message": "Done — updated the commit message to describe what the parent reports (dividing each 4KB PTE\u0027s PSS by the raw swapcount, so four PTEs of a private 16KB entry report only 4KB SwapPss).",
+      "parentUuid": "db27c2b8_caa13c6b",
+      "isAi": true,
+      "revId": "0c16c343ba61f2307f9de996ae6045d68eeea96e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dd683682_2ea45d7a",
