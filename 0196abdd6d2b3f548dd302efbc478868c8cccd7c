@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4cd47d9_1222a8d3",
+        "filename": "include/linux/p3s/iov_iter.h",
+        "patchSetId": 30
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T21:06:28Z",
+      "side": 1,
+      "message": "Thanks, good catch: `vma_lookup()` saw the tagged address while GUP untagged it. Done: `p3s_get_user_slice_pages()` now untags `addr` on entry, which also covers `p3s_process_vm_rw()`.",
+      "parentUuid": "78d9df17_9766afbb",
+      "isAi": true,
+      "revId": "0196abdd6d2b3f548dd302efbc478868c8cccd7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0ab8279d_30ba47a6",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T19:09:51Z",
       "side": 1,
       "message": "Using `avail \u003d maxpages - run.nr_pages` to cap `chunk` conflates 4KB input slices with 16KB compacted host-page slots in `pages[]`. When a caller passes a pre-allocated `pages[]` array with a small `maxpages`:\n- If `maxpages \u003d\u003d 1` (e.g., `iov_iter_get_pages2(..., 1, ...)`), `avail` is 1, so `chunk \u003d 1` and the loop exits after 1 slice (4KB) because `run.nr_pages \u003d\u003d maxpages`, even when up to 4 contiguous slices (16KB) map the same 16KB host page in `pages[0]`.\n- With `maxpages \u003d\u003d 16` (`PVM_MAX_PP_ARRAY_COUNT` in `process_vm_access.c`) and a 64-slice (256KB) contiguous buffer, as `run.nr_pages` approaches 16, `avail` shrinks (`13, 9, 7, 5, 4, 3, 2, 2, 1, 1, 1, 1, 1`), forcing 14 separate `p3s_gup_remote()` calls (the last 5 pinning 1 slice each) and stopping with `pages[15]` only 1/4 populated (`61/64` slices).\n\nConsider using a small 4-entry stack array (`struct page *scratch[P3S_SLICES_PER_PAGE]`) when `avail \u003c P3S_SLICES_PER_PAGE` and allowing the loop to finish the remaining slices (`P3S_SLICE_MASK - run.slice`) of `run.pages[maxpages - 1]` when `run.nr_pages \u003d\u003d maxpages`.",
+      "isAi": true,
+      "revId": "0196abdd6d2b3f548dd302efbc478868c8cccd7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d1ebee4_83dfe832",
+        "filename": "include/linux/p3s/iov_iter.h",
+        "patchSetId": 30
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T21:06:28Z",
+      "side": 1,
+      "message": "Agreed, the page array doubled as GUP output, which capped each batch at the free host slots. \n\nUpdated so that when fewer than `P3S_SLICES_PER_PAGE` entries are left, GUP now uses a 4-entry scratch array, and once the array is full the loop still fills the rest of the last host page. `p3s_slice_run_add()` checks the array\u0027s capacity before starting a host page.",
+      "parentUuid": "0ab8279d_30ba47a6",
       "isAi": true,
       "revId": "0196abdd6d2b3f548dd302efbc478868c8cccd7c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
