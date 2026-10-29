@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "193fdd5f_84b132ff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-29T22:41:04Z",
+      "side": 1,
+      "message": "According to `KernelCommit`, there were merge conflicts when applying this, so shouldn\u0027t it be tagged as `BACKPORT`?",
+      "revId": "525caf52fb63a1e15a250d548b6911504115e6a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
