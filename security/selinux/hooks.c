@@ -3799,15 +3799,53 @@ static int selinux_file_ioctl_compat(struct file *file, unsigned int cmd,
 
 static int default_noexec __ro_after_init;
 
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
 static int file_map_prot_check(struct file *file, unsigned long prot, int shared)
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+static int __file_map_prot_check(const struct cred *cred,
+				 const struct file *file, unsigned long prot,
+				 bool shared, bool bf_user_file)
+=======
+static int __file_map_prot_check(const struct file *file, unsigned long prot,
+				 bool shared, bool mounter_check,
+				 bool bf_user_file)
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 {
 	const struct cred *cred = current_cred();
 	u32 sid = cred_sid(cred);
 	int rc = 0;
 
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
 	if (default_noexec &&
 	    (prot & PROT_EXEC) && (!file || IS_PRIVATE(file_inode(file)) ||
 				   (!shared && (prot & PROT_WRITE)))) {
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+	if (file) {
+		if (bf_user_file)
+			inode = d_inode(backing_file_user_path(file)->dentry);
+		else
+			inode = file_inode(file);
+	}
+
+	if (default_noexec && prot_exec &&
+	    (!file || IS_PRIVATE(inode) || (!shared && prot_write))) {
+		int rc;
+		u32 sid = cred_sid(cred);
+
+=======
+	if (file) {
+		if (bf_user_file)
+			inode = d_inode(backing_file_user_path(file)->dentry);
+		else
+			inode = file_inode(file);
+	}
+
+	if (!mounter_check && default_noexec && prot_exec &&
+	    (!file || IS_PRIVATE(inode) || (!shared && prot_write))) {
+		int rc;
+		u32 sid = current_sid();
+
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 		/*
 		 * We are making executable an anonymous mapping or a
 		 * private file mapping that will also be writable.
@@ -3820,7 +3858,15 @@ static int file_map_prot_check(struct file *file, unsigned long prot, int shared
 	}
 
 	if (file) {
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
 		/* read access is always possible with a mapping */
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+		/* "read" always possible, "write" only if shared */
+=======
+		const struct cred *cred = mounter_check ?
+				file->f_cred : current_cred();
+		/* "read" always possible, "write" only if shared */
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 		u32 av = FILE__READ;
 
 		/* write access only matters if the mapping is shared */
@@ -3833,8 +3879,28 @@ static int file_map_prot_check(struct file *file, unsigned long prot, int shared
 		return file_has_perm(cred, file, av);
 	}
 
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
 error:
 	return rc;
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+	return 0;
+}
+
+static inline int file_map_prot_check(const struct cred *cred,
+				      const struct file *file,
+				      unsigned long prot, bool shared)
+{
+	return __file_map_prot_check(cred, file, prot, shared, false);
+=======
+	return 0;
+}
+
+static inline int file_map_prot_check(const struct file *file,
+				      unsigned long prot, bool shared,
+				      bool mounter_check)
+{
+	return __file_map_prot_check(file, prot, shared, mounter_check, false);
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 }
 
 static int selinux_mmap_addr(unsigned long addr)
@@ -3850,12 +3916,63 @@ static int selinux_mmap_addr(unsigned long addr)
 	return rc;
 }
 
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+static int selinux_mmap_file_common(const struct cred *cred, struct file *file,
+				    unsigned long prot, bool shared)
+{
+	if (file) {
+		int rc;
+		struct common_audit_data ad;
+
+		ad.type = LSM_AUDIT_DATA_FILE;
+		ad.u.file = file;
+		rc = inode_has_perm(cred, file_inode(file), FILE__MAP, &ad);
+		if (rc)
+			return rc;
+	}
+
+	return file_map_prot_check(cred, file, prot, shared);
+}
+
+=======
+static int selinux_mmap_file_common(struct file *file, unsigned long prot,
+				    bool shared, bool mounter_check)
+{
+	if (file) {
+		int rc;
+		struct common_audit_data ad;
+		const struct cred *cred = mounter_check ?
+				file->f_cred : current_cred();
+
+		ad.type = LSM_AUDIT_DATA_FILE;
+		ad.u.file = file;
+		rc = inode_has_perm(cred, file_inode(file), FILE__MAP, &ad);
+		if (rc)
+			return rc;
+	}
+
+	return file_map_prot_check(file, prot, shared, mounter_check);
+}
+
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 static int selinux_mmap_file(struct file *file,
 			     unsigned long reqprot __always_unused,
 			     unsigned long prot, unsigned long flags)
 {
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
 	struct common_audit_data ad;
 	int rc;
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+	return selinux_mmap_file_common(current_cred(), file, prot,
+					(flags & MAP_TYPE) == MAP_SHARED);
+}
+=======
+	return selinux_mmap_file_common(file, prot,
+					(flags & MAP_TYPE) == MAP_SHARED,
+					false);
+}
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 
 	if (file) {
 		ad.type = LSM_AUDIT_DATA_FILE;
@@ -3866,8 +3983,33 @@ static int selinux_mmap_file(struct file *file,
 			return rc;
 	}
 
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
 	return file_map_prot_check(file, prot,
 				   (flags & MAP_TYPE) == MAP_SHARED);
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+	/* translate vma->vm_flags perms into PROT perms */
+	if (vma->vm_flags & VM_READ)
+		prot |= PROT_READ;
+	if (vma->vm_flags & VM_WRITE)
+		prot |= PROT_WRITE;
+	if (vma->vm_flags & VM_EXEC)
+		prot |= PROT_EXEC;
+
+	return selinux_mmap_file_common(backing_file->f_cred, backing_file,
+					prot, vma->vm_flags & VM_SHARED);
+=======
+	/* translate vma->vm_flags perms into PROT perms */
+	if (vma->vm_flags & VM_READ)
+		prot |= PROT_READ;
+	if (vma->vm_flags & VM_WRITE)
+		prot |= PROT_WRITE;
+	if (vma->vm_flags & VM_EXEC)
+		prot |= PROT_EXEC;
+
+	return selinux_mmap_file_common(backing_file, prot,
+					vma->vm_flags & VM_SHARED,
+					true);
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 }
 
 static int selinux_file_mprotect(struct vm_area_struct *vma,
@@ -3907,6 +4049,24 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
 			 */
 			rc = file_has_perm(cred, vma->vm_file, FILE__EXECMOD);
 		}
+<<<<<<< HEAD   (77834aa51de92859c223bd6c53827f34a4197a9b Merge cc8bd47b35ec ("selinux: avoid sk_socket dereference in)
+||||||| BASE   (cc8bd47b35eca82393cbad08b1cc86f02e034439 selinux: avoid sk_socket dereference in selinux_sctp_bind_co)
+	}
+
+	rc = __file_map_prot_check(cred, file, prot, shared, backing_file);
+	if (rc)
+		return rc;
+	if (backing_file) {
+		rc = file_map_prot_check(file->f_cred, file, prot, shared);
+=======
+	}
+
+	rc = __file_map_prot_check(file, prot, shared, false, backing_file);
+	if (rc)
+		return rc;
+	if (backing_file) {
+		rc = file_map_prot_check(file, prot, shared, true);
+>>>>>>> BRANCH (3668aedc95f0d7cafee25dc7040be8dda2667fe8 selinux: fix incorrect execmem checks on overlayfs)
 		if (rc)
 			return rc;
 	}
