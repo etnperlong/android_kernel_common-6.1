@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6d59ac3_80493c60",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:15Z",
+      "side": 1,
+      "message": "Done — updated the subject to \u00274KB processes\u0027 and rewrote the commit message to describe the whole-window swap move and destination conflict checks.",
+      "parentUuid": "3692fe73_f6cf5e74",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a30630de_eba3c53e",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:53:50Z",
       "side": 1,
       "message": "It looks like the test is only built: `run_vmtests.sh` doesn\u0027t run it, neither here nor at the top of the chain, where `uffd_move_swapped_slice_p3s` and `uffd_move_swapcache_lock_p3s` are listed. Could you add it next to them? For example:\n\n```\nCATEGORY\u003d\"userfaultfd\" run_test ./uffd_move_retry_p3s\n```",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a37d480_a324db95",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:15Z",
+      "side": 1,
+      "message": "Done — registered uffd_move_swap_window_p3s in run_vmtests.sh.",
+      "parentUuid": "a30630de_eba3c53e",
       "isAi": true,
       "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd9c6c43_cb2cab96",
+        "filename": "tools/testing/selftests/mm/uffd_move_retry_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:15Z",
+      "side": 1,
+      "message": "Done — renamed the test to uffd_move_swap_window_p3s.c and updated the comment to match what it tests.",
+      "parentUuid": "4c6bfede_0cb3b736",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66f51da5_88fc3edc",
@@ -73,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a545651_e3c2afff",
+        "filename": "tools/testing/selftests/mm/uffd_move_retry_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:15Z",
+      "side": 1,
+      "message": "Done — switched to PM_SWAP, uffd_register(), uffd_unregister(), and pagemap_get_entry() from vm_util.h, and dropped p3s_pagemap_entry_of().",
+      "parentUuid": "66f51da5_88fc3edc",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9d424bf_a708a4b9",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-10-28T22:53:50Z",
       "side": 1,
       "message": "I\u0027m worried that `--native` re-execs forever on a kernel whose native page size isn\u0027t 16KB (4KB arm64 or x86_64). `exec_native()` succeeds there, and `sysconf(_SC_PAGESIZE)` still returns 4KB in the new image, so it takes this branch again. Nothing runs `--native` today, so this only happens when someone runs it by hand.\n\nWould it be OK to drop the `--native` mode and use `P3S_COMPAT_MAIN(run_test)`? If you\u0027d like to keep it, could it re-exec only from a 4KB process (`p3s_is_compat_process()`) and skip when the page size still isn\u0027t `NATIVE_PAGE_SIZE`? `vmalloc_align_p3s.c` and a few other tests later in the chain have the same `main()`.",
+      "isAi": true,
+      "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7a10af5_5dbb7a6c",
+        "filename": "tools/testing/selftests/mm/uffd_move_retry_p3s.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:15Z",
+      "side": 1,
+      "message": "Done — switched uffd_move_swap_window_p3s.c to P3S_COMPAT_MAIN(run_test).",
+      "parentUuid": "e9d424bf_a708a4b9",
       "isAi": true,
       "revId": "4b94ac47a248ad5ae2275eea18c1c4dd129a189c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
