@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e43400b_d1fe916e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:21:03Z",
+      "side": 1,
+      "message": "Thanks for splitting this out. The new loop looks right to me, and `mte_copy_page_tags()` keeps its behaviour for page-aligned addresses.\n\nIts only callers are the slice copies in aosp/4367984 and aosp/4367997, though. If those copies go (see my comment on aosp/4367981), nothing would use it, so I think this patch can go too. If it stays, could the subject start with `ANDROID: P3S: `, since only P3S code uses it, and could the patch sit just before its first caller?",
+      "isAi": true,
+      "revId": "e5a6fc6ef5fd235ebe82cff166b101c262c9f6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
