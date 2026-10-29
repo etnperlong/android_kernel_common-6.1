@@ -2286,11 +2286,19 @@ free_it:
 		 * Is there need to periodically free_folio_list? It would
 		 * appear not as the counts should be low
 		 */
+<<<<<<< HEAD   (e2cfb390ab3a883feb738dff0f182de71a3228ec Merge da9d8d9711f7 ("i2c: core: fix adapter registration rac)
 		trace_android_vh_folio_trylock_clear(folio);
 		if (unlikely(folio_test_large(folio)))
+||||||| BASE   (da9d8d9711f78deebc202d0cffcf577e45ee8621 i2c: core: fix adapter registration race)
+		if (unlikely(folio_test_large(folio)))
+=======
+		if (unlikely(folio_test_large(folio))) {
+			try_to_unmap_flush();
+>>>>>>> BRANCH (d087272c49aa5f351436095bcc6182f2164698f2 arm64: sysreg: Add layout for ID_AA64MMFR4_EL1)
 			destroy_large_folio(folio);
-		else
+		} else {
 			list_add(&folio->lru, &free_folios);
+		}
 		continue;
 
 activate_locked_split:
