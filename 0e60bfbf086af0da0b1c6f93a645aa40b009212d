@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84ac2d4f_a4aa79f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-29T22:24:24Z",
+      "side": 1,
+      "message": "You could also backport this patch too: https://lore.kernel.org/all/20241120222742.2490495-3-lyude@redhat.com/ ?\n\nThat also makes it so you don\u0027t have to introduce it yourself later?",
+      "revId": "0e60bfbf086af0da0b1c6f93a645aa40b009212d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
