@@ -93,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "32609b23_2bb61fc4",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:54Z",
+      "side": 1,
+      "message": "Done. Dropped this patch (and aosp/4393891) from the series so procfs file mappings use conservative native-page mapcount sharing (capped at the reader\u0027s PTE size) without walking file rmaps.",
+      "parentUuid": "75c3ce9c_2ce1922c",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3698d940_c7a85ab8",
@@ -148,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c302c13_02a069fd",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1236,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:54Z",
+      "side": 1,
+      "message": "Done. Dropped this patch (and `vma_slice_ptes()`) from the series.",
+      "parentUuid": "e76a5cc2_ffc66c7d",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f5068090_711328bf",
@@ -166,6 +204,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb478746_69ab2a3c",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1262,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:54Z",
+      "side": 1,
+      "message": "Done. Dropped this patch from the series so neither `smaps` nor `pagemap` walks file rmaps.",
+      "parentUuid": "f5068090_711328bf",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "47ffb817_4526701f",
@@ -179,6 +236,25 @@
       "writtenOn": "2026-10-28T21:42:12Z",
       "side": 1,
       "message": "Agreed that aosp/4312510 is conservative here: `vma_slice_ptes()` only counts the PTEs of this slice window, so a page that is also mapped outside the window (an alias, which I think also happens at segment boundaries of 4KB-aligned libraries, or another process) is reported as shared on all four slices, loses PM_MMAP_EXCLUSIVE, and has its PSS shared per 16KB page rather than per slice (Pss 12 kB and Shared 16 kB instead of 14 kB and 4 kB in `smaps_pss_p3s`).\n\nPages that only this window maps, and whole pages shared by several 4KB processes, already get the same values as with this patch.\n\nIf no reader depends on the per-slice split, would it be OK to drop the file walk and keep `vma_slice_ptes()`, which this patch leaves without users? Otherwise, could the commit message name that reader, given the cost of the walk (next comment)?",
+      "isAi": true,
+      "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "49c09696_2608d5ce",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 1357,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:12:54Z",
+      "side": 1,
+      "message": "Done. Dropped this patch from the series.",
+      "parentUuid": "47ffb817_4526701f",
       "isAi": true,
       "revId": "b25d36dc2ebafabbe4adb3b838cbc0270732624c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
