@@ -88,6 +88,24 @@
       "parentUuid": "470724f4_16426945",
       "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9dd8ac0b_23906cc0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1125653
+      },
+      "writtenOn": "2026-10-29T08:19:48Z",
+      "side": 1,
+      "message": "See comments on the bug please.",
+      "parentUuid": "bac7dbd8_97443c7d",
+      "revId": "6eb3c91be91c746e50fe51323f9977ae5253f1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
