@@ -132,6 +132,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb34695c_978e85c5",
+        "filename": "drivers/vfio/container.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:41:34Z",
+      "side": 1,
+      "message": "Done — dropped the redundant #include \u003clinux/mm.h\u003e lines.",
+      "parentUuid": "c1b2cde1_6cb6e3e5",
+      "isAi": true,
+      "revId": "4988ff901d7c9635d69338a4c41cf65473605672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "60359b11_e75028ed",
