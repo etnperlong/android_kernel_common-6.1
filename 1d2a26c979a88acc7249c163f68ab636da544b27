@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05c86be1_3e51c436",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1984890
+      },
+      "writtenOn": "2026-10-29T14:18:05Z",
+      "side": 1,
+      "message": "does this comment make sense now if it\u0027s a FROMGIT patch. Add a reference from which repo this was taken:\n\nBug: 135791357\n(cherry picked from commit 878a2fd9de10b03d11d2f622250285c7e63deace\nhttps://git.kernel.org/pub/scm/linux/kernel/git/foo/bar.git test-branch)",
+      "revId": "1d2a26c979a88acc7249c163f68ab636da544b27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
