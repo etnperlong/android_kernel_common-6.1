@@ -40,6 +40,31 @@
       ],
       "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ddf1119_00ad916f",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:52:56Z",
+      "side": 1,
+      "message": "The main reason this was included into `mm/gup.c` is that `gup_user_range()` calls `mm/gup.c`\u0027s static helpers (`is_valid_gup_args()` and `__gup_longterm_locked()`). If we compile `mm/gup_p3s.c` separately with a header for the prototypes, we would need to make those static helpers non-static (`extern`) in `mm/gup.c` (or alternatively move these definitions into `mm/p3s/gup.h` included by `mm/gup.c`). Which approach would you prefer?",
+      "parentUuid": "888813a4_9eaaf691",
+      "range": {
+        "startLine": 3,
+        "startChar": 38,
+        "endLine": 3,
+        "endChar": 68
+      },
+      "isAi": true,
+      "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
