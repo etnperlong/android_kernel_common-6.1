@@ -390,7 +390,8 @@ static void fuse_lookup_init(struct fuse_args *args, u64 nodeid,
 }
 
 #ifdef CONFIG_FUSE_BPF
-static bool backing_data_changed(struct fuse_inode *fi, struct dentry *entry,
+static bool backing_data_changed(struct inode *dir, struct fuse_inode *fi,
+				 struct dentry *entry,
 				 struct fuse_entry_bpf *bpf_arg)
 {
 	struct path new_backing_path;
@@ -411,7 +412,7 @@ static bool backing_data_changed(struct fuse_inode *fi, struct dentry *entry,
 	if (err)
 		goto put_inode;
 
-	err = fuse_handle_bpf_prog(bpf_arg, entry->d_parent->d_inode, &bpf);
+	err = fuse_handle_bpf_prog(bpf_arg, dir, &bpf);
 	if (err)
 		goto put_bpf;
 
@@ -511,7 +512,7 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
 			if (outarg.nodeid != get_node_id(inode) ||
 #ifdef CONFIG_FUSE_BPF
 			    (ret == sizeof(bpf_arg.out) &&
-					    backing_data_changed(fi, entry, &bpf_arg)) ||
+			     backing_data_changed(dir, fi, entry, &bpf_arg)) ||
 #endif
 			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg.attr.flags & FUSE_ATTR_SUBMOUNT)) {
 				fuse_chan_queue_forget(fm->fc->chan, forget,
