@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "bfe15ed2689b93d2a4cd04259638140bbaaf2286",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f731aa2_73189779",
+        "filename": "mm/shmem.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2918,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:55Z",
+      "side": 1,
+      "message": "Done — replaced the THP offset arithmetic changes with an early return for mm_is_p3s_4k(current-\u003emm) in shmem_get_unmapped_area(), and dropped aosp/4367988.",
+      "parentUuid": "db0ffa3f_944fb450",
+      "isAi": true,
+      "revId": "bfe15ed2689b93d2a4cd04259638140bbaaf2286",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
