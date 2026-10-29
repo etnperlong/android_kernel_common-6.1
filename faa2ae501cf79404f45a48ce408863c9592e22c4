@@ -36,6 +36,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a4b1ef4_ff10ed4b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 26
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — shifted this selftests patch to the end of the series.",
+      "parentUuid": "adbb9017_e6a9504d",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "668465b2_09023b2f",
@@ -49,6 +68,25 @@
       "writtenOn": "2026-10-29T18:10:33Z",
       "side": 1,
       "message": "Thanks for collecting the tests in `P3S_TESTS`. Giving `P3S_MM_TARGETS` the `-I..` and `LOCAL_HDRS` lines fixes the clang build issue for all of them. As on aosp/4367975, though, 30 of them are built but nothing runs them, here or later in the chain: `exec_stack_p3s`, `exec_user_args_p3s`, `fadvise_dontneed_p3s`, `file_cow_p3s`, `file_cow_refs_p3s`, `filemap_eof_p3s`, `hole_anon_p3s`, `kcov_p3s`, `madv_cold_large_file_p3s`, `memory_failure_anon_p3s`, `mremap_file_slice_p3s`, `mremap_split_p3s`, `mte_anon_p3s`, `oom_score_p3s`, `oom_trace_p3s`, `packed_anon_p3s`, `packed_swap_p3s`, `proc_pagewalk_p3s`, `process_mrelease_p3s`, `rmap_file_referenced_p3s`, `smaps_native_fallback_p3s`, `swap_vma_readahead_p3s`, `swapoff_p3s`, `truncate_remote_p3s`, `userfaultfd_poison_remote_p3s`, `userfaultfd_remote_p3s`, `userfaultfd_unregister_remote_p3s`, `userfaultfd_wp_remote_p3s`, `vhost_dirty_log_p3s` and `vmalloc_align_p3s`. The patch also drops `ashmem_p3s` from `run_vmtests.sh`, where aosp/4367960 added it.\n\nCould they get `run_vmtests.sh` entries? They can still skip when a device or debugfs file is missing. And could `uffd_copy_tuple_p3s`, `mremap_slice_cow_p3s` and `swap_slice_mremap_p3s` move from `TEST_GEN_PROGS` into `P3S_TESTS` and `run_vmtests.sh`, like the rest of the mm tests? `make run_tests` runs `TEST_GEN_PROGS` directly, outside `run_vmtests.sh`, and `P3S_TESTS` would also give `mremap_slice_cow_p3s` the `-I..` it needs (see aosp/4367985).",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ac19c12_ad1d74c1",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — added the missing tests (including ashmem_p3s) to run_vmtests.sh, and moved uffd_copy_tuple_p3s, mremap_slice_cow_p3s, and swap_slice_mremap_p3s from TEST_GEN_PROGS into P3S_TESTS and run_vmtests.sh.",
+      "parentUuid": "668465b2_09023b2f",
       "isAi": true,
       "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -72,6 +110,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f208dbd2_d3b73765",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — restored upstream\u0027s TEST_GEN_MODS_DIR :\u003d page_frag block and gave p3s_modules its own build, clean, and install rules.",
+      "parentUuid": "3a6fdd73_61857c56",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "94908f43_7e3c0c7f",
@@ -85,6 +142,25 @@
       "writtenOn": "2026-10-29T18:10:33Z",
       "side": 1,
       "message": "I\u0027m worried the fixture modules don\u0027t build, and since `p3s_modules/Kbuild` builds all 18 of them in one `make M\u003d` run, one failure leaves none of them. `folio_test_p3s_compat_anon()` here and `vma_set_file_offset()` in `vmalloc_align_p3s_module.c` aren\u0027t defined anywhere in the kernel. The first is still missing at the top of the chain; aosp/4368031 later replaces the second with `vma_set_slice_off()`.\n\n`p3s_run_module.sh` then skips every fixture test because the `.ko` is missing, so this is easy to miss. Could the probe report something that exists (or go, together with `memory_failure_anon_p3s` and `swapoff_p3s`, which nothing runs yet), and could the `vmalloc_align_p3s_module.c` fix from aosp/4368031 move here?",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4651705_a918ed5f",
+        "filename": "tools/testing/selftests/mm/p3s_modules/anon_exclusive_probe_p3s_module.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — removed folio_test_p3s_compat_anon() from anon_exclusive_probe_p3s_module.c (checking sibling PFN sharing in memory_failure_anon_p3s.c instead), and vmalloc_align_p3s_module.c uses vma_set_slice_off().",
+      "parentUuid": "94908f43_7e3c0c7f",
       "isAi": true,
       "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -108,6 +184,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecfadeba_1ad207fe",
+        "filename": "tools/testing/selftests/mm/process_vm_access_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — added p3s_require_native_compat() to the mixed-geometry launcher tests, updated vmalloc_align_p3s --native to skip when getpagesize() !\u003d NATIVE_PAGE_SIZE, and converted mglru_folded_p3s to P3S_COMPAT_MAIN(run_test).",
+      "parentUuid": "a11fa91e_0d294b63",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "de824ca8_624f00ce",
@@ -126,6 +221,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c340a35c_cdc0e238",
+        "filename": "tools/testing/selftests/mm/shmem_quota_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — dropped shmem_quota_p3s.c.",
+      "parentUuid": "de824ca8_624f00ce",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "742cfcc0_02762988",
@@ -139,6 +253,25 @@
       "writtenOn": "2026-10-29T18:10:33Z",
       "side": 1,
       "message": "Nit: `PRESENT` and `EXCLUSIVE` are `PM_PRESENT` and `PM_MMAP_EXCLUSIVE` from `vm_util.h`, which every mm test already links (as on aosp/4367962). `packed_swap_p3s.c` and `page_range_p3s.c` also test `1ULL \u003c\u003c 63` and `1ULL \u003c\u003c 62` by hand, where `PM_PRESENT` and `PM_SWAP` would read better, and the userfaultfd tests could use `uffd_register()` from there instead of filling `struct uffdio_register` themselves.",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b0e2eff_82c27473",
+        "filename": "tools/testing/selftests/mm/smaps_native_fallback_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:21Z",
+      "side": 1,
+      "message": "Done — switched smaps_native_fallback_p3s.c, packed_swap_p3s.c, page_range_p3s.c, anon_pageout_p3s.c, and uffd_sigbus_anon_p3s.c to use PM_PRESENT, PM_MMAP_EXCLUSIVE, PM_SWAP, and uffd_register() from vm_util.h.",
+      "parentUuid": "742cfcc0_02762988",
       "isAi": true,
       "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
