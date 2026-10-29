@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7d6550b_684a1bd8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:15Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 and updated the anonymous cases to verify -EINVAL on cross-slice moves before testing same-phase moves and private file cross-slice COW.",
+      "parentUuid": "f2a6fcf5_b36821dd",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "43be8460_9c3cb0e9",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T18:28:40Z",
       "side": 1,
       "message": "It looks like nothing runs this test: as a `TEST_GEN_FILES` entry it\u0027s only built, and `run_vmtests.sh` doesn\u0027t list it, here or at the top of the chain (aosp/4367986 only moves it to `TEST_GEN_PROGS`). Could you add it to `run_vmtests.sh`, as on aosp/4367975? For example:\n\n```\nCATEGORY\u003d\"mremap\" run_test ./mremap_slice_cow_p3s\n```",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "585ea196_ef7d52bd",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:15Z",
+      "side": 1,
+      "message": "Done — moved mremap_slice_cow_p3s into P3S_TESTS and added it to run_vmtests.sh in aosp/4367986.",
+      "parentUuid": "43be8460_9c3cb0e9",
       "isAi": true,
       "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d2ec16e_0a54a7a6",
+        "filename": "tools/testing/selftests/mm/mremap_slice_cow_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:15Z",
+      "side": 1,
+      "message": "Done — moved mremap_slice_cow_p3s into P3S_TESTS in aosp/4367986 so it gets -I.. and LOCAL_HDRS.",
+      "parentUuid": "7eab8ee6_1f1b64a7",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "657895be_394e2f77",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-29T18:28:40Z",
       "side": 1,
       "message": "The private file case is a nice addition. As far as I can see, though, it can\u0027t notice a wrong file offset after the move: the memfd holds `0x20` everywhere, and every slice is dirtied before `mremap()`, so all four PTEs are anonymous COW pages. aosp/4367981 also carries the source slice through `copy_vma()` so that a moved file VMA keeps its file offset.\n\nWould it be worth writing a different byte into each 4KB slice of the memfd, dropping one slice with `MADV_DONTNEED` after the move, and checking that it faults back in with its own file byte?",
+      "isAi": true,
+      "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6186d2ed_cfd5e986",
+        "filename": "tools/testing/selftests/mm/mremap_slice_cow_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:15Z",
+      "side": 1,
+      "message": "Done — updated move_private_file_cow() in mremap_slice_cow_p3s.c (in aosp/4367986) to write distinct bytes per slice, drop slice 1 with MADV_DONTNEED after mremap(), and verify it refaults its file byte.",
+      "parentUuid": "657895be_394e2f77",
       "isAi": true,
       "revId": "a056840050cbc6c10c5776160f9e585d7fa02894",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
