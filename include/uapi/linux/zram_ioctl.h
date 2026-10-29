@@ -6,7 +6,7 @@
 #include <linux/types.h>
 #include <linux/ioctl.h>
 
-#define ZRAM_ANDROID_IOC_VERSION 1
+#define ZRAM_ANDROID_IOC_VERSION 2
 
 /* Legacy for process writeback */
 struct zram_android_ioc_data_process_writeback {
@@ -50,8 +50,20 @@ struct zram_android_ioc_process_range_writeback {
 	__u64		written_bytes;
 };
 
+/*
+ * Legacy for process prefetch.
+ * Deprecated: Use struct zram_android_ioc_process_prefetch_ext for new
+ * implementations.
+ */
 struct zram_android_ioc_process_prefetch {
 	__aligned_u64	pidfd;
+};
+
+struct zram_android_ioc_process_prefetch_ext {
+	/* The pidfd of the process to scan for prefetch candidates */
+	__aligned_u64	pidfd;
+	/* Total number of bytes successfully prefetched */
+	__u64		read_bytes;
 };
 
 #define ZRAM_ANDROID_IOC_MAGIC 0xBB
@@ -63,10 +75,14 @@ struct zram_android_ioc_process_prefetch {
 #define ZRAM_ANDROID_IOC_PROCESS_RANGE_WRITEBACK \
 	_IOWR(ZRAM_ANDROID_IOC_MAGIC, 2, struct zram_android_ioc_process_range_writeback)
 
+/* Legacy API: keep it for compatibility */
 #define ZRAM_ANDROID_IOC_PROCESS_PREFETCH \
 	_IOW(ZRAM_ANDROID_IOC_MAGIC, 3, struct zram_android_ioc_process_prefetch)
 
 #define ZRAM_ANDROID_IOC_GET_VERSION _IO(ZRAM_ANDROID_IOC_MAGIC, 4)
+
+#define ZRAM_ANDROID_IOC_PROCESS_PREFETCH_EXT \
+	_IOWR(ZRAM_ANDROID_IOC_MAGIC, 5, struct zram_android_ioc_process_prefetch_ext)
 
 #endif /* _UAPI_LINUX_ZRAM_IOCTL_H */
 
