@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cd36b24_7f4521ab",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cec502ab_f348be1c",
+      "revId": "f72460b57965fb2f3394c5b473245619470ad75e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9c6f07d4_f61d5c80",
@@ -35,6 +53,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "53ac90f4_b550f72e",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c6f07d4_f61d5c80",
+      "revId": "f72460b57965fb2f3394c5b473245619470ad75e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f1dbced_42f8f1c3",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-10-27T22:37:33Z",
       "side": 1,
       "message": "same comment as above.",
+      "revId": "f72460b57965fb2f3394c5b473245619470ad75e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99b12e07_47a76810",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5f1dbced_42f8f1c3",
       "revId": "f72460b57965fb2f3394c5b473245619470ad75e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }

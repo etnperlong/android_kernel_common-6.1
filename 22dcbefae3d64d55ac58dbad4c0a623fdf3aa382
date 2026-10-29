@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "46b4e3b0_cf1eb152",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2073,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b82db1ca_a096b049",
+      "range": {
+        "startLine": 2064,
+        "startChar": 0,
+        "endLine": 2073,
+        "endChar": 0
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c9a31e71_3b6f28af",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ab03f4e_30522e9d",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2074,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9a31e71_3b6f28af",
+      "range": {
+        "startLine": 2074,
+        "startChar": 0,
+        "endLine": 2074,
+        "endChar": 0
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "838fcdfb_29060f4b",
@@ -60,6 +108,30 @@
       "writtenOn": "2026-10-27T22:37:33Z",
       "side": 1,
       "message": "Isn\u0027t that still possible if I open up two instances of `/dev/wrapfd` and use the add ioctl with the same wrapfd all within the same process?",
+      "range": {
+        "startLine": 2114,
+        "startChar": 0,
+        "endLine": 2119,
+        "endChar": 6
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "191cadf1_20108041",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2119,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "It is possible and in that case the process will get multiple events. In this case the system will contain two wrap_event_info nodes pointing to the same context but different file_monitor objects. When an event for that context is generated, both files will receive it.",
+      "parentUuid": "838fcdfb_29060f4b",
       "range": {
         "startLine": 2114,
         "startChar": 0,
@@ -111,6 +183,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4dbbdb6_32f86805",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2204,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "I prefer to check early rather than complete the operation and discover that the input is wrong at the end.",
+      "parentUuid": "039359ba_d567e58b",
+      "range": {
+        "startLine": 2204,
+        "startChar": 20,
+        "endLine": 2204,
+        "endChar": 31
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "48eea8a4_8cee552e",
@@ -124,6 +220,24 @@
       "writtenOn": "2026-10-27T22:37:33Z",
       "side": 1,
       "message": "`kzalloc_objs()`",
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8aa9caf4_bf91d345",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2207,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48eea8a4_8cee552e",
       "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -145,6 +259,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b7a5882_5ebb110f",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea628212_621a7f2c",
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c7a27c7c_4e7f5544",
@@ -158,6 +290,30 @@
       "writtenOn": "2026-10-27T22:37:33Z",
       "side": 1,
       "message": "Instead of copying the whole struct, you can just use `if (put_user(i, \u0026((struct wrapfd_events __user *)arg)-\u003ecount))) { ... }` to write in the event count.",
+      "range": {
+        "startLine": 2236,
+        "startChar": 0,
+        "endLine": 2240,
+        "endChar": 2
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7451e56_c523f57e",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2240,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7a27c7c_4e7f5544",
       "range": {
         "startLine": 2236,
         "startChar": 0,
@@ -191,6 +347,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4753618_ee8c0cd9",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2335,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2260a5cc_0524a207",
+      "range": {
+        "startLine": 2335,
+        "startChar": 0,
+        "endLine": 2335,
+        "endChar": 0
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "897c4911_c8edacde",
@@ -210,6 +390,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a1875d46_c1c86a97",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "I guess if only unmap operation is lazy that should be ok for out usecases because we are listening for these events to reset buffer protection on the first access and mmap() should happen before the munmap(). We do use these events in the buffer aging but I guess late unmap notification should not be critical for that.",
+      "parentUuid": "897c4911_c8edacde",
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9b0605de_d019e02d",
         "filename": "include/uapi/linux/wrapfd.h",
         "patchSetId": 4
@@ -221,6 +419,30 @@
       "writtenOn": "2026-10-27T22:37:33Z",
       "side": 1,
       "message": "What is the rationale for having these be separate? Is it just to be able to extend them independently?",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 2
+      },
+      "revId": "22dcbefae3d64d55ac58dbad4c0a623fdf3aa382",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "10c0714d_27331d21",
+        "filename": "include/uapi/linux/wrapfd.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-29T22:33:49Z",
+      "side": 1,
+      "message": "Yes. Logically these are different commands, just happen to use the same parameters.",
+      "parentUuid": "9b0605de_d019e02d",
       "range": {
         "startLine": 67,
         "startChar": 0,
