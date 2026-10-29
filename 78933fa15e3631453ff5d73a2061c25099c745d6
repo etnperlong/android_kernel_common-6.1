@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70d880f7_fa1b62c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:11:45Z",
+      "side": 1,
+      "message": "Agreed that VMA readahead doesn\u0027t start in 4KB processes today: since aosp/4379310 restores the sibling slices that share the faulting swap entry, a sequential pass faults once per kernel page, so `__swapin_nr_pages()` never sees adjacent 4KB offsets and the window stays at one page. Could the message say that, rather than only that it \"selects the wrong window\"?\n\nAs far as I can see, `swap_vma_readahead_p3s` from aosp/4367986 checks exactly this (page 10 read ahead after faults on native pages 8 and 9), so it fails until this patch and could follow it when aosp/4367986 is split.",
+      "isAi": true,
+      "revId": "78933fa15e3631453ff5d73a2061c25099c745d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a0e6fc4_e35bedf6",
+        "filename": "mm/swap_state.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 709,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:11:45Z",
+      "side": 1,
+      "message": "If this stays, would you mind moving the 4KB window into a helper in `include/linux/p3s/swap.h` (inside its existing `#if` block, with a stub in the `#else` branch), so that `swap_vma_ra_win()` keeps upstream\u0027s window code and only gains a hook after the `win \u003d\u003d 1` check? Something like:\n\n```\n\tif (vma_is_p3s_4k(vma))\n\t\treturn p3s_swap_vma_ra_win(vma, faddr, prev_faddr, win, start, end);\n```\n\nThe history then only needs `__swapin_nr_pages()` to count kernel pages (`prev_faddr \u003e\u003e PAGE_SHIFT_KERNEL` and `faddr \u003e\u003e PAGE_SHIFT_KERNEL`), which is what `PFN_DOWN()` already gives native VMAs. That keeps the geometry comment, the new locals and the unit math out of `mm/swap_state.c`, so upstream changes there don\u0027t conflict with P3S.",
+      "isAi": true,
+      "revId": "78933fa15e3631453ff5d73a2061c25099c745d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85668b2b_fe8b2b8c",
+        "filename": "mm/swap_state.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:11:45Z",
+      "side": 1,
+      "message": "I\u0027m not sure readahead is wanted in 4KB processes, though. On `SWP_SYNCHRONOUS_IO` devices such as zram, `do_swap_page()` skips the swap cache and readahead when the swap count is 1, as for unshared native pages, while a folio mapped by several 4KB slices holds one swap reference per slice PTE, so its swap-in goes through `swapin_readahead()`.\n\nWith this change, 4KB processes would read ahead from zram where native processes don\u0027t (with `page-cluster` at 0, `swap_vma_ra_win()` returns before any of this). Is there a workload that needs it? If not, would it be OK to drop this patch, together with `swap_vma_readahead_p3s`?",
+      "isAi": true,
+      "revId": "78933fa15e3631453ff5d73a2061c25099c745d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2c044ba_c895594b",
+        "filename": "mm/swap_state.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:11:45Z",
+      "side": 1,
+      "message": "I think the walk can now read the faulting folio through one of its sibling slices. When the fault isn\u0027t on the first slice, the window starts at or before its kernel page, so `swap_vma_readahead()` reaches the earlier slices first. They hold the same swap entry, so `__read_swap_cache_async()` allocates the target folio there with `addr !\u003d vmf-\u003eaddress`, which marks it `PG_readahead` and counts it as `SWAP_RA` although `do_swap_page()` maps it right away.\n\nCould that check compare `entry.val !\u003d targ_entry.val` instead? Native VMAs wouldn\u0027t change, since only the faulting PTE normally holds `targ_entry` there.",
+      "isAi": true,
+      "revId": "78933fa15e3631453ff5d73a2061c25099c745d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3112660_c55567a9",
+        "filename": "mm/swap_state.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:11:45Z",
+      "side": 1,
+      "message": "I think this hunk doesn\u0027t change anything: this file opts into `\u003clinux/p3s_user_pages.h\u003e`, arm64 derives `PMD_SHIFT` from the per-process `PAGE_SHIFT`, and `swap_vma_readahead()` calls this under `P3S_CONTEXT_REMOTE_MM(vmf-\u003evma-\u003evm_mm)` since aosp/4312500. So `PMD_MASK` and `PMD_SIZE` are already 2MB for a 4KB mm, the same as `mm_pmd_size(mm)`.\n\nWould it be OK to keep upstream\u0027s two lines and drop the `mm` and `pmd_mask` locals, along with \"bounded by the target mm\u0027s PMD size\" in the message?",
+      "isAi": true,
+      "revId": "78933fa15e3631453ff5d73a2061c25099c745d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
