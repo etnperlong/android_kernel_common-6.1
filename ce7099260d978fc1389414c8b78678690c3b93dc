@@ -17,6 +17,24 @@
       "isAi": true,
       "revId": "ce7099260d978fc1389414c8b78678690c3b93dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b627140f_b164d598",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 1614,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T01:56:49Z",
+      "side": 1,
+      "message": "Semantically, \"not supported\" make more sense, as we don\u0027t support 4KB compat mode for these features. EPERM sounds like a security block, which really isn\u0027t the case here.",
+      "parentUuid": "b00c2e5a_9b78934c",
+      "revId": "ce7099260d978fc1389414c8b78678690c3b93dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
