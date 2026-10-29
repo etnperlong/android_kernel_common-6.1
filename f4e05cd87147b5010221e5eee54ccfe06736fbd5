@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcfd25ac_b8647c2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-29T22:23:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa43159e_fae983bf",
+      "revId": "f4e05cd87147b5010221e5eee54ccfe06736fbd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "093134f1_b05396ff",
@@ -49,6 +67,24 @@
           ]
         }
       ],
+      "revId": "f4e05cd87147b5010221e5eee54ccfe06736fbd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3039ffca_ef954f05",
+        "filename": "rust/kernel/sync/lock/spinlock.rs",
+        "patchSetId": 5
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-29T22:23:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "093134f1_b05396ff",
       "revId": "f4e05cd87147b5010221e5eee54ccfe06736fbd5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
