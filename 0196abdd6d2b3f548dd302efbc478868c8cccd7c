@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78d9df17_9766afbb",
+        "filename": "include/linux/p3s/iov_iter.h",
+        "patchSetId": 30
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T19:09:51Z",
+      "side": 1,
+      "message": "`import_ubuf()` and `__import_iovec()` (as well as `process_vm_rw` in CL 4312492) keep user pointers tagged (e.g., Scudo/TBI/MTE top-byte tags in bits `[63:56]`). In the native path, `gup_fast_fallback()` and `__get_user_pages()` strip the tag via `untagged_addr()` / `untagged_addr_remote()`.\n\nHere, `start \u003d addr \u0026 PAGE_MASK_4KB` retains the top-byte tag. `p3s_gup_remote(mm, va, ...)` succeeds because `__get_user_pages()` untags `va` internally, but `p3s_slice_run_merge()` then calls `vma_lookup(mm, va)` (line 155) with the still-tagged `va`. Since `va \u003e\u003d TASK_SIZE_4KB`, `vma_lookup()` returns `NULL`, `p3s_slice_run_merge()` returns `0`, all pinned pages are released, and `p3s_get_user_slice_pages()` fails with `-EFAULT`.\n\nPlease untag `addr` at the start of `p3s_get_user_slice_pages()` (e.g., `addr \u003d untagged_addr(addr);`, or `addr \u003d untagged_addr_remote(mm, addr);` after acquiring `mmap_lock`).",
+      "isAi": true,
+      "revId": "0196abdd6d2b3f548dd302efbc478868c8cccd7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ab8279d_30ba47a6",
+        "filename": "include/linux/p3s/iov_iter.h",
+        "patchSetId": 30
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-29T19:09:51Z",
+      "side": 1,
+      "message": "Using `avail \u003d maxpages - run.nr_pages` to cap `chunk` conflates 4KB input slices with 16KB compacted host-page slots in `pages[]`. When a caller passes a pre-allocated `pages[]` array with a small `maxpages`:\n- If `maxpages \u003d\u003d 1` (e.g., `iov_iter_get_pages2(..., 1, ...)`), `avail` is 1, so `chunk \u003d 1` and the loop exits after 1 slice (4KB) because `run.nr_pages \u003d\u003d maxpages`, even when up to 4 contiguous slices (16KB) map the same 16KB host page in `pages[0]`.\n- With `maxpages \u003d\u003d 16` (`PVM_MAX_PP_ARRAY_COUNT` in `process_vm_access.c`) and a 64-slice (256KB) contiguous buffer, as `run.nr_pages` approaches 16, `avail` shrinks (`13, 9, 7, 5, 4, 3, 2, 2, 1, 1, 1, 1, 1`), forcing 14 separate `p3s_gup_remote()` calls (the last 5 pinning 1 slice each) and stopping with `pages[15]` only 1/4 populated (`61/64` slices).\n\nConsider using a small 4-entry stack array (`struct page *scratch[P3S_SLICES_PER_PAGE]`) when `avail \u003c P3S_SLICES_PER_PAGE` and allowing the loop to finish the remaining slices (`P3S_SLICE_MASK - run.slice`) of `run.pages[maxpages - 1]` when `run.nr_pages \u003d\u003d maxpages`.",
+      "isAi": true,
+      "revId": "0196abdd6d2b3f548dd302efbc478868c8cccd7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
