@@ -640,6 +640,18 @@ int error_test(struct fuse_bpf_args *fa)
 		return 0;
 	}
 
+	case FUSE_RMDIR | FUSE_PREFILTER: {
+		bpf_printk("rmdir prefilter");
+		return FUSE_BPF_BACKING | FUSE_BPF_POST_FILTER;
+	}
+	case FUSE_RMDIR | FUSE_POSTFILTER: {
+		bpf_printk("rmdir postfilter %d", fa->error_in);
+		if (fa->error_in == -ENOTEMPTY)
+			return -EXDEV;
+
+		return 0;
+	}
+
 	case FUSE_LOOKUP | FUSE_PREFILTER: {
 		const char *name = fa->in_args[0].value;
 
