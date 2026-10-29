@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a58211d7ec046e60918a878a92e0bf898076634b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c54781c9_4800f7a3",
+        "filename": "mm/madvise.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:13:07Z",
+      "side": 1,
+      "message": "Done. Dropped this patch from the series and updated `madvise_free_p3s.c` (in aosp/4367986) to flush the lazyfree batch from userspace (`flush_lazyfree()`).",
+      "parentUuid": "3df354df_0f6fd747",
+      "isAi": true,
+      "revId": "a58211d7ec046e60918a878a92e0bf898076634b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
