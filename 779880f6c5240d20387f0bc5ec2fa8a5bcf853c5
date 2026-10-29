@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a5ac094f_f3fe5fae",
+        "filename": "mm/fadvise.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:03Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series to keep upstream\u0027s POSIX_FADV_DONTNEED rounding.",
+      "parentUuid": "58df169b_16c8e610",
+      "isAi": true,
+      "revId": "779880f6c5240d20387f0bc5ec2fa8a5bcf853c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0dcd7ded_cb588cbf",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T18:19:12Z",
       "side": 1,
       "message": "I\u0027m worried this drops cached data the caller didn\u0027t ask to drop. Converting the 4KB-rounded bounds with `\u003e\u003e PAGE_SHIFT` rounds the start down and the end up to whole 16KB pages, so a hint that covers one 4KB page invalidates the whole 16KB folio around it, up to 12KB on each side of the range. `mapping_evict_folio()` skips dirty, writeback and mapped folios, so nothing is lost, but clean data that this or another process still reads has to come back from storage. For example, a 4KB process that reads a file 4KB at a time and drops each chunk behind it would read every 16KB page four times.\n\nToday, since mm/fadvise.c doesn\u0027t include `\u003clinux/p3s_user_pages.h\u003e`, a 4KB process gets the same rounding as a native one: every 16KB page that the range covers completely is dropped, and partial pages are kept, which upstream does on purpose (\"it is better to preserve needed memory than to discard unneeded memory\"). The native path doesn\u0027t change with this patch, which is good.\n\nSince `POSIX_FADV_DONTNEED` is only a hint, would it be OK to drop this patch (and its test, aosp/4367980) and keep upstream\u0027s rounding? I may be missing a use case: if a 4KB app depends on 4KB hints dropping the page cache, could the message name it and say that a hint now also drops the rest of each 16KB page at both ends?",
+      "isAi": true,
+      "revId": "779880f6c5240d20387f0bc5ec2fa8a5bcf853c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1db2994a_1395bebd",
+        "filename": "mm/fadvise.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:03Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series to keep upstream\u0027s rounding, and updated fadvise_dontneed_p3s.c in aosp/4367986 to verify that partial native pages are retained while whole native-page hints evict clean cached data.",
+      "parentUuid": "0dcd7ded_cb588cbf",
       "isAi": true,
       "revId": "779880f6c5240d20387f0bc5ec2fa8a5bcf853c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
