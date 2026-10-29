@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6530e048_85998b8b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:42:04Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain that a private 16KB folio mapped by four 4KB PTEs fails the native mapcount comparison and that full coverage keeps partly advised clean folios out of LazyFree accounting.",
+      "parentUuid": "1fe8ec7e_7e7e0352",
+      "isAi": true,
+      "revId": "5370c7f652f0c34c490a7f1371dd1d17dd0faa53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "80351e8d_fbbefd63",
