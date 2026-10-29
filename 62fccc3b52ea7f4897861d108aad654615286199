@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "288f2f21_f6845088",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:40:39Z",
+      "side": 1,
+      "message": "Done — updated the subject to \u0027ANDROID: P3S: mm: Add vm_insert_page_slice() for 4KB VMAs\u0027.",
+      "parentUuid": "7b660315_5f1ff8c6",
+      "isAi": true,
+      "revId": "62fccc3b52ea7f4897861d108aad654615286199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "63d15bb5_fdff0671",
