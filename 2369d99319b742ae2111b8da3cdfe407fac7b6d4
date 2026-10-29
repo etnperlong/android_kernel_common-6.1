@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e73734f0_c0df4413",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:28:46Z",
+      "side": 1,
+      "message": "Could the message name aosp/4312528, whose `p3s_uffd_install_anon_folio()` this stresses? As far as I can see, no patch in this chain changes that path, so this is regression coverage.",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8b38c5e_453a0344",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 26
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:28:46Z",
+      "side": 1,
+      "message": "As on aosp/4367991, nothing runs this test yet. Could it get a `run_vmtests.sh` entry next to `userfaultfd_mixed_p3s`? Something like:\n\n```\nCATEGORY\u003d\"userfaultfd\" run_test ./uffd_sigbus_anon_p3s\n```",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3b45ebb_474f933b",
+        "filename": "tools/testing/selftests/mm/uffd_sigbus_anon_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:28:46Z",
+      "side": 1,
+      "message": "I\u0027m worried a failing `UFFDIO_COPY` hangs the test instead of failing it: the handler only sets `handler_failed` and returns, so the access faults again, raises `SIGBUS` again, and never completes.\n\nCould the handler `siglongjmp()` back to `run_test()` (with a `sigsetjmp()` before the accesses), or report and `_exit(KSFT_FAIL)`, when the copy fails?",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18133002_0a982a10",
+        "filename": "tools/testing/selftests/mm/uffd_sigbus_anon_p3s.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T20:28:46Z",
+      "side": 1,
+      "message": "I\u0027m worried this fails instead of skipping without P3S, as on aosp/4367986. `main()` returns `EXIT_FAILURE` without any TAP output when `p3s_execl()` fails; a 16KB kernel that ignores the personality flag runs `run_test()` with 16KB pages, where the first subtest fails and the handler\u0027s 4KB `UFFDIO_COPY` gets `-EINVAL` (so the access loops, see my other comment); and a 4KB kernel passes without P3S.\n\nCould it use `P3S_COMPAT_MAIN(run_test)`, as `dontneed_refault_p3s.c` does? `p3s_require_compat()` would then replace the \"process uses 4K compatibility pages\" subtest.",
+      "isAi": true,
+      "revId": "2369d99319b742ae2111b8da3cdfe407fac7b6d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
