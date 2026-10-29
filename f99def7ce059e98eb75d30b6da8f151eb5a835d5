@@ -56,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c69e6d1_1bf43e41",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1529,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T20:53:01Z",
+      "side": 1,
+      "message": "Done — moved smaps_page_size_p3s.c back out into the separate selftests patch (aosp/4367986) so this patch only touches fs/proc/task_mmu.c.",
+      "parentUuid": "adb0e6dd_c5f31bcd",
+      "isAi": true,
+      "revId": "f99def7ce059e98eb75d30b6da8f151eb5a835d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7640f056_5af5ca08",
