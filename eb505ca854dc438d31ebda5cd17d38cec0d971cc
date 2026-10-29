@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da542397_06104848",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1984890
+      },
+      "writtenOn": "2026-10-29T14:25:46Z",
+      "side": 1,
+      "message": "no cherry-pick info",
+      "revId": "eb505ca854dc438d31ebda5cd17d38cec0d971cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
