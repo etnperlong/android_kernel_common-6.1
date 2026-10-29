@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9eade8d_92342720",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 25
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:12Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 and updated fadvise_dontneed_p3s.c to verify upstream\u0027s rounding after dropping aosp/4367979.",
+      "parentUuid": "0fc3aef6_2472fafe",
+      "isAi": true,
+      "revId": "ec162d5f48fb5f535f7748c3d187e5193b18f1df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b83b8ec_321cb233",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-29T18:19:48Z",
       "side": 1,
       "message": "If the test stays: I\u0027m worried it doesn\u0027t build at this point in the series. It includes \"kselftest_p3s.h\" without `../`, and unlike `devzero_slice_p3s` it gets no `-I..`, so `make -C tools/testing/selftests/mm` stops on it until aosp/4367986 adds the `P3S_MM_TARGETS` rule. Could this patch add the same lines as `devzero_slice_p3s`?\n\n```\n$(OUTPUT)/fadvise_dontneed_p3s: CFLAGS +\u003d -I..\n$(OUTPUT)/fadvise_dontneed_p3s: LOCAL_HDRS +\u003d ../kselftest_p3s.h\n$(OUTPUT)/fadvise_dontneed_p3s: ../kselftest_p3s.h\n```\n\nAlso, nothing runs it, here or at the top of the chain: it\u0027s only built. Could it run from run_vmtests.sh, like `devzero_slice_p3s`?",
+      "isAi": true,
+      "revId": "ec162d5f48fb5f535f7748c3d187e5193b18f1df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c12f567_32a6f1d7",
+        "filename": "tools/testing/selftests/mm/Makefile",
+        "patchSetId": 25
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T22:24:12Z",
+      "side": 1,
+      "message": "Done — folded into aosp/4367986 where fadvise_dontneed_p3s is built via P3S_TESTS (with -I.. and LOCAL_HDRS) and run from run_vmtests.sh.",
+      "parentUuid": "3b83b8ec_321cb233",
       "isAi": true,
       "revId": "ec162d5f48fb5f535f7748c3d187e5193b18f1df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
