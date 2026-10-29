@@ -16,6 +16,25 @@
       "message": "Lets pull these upstream ones out of the P3S chain and submit them separately once the chain is ready.",
       "revId": "ddcd084b426771cd49412ee1ad2ee728ef4371ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8696f2cc_ec0150a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T03:31:44Z",
+      "side": 1,
+      "message": "Done — pulled this upstream patch out of the P3S chain so it can be submitted separately.",
+      "parentUuid": "e6e34d1e_d6fcf512",
+      "isAi": true,
+      "revId": "ddcd084b426771cd49412ee1ad2ee728ef4371ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
