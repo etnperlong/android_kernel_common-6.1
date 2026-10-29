@@ -774,6 +774,9 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
 	} else
 #endif
 	{
+		if (err > 0)
+			err = -EIO;
+
 		/* Zero nodeid is same as -ENOENT, but with valid timeout */
 		if (err || !outarg->nodeid)
 			goto out_put_forget;
