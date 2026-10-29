@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9badc5d9_0a51eb7e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:46Z",
+      "side": 1,
+      "message": "Done — updated the subject and commit message to describe secretmem_fault() past-EOF handling for 4KB processes.",
+      "parentUuid": "b8de3cd5_db7c782c",
+      "isAi": true,
+      "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "642fbc3d_cc0d28a7",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "02c12030_6b3576aa",
+        "filename": "mm/secretmem.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:46Z",
+      "side": 1,
+      "message": "Done — reused vma_slice_past_eof() in secretmem_fault() and removed the #include \u003clinux/p3s/vma.h\u003e.",
+      "parentUuid": "642fbc3d_cc0d28a7",
+      "isAi": true,
+      "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f40dc087_7029e30c",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-28T22:24:47Z",
       "side": 1,
       "message": "It looks like this repeats the check just above it: `vma_slice_past_eof()` (`mm/p3s/filemap.h`, from aosp/4312526) is exactly `vma_is_p3s_4k(vma) \u0026\u0026 vma_file_offset_at(vma, addr) \u003e\u003d i_size_read(inode)`, and `shmem_fault()` already returns `VM_FAULT_SIGBUS` when it\u0027s true.\n\nAs far as I can see, no other shmem path maps a slice past EOF in a 4KB VMA either: `should_fault_around()` returns false for 4KB VMAs, so `filemap_map_pages()` isn\u0027t used there, and `vma_can_userfault()` refuses shmem userfaultfd in 4KB processes (aosp/4312484).\n\nWould it be OK to drop the `mm/shmem.c` hunk?",
+      "isAi": true,
+      "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "919fa601_2820e84a",
+        "filename": "mm/shmem.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2807,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:46Z",
+      "side": 1,
+      "message": "Done — dropped the redundant mm/shmem.c hunk.",
+      "parentUuid": "f40dc087_7029e30c",
       "isAi": true,
       "revId": "f4c92dc437faa5b4b3f43ced61244413706121c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
