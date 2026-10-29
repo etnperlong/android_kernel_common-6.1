@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "680027dc_e87eeb6e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:22Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain that a native-page stride misses a swapped page when the first 4KB slice is a hole and that native alignment checks reject a resumed 4KB-only-aligned next_addr.",
+      "parentUuid": "f63ce199_49e4a72b",
+      "isAi": true,
+      "revId": "850140e6aba6e9e70b15d2ac69a1ea7749cf9e19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "39b649cb_a6a6d783",
