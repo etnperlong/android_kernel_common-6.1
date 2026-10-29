@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec618212_50cc65e4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 25
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:25:30Z",
+      "side": 1,
+      "message": "I don\u0027t think `mremap()` can copy the pages it moves. Upstream only moves the PTEs, so the pages behind the range stay the same, and anything that pinned them for DMA, such as a driver, io_uring fixed buffers ..., keeps working on the memory the process sees. After a copy, a device holding a pin on the old folios would keep reading and writing memory that the process no longer maps. The comment this patch removes from `mm_mremap_fixed_keeps_slice()` makes the same point.\n\nThe `folio_maybe_dma_pinned()` check in `p3s_mremap_prepare()` only turns the `FOLL_PIN` case into an `-EBUSY` that `mremap()` doesn\u0027t otherwise return, after `mremap_to()` has already unmapped an `MREMAP_FIXED` target. References taken with plain `get_user_pages()` don\u0027t show up in it at all.\n\nThe message doesn\u0027t name a user either. As the removed comment notes, ART\u0027s `MREMAP_FIXED` users (`MarkCompact::KernelPrepareRangeForUffd()` and `MemMap::ReplaceWith()`) keep the slice. The only other callers I found were tests and the exec stack move in aosp/4367983, which has since left the series.\n\nCould we keep the `-EINVAL` from aosp/4312522 for VMAs whose slices follow their address (`!vm_ops \u0026\u0026 !vm_file`, as in `vma_slice_offset()`), and drop the repacking? The `copy_vma()` change alone would still let file, shmem and private `/dev/zero` mappings move to another slice, since their pages don\u0027t change. Tests in aosp/4367986 that move anonymous memory to another slice, such as `hole_anon_p3s` and `packed_swap_p3s`, would then expect `-EINVAL`. I have the same concern on the copy path that aosp/4367997 adds for UFFDIO_MOVE.",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86dca629_cd957628",
+        "filename": "include/linux/p3s/mremap.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:25:30Z",
+      "side": 1,
+      "message": "If the repacking goes (see my comment on the commit message), this hint handling would need to go back too, at least for anonymous VMAs. Otherwise a hint at another slice would move the PTEs without fixing their slices. Before this patch, such a hint made the search start from its 16KB window and keep the source slice. A hint isn\u0027t binding, so that\u0027s still valid, and `mremap_hint_p3s` in aosp/4367986 would then expect the slice-preserving address rather than the hint.",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ae47521_6f015988",
+        "filename": "mm/mremap.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 1778,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:25:30Z",
+      "side": 1,
+      "message": "I think these alignment changes (here, for `vrm-\u003enew_addr`, and for the lengths in `do_mremap()`) aren\u0027t needed. `mm/mremap.c` includes `\u003clinux/p3s_user_pages.h\u003e`, so on arm64 `__offset_in_page_log()`, `__offset_in_page()` and `__PAGE_ALIGN()` already use the 4KB process page in a 4KB process.\n\nThey also drop ACK\u0027s x86_64 page size emulation from `d687e7b29d66` (`\"ANDROID: 16K: mremap: __PAGE_ALIGN addr and len`\"), since `mm_pte_size()` is the 4KB kernel page there. Would it be OK to keep the original lines?",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ee58841_077339a0",
+        "filename": "mm/vma.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 1895,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-29T18:25:30Z",
+      "side": 1,
+      "message": "Agreed that file and shmem VMAs need the source slice here once `mremap()` can move them to another slice, so my earlier comment on aosp/4367608 no longer applies.\n\nWould you mind moving the choice into a helper next to `vma_slice_offset()` in `include/linux/p3s/vma.h`, so that `copy_vma()` keeps one-line hooks? Something like:\n\n```\n\tunsigned short slice_off \u003d vma_mremap_slice_off(vma, old_addr, addr);\n\t...\n\tvmg_set_slice_off(\u0026vmg, slice_off);\n```\n\nThe helper would carry the comment. It would return `vma_slice_offset(vma, old_addr)` for VMAs with `vm_file` or `vm_ops`, and `vma_slice_offset(vma, addr)` otherwise. For anonymous VMAs that\u0027s the value `VMG_VMA_STATE()` already set, so the second line changes nothing for them.",
+      "isAi": true,
+      "revId": "e18c1fcd04a4a8bb9444482f9172d48ac7eaf018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
