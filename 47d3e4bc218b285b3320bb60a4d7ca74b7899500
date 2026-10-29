@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcac32ca_5cdf5643",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:51Z",
+      "side": 1,
+      "message": "Done — updated the commit message to explain both the 4KB status mapping -EIO and the 16KB mapping at offset 4KB exposing the next kernel page, as well as policy EOF SIGBUS.",
+      "parentUuid": "c1175c2c_fde0a35a",
+      "isAi": true,
+      "revId": "47d3e4bc218b285b3320bb60a4d7ca74b7899500",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3eca484c_993ad618",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T22:33:55Z",
       "side": 1,
       "message": "Nit: `selinux_status_mmap_p3s.c` in aosp/4367986 might be worth extending to map `NATIVE_PAGE_SIZE` at offset `PROCESS_PAGE_SIZE`: that is the mapping that reads past the status page without this patch, while the 4KB mapping at that offset already fails the size check today.",
+      "isAi": true,
+      "revId": "47d3e4bc218b285b3320bb60a4d7ca74b7899500",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94364e51_b3cfbd79",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:51Z",
+      "side": 1,
+      "message": "Done — extended selinux_status_mmap_p3s.c to also test a NATIVE_PAGE_SIZE mapping at offset PROCESS_PAGE_SIZE and policy EOF access.",
+      "parentUuid": "3eca484c_993ad618",
       "isAi": true,
       "revId": "47d3e4bc218b285b3320bb60a4d7ca74b7899500",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c97a64eb_1694cd53",
+        "filename": "security/selinux/selinuxfs.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:51Z",
+      "side": 1,
+      "message": "Done — removed the redundant #include \u003clinux/p3s/vma.h\u003e.",
+      "parentUuid": "c1d70e25_fd23482e",
+      "isAi": true,
+      "revId": "47d3e4bc218b285b3320bb60a4d7ca74b7899500",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f2716e9_95237919",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-28T22:33:55Z",
       "side": 1,
       "message": "Agreed that this check needs fixing: today a 4KB process can map 16KB at offset 4KB, which gives `vm_pgoff \u003d\u003d 0` and `vm_slice_off \u003d\u003d 1`, so it passes. Since aosp/4368055, `remap_pfn_range()` then maps slices 1 to 3 of the status page and the first 4KB of the page after it. The `vma_file_offset()` check closes that, thanks.\n\nI\u0027m worried `vma_page_size()` reverts `983c0ad4d20e` (`\"ANDROID: 16K: Fix selinux mmap size check\"`) on x86_64 with page size emulation, though: there `__PAGE_SIZE` is the emulated 16KB and every VMA is a multiple of it, while `vma_page_size()` is the 4KB kernel page, so the status mmap would fail with `-EIO` again.\n\nCould the 4KB size apply only to 4KB VMAs, as for perf on aosp/4367963, keeping the original comment? Something like:\n\n```\n\t/* only allows one page from the head */\n\tif (vma_file_offset(vma) ||\n\t    size !\u003d (vma_is_p3s_4k(vma) ? vma_page_size(vma) : __PAGE_SIZE))\n\t\treturn -EIO;\n```",
+      "isAi": true,
+      "revId": "47d3e4bc218b285b3320bb60a4d7ca74b7899500",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c02e6a7_050e8cf9",
+        "filename": "security/selinux/selinuxfs.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:51Z",
+      "side": 1,
+      "message": "Done — restored the original comment and gated the vma_page_size(vma) check on vma_is_p3s_4k(vma) to preserve __PAGE_SIZE under x86_64 page-size emulation.",
+      "parentUuid": "5f2716e9_95237919",
       "isAi": true,
       "revId": "47d3e4bc218b285b3320bb60a4d7ca74b7899500",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
