@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a7800cf218e14ea74baf6b1e7a78c04ed9ddee28",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48d4054a_8632d896",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T21:41:02Z",
+      "side": 1,
+      "message": "Done — dropped this patch from the series now that aosp/4367981 no longer copies slices.",
+      "parentUuid": "60eac57d_62d9ca58",
+      "isAi": true,
+      "revId": "a7800cf218e14ea74baf6b1e7a78c04ed9ddee28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
