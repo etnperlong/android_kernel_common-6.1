@@ -8,9 +8,15 @@ use kernel::{
     prelude::*,
     seq_file::SeqFile,
     seq_print,
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
     str::BStr,
     sync::atomic::{ordering::Relaxed, Atomic},
     sync::{Arc, SetOnce, SpinLock},
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+    sync::{Arc, SpinLock},
+=======
+    sync::{Arc, SpinLock},
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
     task::{Kuid, Pid},
     time::{Instant, Monotonic},
     types::ScopeGuard,
@@ -29,6 +35,7 @@ use crate::{
     BinderReturnWriter, DArc, DLArc, DTRWrap, DeliverToRead,
 };
 
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
 const LOG_SIZE: usize = 32;
 
 pub(crate) static TRANSACTION_LOG: TransactionLog = TransactionLog::new();
@@ -307,6 +314,36 @@ pub(crate) const TRANSACTION_LAYOUT: rb_transaction_layout = rb_transaction_layo
     __kabi_reserved_backport2: 0,
     __kabi_reserved_backport3: 0,
 };
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+#[derive(Zeroable)]
+pub(crate) struct TransactionInfo {
+    pub(crate) from_pid: Pid,
+    pub(crate) from_tid: Pid,
+    pub(crate) to_pid: Pid,
+    pub(crate) to_tid: Pid,
+    pub(crate) code: u32,
+    pub(crate) flags: u32,
+    pub(crate) data_ptr: UserPtr,
+    pub(crate) data_size: usize,
+    pub(crate) offsets_ptr: UserPtr,
+    pub(crate) offsets_size: usize,
+    pub(crate) buffers_size: usize,
+    pub(crate) target_handle: u32,
+    pub(crate) errno: i32,
+    pub(crate) reply: u32,
+    pub(crate) oneway_spam_suspect: bool,
+    pub(crate) is_reply: bool,
+    pub(crate) debug_id: usize,
+}
+
+impl TransactionInfo {
+    #[inline]
+    pub(crate) fn is_oneway(&self) -> bool {
+        self.flags & TF_ONE_WAY != 0
+    }
+}
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
 
 #[pin_data(PinnedDrop)]
 pub(crate) struct Transaction {
@@ -353,7 +390,30 @@ impl Transaction {
             info.debug_id,
             allow_fds,
             txn_security_ctx_off.as_mut(),
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         )?;
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        ) {
+            Ok(alloc) => alloc,
+            Err(err) => {
+                if !err.is_dead() {
+                    pr_warn!("Failure in copy_transaction_data: {:?}", err);
+                }
+                return Err(err);
+            }
+        };
+        let oneway_spam_detected = alloc.oneway_spam_detected;
+=======
+        ) {
+            Ok(alloc) => alloc,
+            Err(err) => {
+                if !err.is_dead() {
+                    pr_warn!("Failure in copy_transaction_data: {:?}", err);
+                }
+                return Err(err);
+            }
+        };
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         if info.is_oneway() {
             if from_parent.is_some() {
                 pr_warn_ratelimited!("Oneway transaction should not be in a transaction stack.\n");
@@ -409,7 +469,28 @@ impl Transaction {
         allow_fds: bool,
     ) -> BinderResult<DLArc<Self>> {
         let mut alloc =
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
             from.copy_transaction_data(to.clone(), info, info.debug_id, allow_fds, None)?;
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        let trd = &tr.transaction_data;
+        let mut alloc = match from.copy_transaction_data(to.clone(), tr, debug_id, allow_fds, None)
+        {
+            Ok(alloc) => alloc,
+            Err(err) => {
+                pr_warn!("Failure in copy_transaction_data: {:?}", err);
+                return Err(err);
+            }
+        };
+        let oneway_spam_detected = alloc.oneway_spam_detected;
+=======
+            match from.copy_transaction_data(to.clone(), info, info.debug_id, allow_fds, None) {
+                Ok(alloc) => alloc,
+                Err(err) => {
+                    pr_warn!("Failure in copy_transaction_data: {:?}", err);
+                    return Err(err);
+                }
+            };
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         if info.flags & TF_CLEAR_BUF != 0 {
             alloc.set_info_clear_on_drop();
         }
@@ -590,7 +671,11 @@ impl Transaction {
 
         let res = if let Some(thread) = self.find_target_thread() {
             info.to_tid = thread.id;
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
             crate::trace::trace_transaction(false, &self, Some(&thread.task));
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
             match thread.push_work(self) {
                 PushWorkRes::Ok => Ok(()),
                 PushWorkRes::OkNotifyPoll => {
@@ -757,6 +842,7 @@ impl DeliverToRead for Transaction {
         if self.target_node.is_some() && self.flags & TF_ONE_WAY == 0 {
             let reply = Err(BR_DEAD_REPLY);
             self.from.deliver_reply(reply, &self, None);
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         } else {
             binder_debug!(
                 pid = self.to.task.pid(),
@@ -764,6 +850,9 @@ impl DeliverToRead for Transaction {
                 "undelivered transaction {}, process died",
                 self.debug_id
             );
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         }
 
         self.drop_outstanding_txn();

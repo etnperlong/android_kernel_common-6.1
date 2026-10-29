@@ -21,7 +21,12 @@ use core::mem::{size_of, MaybeUninit};
 #[derive(Copy, Clone)]
 pub struct UserPtr(*mut c_void);
 
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
 // SAFETY: `UserPtr` is represented as a raw pointer, which can be safely zero-initialized.
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+// SAFETY: Null pointer is a valid value.
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
 unsafe impl Zeroable for UserPtr {}
 
 impl UserPtr {

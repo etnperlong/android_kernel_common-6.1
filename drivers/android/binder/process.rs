@@ -992,8 +992,12 @@ impl Process {
 
         // To preserve original binder behaviour, we only fail requests where the manager tries to
         // increment references on itself.
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         let _to_free_by_handle;
         let _to_free_by_node;
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         let _to_free_freeze_listener;
         let _to_free_freeze_listener_cleanup;
         let mut refs = self.node_refs.lock();
@@ -1013,6 +1017,7 @@ impl Process {
                 unsafe { info.node_ref2().node.remove_node_info(info) };
 
                 let id = info.node_ref().node.global_id();
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
                 if let Some(freeze) = *info.freeze() {
                     if let Some(fl) = refs.freeze_listeners.remove(&freeze) {
                         _to_free_freeze_listener_cleanup = fl.on_process_cleanup(&self);
@@ -1032,6 +1037,21 @@ impl Process {
                         refs.handle_is_present.shrink(new_bitmap);
                     }
                 }
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+                refs.by_handle.remove(&handle);
+                refs.by_node.remove(&id);
+=======
+
+                if let Some(freeze) = *info.freeze() {
+                    if let Some(fl) = refs.freeze_listeners.remove(&freeze) {
+                        _to_free_freeze_listener_cleanup = fl.on_process_cleanup(&self);
+                        _to_free_freeze_listener = fl;
+                    }
+                }
+
+                refs.by_handle.remove(&handle);
+                refs.by_node.remove(&id);
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
             }
         } else {
             // All refs are cleared in process exit, so this warning is expected in that case.

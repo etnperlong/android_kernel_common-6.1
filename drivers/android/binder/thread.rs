@@ -1197,10 +1197,45 @@ impl Thread {
             size_of::<u64>(),
         );
         let secctx_off = aligned_data_size + offsets_size + buffers_size;
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         let mut alloc = to_process.buffer_alloc(debug_id, len, info)?;
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        let mut alloc =
+            match to_process.buffer_alloc(debug_id, len, is_oneway, self.process.task.pid()) {
+                Ok(alloc) => alloc,
+                Err(err) => {
+                    pr_warn!(
+                        "Failed to allocate buffer. len:{}, is_oneway:{}",
+                        len,
+                        is_oneway
+                    );
+                    return Err(err);
+                }
+            };
+=======
+        let mut alloc = match to_process.buffer_alloc(debug_id, len, info) {
+            Ok(alloc) => alloc,
+            Err(err) => {
+                pr_warn!(
+                    "Failed to allocate buffer. len:{}, is_oneway:{}",
+                    len,
+                    info.is_oneway(),
+                );
+                return Err(err);
+            }
+        };
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
 
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         crate::trace::trace_transaction_alloc_buf(debug_id, data_size, offsets_size, buffers_size);
 
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        // SAFETY: This accesses a union field, but it's okay because the field's type is valid for
+        // all bit-patterns.
+        let trd_data_ptr = unsafe { &trd.data.ptr };
+        let mut buffer_reader =
+=======
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         let mut buffer_reader = UserSlice::new(info.data_ptr, data_size).reader();
         let mut end_of_previous_object = 0;
         let mut sg_state = None;
@@ -1356,6 +1391,16 @@ impl Thread {
             if let Some(ee) = extended_error {
                 if inner.extended_error.command == BR_OK {
                     inner.extended_error = ee;
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+                }
+            }
+
+            match reply {
+                Ok(work) => {
+                    inner.push_work(work);
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
                 }
             }
 
@@ -1451,6 +1496,7 @@ impl Thread {
             self.transaction_inner(&mut info)
         };
 
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         // This runs when return work is passed to the caller. This is not
         // always the same as the transaction failing, as reply errors are
         // delivered to the remote process.
@@ -1511,6 +1557,38 @@ impl Thread {
         let node_ref = self.process.get_transaction_node(info.target_handle)?;
         info.to_pid = node_ref.node.owner.task.pid();
         info.to_node_debug_id = node_ref.node.debug_id;
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+=======
+        if let Err(err) = ret {
+            self.push_return_work(err.reply);
+            if err.reply != BR_TRANSACTION_COMPLETE {
+                info.reply = err.reply;
+                if let Some(source) = &err.source {
+                    info.errno = source.to_errno();
+
+                    {
+                        let mut inner = self.inner.lock();
+                        inner.extended_error =
+                            ExtendedError::new(info.debug_id as u32, err.reply, source.to_errno());
+                    }
+                }
+
+                pr_warn!(
+                    "{}:{} transaction to {} failed: {err:?}",
+                    info.from_pid,
+                    info.from_tid,
+                    info.to_pid
+                );
+            }
+        }
+
+        Ok(())
+    }
+
+    fn transaction_inner(self: &Arc<Self>, info: &mut TransactionInfo) -> BinderResult {
+        let node_ref = self.process.get_transaction_node(info.target_handle)?;
+        info.to_pid = node_ref.node.owner.task.pid();
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         security::binder_transaction(&self.process.cred, &node_ref.node.owner.cred)?;
         // TODO: We need to ensure that there isn't a pending transaction in the work queue. How
         // could this happen?
@@ -1550,6 +1628,7 @@ impl Thread {
     }
 
     fn reply_inner(self: &Arc<Self>, info: &mut TransactionInfo) -> BinderResult {
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         let orig = match self.inner.lock().pop_transaction_to_reply(self) {
             Ok(orig) => orig,
             Err(err) => {
@@ -1557,6 +1636,11 @@ impl Thread {
                 return Err(err.into());
             }
         };
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        let orig = self.inner.lock().pop_transaction_to_reply(self)?;
+=======
+        let orig = self.inner.lock().pop_transaction_to_reply(self)?;
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         if !orig.from.is_current_transaction(&orig) {
             binder_debug!(
                 UserError,
@@ -1577,6 +1661,7 @@ impl Thread {
             let process = orig.from.process.clone();
             let allow_fds = orig.flags & TF_ACCEPT_FDS != 0;
             let reply = Transaction::new_reply(self, process, info, allow_fds)?;
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
             if info.flags & TF_DEFER_COMPLETE != 0 {
                 // The flag is set. Perform a deferred push so that `read` can wait for the
                 // next incoming transaction without a userspace roundtrip.
@@ -1588,6 +1673,11 @@ impl Thread {
                     self.process.notify_poll(false);
                 }
             }
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+            self.inner.lock().push_work(completion);
+=======
+            self.inner.lock().push_work(completion);
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
             orig.from.deliver_reply(Ok(reply), &orig, None);
             Ok(())
         })()
@@ -1595,6 +1685,7 @@ impl Thread {
             // At this point we only return `BR_TRANSACTION_COMPLETE` to the caller, and we must let
             // the sender know that the transaction has completed (with an error in this case).
 
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
             let param = err.source.as_ref().map_or(0, |e| e.to_errno());
             let ee = ExtendedError::new(info.debug_id as u32, err.reply, param);
             orig.from
@@ -1602,6 +1693,25 @@ impl Thread {
             info.reply = BR_FAILED_REPLY;
             info.errno = err.source;
             info.error_line = Some(err.line);
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+                "Failure {:?} during reply - delivering BR_FAILED_REPLY to sender.",
+                err
+            );
+            let reply = Err(BR_FAILED_REPLY);
+            orig.from.deliver_reply(reply, &orig);
+=======
+            pr_warn!(
+                "{}:{} reply to {} failed: {err:?}",
+                info.from_pid,
+                info.from_tid,
+                info.to_pid
+            );
+
+            let param = err.source.as_ref().map_or(0, |e| e.to_errno());
+            let ee = ExtendedError::new(info.debug_id as u32, err.reply, param);
+            orig.from
+                .deliver_reply(Err(BR_FAILED_REPLY), &orig, Some(ee));
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
             err.reply = BR_TRANSACTION_COMPLETE;
             err
         });
@@ -1619,7 +1729,13 @@ impl Thread {
     fn oneway_transaction_inner(self: &Arc<Self>, info: &mut TransactionInfo) -> BinderResult {
         let node_ref = self.process.get_transaction_node(info.target_handle)?;
         info.to_pid = node_ref.node.owner.task.pid();
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         info.to_node_debug_id = node_ref.node.debug_id;
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        let handle = unsafe { tr.transaction_data.target.handle };
+        let node_ref = self.process.get_transaction_node(handle)?;
+=======
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
         security::binder_transaction(&self.process.cred, &node_ref.node.owner.cred)?;
         let transaction = Transaction::new(node_ref, None, self, info)?;
         let code = if self.process.is_oneway_spam_detection_enabled() && info.oneway_spam_suspect {
@@ -1630,6 +1746,7 @@ impl Thread {
         let list_completion =
             DTRWrap::arc_try_new(DeliverCode::new(code, self.process.task.pid()))?;
         let completion = list_completion.clone_arc();
+<<<<<<< HEAD   (545009c7ffbf724b5f54123df2df15a21efb012f Revert "KVM: x86: Move update_cr8_intercept() to lapic.c")
         // Not notifying work_condvar: Reply to current thread.
         let res = self.inner.lock().push_work(list_completion);
         match transaction.submit(info) {
@@ -1639,6 +1756,15 @@ impl Thread {
                 }
                 Ok(())
             }
+||||||| BASE   (a4f8491da9563ba6eb77969ac26fc7052114c476 iio: temperature: tmp006: use devm_iio_trigger_register)
+        self.inner.lock().push_work(list_completion);
+        match transaction.submit() {
+            Ok(()) => Ok(()),
+=======
+        self.inner.lock().push_work(list_completion);
+        match transaction.submit(info) {
+            Ok(()) => Ok(()),
+>>>>>>> BRANCH (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
             Err(err) => {
                 completion.skip();
                 Err(err)
