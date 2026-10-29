@@ -60,6 +60,8 @@
   prep_new_hpage_order
   proc_set_size
   proc_symlink
+  proc_tgid_get_task
+  proc_tgid_register
   pstore_register
   pstore_unregister
   put_disk
