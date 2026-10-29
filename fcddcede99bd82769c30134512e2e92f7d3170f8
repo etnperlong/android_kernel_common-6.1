@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "76a8b957_d0a547fd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:35Z",
+      "side": 1,
+      "message": "Done — updated the subject to \u00274KB processes\u0027 and updated the commit message to explain why (1 + 2^n) * 4KB ring mappings fail without this patch and why explicit data PTEs do not need to match vma_slice_offset().",
+      "parentUuid": "cde4fed8_47bcbca4",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4b2c5f77_059ceab6",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-28T21:54:56Z",
       "side": 1,
       "message": "If the 4KB layout stays, would you mind moving this mapping out of `kernel/events/core.c`? It\u0027s about 45 lines of P3S-only code, plus the `#ifdef`ed fields and accessors in `internal.h`. A P3S header that kernel/events includes (e.g. `include/linux/p3s/perf.h`) could hold it, with a one-line dispatch left in `map_range()`.\n\nCould the new names also say P3S rather than PPPS, the old abbreviation (`perf_map_main_ppps()`, `perf_map_aux_ppps()`)?",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aab0710f_f339a169",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 6889,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:35Z",
+      "side": 1,
+      "message": "Done — moved perf_map_main_p3s() and the P3S perf helpers into include/linux/p3s/perf.h and renamed ppps to p3s.",
+      "parentUuid": "4b2c5f77_059ceab6",
       "isAi": true,
       "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e14d85a3_cddc8404",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 6973,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:35Z",
+      "side": 1,
+      "message": "Done — dropped perf_map_aux_ppps(), perf_aux_offset(), and perf_mmap_is_aux(), keeping AUX mappings on the native path.",
+      "parentUuid": "9fad7045_5fd0e1e8",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "44892b5c_356daa56",
@@ -73,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7117e9e6_86c67300",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7087,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:35Z",
+      "side": 1,
+      "message": "Done — kept user_extra \u003d nr_pages + __PAGE_SIZE / PAGE_SIZE in perf_mmap_rb() and moved the x86 emulated metadata unmap accounting fix into a separate patch (aosp/4399068).",
+      "parentUuid": "44892b5c_356daa56",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a67a0ba6_ca4803c3",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-10-28T21:54:56Z",
       "side": 1,
       "message": "I\u0027m worried this breaks repeat mappings of a ring buffer, and every AUX mapping, under x86_64 page size emulation. Without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, `perf_mmap_page_size()` returns `__PAGE_SIZE`, the emulated 16KB, while `mm_pte_size()` is the 4KB kernel page. So this check, and the one at the top of `perf_mmap_aux()`, return `-EINVAL` there.\n\nCould the stored and the compared values come from one helper, which `metadata_size` in `perf_mmap()` and `perf_set_mmap_page_size()` would use too? Something like:\n\n```\nstatic unsigned long perf_mm_page_size(struct mm_struct *mm)\n{\n        return mm_is_p3s_4k(mm) ? mm_pte_size(mm) : __PAGE_SIZE;\n}\n```",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3c3b451_0e680646",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 7103,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:35Z",
+      "side": 1,
+      "message": "Done — added perf_mm_page_size() and used it consistently for metadata_size, perf_set_mmap_page_size(), and repeat/AUX checks.",
+      "parentUuid": "a67a0ba6_ca4803c3",
       "isAi": true,
       "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -122,6 +217,25 @@
       "writtenOn": "2026-10-28T21:54:56Z",
       "side": 1,
       "message": "These offsets look right to me, and I think they\u0027re needed whichever way the ring buffer goes. When a native simpleperf profiles a 4KB app today, `PERF_RECORD_MMAP2` reports `vm_pgoff \u003c\u003c PAGE_SHIFT` without the 4KB slice, so symbols in a library segment mapped at a 4KB offset come out wrong. The same goes for the address filters in `perf_addr_filter_vma_adjust()`, and `perf_get_pgtable_size()` walks a 4KB mm with the kernel\u0027s PMD index and page sizes.\n\nWould you mind moving these three into a separate patch, together with `perf_page_size_p3s.c` and the `PERF_RECORD_MMAP` check of `perf_mmap_offset_p3s.c` from aosp/4367986? They don\u0027t depend on the ring layout, so they could land whatever we decide for `perf_mmap()`.",
+      "isAi": true,
+      "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d8413ff_5c6ffcee",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 15
+      },
+      "lineNbr": 9732,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-29T00:41:35Z",
+      "side": 1,
+      "message": "Done — split perf_event_mmap(), perf_addr_filter_vma_adjust(), perf_get_pgtable_size(), and perf_page_size_p3s.c into a separate commit (aosp/4399069).",
+      "parentUuid": "67bea9d1_42ddb17f",
       "isAi": true,
       "revId": "fcddcede99bd82769c30134512e2e92f7d3170f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
