@@ -247,8 +247,15 @@ asmlinkage void __noreturn __kvm_host_psci_cpu_entry(bool is_cpu_on)
 	if (is_cpu_on)
 		release_boot_args(boot_args);
 
+<<<<<<< HEAD   (8f9a11a2a3e71a4831fa26c7ef57e8c0cea65039 Merge a2c343370351 ("KVM: arm64: Initialize HCR_EL2.E2H earl)
 	pkvm_psci_notify(PKVM_PSCI_CPU_ENTRY, host_ctxt);
 	__hyp_exit();
+||||||| BASE   (a2c343370351f2fe03b1fbc0a909647b61e8d615 KVM: arm64: Initialize HCR_EL2.E2H early)
+=======
+	write_sysreg_el1(INIT_SCTLR_EL1_MMU_OFF, SYS_SCTLR);
+	write_sysreg(INIT_PSTATE_EL1, SPSR_EL2);
+
+>>>>>>> BRANCH (6e5714bcc98f3959794954287f5c3e16d2eebaaf KVM: arm64: Initialize SCTLR_EL1 in __kvm_hyp_init_cpu())
 	__host_enter(host_ctxt);
 }
 
