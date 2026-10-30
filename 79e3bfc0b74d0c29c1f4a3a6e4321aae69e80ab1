@@ -1,0 +1,166 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ffa6131_e4e43425",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Could the commit message keep the two points from the PS15 thread that got lost in the rewrite? First, what fails without the patch: in a 4KB process, `mmap()` of a (1 + 2^n) × 4KB ring, the size perf tools compute from the page size, fails with `-EINVAL`. Second, why the data PTEs can map a different slice from the one `vma_slice_offset()` gives (the data starts one 4KB page into the VMA, but at slice 0 of its kernel page), and why that\u0027s fine: the VMA is `VM_IO | VM_PFNMAP` with no `-\u003eaccess`, so GUP, `__access_remote_vm()` and coredumps never read through these PTEs.\n\nIt would also help to say what 4KB processes see now: a 4KB `data_offset`, and `-EINVAL` for 4KB and 8KB data rings. And could the subject mention 4KB processes, e.g. \"ANDROID: P3S: perf: Map a 4KB user page for 4KB processes\"?",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "400c8104_3c9507ad",
+        "filename": "include/linux/p3s/perf.h",
+        "patchSetId": 28
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Would you mind folding the three `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` blocks of this header into one, with the stubs in its `#else` branch? `perf_mmap_page_size()` and `perf_set_mmap_page_size()` each have a block inside the function, and `perf_map_main_p3s()` has a third. Something like:\n\n```\n#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE\nstatic inline unsigned long perf_mmap_page_size(struct perf_buffer *rb)\n{\n\treturn rb-\u003emmap_page_size;\n}\n/* perf_set_mmap_page_size(), perf_map_main_p3s(), new helpers */\n#else\nstatic inline unsigned long perf_mmap_page_size(struct perf_buffer *rb)\n{\n\treturn __PAGE_SIZE;\n}\n/* their stubs */\n#endif\n```\n\nThe `#ifdef` around `mmap_page_size` in `struct perf_buffer` is fine as it is, since its accessors live here. Also, `PAGE_SIZE_KERNEL` in `perf_map_main_p3s()` would make the units explicit, as in the other P3S headers.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7590c2ba_07b43521",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 6860,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Agreed that the 4KB layout needs this: `vmf-\u003epgoff` counts kernel pages, so upstream\u0027s check would also let the first three data slices become writable. Would you mind moving the 4KB case into `include/linux/p3s/perf.h` as well, so that upstream\u0027s check stays as it is? Something like:\n\n```\n\tif (vma_is_p3s_4k(vmf-\u003evma))\n\t\treturn p3s_perf_mmap_pfn_mkwrite(vmf);\n\n\t/* The first page is the user control page, others are read-only. */\n\treturn vmf-\u003epgoff \u003d\u003d 0 ? 0 : VM_FAULT_SIGBUS;\n```\n\nThe helper would allow only the first 4KB of the main ring (`!vma-\u003evm_pgoff`), with a stub in the header\u0027s `#else` branch.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40e5621d_f014e348",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 6883,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Nit: this adds a second blank line here, and another one before `perf_mmap_open()` (checkpatch: multiple blank lines). Could both go?",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49c1b42a_b066faf5",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 7081,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Thanks for dropping the AUX mapping. A few rewrites from it seem to be left, and as far as I can see they give the same answers as upstream. `mmap_offset` here is `vm_pgoff \u003c\u003c PAGE_SHIFT`. `perf_mmap_aux()` already requires `aux_pgoff \u003d\u003d vm_pgoff`, so in `perf_mmap_open()` every VMA with a non-zero `vm_pgoff` is the AUX one. And `data_page_nr(rb)` in `perf_mmap_close()` is `perf_data_size(rb) \u003e\u003e PAGE_SHIFT`. Would it be OK to drop those changes? I think the page size check at the top of this function isn\u0027t needed either, since AUX keeps the native layout whichever mm maps it, but I may be missing a case.\n\nThe `perf_data_size(rb) + perf_mmap_page_size(rb)` bound doesn\u0027t change anything on arm64, where AUX offsets and data sizes are whole kernel pages. Under x86_64 page size emulation, though, it becomes data + 16KB instead of data + 4KB. That looks right for the emulated metadata area, but like the accounting fix, could it move to aosp/4399088 (with `__PAGE_SIZE`)?",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b9d865a_949c2e5e",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 7184,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Thanks for moving the mapping into `include/linux/p3s/perf.h` and for requiring 16KB of data. I think the size checks could become a one-line accessor too. The only P3S difference is the 4KB user page, which is still backed by one kernel page. If `perf_mmap()` counts it as that kernel page, upstream\u0027s checks here and in `perf_mmap_rb()` work unchanged. Something like:\n\n```\n/* Count the 4KB user page of a 4KB process as the kernel page behind it. */\nstatic inline unsigned long p3s_perf_mmap_size(struct vm_area_struct *vma)\n{\n\tunsigned long size \u003d vma-\u003evm_end - vma-\u003evm_start;\n\n\tif (!vma_is_p3s_4k(vma) || vma-\u003evm_pgoff)\n\t\treturn size;\n\treturn size - mm_pte_size(vma-\u003evm_mm) + PAGE_SIZE_KERNEL;\n}\n```\n\nwith only this left here:\n\n```\n\tvma_size \u003d p3s_perf_mmap_size(vma);\n```\n\n`vma_size !\u003d PAGE_SIZE * nr_pages` then rejects data that isn\u0027t a multiple of 16KB, `perf_mmap_rb()` rejects page counts that aren\u0027t a power of two, and `user_extra` stays data + 1 kernel pages, which matches `perf_mmap_close()`. The `data_size` and `mmap_offset` locals, the re-indented checks and the `user_extra` and `nr_pages` change in `perf_mmap_rb()` could then go. Its page size check and `perf_set_mmap_page_size()` would stay. (`mmap_offset` is always `vm_pgoff \u003c\u003c PAGE_SHIFT` here anyway, since `vma_slice_off()` is rejected above.)",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f259b698_380e7a03",
+        "filename": "kernel/events/internal.h",
+        "patchSetId": 28
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Could the upstream helpers stay where they are? `perf_data_size()` moves into the P3S header unchanged, so upstream changes to it (`ring_buffer.c` uses it too) would land in a P3S file. Including `\u003clinux/p3s/perf.h\u003e` after it would keep it here, and the header could include `\u003clinux/page_size_compat_defs.h\u003e` itself, rather than `internal.h`.\n\nSimilarly, I think `perf_map_main_p3s()` can call `perf_mmap_to_page()`: it returns `__perf_mmap_to_page()` for every offset below `aux_pgoff`, and the AUX area starts after the main ring. `__perf_mmap_to_page()` could then keep its name and stay `static`, and the `ring_buffer.c` change and the `perf_mmap_main_page()` prototype could go.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82e4caed_5ab0a4d7",
+        "filename": "mm/p3s.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Nit: checkpatch asks for `\u003clinux/cacheflush.h\u003e` here. It also wants a blank line after `struct mm_struct *mm \u003d vma-\u003evm_mm;` in `remap_pfn_range_slice()`. Putting `P3S_CONTEXT_REMOTE_MM(vma-\u003evm_mm);` first, as `remap_pfn_range_internal()` does, keeps the declarations together. With `--strict`, the continuation lines of its prototype and definition should also line up with the open parenthesis.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d56ab70e_c0642af5",
+        "filename": "mm/p3s.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:53:53Z",
+      "side": 1,
+      "message": "Could this get a `p3s_` prefix, e.g. `p3s_remap_pfn_slice()`? It has to stay global for the perf header and aosp/4368009, but Will objected to unprefixed globals on aosp/4368056, and `remap_pfn_range_slice()` reads like an upstream variant of `remap_pfn_range()`. Keeping it unexported looks right.\n\nBoth callers, here and in aosp/4368009, map exactly one 4KB page, so the `size` argument could go too. And if you rename it, the helpers in `include/linux/p3s/perf.h` could take the prefix as well (e.g. `p3s_perf_map_main()`), so that they can\u0027t clash with upstream `perf_*()` names.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
