@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4b98b98_7b20ce2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 13
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T19:31:54Z",
+      "side": 1,
+      "message": "Done. Dropped this patch and aosp/4368010 from the stack, and updated remap_vmalloc_range_partial() (aosp/4367949) to use vm_insert_page() per native-page window.",
+      "parentUuid": "477796ca_39d26ef4",
+      "isAi": true,
+      "revId": "3b73134c068690c32fc9873b657a9356a4793d33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4f14848d_24d40390",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1562fed_7cf6dc03",
+        "filename": "mm/memory.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 2338,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T19:31:54Z",
+      "side": 1,
+      "message": "Ack — dropped this patch from the stack.",
+      "parentUuid": "4f14848d_24d40390",
+      "isAi": true,
+      "revId": "3b73134c068690c32fc9873b657a9356a4793d33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "039e7f2a_53104f8e",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-30T05:02:55Z",
       "side": 1,
       "message": "If it stays, would you mind moving the body and kernel-doc of `vm_insert_page_slice()` into `vma_insert_page_slice()` in `mm/p3s/memory.h`? It can call the `static` helpers declared there, and `mm/memory.c` would only keep the entry point that `mm/vmalloc.c` and `mm/p3s.c` need:\n\n```\nint vm_insert_page_slice(struct vm_area_struct *vma, unsigned long addr,\n\t\t\t struct page *page, unsigned int slice_idx)\n{\n\treturn vma_insert_page_slice(vma, addr, page, slice_idx);\n}\n```\n\nThe helper could set `VM_MIXEDMAP` itself, with a `WARN_ON_ONCE()` for `VM_PFNMAP` instead of the two `BUG_ON()`s. Then `vm_insert_page()` and `vm_insert_pages()` keep upstream\u0027s code and `prepare_vm_insert_page()` isn\u0027t needed. That goes back on the shared helper I asked for on PS7, sorry about that.\n\nThe prototype could then move from `include/linux/mm.h` to `mm/p3s/pgtable.h`, since only `mm/` calls it and it isn\u0027t exported.",
+      "isAi": true,
+      "revId": "3b73134c068690c32fc9873b657a9356a4793d33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "069ac948_26d1fb1b",
+        "filename": "mm/memory.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 2540,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T19:31:54Z",
+      "side": 1,
+      "message": "Ack — dropped this patch from the stack.",
+      "parentUuid": "039e7f2a_53104f8e",
       "isAi": true,
       "revId": "3b73134c068690c32fc9873b657a9356a4793d33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
