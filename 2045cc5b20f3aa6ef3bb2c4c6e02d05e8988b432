@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c082cee_6a56f7b0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1984890
+      },
+      "writtenOn": "2026-10-30T12:37:18Z",
+      "side": 1,
+      "message": "Looking at the cherry-picks history is not clear to me why Jacky\u0027s S-o-b is here. I guess because he cherry-picked this patch to android-mainline but was never merged.",
+      "revId": "2045cc5b20f3aa6ef3bb2c4c6e02d05e8988b432",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c35171e5_ee982960",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1984890
+      },
+      "writtenOn": "2026-10-30T12:37:18Z",
+      "side": 1,
+      "message": "the comment that you removed from the commit message is valid here as well, I\u0027d keep it.",
+      "revId": "2045cc5b20f3aa6ef3bb2c4c6e02d05e8988b432",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
