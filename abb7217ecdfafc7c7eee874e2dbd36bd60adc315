@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d84663e1_d8cf01bf",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 20
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:19:57Z",
+      "side": 1,
+      "message": "Hi Kelvin, Will suggested squashing this into aosp/4368036 to fill the zero-page COW gap. It only uses helpers from p3s_6.18_b10 and applies to it as is, so I\u0027d rather keep it as this separate patch: could you move it to the front of your series, right on top of p3s_6.18_b10? Thanks!",
+      "isAi": true,
+      "revId": "abb7217ecdfafc7c7eee874e2dbd36bd60adc315",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
