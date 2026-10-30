@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6ca9205_4d84dd67",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 23
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:42:31Z",
+      "side": 1,
+      "message": "I think this patch and aosp/4367612 might not be needed anymore. As far as I can see, at the top of the chain every PTE that GUP can reach maps the slice that `vma_slice_offset()` gives its address, which is what our readers already use: iov_iter and `process_vm_readv()` (aosp/4312497, aosp/4312492), `__access_remote_vm()` (aosp/4368035) and futex keys (aosp/4368034).\n\nThe only explicit insertions are `vm_insert_page_slice()` calls. It isn\u0027t exported, and as I mentioned on aosp/4367599, both of its callers pass the slice that `vma_slice_offset()` gives the address: `remap_vmalloc_range_partial()` in aosp/4367949 and `p3s_vm_map_pages()` in aosp/4368010. The BPF ring buffer mentioned on PS9 is refused since aosp/4367950, and the `iov_iter_p3s.c` fixture in aosp/4367986 now maps its pages with `vm_map_pages()`.\n\n`remap_pfn_range_slice()` does map other slices (perf in aosp/4367963, `p3s_remap_phys_range()` in aosp/4368009 and aosp/4368011), but it sets `VM_IO | VM_PFNMAP`, so `check_vma_flags()` refuses those VMAs before any span is filled. `__access_remote_vm()` only reaches them through `vm_ops-\u003eaccess`, where `generic_access_phys()` already reads the PTE (aosp/4368007) and perf has none.\n\nSince aosp/4367612 is the only user of the range API, would it be OK to drop both patches? That would also take the `phys_offset` and `spans` parameters out of the `follow_*()` walkers, `__get_user_pages()`, `__get_user_pages_locked()` and `__gup_longterm_locked()`, and `struct page_span` out of `\u003clinux/mm_types.h\u003e`. The `mm_user_range_pages()` checks in `iov_iter_p3s_module.c` (aosp/4367986) would go too.",
+      "isAi": true,
+      "revId": "e452023ffd4cf1efc1aedab78bd3be2eed04f363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68cc2844_ccdccc49",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 807,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:42:31Z",
+      "side": 1,
+      "message": "If the patch stays, would you mind moving `struct page_span` and the three prototypes added to `\u003clinux/mm.h\u003e` into `include/linux/p3s/mm.h`, next to `mm_user_range_pages()`? Only the P3S paths use them (`include/linux/p3s/iov_iter.h`, `mm/p3s/remote_access.h` and the 4KB branch of `gup_user_range()`), so this patch wouldn\u0027t need to touch `\u003clinux/mm_types.h\u003e` and `\u003clinux/mm.h\u003e` at all.",
+      "isAi": true,
+      "revId": "e452023ffd4cf1efc1aedab78bd3be2eed04f363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

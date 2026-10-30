@@ -65,6 +65,31 @@
       "isAi": true,
       "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5eb27db1_9cbd0546",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:42:31Z",
+      "side": 1,
+      "message": "Thanks for explaining. If the patch stays (see my new comment on the commit message), I\u0027d go with the second option, but keep both helpers `static`: only `mm/gup.c` includes `mm/p3s/gup.h`, so the header can declare them `static`, as `mm/p3s/process_vm_access.h` does for `process_vm_rw_pages()` (aosp/4312492) and our current `mm/p3s/memory.h` does for `insert_page_into_pte_locked()` (aosp/4368056):\n\n```\n/*\n * The GUP walkers of mm/gup.c, the only file that includes this header,\n * so they can stay static there.\n */\nstatic bool is_valid_gup_args(struct page **pages, int *locked,\n\t\t\t      unsigned int *gup_flags_p, unsigned int to_set);\nstatic long __gup_longterm_locked(struct mm_struct *mm, unsigned long start,\n\t\t\t\t  unsigned long nr_pages, struct page **pages,\n\t\t\t\t  int *locked, unsigned int gup_flags,\n\t\t\t\t  struct page_span *spans);\n```\n\n`gup_user_range()` and the three wrappers could then move into the header\u0027s single `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block, and `mm/gup_p3s.c` and the `#include` at the end of `mm/gup.c` would go away. `p3s_capture_pte_offset()` could go into the same block, with an empty stub in its `#else` branch instead of the `#ifdef` inside the function.",
+      "parentUuid": "1ddf1119_00ad916f",
+      "range": {
+        "startLine": 3,
+        "startChar": 38,
+        "endLine": 3,
+        "endChar": 68
+      },
+      "isAi": true,
+      "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
