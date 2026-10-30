@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "4c4fd6be5c0e500f9bf7a81183c5ee791cfee707",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab5f76e1_f8eb8c35",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 1521,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T18:28:40Z",
+      "side": 1,
+      "message": "Done. Added p3s_vma_mmu_pagesize() to include/linux/p3s/proc.h so show_smap() stays a single-line call while preserving vma_mmu_pagesize() outside P3S 4KB VMAs.",
+      "parentUuid": "7b0c3d1a_06acc152",
+      "isAi": true,
+      "revId": "4c4fd6be5c0e500f9bf7a81183c5ee791cfee707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
