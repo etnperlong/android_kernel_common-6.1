@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccd7bf47_bf473078",
+        "filename": "mm/mremap.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T18:28:30Z",
+      "side": 1,
+      "message": "Done. Restored the upstream comment above the declaration and removed the extra blank line.",
+      "parentUuid": "12d6e4ca_977b7b2f",
+      "isAi": true,
+      "revId": "605a863640d9e1b9cc19f4972ad8687805963007",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fc2b6a5a_f2223908",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T05:19:13Z",
       "side": 1,
       "message": "It looks like this re-wrap is left over from dropping `old_addr`. `copy_vma()` takes the same arguments as in the parent, so this hunk, the prototype in `mm/vma.h` and the call in `copy_vma_and_data()` only move `pgoff` to a line of its own.\n\nWould you mind restoring the original lines? Then `mm/vma.c` and `mm/vma.h` drop out of this patch. aosp/4367981 adds `old_addr` back to `copy_vma()` later in the chain, so it could re-wrap these lines if it needs to.",
+      "isAi": true,
+      "revId": "605a863640d9e1b9cc19f4972ad8687805963007",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be1a23f2_ab662f39",
+        "filename": "mm/vma.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 1880,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T18:28:30Z",
+      "side": 1,
+      "message": "Done. Restored the original copy_vma() lines so mm/vma.c and mm/vma.h are no longer touched in this patch.",
+      "parentUuid": "fc2b6a5a_f2223908",
       "isAi": true,
       "revId": "605a863640d9e1b9cc19f4972ad8687805963007",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
