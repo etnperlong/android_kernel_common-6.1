@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c22a9f55_ba7d81e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:39:53Z",
+      "side": 1,
+      "message": "Agreed that this is a real bug, and not a P3S one. Upstream `eb16876971ea` (`\"fs/proc/task_mmu: remove per-page mapcount dependency for PM_MMAP_EXCLUSIVE (CONFIG_NO_PAGE_MAPCOUNT)\"`) replaced `folio_precise_page_mapcount(folio, page + idx)` with `__folio_page_mapped_exclusively(folio, page)` in v6.15. Since then, every subpage of a PMD-mapped THP reports the exclusivity of the first one. As far as I can see, torvalds/master still has the bug.\n\nIt also only affects native mappings, since THP is off in 4KB VMAs (`vma_thp_disabled()`), so keeping this out of the P3S series with `ANDROID: proc:` makes sense to me. The only P3S part of the line is the `nr_local` argument from aosp/4312510.\n\nWould you mind also sending it upstream with `Fixes: eb16876971ea`? This patch could then become a `FROMLIST:` (and later `UPSTREAM:`) pick, and its commit message could name the commit that broke it.",
+      "isAi": true,
+      "revId": "33b6af964b9d5d744f11bfe8cdc0f5e58658c74a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
