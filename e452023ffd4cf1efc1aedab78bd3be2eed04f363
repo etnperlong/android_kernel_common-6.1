@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9973f55_46b42699",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 23
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T20:37:50Z",
+      "side": 1,
+      "message": "Done. Dropped this patch and aosp/4367612 from the stack, and removed the mm_user_range_pages() checks in iov_iter_p3s_module.c.",
+      "parentUuid": "b6ca9205_4d84dd67",
+      "isAi": true,
+      "revId": "e452023ffd4cf1efc1aedab78bd3be2eed04f363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "68cc2844_ccdccc49",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T06:42:31Z",
       "side": 1,
       "message": "If the patch stays, would you mind moving `struct page_span` and the three prototypes added to `\u003clinux/mm.h\u003e` into `include/linux/p3s/mm.h`, next to `mm_user_range_pages()`? Only the P3S paths use them (`include/linux/p3s/iov_iter.h`, `mm/p3s/remote_access.h` and the 4KB branch of `gup_user_range()`), so this patch wouldn\u0027t need to touch `\u003clinux/mm_types.h\u003e` and `\u003clinux/mm.h\u003e` at all.",
+      "isAi": true,
+      "revId": "e452023ffd4cf1efc1aedab78bd3be2eed04f363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "444105a9_f0592793",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 807,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T20:37:50Z",
+      "side": 1,
+      "message": "Ack — dropped this patch from the stack.",
+      "parentUuid": "68cc2844_ccdccc49",
       "isAi": true,
       "revId": "e452023ffd4cf1efc1aedab78bd3be2eed04f363",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"

@@ -90,6 +90,31 @@
       "isAi": true,
       "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b759df9_3c60ba7f",
+        "filename": "mm/gup_p3s.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T20:37:50Z",
+      "side": 1,
+      "message": "Ack — dropped this patch from the stack.",
+      "parentUuid": "5eb27db1_9cbd0546",
+      "range": {
+        "startLine": 3,
+        "startChar": 38,
+        "endLine": 3,
+        "endChar": 68
+      },
+      "isAi": true,
+      "revId": "803f8dd4fa8da24a07fa5e22643792390692183a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
