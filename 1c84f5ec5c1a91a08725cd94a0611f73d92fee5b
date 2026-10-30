@@ -16,6 +16,24 @@
       "message": "you need more info here, a bug reference. Was this cherry-picked from somewhere?",
       "revId": "1c84f5ec5c1a91a08725cd94a0611f73d92fee5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "abafe5bc_7f303987",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T11:48:01Z",
+      "side": 1,
+      "message": "original patch included more vendor hooks that aren\u0027t strictly required for the build. I\u0027ll add more info in the patch description",
+      "parentUuid": "7678626e_cfa62e62",
+      "revId": "1c84f5ec5c1a91a08725cd94a0611f73d92fee5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
