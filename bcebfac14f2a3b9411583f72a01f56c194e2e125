@@ -16,6 +16,24 @@
       "message": "same change-id comments as in prev patches",
       "revId": "bcebfac14f2a3b9411583f72a01f56c194e2e125",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0358107_67678f26",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T11:45:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad070256_9ceadd07",
+      "revId": "bcebfac14f2a3b9411583f72a01f56c194e2e125",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
