@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dbc75d27_0ca848a2",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 27
+      },
+      "lineNbr": 1058,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:21:15Z",
+      "side": 1,
+      "message": "As in `shmem_swap_usage()`: with `vma_shmem_swap_usage()` in `include/linux/p3s/shmem.h`, could this go back to the early return from the PS13 reply, so that the native `shmem_partial_swap_usage()` call stays as it is?\n\n```\n\tif (vma_is_p3s_4k(vma)) {\n\t\tmss-\u003eswap +\u003d vma_shmem_swap_usage(vma, addr, end);\n\t\treturn 0;\n\t}\n```",
+      "isAi": true,
+      "revId": "1bac0bcc487d17b18862b89a89637a0fada8f537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b00205b_f4adffe8",
+        "filename": "mm/shmem.c",
+        "patchSetId": 27
+      },
+      "lineNbr": 991,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:21:15Z",
+      "side": 1,
+      "message": "The byte-overlap counting still looks right to me, and native VMAs get the same `first`, `last` and byte count as before.\n\nI think the move from PS13 got lost in a later patchset, though. The reply there says the 4KB counting went into `vma_shmem_swap_usage()` in `include/linux/p3s/shmem.h`, but PS27 has no such header. Instead, `shmem_partial_swap_usage()` now takes the VMA, the 4KB branches run inside the native loop, and `shmem_swap_usage()` has `vma_is_p3s_4k()` in its fast-path condition again. That adds 39 lines to `mm/shmem.c` and changes the upstream prototype in `\u003clinux/shmem_fs.h\u003e`.\n\nWould you mind moving the 4KB path back into a static inline in a new `include/linux/p3s/shmem.h`, with a stub returning 0 in the `#else` branch of its `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block? Something like:\n\n```\nstatic inline unsigned long vma_shmem_swap_usage(struct vm_area_struct *vma,\n\t\t\t\t\t\t unsigned long start,\n\t\t\t\t\t\t unsigned long end)\n```\n\n`shmem_partial_swap_usage()`, its prototype and its callers could then stay as upstream has them, and `shmem_swap_usage()` would only need an early return after the `!swapped` check:\n\n```\n\tif (vma_is_p3s_4k(vma))\n\t\treturn vma_shmem_swap_usage(vma, vma-\u003evm_start, vma-\u003evm_end);\n```\n\nThat also takes care of the extern and alignment CHECKs from checkpatch, since those upstream lines would no longer change.",
+      "isAi": true,
+      "revId": "1bac0bcc487d17b18862b89a89637a0fada8f537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
