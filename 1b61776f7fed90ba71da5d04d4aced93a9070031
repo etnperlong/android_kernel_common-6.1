@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99e96ae1_e75c4321",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 29
+      },
+      "lineNbr": 1608,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T21:59:16Z",
+      "side": 1,
+      "message": "Hi Kelvin, would you be OK with dropping this patch? As far as I can tell it doesn\u0027t change anything for 64-bit tasks: a 4KB process\u0027s `mm-\u003etask_size` is still `TASK_SIZE_64` (`setup_new_exec()` sets it from arm64\u0027s own `TASK_SIZE`, since `fs/exec.c` doesn\u0027t include `\u003clinux/p3s_user_pages.h\u003e`), and `TASK_SIZE_4KB` only feeds `mm_task_size()`. So `ctx-\u003emm-\u003etask_size` and `current-\u003emm-\u003etask_size` are the same for any 64-bit handler, and the `-EINVAL` that the commit message describes can\u0027t happen. Only AArch32 tasks, which P3S doesn\u0027t support, would see a difference. Will asked to squash it into aosp/4312528, and I\u0027ve replied there with the details.",
+      "isAi": true,
+      "revId": "1b61776f7fed90ba71da5d04d4aced93a9070031",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
