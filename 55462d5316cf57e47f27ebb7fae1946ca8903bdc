@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ebfa1a9_fcbcbd82",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 587,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-30T17:40:33Z",
+      "side": 1,
+      "message": "Returning `false` when `!old_folio` means zero-page COW write faults never look around for an existing sibling folio in the 16KB window, so reading all 4 slices of a 16KB window before writing to them allocates four separate 16KB folios instead of reusing the first one.\n\nPlease squash up-stack fix aosp/4367603 (\"ANDROID: P3S: mm: Reuse sibling folios on zero-page COW\") (and consider squashing aosp/4393904 (\"ANDROID: P3S: mm: Protect shared 4KB slices across fork and migration\")) into this change.",
+      "isAi": true,
+      "revId": "55462d5316cf57e47f27ebb7fae1946ca8903bdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c220ba5f_20c182a6",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 694,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-30T17:40:33Z",
+      "side": 1,
+      "message": "This loop unconditionally marks every redirected slice in the window—including non-faulting sibling slices (`ptep !\u003d vmf-\u003epte`)—as young (`pte_sw_mkyoung`) and dirty (`pte_mkdirty`). Unlike `p3s_swapin_map_sibling_slices()` in aosp/4379310, a write fault on a single 4KB slice will mark untouched sibling 4KB slices as accessed and dirty (`PTE_AF` and `PTE_DIRTY`) and lose/bypass per-slice `pte_soft_dirty(ptent)` / `pte_needs_soft_dirty_wp(vma, entry)` state.\n\nOnly the faulting slice (`ptep \u003d\u003d vmf-\u003epte`) should be forced young and dirty; non-faulting sibling slices (`ptep !\u003d vmf-\u003epte`) should preserve `pte_young(ptent)`, `pte_dirty(ptent)`, and `pte_soft_dirty(ptent)` from `ptent` (and only call `maybe_mkwrite(entry, vma)` when `!pte_needs_soft_dirty_wp(vma, entry)`).",
+      "isAi": true,
+      "revId": "55462d5316cf57e47f27ebb7fae1946ca8903bdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
