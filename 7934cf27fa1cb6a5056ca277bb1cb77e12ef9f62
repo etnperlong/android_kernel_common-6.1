@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "7934cf27fa1cb6a5056ca277bb1cb77e12ef9f62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "105a6053_e5692811",
+        "filename": "drivers/android/binder/page_range.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T18:28:06Z",
+      "side": 1,
+      "message": "Done. Kept trace_unmap_user_start() in its original position above user_page_addr.",
+      "parentUuid": "d6bebc05_e9c04770",
+      "isAi": true,
+      "revId": "7934cf27fa1cb6a5056ca277bb1cb77e12ef9f62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
