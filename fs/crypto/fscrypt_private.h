@@ -27,6 +27,7 @@
  */
 #define FSCRYPT_MIN_KEY_SIZE	16
 
+<<<<<<< HEAD   (c52ce393bbcf08333df7409b155773174f7cfbe1 Revert "PCI: Use pbus_select_window() during BAR resize")
 /* Maximum size of a standard fscrypt master key */
 #define FSCRYPT_MAX_STANDARD_KEY_SIZE	64
 #define FSCRYPT_MAX_RAW_KEY_SIZE	64
@@ -48,6 +49,11 @@
  * Don't use it in kernel code; use one of the above constants instead.
  */
 #undef FSCRYPT_MAX_KEY_SIZE
+||||||| BASE   (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
+=======
+/* Maximum size of a raw fscrypt master key */
+#define FSCRYPT_MAX_RAW_KEY_SIZE	64
+>>>>>>> BRANCH (0fdd40630ea1ca5eb0bb70113cdac90d5788511a Linux 6.12.97)
 
 /*
  * This mask is passed as the third argument to the crypto_alloc_*() functions

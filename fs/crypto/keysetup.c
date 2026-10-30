@@ -230,6 +230,7 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
 	if (WARN_ON_ONCE(mode_num > FSCRYPT_MODE_MAX))
 		return -EINVAL;
 
+<<<<<<< HEAD   (c52ce393bbcf08333df7409b155773174f7cfbe1 Revert "PCI: Use pbus_select_window() during BAR resize")
 	if (mk->mk_secret.is_hw_wrapped && S_ISREG(inode->i_mode)) {
 		/* Using a hardware-wrapped key for file contents encryption */
 		if (!fscrypt_using_inline_encryption(ci)) {
@@ -244,6 +245,9 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
 		use_hw_wrapped_key = true;
 	}
 
+||||||| BASE   (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
+=======
+>>>>>>> BRANCH (0fdd40630ea1ca5eb0bb70113cdac90d5788511a Linux 6.12.97)
 	prep_key = fscrypt_find_mode_key(mk, hkdf_context, mode_num, ci);
 	if (prep_key) {
 		ci->ci_enc_key = *prep_key;
@@ -258,6 +262,7 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
 		return 0;
 	}
 
+<<<<<<< HEAD   (c52ce393bbcf08333df7409b155773174f7cfbe1 Revert "PCI: Use pbus_select_window() during BAR resize")
 	new_node = kzalloc(sizeof(*new_node), GFP_KERNEL);
 	if (!new_node)
 		return -ENOMEM;
@@ -272,6 +277,18 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
 						       mk->mk_secret.size, true,
 						       ci);
 	} else {
+||||||| BASE   (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
+=======
+	new_node = kzalloc_obj(*new_node);
+	if (!new_node)
+		return -ENOMEM;
+	new_node->hkdf_context = hkdf_context;
+	new_node->mode_num = mode_num;
+	new_node->data_unit_bits = ci->ci_data_unit_bits;
+	prep_key = &new_node->key;
+
+	{
+>>>>>>> BRANCH (0fdd40630ea1ca5eb0bb70113cdac90d5788511a Linux 6.12.97)
 		static_assert(sizeof(mode_num) == 1);
 		static_assert(sizeof(sb->s_uuid) == 16);
 		static_assert(sizeof(hkdf_info) == 17);

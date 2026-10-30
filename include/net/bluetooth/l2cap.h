@@ -665,8 +665,15 @@ struct l2cap_conn {
 
 	struct sk_buff		*rx_skb;
 	__u32			rx_len;
+<<<<<<< HEAD   (c52ce393bbcf08333df7409b155773174f7cfbe1 Revert "PCI: Use pbus_select_window() during BAR resize")
 	__u8			tx_ident;
 	struct mutex		ident_lock;
+||||||| BASE   (84c0fd009f86bbfa7122148b90d06bb2a238672a slab: recognize @GFP parameter as optional in kernel-doc)
+	struct ida		tx_ida;
+=======
+	struct ida		tx_ida;
+	__u8			tx_ident;
+>>>>>>> BRANCH (0fdd40630ea1ca5eb0bb70113cdac90d5788511a Linux 6.12.97)
 
 	struct sk_buff_head	pending_rx;
 	struct work_struct	pending_rx_work;
