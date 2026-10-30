@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7922fc3a_63a48257",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 587,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T22:05:46Z",
+      "side": 1,
+      "message": "Thanks, agreed on the gap: a window that\u0027s read before it\u0027s written still ends up with up to four 16KB folios. It\u0027s a memory-efficiency gap rather than a correctness issue, though, and it isn\u0027t new with this patch, since aosp/4312529 only reuses siblings for none PTEs in `do_anonymous_page()`.\n\naosp/4367603 fills it nicely. It only adds `p3s_wp_reuse_zero_folio()` in `mm/p3s/anon.h`, uses helpers from this series, and applies to this patch as is. I\u0027d still rather keep it as Kelvin\u0027s own patch than fold a new reuse path into this one, which Juan has already reviewed. It doesn\u0027t depend on anything in front of it, so I\u0027ve asked Kelvin to move it to the front of his series, right on top of this topic.\n\nOn aosp/4393904: agreed that we need it, and it\u0027s more than hardening. Once several slice PTEs share one folio (from aosp/4312528 and aosp/4312529 on), `MADV_DONTFORK` or `MADV_WIPEONFORK` on part of a 16KB window leaves a sibling PTE writable on a folio that `fork()` has just shared. Migration turns that PTE into a writable migration entry, `remove_migration_pte()` makes the folio exclusive again, and `do_wp_page()` then lets the parent and the child reuse it in place. Kelvin\u0027s `fork_dontfork_slice_p3s` shows exactly this: on the previous patch sets of this topic it fails both cases on every run, with every migrated folio leaking the child\u0027s write into the parent.\n\nSince the hole opens with the first patch of this topic, squashing the fix into this patch, the last one, wouldn\u0027t cover the patches before it. I\u0027ve added it instead as a prep patch at the start of the topic, aosp/4405275, co-developed with Kelvin, with the logic in P3S helpers. Its window scan matches the folio by PFN rather than calling `vm_normal_folio()` on PTEs of other VMAs. On the migration side it goes a bit further than aosp/4393904: as for their swap PTEs, no migration entry of a folio that several slices map keeps it exclusive. That also covers a `madvise()`/`mremap()` plus `fork()` race while the folio is under migration. With it, Kelvin\u0027s test passes both cases, and Kelvin can drop aosp/4393904.",
+      "parentUuid": "3ebfa1a9_fcbcbd82",
+      "isAi": true,
+      "revId": "55462d5316cf57e47f27ebb7fae1946ca8903bdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c220ba5f_20c182a6",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T17:40:33Z",
       "side": 1,
       "message": "This loop unconditionally marks every redirected slice in the window—including non-faulting sibling slices (`ptep !\u003d vmf-\u003epte`)—as young (`pte_sw_mkyoung`) and dirty (`pte_mkdirty`). Unlike `p3s_swapin_map_sibling_slices()` in aosp/4379310, a write fault on a single 4KB slice will mark untouched sibling 4KB slices as accessed and dirty (`PTE_AF` and `PTE_DIRTY`) and lose/bypass per-slice `pte_soft_dirty(ptent)` / `pte_needs_soft_dirty_wp(vma, entry)` state.\n\nOnly the faulting slice (`ptep \u003d\u003d vmf-\u003epte`) should be forced young and dirty; non-faulting sibling slices (`ptep !\u003d vmf-\u003epte`) should preserve `pte_young(ptent)`, `pte_dirty(ptent)`, and `pte_soft_dirty(ptent)` from `ptent` (and only call `maybe_mkwrite(entry, vma)` when `!pte_needs_soft_dirty_wp(vma, entry)`).",
+      "isAi": true,
+      "revId": "55462d5316cf57e47f27ebb7fae1946ca8903bdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4bdd34a4_9e54d150",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 694,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T22:05:46Z",
+      "side": 1,
+      "message": "Good point, thanks. Done in the new patch set, to match `p3s_swapin_map_sibling_slices()`:\n- only the faulting PTE is made young and dirty, as in `wp_page_copy()`;\n- each sibling keeps the young, dirty and soft-dirty bits of the PTE it replaces, taken from what `ptep_clear_flush()` returns;\n- a sibling gets `maybe_mkwrite()` only when `!pte_needs_soft_dirty_wp()`.\n\nOn arm64 `pte_sw_mkyoung()` is a no-op and `vm_page_prot` already sets `PTE_AF`, so an old sibling gets an explicit `pte_mkold()`. uffd-wp needs no handling here, since `p3s_wp_slice_bounds()` skips userfaultfd-armed VMAs. The sibling case is in a small `p3s_wp_mk_sibling_pte()` helper next to `p3s_wp_install_folio_slices()`.",
+      "parentUuid": "c220ba5f_20c182a6",
       "isAi": true,
       "revId": "55462d5316cf57e47f27ebb7fae1946ca8903bdc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
