@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "561ec0c9_d961106e",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 32
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T22:44:52Z",
+      "side": 1,
+      "message": "Hi Kelvin, thanks for finding this one! Since the hole opens with the first patch of p3s_6.18_b10, I\u0027ve added the fix at the start of that topic as aosp/4405275, with you as co-developer from this patch; let me know if you\u0027d rather I change that). It follows this patch, with a few changes:\n- the window scan matches the folio by PFN rather than through `vm_normal_folio()` on PTEs of other VMAs, where a special PTE would get a \"Bad page map\" report;\n- on the migration side, as for their swap PTEs, no migration entry of a folio that several slices map keeps it exclusive. That also covers `madvise()`/`mremap()` plus `fork()` while the folio is under migration;\n- the logic is in P3S helpers, with one-line hooks.\n\nThe `fork_dontfork_slice_p3s` fails both cases on the previous b10 patch sets and passes with the fix. Could you drop this patch when you rebase onto the new b10, and keep the selftest? Thanks!",
+      "isAi": true,
+      "revId": "190d1fb42d507b4c2f7baea196dd5aef2ecaabfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
