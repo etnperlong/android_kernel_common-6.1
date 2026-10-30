@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba4d3e61_169971f7",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 35
+      },
+      "lineNbr": 2023,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:01:18Z",
+      "side": 1,
+      "message": "Thanks for checking the cross-page-size case! As far as I can see, though, a 4KB process\u0027s `mm-\u003etask_size` is still `TASK_SIZE_64`, not `TASK_SIZE_4KB`, so this check doesn\u0027t reject a native handler\u0027s buffer above 512GB:\n\n`mm-\u003etask_size` is only set in `setup_new_exec()` (`me-\u003emm-\u003etask_size \u003d TASK_SIZE;`) and copied on fork. `fs/exec.c` doesn\u0027t include `\u003clinux/p3s_user_pages.h\u003e`, so that `TASK_SIZE` is arm64\u0027s own, `TASK_SIZE_64`, for 4KB and 16KB processes alike.\n\n`TASK_SIZE_4KB` (aosp/4312458) is only returned by `mm_task_size()` (aosp/4312461), behind the `TASK_SIZE` macro in the files that include `\u003clinux/p3s_user_pages.h\u003e` (aosp/4312462). Nothing in our series or in Kelvin\u0027s stores it in `mm-\u003etask_size`.\n\n`validate_unaligned_range()` reads the `mm-\u003etask_size` field, not the macro. `P3S_CONTEXT_REMOTE_MM(ctx-\u003emm)` only changes what `PAGE_SIZE` and `PAGE_MASK` evaluate to, so here it only affects the `len` alignment check.\n\nSo for any 64-bit handler, `ctx-\u003emm-\u003etask_size` and `current-\u003emm-\u003etask_size` are the same, and ART\u0027s GC serves its faults in-process anyway. The source check is upstream code that this patch doesn\u0027t touch, and aosp/4367947 only changes the result for AArch32 tasks. Since this patch doesn\u0027t need it, I\u0027d prefer to keep it out of this one. I\u0027ve also asked Kelvin on aosp/4367947 whether he can drop it.",
+      "parentUuid": "0d19ca4e_3a5edac3",
+      "isAi": true,
+      "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cf28ff62_a8abf97f",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "42650cd8_8adb54b8",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 35
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:01:18Z",
+      "side": 1,
+      "message": "Thanks, agreed that the zeroing is redundant here: by the time `mfill_atomic_install_pte()` runs, `copy_from_user()` has filled all 4KB of the new folio (a short copy returns `-ENOENT` or `-EFAULT` before that), and `memcpy()` overwrites the whole reused slice from it.\n\nIt needs a second, tags-only helper, though, because `mte_zero_clear_slice_tags()` is also used by `p3s_anon_folio_zero_slice()` in aosp/4312529, where an anonymous fault does need the slice zeroed. I\u0027ve added it as a small follow-up at the end of this topic, aosp/4404637: `mte_clear_slice_tags()`, the 4KB counterpart of `mte_clear_page_tags()`, clears only the tags (`STG`/`DC GVA` rather than `STZG`/`DC GZVA`), and this path now uses it.",
+      "parentUuid": "cf28ff62_a8abf97f",
+      "isAi": true,
+      "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d60f3071_cd047b6d",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-30T17:40:28Z",
       "side": 1,
       "message": "When `!p3s_folio_mapped_by_slices(vma, folio)` (`folio_mapcount(folio) \u003d\u003d 1`), returning `1` here allows `move_present_ptes()` to move `src_folio` in place (updating `src_folio-\u003eindex` and `anon_vma`) without checking whether `folio` is still in the swap cache (`folio_test_swapcache(folio)` — e.g. when sibling slices in the 16KB window are still swap PTEs) or whether the physical slice offset matches `vma_slice_offset(dst_vma, dst_addr)`.\n\nThere are also four follow-up `userfaultfd` patches higher in the stack that rework or fix the code introduced here:\n- aosp/4367946 (\"ANDROID: P3S: userfaultfd: Limit compat registration to anonymous VMAs\")\n- aosp/4367974 (\"ANDROID: P3S: userfaultfd: Move swapped 16KB windows of 4KB processes\")\n- aosp/4367997 (\"ANDROID: P3S: userfaultfd: Move present 4KB slices safely\")\n- aosp/4368005 (\"ANDROID: P3S: userfaultfd: Keep the slice phase of moved swap PTEs\")\n\nCan we squash those follow-up `userfaultfd` fixes into this patch so we don\u0027t introduce `p3s_uffd_move_nr_slices()` / the `move_pages()` slice check here only to replace them up-stack?",
+      "isAi": true,
+      "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1150cd95_6f4ee0d9",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 35
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:01:18Z",
+      "side": 1,
+      "message": "Thanks for looking at this closely.\n\n**Swap cache.** `move_present_ptes()` is only reached after `move_pages_ptes()` checks `PageAnonExclusive()`. It checks again under both page table locks, with the folio locked, right before calling it. A folio can\u0027t be exclusive while sibling slices still hold swap PTEs for its entry:\n- `try_to_unmap_one()` marks a swap PTE exclusive only while a single slice maps the folio, and unmapping the first slice clears `PageAnonExclusive`. When two or more slices are swapped out together, none of their swap PTEs is exclusive.\n- When one of them swaps back in, `do_swap_page()` sees a non-exclusive swap PTE. `folio_free_swap()` can\u0027t drop the swap cache while the other slices still hold the entry, so the folio is mapped without `RMAP_EXCLUSIVE`.\n\nUpstream relies on the same invariant: `do_swap_page()` has `BUG_ON(folio_test_anon(folio) \u0026\u0026 PageAnonExclusive(page))` for a swap cache folio that a swap PTE still points to. Its UFFDIO_MOVE swap cache fixes are in `move_swap_pte()`, for swap PTEs.\n\n**Slice offset.** `move_pages()` refuses a move whose source and destination start at different slices. Each range lies within one VMA, so the slices stay equal across the whole range. Each destination PTE is built with `vma_pte_add_slice(dst_vma, addr, ...)`, so it maps the physical slice that the source PTE mapped.\n\n**The follow-ups.** On the previous patchsets, the series did replace this code. Kelvin\u0027s latest upload changed that, and at the top of his series `p3s_uffd_move_nr_slices()` and the slice check are unchanged except for the errno:\n- aosp/4367946 and aosp/4367997 are no longer in the series.\n- aosp/4367974 adds a feature (moving a whole swapped-out 16KB window) rather than fixing this patch.\n- aosp/4368005 changes the slice check\u0027s errno from `-EINVAL` to `-EBUSY`. I agree with that change, since ART\u0027s `MoveIoctl()` falls back to UFFDIO_COPY on `EBUSY` but treats `EINVAL` as fatal. It\u0027s a self-contained change on top of this patch, so I\u0027d rather keep it as Kelvin\u0027s patch and have asked him to move it to the front of his series, right after this topic.\n\nSo I\u0027d prefer not to squash these, and each one is easier to review on its own.",
+      "parentUuid": "d60f3071_cd047b6d",
       "isAi": true,
       "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
