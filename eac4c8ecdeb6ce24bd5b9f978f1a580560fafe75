@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "76bf0f80_ce165367",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1898956
+      },
+      "writtenOn": "2026-10-30T14:19:13Z",
+      "side": 1,
+      "message": "Updated the change per @willdeacon@google.com offline suggestion.",
+      "revId": "eac4c8ecdeb6ce24bd5b9f978f1a580560fafe75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
