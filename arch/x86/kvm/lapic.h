@@ -153,10 +153,16 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 msr, u64 *data);
 int kvm_lapic_set_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len);
 void kvm_lapic_exit(void);
 
+<<<<<<< HEAD   (2da6e4f0082d90969b56b84cdb803c99f44dfb41 Merge 6bea2f8becdb ("KVM: arm64: Clear __hyp_running_vcpu wh)
 u64 kvm_lapic_readable_reg_mask(struct kvm_lapic *apic);
 #ifdef __PKVM_HYP__
 u64 pkvm_protected_lapic_readable_reg_mask(struct kvm_lapic *apic);
 #endif
+||||||| BASE   (6bea2f8becdb20d34378493c3b77a9b9cf8c6cfa KVM: arm64: Clear __hyp_running_vcpu when flushing the pKVM )
+u64 kvm_lapic_readable_reg_mask(struct kvm_lapic *apic);
+=======
+u64 kvm_x2apic_disable_read_intercept_reg_mask(struct kvm_vcpu *vcpu);
+>>>>>>> BRANCH (4b200e0c9c339cfb9385e548cabcfdf52845717c KVM: x86: Add dedicated API for getting mask of accelerated )
 
 static inline void kvm_lapic_set_irr(int vec, struct kvm_lapic *apic)
 {

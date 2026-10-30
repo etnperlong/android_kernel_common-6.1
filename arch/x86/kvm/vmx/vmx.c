@@ -4416,6 +4416,7 @@ static void vmx_update_msr_bitmap_x2apic(struct kvm_vcpu *vcpu)
 	 * through reads for all valid registers by default in x2APIC+APICv
 	 * mode, only the current timer count needs on-demand emulation by KVM.
 	 */
+<<<<<<< HEAD   (2da6e4f0082d90969b56b84cdb803c99f44dfb41 Merge 6bea2f8becdb ("KVM: arm64: Clear __hyp_running_vcpu wh)
 	if (mode & MSR_BITMAP_MODE_X2APIC_APICV) {
 		msr_bitmap[read_idx] = ~kvm_lapic_readable_reg_mask(vcpu->arch.apic);
 #ifdef __PKVM_HYP__
@@ -4431,6 +4432,15 @@ static void vmx_update_msr_bitmap_x2apic(struct kvm_vcpu *vcpu)
 				~pkvm_protected_lapic_readable_reg_mask(vcpu->arch.apic);
 #endif
 	} else {
+||||||| BASE   (6bea2f8becdb20d34378493c3b77a9b9cf8c6cfa KVM: arm64: Clear __hyp_running_vcpu when flushing the pKVM )
+	if (mode & MSR_BITMAP_MODE_X2APIC_APICV)
+		msr_bitmap[read_idx] = ~kvm_lapic_readable_reg_mask(vcpu->arch.apic);
+	else
+=======
+	if (mode & MSR_BITMAP_MODE_X2APIC_APICV)
+		msr_bitmap[read_idx] = ~kvm_x2apic_disable_read_intercept_reg_mask(vcpu);
+	else
+>>>>>>> BRANCH (4b200e0c9c339cfb9385e548cabcfdf52845717c KVM: x86: Add dedicated API for getting mask of accelerated )
 		msr_bitmap[read_idx] = ~0ull;
 	}
 	msr_bitmap[write_idx] = ~0ull;
@@ -4443,7 +4453,6 @@ static void vmx_update_msr_bitmap_x2apic(struct kvm_vcpu *vcpu)
 				  !(mode & MSR_BITMAP_MODE_X2APIC));
 
 	if (mode & MSR_BITMAP_MODE_X2APIC_APICV) {
-		vmx_enable_intercept_for_msr(vcpu, X2APIC_MSR(APIC_TMCCT), MSR_TYPE_RW);
 		vmx_disable_intercept_for_msr(vcpu, X2APIC_MSR(APIC_EOI), MSR_TYPE_W);
 		vmx_disable_intercept_for_msr(vcpu, X2APIC_MSR(APIC_SELF_IPI), MSR_TYPE_W);
 		if (enable_ipiv)
