@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87b92996_42121ee1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 27
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:21:21Z",
+      "side": 1,
+      "message": "Thanks for the bound fix: aosp/4312495 PS34 now takes the `area-\u003eaddr` hunk from this patch, and it moved after aosp/4368056.\n\nWith that, I think what\u0027s left here is the per-4KB `vm_insert_page_slice()` loop. On `remap_vmalloc_range()`, the only exported entry point, it gives the same PTEs and bounds as aosp/4312495: since aosp/4368056, each `vm_insert_page()` maps every slice of its kernel page that lies in the VMA, with `uaddr` at slice `vma_slice_offset(vma, uaddr)`. The two only differ for the partial callers in `fs/proc/vmcore.c`, which GKI doesn\u0027t build. There, with a non-zero `vm_slice_off`, taking the slice from `kaddr` gives a driver-selected slice.\n\nSo if `vm_insert_page_slice()` can go (see my comment on aosp/4367599), would it be OK to drop this patch? That would also keep the two `vma_is_p3s_4k()` branches out of `mm/vmalloc.c`. `vma_aligned_size()` could then move to aosp/4368009, its next user.",
+      "isAi": true,
+      "revId": "6b6e30bd8f444252ea0de4c3c02f753cedc178d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
