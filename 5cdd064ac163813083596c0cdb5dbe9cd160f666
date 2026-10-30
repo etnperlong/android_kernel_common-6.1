@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9eb43b5_2d6f5f1f",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2280,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T01:31:45Z",
+      "side": 1,
+      "message": "Done, thanks. Both helpers stay `static`. The slice loops moved to a new `mm/p3s/memory.h`, which only `mm/memory.c` includes, so it can declare them `static`, as `mm/p3s/process_vm_access.h` does. They couldn\u0027t be declared `static` in `mm/p3s/pgtable.h`, since `mm/internal.h` pulls that header into about 90 files.",
+      "parentUuid": "910b1b47_5e7307dd",
+      "isAi": true,
+      "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cbc238f8_2a8e3846",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cb2a4b8_2048a737",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 2539,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T01:31:45Z",
+      "side": 1,
+      "message": "Thanks, done.\n\n`vm_map_pages_zero()` now clears `vm_slice_off` too, so `vm_start` maps slice 0 of `pages[0]` and the PTEs still match `vma_slice_offset()`.\n\nI\u0027d rather not squash aosp/4368010, though. For `vm_map_pages()` it maps the same as this patch. For `vm_map_pages_zero()` it maps slices that don\u0027t match the address (through `vm_insert_page_slice()` from aosp/4367599), which `__access_remote_vm()` and GUP can\u0027t follow.",
+      "parentUuid": "cbc238f8_2a8e3846",
+      "isAi": true,
+      "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "90ae50c8_146d7f4b",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-29T23:02:42Z",
       "side": 1,
       "message": "`vma_insert_pages_slices()` advances `addr +\u003d PAGE_SIZE_KERNEL` (`16KB`) on every iteration even when the initial `addr` has a non-zero slice offset `off \u003d vma_slice_offset(vma, addr) \u003c\u003c PAGE_SHIFT_4KB`.\n\nWhen `off \u003e 0` (for example, `addr \u003d vma-\u003evm_start` with `vma-\u003evm_slice_off \u003d 3`, so `off \u003d 12KB`):\n- Iteration 0 (`pages[0]`, `addr \u003d vm_start`) maps only `PAGE_SIZE_KERNEL - off` (`4KB`, `[vm_start, vm_start + 4KB)`).\n- Iteration 1 (`pages[1]`) jumps to `addr \u003d vm_start + 16KB` instead of `vm_start + 4KB`. Inside `vma_insert_page_slices()`, `target` is set to `vm_start + 16KB` while `addr` backs up by `min(off, addr - vma-\u003evm_start)`. If the VMA is 8KB or 12KB (`vm_end \u003c vm_start + 16KB`, `vma_kernel_pages \u003d 2`), `target` lies outside `[vm_start + 4KB, vm_end)`. Consequently, `addr !\u003d target` is true for every slice of `pages[1]`, so if the PTE at `vm_start + 4KB` is already populated (`-EBUSY`), `if (ret \u003d\u003d -EBUSY \u0026\u0026 addr !\u003d target) ret \u003d 0;` silently swallows `-EBUSY` instead of returning `-EBUSY` with the remaining `*num`.\n\nAdvancing `addr` to the start of the next kernel page\u0027s slice window (`addr +\u003d PAGE_SIZE_KERNEL - off` on the first iteration, or stepping by the actual bytes mapped) keeps `target` aligned to the first slice of each page.",
+      "isAi": true,
+      "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bbccd24e_a1fa578f",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T01:31:45Z",
+      "side": 1,
+      "message": "Good catch, thanks.\n\nThe PTEs came out right, because `vma_insert_page_slices()` backs up to the start of the page\u0027s slices, but `-EBUSY` on the last partial page was lost.\n\nEach page after the first now starts at slice 0 of its kernel page (`addr +\u003d PAGE_SIZE_KERNEL - off`), so the target is always that page\u0027s first slice.",
+      "parentUuid": "90ae50c8_146d7f4b",
       "isAi": true,
       "revId": "5cdd064ac163813083596c0cdb5dbe9cd160f666",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
