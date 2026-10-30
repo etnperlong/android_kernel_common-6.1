@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "24c78fe0cb8b5bc528cb446d63adcabb8a4c4a22",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e28544b7_3609524f",
+        "filename": "mm/memory.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 3118,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T01:29:18Z",
+      "side": 1,
+      "message": "Thanks! You\u0027re right about the mechanism. Like upstream, `vm_iomap_memory()` maps from the kernel page that contains `start`, so a 4KB process sees the resource at `start \u0026 ~PAGE_MASK_KERNEL`, exactly where a native process sees it. As far as I can see, no GKI caller passes a `start` that isn\u0027t 16KB-aligned: open-dice requires an aligned base, and the PCM iomem, STM and fbdev users aren\u0027t built.\n\nOn the stale `vm_slice_off`: it\u0027s the slice of the process\u0027s own offset, so a driver that uses `vm_pgoff` as a cookie should reject a non-zero `vma_slice_off()`, as `perf_mmap()` does. The effect is bounded, since `vma_kernel_pages()` counts the slice. aosp/4368009 keeps it too (through `vma_file_offset()`), so squashing it wouldn\u0027t change this.\n\naosp/4368009 also needs `remap_pfn_range_slice()` (aosp/4367963) and `vma_aligned_size()` (aosp/4367949), which would pull about 150 lines from later batches into b9. I\u0027d rather keep it as a follow-up in Kelvin\u0027s series.",
+      "parentUuid": "57cb7110_6a166352",
+      "isAi": true,
+      "revId": "24c78fe0cb8b5bc528cb446d63adcabb8a4c4a22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
