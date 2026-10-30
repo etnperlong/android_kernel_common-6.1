@@ -1040,12 +1040,13 @@ static int can_modify(struct wrap_ctx *ctx, struct task_struct *task,
 	return 0;
 }
 
-static int block_usage(struct wrap_ctx *ctx, struct device *dev)
+static int block_usage(struct wrap_ctx *ctx, struct device *dev,
+		       bool check_content)
 {
 	int ret;
 
 	assert_spin_locked(&ctx->lock);
-	ret = can_modify(ctx, current, dev, true);
+	ret = can_modify(ctx, current, dev, check_content);
 	if (ret)
 		return ret;
 
@@ -1494,7 +1495,7 @@ static int wrap_file_rewrap(struct wrap_ctx *ctx,
 		return -EINVAL;
 
 	spin_lock(&ctx->lock);
-	ret = block_usage(ctx, NULL);
+	ret = block_usage(ctx, NULL, true);
 	if (!ret) {
 		content = ctx->content;
 		ctx->content = NULL;
@@ -1556,7 +1557,7 @@ static int wrap_file_empty(struct wrap_ctx *ctx, struct device *dev)
 
 	spin_lock(&ctx->lock);
 
-	ret = block_usage(ctx, dev);
+	ret = block_usage(ctx, dev, true);
 	if (ret)
 		goto unlock;
 
@@ -1586,6 +1587,60 @@ static int wrap_file_allow_guests(struct wrap_ctx *ctx, bool allow)
 
 	ctx->allow_guests = allow;
 unlock:
+	spin_unlock(&ctx->lock);
+
+	return ret;
+}
+
+static struct wrap_content *create_content_for(int fd, unsigned long prot);
+
+static int wrap_file_repopulate(struct wrap_ctx *ctx, struct file *file,
+				struct wrapfd_repopulate __user *user_wrapfd_repopulate)
+{
+	struct wrapfd_repopulate wrapfd_repopulate;
+	struct wrap_content *content;
+	struct content_attribs attrs;
+	__u32 prot = 0;
+	int ret = 0;
+
+	if (copy_from_user(&wrapfd_repopulate, user_wrapfd_repopulate,
+			   sizeof(wrapfd_repopulate)))
+		return -EFAULT;
+
+	if (wrapfd_repopulate.reserved || wrapfd_repopulate.pad)
+		return -EINVAL;
+
+	if (file->f_mode & FMODE_READ)
+		prot |= PROT_READ;
+	if (file->f_mode & FMODE_WRITE)
+		prot |= PROT_WRITE;
+	if (!prot)
+		return -EINVAL;
+
+	spin_lock(&ctx->lock);
+	ret = block_usage(ctx, NULL, false);
+	if (!ret && ctx->content) {
+		unblock_usage(ctx);
+		ret = -EBUSY;
+	}
+	spin_unlock(&ctx->lock);
+	if (ret)
+		return ret;
+
+	content = create_content_for(wrapfd_repopulate.fd, prot);
+	if (IS_ERR(content)) {
+		ret = PTR_ERR(content);
+		goto unblock_usage;
+	}
+	INIT_LIST_HEAD(&content->listeners);
+	content->close_on_exec = get_close_on_exec(wrapfd_repopulate.fd);
+	content->ops->get_content_attribs(content, &attrs);
+	i_size_write(file_inode(file), attrs.size);
+unblock_usage:
+	spin_lock(&ctx->lock);
+	if (!ret)
+		ctx->content = content;
+	unblock_usage(ctx);
 	spin_unlock(&ctx->lock);
 
 	return ret;
@@ -1670,6 +1725,10 @@ static long wrap_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	case WRAPFD_DEV_IOC_PROHIBIT_GUESTS:
 		ret = wrap_file_allow_guests(ctx, false);
 		break;
+	case WRAPFD_DEV_IOC_REPOPULATE:
+		ret = wrap_file_repopulate(ctx, file,
+					   (struct wrapfd_repopulate __user *)arg);
+		break;
 	default:
 		ret = wrap_file_ioctl(ctx, cmd, arg);
 		break;
@@ -1685,6 +1744,7 @@ static long wrap_compat_ioctl(struct file *file, unsigned int cmd, unsigned long
 	case WRAPFD_DEV_IOC_GET_STATE:
 	case WRAPFD_DEV_IOC_LOAD:
 	case WRAPFD_DEV_IOC_REWRAP:
+	case WRAPFD_DEV_IOC_REPOPULATE:
 		arg = (unsigned long)compat_ptr(arg);
 		break;
 	}

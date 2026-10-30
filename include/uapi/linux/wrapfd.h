@@ -54,6 +54,12 @@ struct wrapfd_rewrap {
 	__u64 reserved;
 };
 
+struct wrapfd_repopulate {
+	__u32 fd;		/* [in] file to populate with */
+	__u32 pad;
+	__u64 reserved;
+};
+
 struct wrapfd_monitor {
 	__u32 fd;
 	__u32 events;
@@ -107,6 +113,7 @@ enum {
 	WRAPFD_DEV_IOC_ADD_MONITOR	= _IOWR(WRAPFD_DEV_IOC, 9, struct wrapfd_add_monitors),
 	WRAPFD_DEV_IOC_DEL_MONITOR	= _IOWR(WRAPFD_DEV_IOC, 10, struct wrapfd_del_monitors),
 	WRAPFD_DEV_IOC_QUERY_EVENTS	= _IOWR(WRAPFD_DEV_IOC, 11, struct wrapfd_events),
+	WRAPFD_DEV_IOC_REPOPULATE	= _IOW(WRAPFD_DEV_IOC, 12, struct wrapfd_repopulate),
 };
 
 #endif /* _UAPI_WRAPFD_H */
