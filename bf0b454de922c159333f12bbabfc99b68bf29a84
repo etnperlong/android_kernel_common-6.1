@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0926b2a_62ca0872",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "\"Add shared-fd and native controls.\" seems to describe the selftest, which is now in aosp/4367986, so could it go?\n\nIt might also help to start with what fails today, for example:\n\n```\nASHMEM_PIN, ASHMEM_UNPIN and ASHMEM_GET_PIN_STATUS check ranges against\nthe 16KB kernel page, so a 4KB process gets -EINVAL for ranges that are\n4KB- but not 16KB-aligned.\n```",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "881531bb_d76338c0",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "Nit: since `mmap()` still uses `__page_align()`, could the `page_size_compat::__page_align` import stay, so that this line doesn\u0027t change?",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb6b4924_8f453bea",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "Could the `let (offset, cmd_len) \u003d { ... };` block stay as it was, with only the `mm` lines added after it? Something like:\n\n```\n            (pin.offset as usize, pin.len as usize)\n        };\n\n        let current \u003d current!();\n        let mm \u003d current.mm().ok_or(EINVAL)?;\n        let page_mask \u003d mm.page_mask();\n```\n\nRe-indenting the upstream lines doesn\u0027t change behavior, and leaving them alone keeps conflicts with later ashmem changes from android17-6.18 down.",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ca3841ea_620ae7cc",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "I\u0027m worried that with `mm.page_align()`, a `len \u003d\u003d 0` unpin from a 4KB process now stops at the 4KB-rounded size. For a 20KB region, the range ends 4KB into the last 16KB page, so `free_lru()` can only zero those 4KB instead of freeing the page as it did before this patch (`punch_hole()` only frees whole pages).\n\nWould `page_align(asma.size)` still work here? `mmap()` lets a 4KB process map up to the 16KB-rounded size, so 4KB processes could then pin and unpin any 4KB-aligned range they can map, as native processes can, and `Mm::page_align()` would have no user.",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8a63a862_337c5320",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "Nit: `div_ceil()` would do the rounding in one call, as binder does with `div_ceil(PAGE_SIZE)`:\n\n```\n        let total_num_process_pages \u003d total_num_range_pages.div_ceil(pages_per_process_page);\n```\n\nSince the comment above it changes anyway, could it get a blank line before it too?",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9f93a3f_e909f6fb",
+        "filename": "drivers/staging/android/ashmem_range.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "The `LRU_COUNT` update is gone, but it looks like this hunk still drops `self.remove_lru(\u0026range)` and reads `range.size()` before `set_purged()`. Neither changes anything (`remove_lru()` finds nothing after `pop_back()`, and `set_purged()` doesn\u0027t change the size), and a643c1800767 in android17-6.18 rewrites these same lines.\n\nCould only the `start` and `end` conversion stay, as discussed on PS15? Something like:\n\n```\n            let start \u003d range.pgstart(self) * crate::ASHMEM_RANGE_PAGE_SIZE;\n            let end \u003d (range.pgend(self) + 1) * crate::ASHMEM_RANGE_PAGE_SIZE;\n            range.set_purged(self);\n            self.remove_lru(\u0026range);\n            freed +\u003d range.size(self);\n```",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78f0d116_30dbfb15",
+        "filename": "rust/bindings/bindings_helper.h",
+        "patchSetId": 28
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:38:35Z",
+      "side": 1,
+      "message": "Is this include needed? As far as I can see, `\u003clinux/mm.h\u003e` above already pulls in `\u003clinux/p3s/const.h\u003e` (through `\u003clinux/mm_types.h\u003e` and `\u003clinux/p3s.h\u003e`), and bindgen emits the macros of every header it sees, as it does for `bindings::PAGE_SHIFT` in `rust/kernel/page.rs`. So `bindings::PAGE_SHIFT_4KB` should exist without it.",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
