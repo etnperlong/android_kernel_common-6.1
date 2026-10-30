@@ -16,6 +16,24 @@
       "message": "`KernelCommit` cites a merge conflict when applying this patch, so shouldn\u0027t it be `BACKPORT`?",
       "revId": "5117575e344f85c5b0b89441118b7da901b18c42",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68c1c2fa_596dd70b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2026-10-30T17:14:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e4f4ceb_bd5b488a",
+      "revId": "5117575e344f85c5b0b89441118b7da901b18c42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
