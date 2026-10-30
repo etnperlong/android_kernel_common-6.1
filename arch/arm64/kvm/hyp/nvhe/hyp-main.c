@@ -804,8 +804,23 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
 	if (!pkvm_hyp_vcpu_is_protected(hyp_vcpu)) {
 		u8 host_iflags = READ_ONCE(host_vcpu->arch.iflags);
 
+<<<<<<< HEAD   (7daa4c3a3435616fd0e790d669ac4fcf1545230f Revert "virtio-mmio: fix device release warning on module un)
 		if (host_iflags & unpack_vcpu_flag(PKVM_HOST_STATE_DIRTY))
 			__flush_hyp_vcpu(hyp_vcpu);
+||||||| BASE   (2d710d4fcd2cd24f25df61f6fc68b02c034d079f LoongArch: KVM: Add missing slots_lock for device register/u)
+	hyp_vcpu->vcpu.arch.mdcr_el2	= host_vcpu->arch.mdcr_el2;
+	hyp_vcpu->vcpu.arch.hcr_el2 &= ~(HCR_TWI | HCR_TWE);
+	hyp_vcpu->vcpu.arch.hcr_el2 |= READ_ONCE(host_vcpu->arch.hcr_el2) &
+						 (HCR_TWI | HCR_TWE);
+=======
+	/* __hyp_running_vcpu must be NULL in a guest context. */
+	hyp_vcpu->vcpu.arch.ctxt.__hyp_running_vcpu = NULL;
+
+	hyp_vcpu->vcpu.arch.mdcr_el2	= host_vcpu->arch.mdcr_el2;
+	hyp_vcpu->vcpu.arch.hcr_el2 &= ~(HCR_TWI | HCR_TWE);
+	hyp_vcpu->vcpu.arch.hcr_el2 |= READ_ONCE(host_vcpu->arch.hcr_el2) &
+						 (HCR_TWI | HCR_TWE);
+>>>>>>> BRANCH (6bea2f8becdb20d34378493c3b77a9b9cf8c6cfa KVM: arm64: Clear __hyp_running_vcpu when flushing the pKVM )
 
 		hyp_vcpu->vcpu.arch.iflags = host_iflags;
 		hyp_vcpu->vcpu.arch.hcr_el2 &= ~(HCR_TWI | HCR_TWE | HCR_VSE);
