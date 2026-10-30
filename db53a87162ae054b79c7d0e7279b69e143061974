@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a41efec_e7b417bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:41:06Z",
+      "side": 1,
+      "message": "Thanks for splitting this out. It looks right to me: under x86_64 page size emulation the metadata area is `__PAGE_SIZE`, i.e. four kernel pages (see `perf_mmap_alloc_metadata_page()`), and `perf_mmap_rb()` has charged all four since `9bb7e0640feb` (`\"ANDROID: 16K: Fixup perf_mmap check for metadata page\"`). So `perf_mmap_close()` left three pages in `locked_vm` for every ring buffer. On arm64, `__PAGE_SIZE / PAGE_SIZE` is 1, so nothing changes there or for P3S.\n\nSince this fixes an emulation patch rather than P3S, would `ANDROID: 16K: perf: Balance emulated metadata page accounting` work as the subject, like the other emulation fixes (e.g. \"ANDROID: 16K: proc: Fix resident page count in task_statm\"), with `Fixes: 9bb7e0640feb`? It doesn\u0027t depend on the P3S series either, so it could go to android17-6.18 on its own, together with the AUX bound I mentioned on aosp/4367963.",
+      "isAi": true,
+      "revId": "db53a87162ae054b79c7d0e7279b69e143061974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
