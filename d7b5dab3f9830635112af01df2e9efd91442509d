@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75a1cf70_61127ccd",
+        "filename": "mm/madvise.c",
+        "patchSetId": 19
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:17:52Z",
+      "side": 1,
+      "message": "I think these `PAGE_SIZE` to `mm_pte_size(mm)` conversions don\u0027t change anything. `mm/madvise.c` opts into `\u003clinux/p3s_user_pages.h\u003e`, and `walk_pgd_range()` enters `P3S_CONTEXT_REMOTE_MM(walk-\u003emm)` for the whole walk (aosp/4312517). So in the walk callbacks, `PAGE_SIZE` already is `mm_pte_size(vma-\u003evm_mm)`.\n\nThat covers `max_nr` here, plus `tlb_change_page_size()` and the loop increment in `madvise_cold_or_pageout_pte_range()`. `madvise_free_pte_range()` keeps `PAGE_SIZE` on the same lines.\n\nWould it be OK to keep the upstream lines and drop the `mm` local? The `vma_is_p3s_4k()` early return can stay as it is.",
+      "isAi": true,
+      "revId": "d7b5dab3f9830635112af01df2e9efd91442509d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2c0aef1_7ed4834f",
+        "filename": "mm/madvise.c",
+        "patchSetId": 19
+      },
+      "lineNbr": 511,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:17:52Z",
+      "side": 1,
+      "message": "Would it be possible to keep this closer to upstream, with `vma_folio_nr_ptes(vma, folio)` from `mm/p3s/rmap.h` as the split threshold? Something like:\n\n```\n\t\tif (folio_test_large(folio) || vma_is_p3s_4k(vma)) {\n\t\t\tnr \u003d madvise_folio_pte_batch(vma, addr, end, folio,\n\t\t\t\t\t\t     pte, \u0026ptent);\n\t\t\tif (nr \u003c vma_folio_nr_ptes(vma, folio)) {\n```\n\nI agree the batch itself has to count all four slices of a small folio, as you explained on PS7. For the threshold, though, `vma_folio_nr_ptes()` returns 1 for a small folio, so `nr \u003c 1` never splits one, which is what the added `folio_test_large()` does now. For a large folio in a 4KB VMA it returns `folio_size() / 4KB`. That drops the `folio_nr_ptes` local and the open-coded division, and native folios keep the upstream test.\n\nCould the upstream comment above the mapcount check stay as well? With `!\u003d nr` it still holds for native folios, and `vma_folio_slices_exclusive()` documents the small anonymous case. If you\u0027d like it to cover 4KB VMAs, changing \"its number of pages\" to \"the number of PTEs in the batch\" would be enough. That would also avoid \"compat\", which the series spells \"4KB\".",
+      "isAi": true,
+      "revId": "d7b5dab3f9830635112af01df2e9efd91442509d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
