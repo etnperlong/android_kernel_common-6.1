@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e203e05a_7fb71b24",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-30T17:31:57Z",
+      "side": 1,
+      "message": "Should we have these in a structure?",
+      "range": {
+        "startLine": 136,
+        "startChar": 69,
+        "endLine": 137,
+        "endChar": 23
+      },
+      "revId": "a346ced7eb02d6fb6c578a9c56cda623d5cd3158",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
