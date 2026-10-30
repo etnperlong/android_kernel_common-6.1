@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5fb0885_5f9a18b8",
+        "filename": "drivers/block/zram/zram_ioctl.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:46:08Z",
+      "side": 1,
+      "message": "The repeat check looks right to me. Would you mind moving it into a helper in `include/linux/p3s/swap.h`, so that `zram_process_walker()` keeps a one-line hook? Something like:\n\n```\nstatic inline bool p3s_swap_entry_repeats(swp_entry_t *last, swp_entry_t entry)\n{\n\tbool repeats \u003d last-\u003eval \u003d\u003d entry.val;\n\n\t*last \u003d entry;\n\treturn repeats;\n}\n```\n\nThe stub in the `#else` branch of the header\u0027s existing config block would return `false`, so builds without P3S drop the check. In the walker, before the budget check:\n\n```\n\t\tif (p3s_swap_entry_repeats(\u0026private-\u003elast_entry, entry))\n\t\t\tgoto unlock_swap_device;\n```\n\nThe comment about 4KB PTEs sharing a swap slot would then become the helper\u0027s kernel-doc.\n\nI think `have_last_entry` could go too. Swap slot 0 holds the swap header and is never allocated (`setup_swap_map()` sets `swap_map[0] \u003d SWAP_MAP_BAD`), so the zeroed `last_entry` can\u0027t match a real entry. Recording the entry before the budget check should also be fine, since nothing reads `last_entry` after the walker returns 1.",
+      "isAi": true,
+      "revId": "359d50b01c830a78be117b1e013e706790bb5236",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
