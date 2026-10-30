@@ -283,4 +283,3 @@ failed:
 
 	return status;
 }
-EXPORT_SYMBOL_GPL(pcie_do_recovery);
