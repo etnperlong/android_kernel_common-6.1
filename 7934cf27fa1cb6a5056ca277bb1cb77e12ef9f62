@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6bebc05_e9c04770",
+        "filename": "drivers/android/binder/page_range.rs",
+        "patchSetId": 15
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:03:41Z",
+      "side": 1,
+      "message": "Nit: would it be OK to leave `trace_unmap_user_start()` where it was, above `user_page_addr`? The clamp doesn\u0027t need the move, so the change to upstream Rust Binder would stay limited to the zap size.",
+      "isAi": true,
+      "revId": "7934cf27fa1cb6a5056ca277bb1cb77e12ef9f62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
