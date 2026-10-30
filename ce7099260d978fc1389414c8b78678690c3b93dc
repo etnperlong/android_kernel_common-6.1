@@ -35,6 +35,25 @@
       "parentUuid": "b00c2e5a_9b78934c",
       "revId": "ce7099260d978fc1389414c8b78678690c3b93dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "568b1742_2f73dc93",
+        "filename": "drivers/block/ublk_drv.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 1614,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:42:55Z",
+      "side": 1,
+      "message": "Fair point, thanks! `-EOPNOTSUPP` describes this well, and `p3s_4k_unsupported()` logs the reason anyway, so let\u0027s keep it as is.",
+      "parentUuid": "b627140f_b164d598",
+      "isAi": true,
+      "revId": "ce7099260d978fc1389414c8b78678690c3b93dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
