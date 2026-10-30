@@ -169,18 +169,17 @@ static bool needs_swiotlb_bounce(struct device *dev, struct sg_table *table)
 	struct scatterlist *sg;
 	int i;
 
+	/* Only DMA-API domains mean dma-iommu; e.g. IDENTITY uses dma-direct. */
+	if (domain && !iommu_is_dma_domain(domain))
+		domain = NULL;
+
 	for_each_sgtable_dma_sg(table, sg, i) {
-		// SG_DMA_SWIOTLB is set only for dma-iommu, not for dma-direct
-		if (domain && IS_ENABLED(CONFIG_NEED_SG_DMA_FLAGS)) {
-			if (sg_dma_is_swiotlb(table->sgl))
-				return true;
-		} else {
-			phys_addr_t paddr = domain ?
-					    iommu_iova_to_phys(domain, sg_dma_address(sg)) :
-					    dma_to_phys(dev, sg_dma_address(sg));
-			if (swiotlb_find_pool(dev, paddr))
-				return true;
-		}
+		phys_addr_t paddr = domain ?
+				    iommu_iova_to_phys(domain, sg_dma_address(sg)) :
+				    dma_to_phys(dev, sg_dma_address(sg));
+
+		if (swiotlb_find_pool(dev, paddr))
+			return true;
 	}
 	return false;
 }
