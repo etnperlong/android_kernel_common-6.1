@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8fe1013_571902d7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:11:41Z",
+      "side": 1,
+      "message": "Nit: the clamp looks good to me now. 24 bits match arm64\u0027s `ARCH_MMAP_RND_BITS_MAX` for a 39-bit VA, and native mms keep `~0UL`.\n\nThe two cleanups look right as well: `PAGE_ALIGN_DOWN_4KB()` has no user, and `personality_4kb_pages()` is only called from `mm_init_pte_shift()` inside the config block. But they tidy up aosp/4312458 and aosp/4312459 rather than fix ASLR. Would you mind moving them into a small patch of their own, so this one stays about the randomization?",
+      "isAi": true,
+      "revId": "fcd6af1e2cd14993edbf0af3da4bd076ec0edff7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
