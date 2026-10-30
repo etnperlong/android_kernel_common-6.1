@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20271af8_2cabe60e",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 30
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:25:27Z",
+      "side": 1,
+      "message": "Hi Kelvin, Will pointed out on aosp/4312528 that zeroing this slice is redundant, since the copy overwrites all of it, so we\u0027ve added a tags-only `mte_clear_slice_tags()` and use it here, in a follow-up at the end of p3s_6.18_b10: aosp/4404637. This hunk changes the same lines, so it will conflict when you rebase onto the new b10. As far as I can tell it doesn\u0027t change the behavior anyway: `mfill_atomic_pte_copy()` allocates the source folio without tags (`__GFP_ZERO`, not `__GFP_ZEROTAGS`), so the condition is always true and the slice is still zeroed. Could you drop this hunk when you rebase? Thanks!",
+      "isAi": true,
+      "revId": "a1513d6b693b33b6b0c635475d312e2ad94aca4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
