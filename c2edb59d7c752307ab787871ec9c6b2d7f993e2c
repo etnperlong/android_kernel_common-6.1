@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "c2edb59d7c752307ab787871ec9c6b2d7f993e2c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "932d0ebb_83b8cc73",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 16
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T01:38:09Z",
+      "side": 1,
+      "message": "Thanks, Will!\n\n\u003e 1\n\nEvery DMA allocator behind these helpers allocates whole kernel pages. `dma_direct_alloc()`, `__dma_alloc_pages()` and the IOMMU allocators use `PAGE_ALIGN()`, the atomic pools have a minimum order of `PAGE_SHIFT`, and the coherent pool bitmap counts kernel pages with `get_order(size)`. So the rest of the last kernel page belongs to the same allocation, and a native process already maps it today. Nothing crosses into another coherent allocation.\n\n\u003e 2\n\nA non-zero `vm_slice_off` needs an `mmap()` offset that isn\u0027t 16KB-aligned. That isn\u0027t a valid vb2 or DRM cookie, since both are kernel-page multiples, and native processes can\u0027t pass one. `remap_pfn_range()` starts at `vm_slice_off`, so the bound has to count it; otherwise callers that pass the offset through, like ALSA, would map past the buffer. Rejecting sliced cookies belongs in the drivers, as Kelvin\u0027s aosp/4367607 (DRM GEM) and aosp/4367609 (vb2) do.\n\nOn the squash, this patch and aosp/4368055 already fix the `-ENXIO` and wrong-slice problems that aosp/4368011 describes, and it needs `vma_aligned_size()`, `p3s_remap_phys_range()` and `remap_pfn_range_slice()` from three later patches. aosp/4367610 is now only the `dma_mmap_pfn()` refactor, which is folded into aosp/4368011. So I\u0027d rather not squash them here.",
+      "parentUuid": "f7b94ed0_eed48296",
+      "isAi": true,
+      "revId": "c2edb59d7c752307ab787871ec9c6b2d7f993e2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
