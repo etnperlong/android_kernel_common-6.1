@@ -14,7 +14,6 @@
 #include <linux/skbuff.h>
 #include <linux/inet.h>
 #include <linux/file.h>
-#include <linux/fdtable.h>
 #include <linux/rhashtable.h>
 
 #include <net/sock.h>
