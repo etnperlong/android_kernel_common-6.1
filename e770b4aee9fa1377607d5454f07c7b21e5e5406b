@@ -16,6 +16,24 @@
       "message": "ioc_prefetch-\u003eread_bytes \u003d 0;\n\nEarly return will leave the structure uninitialized with potentially garbage from the userspace call if the user doesn\u0027t explicitly set it to 0, just seems like a best practice to make sure its 0 on an error path.",
       "revId": "e770b4aee9fa1377607d5454f07c7b21e5e5406b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95a5d906_391e0584",
+        "filename": "drivers/block/zram/zram_ioctl.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1894539
+      },
+      "writtenOn": "2026-10-30T03:41:36Z",
+      "side": 1,
+      "message": "Clear to 0 before passing to the scanning function. Thanks for the review.",
+      "parentUuid": "a013a5a4_195974e2",
+      "revId": "e770b4aee9fa1377607d5454f07c7b21e5e5406b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
