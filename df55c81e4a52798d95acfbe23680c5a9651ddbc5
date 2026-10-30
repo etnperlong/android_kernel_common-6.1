@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aeee98f4_0e6d35e2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:24:00Z",
+      "side": 1,
+      "message": "Since this doesn\u0027t depend on the ring layout, would it be OK to move it before aosp/4367963 in the chain, so it can land whatever happens to the `perf_mmap()` changes?",
+      "isAi": true,
+      "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75648e7e_7272501c",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 8166,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:24:00Z",
+      "side": 1,
+      "message": "As far as I can see, only the PTE case can happen in a 4KB mm. `pgd_leaf()` is always `false` on arm64 (the generic fallback in `\u003clinux/pgtable.h\u003e`). THP is off in 4KB VMAs (`vma_thp_disabled()`), so there are no PMD leaves. And contpte is off for 4KB mms (`contpte_is_enabled()`), so every present 4KB PTE reports `PAGE_SIZE_KERNEL`.\n\nWould it be OK to drop the PGD and PMD hunks, and to move the PTE one into a helper in `include/linux/p3s/perf.h`? The upstream walk would then only gain `P3S_CONTEXT_REMOTE_MM()` and `mm_pmd_offset()`. Something like:\n\n```\n\tif (pte_present(pte))\n\t\tsize \u003d p3s_perf_pte_size(mm, __pte_leaf_size(pmd, pte));\n```\n\nwhere `p3s_perf_pte_size()` returns `mm_pte_size(mm)` for a `PAGE_SIZE_KERNEL` leaf. The walk itself looks right to me: the guard nests, so it\u0027s fine in the NMI path, and `pte_offset_map()` follows it.",
+      "isAi": true,
+      "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c792d8c_8ba778ac",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 9644,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:24:00Z",
+      "side": 1,
+      "message": "These offsets look right to me, including the anonymous case, where a 4KB VMA counts `vm_pgoff` in 4KB pages. Could the expression become an accessor in `include/linux/p3s/perf.h` too, with that note as its comment? Something like:\n\n```\n\t\t\t.pgoff  \u003d p3s_mmap_pgoff(vma),\n```",
+      "isAi": true,
+      "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
