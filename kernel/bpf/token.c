@@ -1,5 +1,6 @@
 #include <linux/bpf.h>
 #include <linux/vmalloc.h>
+#include <linux/fdtable.h>
 #include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
