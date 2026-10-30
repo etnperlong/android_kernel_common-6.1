@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d19ca4e_3a5edac3",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 35
+      },
+      "lineNbr": 2023,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-30T17:40:28Z",
+      "side": 1,
+      "message": "Setting `P3S_CONTEXT_REMOTE_MM(ctx-\u003emm)` here makes `PAGE_SIZE`/`PAGE_MASK` evaluate to `ctx-\u003emm`\u0027s page size, which is right for `dst` and `len`. However, in `userfaultfd_copy()`, `validate_unaligned_range(ctx-\u003emm, uffdio_copy.src, uffdio_copy.len)` checks `uffdio_copy.src` against `ctx-\u003emm-\u003etask_size` (`TASK_SIZE_4KB` \u003d 512 GB for a 4KB target process).\n\nBecause `uffdio_copy.src` is in the caller\u0027s address space (`current-\u003emm`), a native 16KB monitor process (`TASK_SIZE_64`) servicing faults for a 4KB process will fail with `-EINVAL` whenever its source buffer is mapped above 512 GB.\n\nPlease squash up-stack fix aosp/4367947 (\"ANDROID: P3S: userfaultfd: Validate COPY source in the caller mm\") into this change.",
+      "isAi": true,
+      "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf28ff62_a8abf97f",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 35
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-30T17:40:28Z",
+      "side": 1,
+      "message": "Minor optimization: `mte_zero_clear_slice_tags()` calls `mte_set_mem_tag_range(..., PAGE_SIZE_4KB, 0, true)` (`DC GZVA`), which zeroes both data and allocation tags right before `memcpy()` overwrites all 4KB of data. Clearing only the tags (`mte_set_mem_tag_range(..., PAGE_SIZE_4KB, 0, false)`) would avoid zeroing the 4KB slice twice on `UFFDIO_COPY`.",
+      "isAi": true,
+      "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d60f3071_cd047b6d",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 35
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-10-30T17:40:28Z",
+      "side": 1,
+      "message": "When `!p3s_folio_mapped_by_slices(vma, folio)` (`folio_mapcount(folio) \u003d\u003d 1`), returning `1` here allows `move_present_ptes()` to move `src_folio` in place (updating `src_folio-\u003eindex` and `anon_vma`) without checking whether `folio` is still in the swap cache (`folio_test_swapcache(folio)` — e.g. when sibling slices in the 16KB window are still swap PTEs) or whether the physical slice offset matches `vma_slice_offset(dst_vma, dst_addr)`.\n\nThere are also four follow-up `userfaultfd` patches higher in the stack that rework or fix the code introduced here:\n- aosp/4367946 (\"ANDROID: P3S: userfaultfd: Limit compat registration to anonymous VMAs\")\n- aosp/4367974 (\"ANDROID: P3S: userfaultfd: Move swapped 16KB windows of 4KB processes\")\n- aosp/4367997 (\"ANDROID: P3S: userfaultfd: Move present 4KB slices safely\")\n- aosp/4368005 (\"ANDROID: P3S: userfaultfd: Keep the slice phase of moved swap PTEs\")\n\nCan we squash those follow-up `userfaultfd` fixes into this patch so we don\u0027t introduce `p3s_uffd_move_nr_slices()` / the `move_pages()` slice check here only to replace them up-stack?",
+      "isAi": true,
+      "revId": "1f5ac3f00fa7dd8c1ffda11b32d6f076afe5d251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
