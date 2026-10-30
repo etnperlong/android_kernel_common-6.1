@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0fe1ac1_1d42c4aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 13
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T04:18:41Z",
+      "side": 1,
+      "message": "Could this paragraph say what fails without the patch? As far as I can see, in a 4KB process `dma_buf_mmap_internal()` rejects mappings of more than a quarter of the buffer with `-EINVAL`, since `vma_pages()` counts 4KB pages. `system_heap_mmap()` remaps a whole kernel page at each address, so a mapping at a 4KB offset also maps slices of the physically next page, which may not belong to the buffer, and one that ends partway through a page gets PTEs past `vm_end`.\n\nI think \"Preserve the VMA\u0027s file slice when setting vm_pgoff\" can go as well: the patch no longer touches the `vm_pgoff` update in `dma_buf_mmap()`.",
+      "isAi": true,
+      "revId": "bbe3876eb0a05c0c9cc8b19f9d6c54ec7c977ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98a55b78_1e15c138",
+        "filename": "drivers/dma-buf/heaps/system_heap.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T04:18:41Z",
+      "side": 1,
+      "message": "The clamped loop looks right to me, thanks. One follow-up to the loop I suggested on PS7, now that we keep slice math in P3S headers: would you mind moving it into a small helper in `include/linux/p3s/vma.h`? Something like:\n\n```\n/* Bytes from @addr to the end of the kernel page that backs it, within @vma */\nstatic inline unsigned long vma_kernel_page_bytes(const struct vm_area_struct *vma,\n\t\t\t\t\t\t  unsigned long addr)\n{\n\treturn min(PAGE_SIZE_KERNEL - vma_folio_offset(vma, addr),\n\t\t   vma-\u003evm_end - addr);\n}\n```\n\nThen `system_heap_mmap()` only needs a `size` local, with no `off`, and the rest of the loop stays as it is now:\n\n```\n\t\tunsigned long size \u003d vma_kernel_page_bytes(vma, addr);\n```\n\nNative VMAs get `min(PAGE_SIZE, vm_end - addr)`, so it needs no stub.",
+      "isAi": true,
+      "revId": "bbe3876eb0a05c0c9cc8b19f9d6c54ec7c977ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
