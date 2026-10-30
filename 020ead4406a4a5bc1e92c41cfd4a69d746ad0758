@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "49981aea_7321e939",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T10:41:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "200eb60e_f203f340",
+      "revId": "020ead4406a4a5bc1e92c41cfd4a69d746ad0758",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d0e14513_6a4623fb",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-29T14:21:45Z",
       "side": 1,
       "message": "I think here it shall be your bug number:\nBug: 500932210",
+      "revId": "020ead4406a4a5bc1e92c41cfd4a69d746ad0758",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9524615e_91c4e01c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T10:41:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0e14513_6a4623fb",
       "revId": "020ead4406a4a5bc1e92c41cfd4a69d746ad0758",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
