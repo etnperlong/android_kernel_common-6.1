@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6421c818_9261e981",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1865,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T23:25:55Z",
+      "side": 1,
+      "message": "Hi Kelvin, I agree with this one: ART\u0027s `MoveIoctl()` falls back to UFFDIO_COPY on `EBUSY` but treats `EINVAL` as fatal. Will asked to squash it into aosp/4312528, but I\u0027d rather it stay your patch. Could you move it to the front of your series as well, right after p3s_6.18_b10? Thanks!",
+      "isAi": true,
+      "revId": "2f598c3f20ba37eea95936795a0104a179101f8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
