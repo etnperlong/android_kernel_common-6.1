@@ -21,6 +21,9 @@ TEST_GEN_PROGS := \
 
 TEST_PROGS := run.sh
 
+# Manual reproducer (needs root and a FUTEX_*_PING kernel); not run by run.sh
+TEST_GEN_FILES := futex_ping_edge_repro
+
 top_srcdir = ../../../../..
 DEFAULT_INSTALL_HDR_PATH := 1
 include ../../lib.mk
