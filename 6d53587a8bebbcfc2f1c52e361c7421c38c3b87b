@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "98242d8b_2568e314",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T11:42:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "262fdf69_c1399d71",
+      "revId": "6d53587a8bebbcfc2f1c52e361c7421c38c3b87b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7a641d01_18dd77b4",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-29T14:25:02Z",
       "side": 1,
       "message": "looks good, just some nits, as in previous patches",
+      "revId": "6d53587a8bebbcfc2f1c52e361c7421c38c3b87b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73e80302_b41be33b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T11:42:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a641d01_18dd77b4",
       "revId": "6d53587a8bebbcfc2f1c52e361c7421c38c3b87b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
