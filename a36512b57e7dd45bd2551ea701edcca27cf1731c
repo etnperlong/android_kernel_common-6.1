@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8e13007_213a6944",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:34:59Z",
+      "side": 1,
+      "message": "Thanks for switching to `ELF_MIN_ALIGN`, the code looks right to me now: native and non-P3S cores keep `ELF_EXEC_PAGESIZE`, and the core of a 4KB process gets 4KB-aligned `p_offset` and `p_align`.\n\nSince `elf_core_p3s.c` moved to the selftest patch aosp/4367986, this patch no longer adds the PT_LOAD, content and NT_FILE checks, though. Could the first paragraph drop that part? Something like:\n\n```\nUse ELF_MIN_ALIGN for the core segment data offset and p_align.\n```\n\nAlso, \"follows the process size\" in the second paragraph could say \"follows the process page size\".",
+      "isAi": true,
+      "revId": "a36512b57e7dd45bd2551ea701edcca27cf1731c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
