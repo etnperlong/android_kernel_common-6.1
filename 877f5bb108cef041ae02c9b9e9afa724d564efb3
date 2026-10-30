@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61ef7e7d_2e1020c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 23
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T20:37:58Z",
+      "side": 1,
+      "message": "Done. Dropped this patch together with aosp/4367611 from the stack.",
+      "parentUuid": "fb7d490b_d3ee3a4f",
+      "isAi": true,
+      "revId": "877f5bb108cef041ae02c9b9e9afa724d564efb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "79924ef9_eeddeed4",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T06:48:06Z",
       "side": 1,
       "message": "If the patch stays: now that it\u0027s rebased onto aosp/4368056, `mm/memory.c` has its own P3S header, `mm/p3s/memory.h`, which only it includes. Could `p3s_get_remote_page()` go there instead of into a new `mm/p3s/remote_access.h`? Then this `#include` wouldn\u0027t be needed.",
+      "isAi": true,
+      "revId": "877f5bb108cef041ae02c9b9e9afa724d564efb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "818f9af4_e3ddee98",
+        "filename": "mm/memory.c",
+        "patchSetId": 23
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-30T20:37:58Z",
+      "side": 1,
+      "message": "Ack — dropped this patch from the stack.",
+      "parentUuid": "79924ef9_eeddeed4",
       "isAi": true,
       "revId": "877f5bb108cef041ae02c9b9e9afa724d564efb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
