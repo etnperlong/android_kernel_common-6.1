@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb7d490b_d3ee3a4f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 23
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:48:06Z",
+      "side": 1,
+      "message": "As on aosp/4367611, I think this patch might not be needed anymore: as far as I can see, no PTE that GUP can reach has an explicitly inserted slice other than the one `vma_slice_offset()` gives its address, since both `vm_insert_page_slice()` callers pass the address slice and the BPF ring buffer is refused (aosp/4367950). Then `p3s_get_user_slice_pages()` (aosp/4312497) and `vma_remote_access_chunk()` (aosp/4368035) already read the right bytes.\n\nWould it be OK to drop it together with aosp/4367611? `p3s_get_user_slice_pages()` and `__access_remote_vm()` would then stay as they are in our series.",
+      "isAi": true,
+      "revId": "877f5bb108cef041ae02c9b9e9afa724d564efb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79924ef9_eeddeed4",
+        "filename": "mm/memory.c",
+        "patchSetId": 23
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:48:06Z",
+      "side": 1,
+      "message": "If the patch stays: now that it\u0027s rebased onto aosp/4368056, `mm/memory.c` has its own P3S header, `mm/p3s/memory.h`, which only it includes. Could `p3s_get_remote_page()` go there instead of into a new `mm/p3s/remote_access.h`? Then this `#include` wouldn\u0027t be needed.",
+      "isAi": true,
+      "revId": "877f5bb108cef041ae02c9b9e9afa724d564efb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
