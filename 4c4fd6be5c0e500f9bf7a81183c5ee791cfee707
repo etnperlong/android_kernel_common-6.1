@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b0c3d1a_06acc152",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 26
+      },
+      "lineNbr": 1521,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T06:44:30Z",
+      "side": 1,
+      "message": "Thanks, `vma_page_size()` looks right here. Would you mind moving the choice into a helper in `include/linux/p3s/proc.h`, which `fs/proc/task_mmu.c` already includes, so that the change to `show_smap()` stays on one line? Something like:\n\n```\nstatic inline unsigned long p3s_vma_mmu_pagesize(struct vm_area_struct *vma)\n{\n\tif (vma_is_p3s_4k(vma))\n\t\treturn vma_page_size(vma);\n\treturn vma_mmu_pagesize(vma);\n}\n```\n\n```\n\tSEQ_PUT_DEC(\" kB\\nMMUPageSize:    \", p3s_vma_mmu_pagesize(vma));\n```\n\nIt wouldn\u0027t need a stub of its own, since `vma_is_p3s_4k()` has one. `is_vm_hugetlb_page()` isn\u0027t needed either: `hugetlbfs_file_mmap()` refuses 4KB processes, so a 4KB VMA is never a hugetlb one.\n\nThis also keeps upstream\u0027s `vma_mmu_pagesize()` for every other VMA. That changes nothing on arm64 or x86_64. powerpc, though, overrides it for ordinary VMAs to report 4K hash pages under a 64K kernel, which is the case `MMUPageSize` was added for in `3340289ddf29` (`\"mm: report the MMU pagesize in /proc/pid/smaps\"`).",
+      "isAi": true,
+      "revId": "4c4fd6be5c0e500f9bf7a81183c5ee791cfee707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
