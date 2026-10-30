@@ -16,6 +16,24 @@
       "message": "is this an ANDROID/FROMLIST/FROMGIT patch? please prepend subject with relevant info",
       "revId": "f8a256a2ed8ad4045e4f2948cc19f2708b7e926c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a19df7fa_a716d574",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-10-30T11:47:13Z",
+      "side": 1,
+      "message": "I\u0027m planning on upstreaming it, but it hasn\u0027t been sent to the mailing list yet. In part because I need this patch stack to actually test it properly on mainline",
+      "parentUuid": "5db60e8b_59daa1d9",
+      "revId": "f8a256a2ed8ad4045e4f2948cc19f2708b7e926c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
