@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a522146_83fb4c74",
+        "filename": "kernel/bpf/syscall.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:33:03Z",
+      "side": 1,
+      "message": "Nit: I think the new `#include \u003clinux/p3s/mm.h\u003e` isn\u0027t needed. `\u003clinux/bpf.h\u003e` already includes `\u003clinux/mm_types.h\u003e`, which pulls in `\u003clinux/p3s.h\u003e` and with it `\u003clinux/p3s/mm.h\u003e`. That is how `io_uring_mmap()` (aosp/4368076) and `tracing_buffers_mmap()` (aosp/4368077) call `p3s_4k_unsupported()` without an include of their own.\n\nWould it be OK to drop it, here and in `kernel/bpf/sysfs_btf.c` (aosp/4393907)?",
+      "isAi": true,
+      "revId": "364623610db7fb9ce9bf5ce9da8e96588df6a50e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8ca888f_d1671050",
+        "filename": "kernel/bpf/syscall.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 1097,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:33:03Z",
+      "side": 1,
+      "message": "This looks complete to me for BPF maps: array, ring buffer, user ring buffer and arena maps only reach `map-\u003eops-\u003emap_mmap()` through `bpf_map_mmap()`, and refusing here, before `bpf_map_write_active_inc()` and the `vm_ops` setup, leaves nothing to undo.\n\nThe only other bpf `mmap()` I can find is `btf_sysfs_vmlinux_mmap()`, which aosp/4393907 refuses separately in p3s_6.18_b16. Would it make sense to fold that patch into this one, so that the bpf `mmap()` refusals land together?",
+      "isAi": true,
+      "revId": "364623610db7fb9ce9bf5ce9da8e96588df6a50e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
