@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "bc1aab798f082b3a4363f71e07e2b275a53f7cbd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35c15090_ef85b018",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T01:35:16Z",
+      "side": 1,
+      "message": "Thanks! In this series, every PFN PTE\u0027s slice comes from `vma_slice_offset()` (`remap_pfn_range()` through `vma_remap_frame()`, and `insert_pfn()`), so `vma_pfnmap_phys()` is exact here. aosp/4368007 only becomes necessary with explicit-slice PFN mappings (`remap_pfn_range_slice()` in Kelvin\u0027s series), so I think it fits better next to those. I\u0027ll leave this patch as is.",
+      "parentUuid": "802a7bf8_abdfee59",
+      "isAi": true,
+      "revId": "bc1aab798f082b3a4363f71e07e2b275a53f7cbd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
