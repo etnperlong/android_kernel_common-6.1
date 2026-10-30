@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8543df6c_aac618a7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 20
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:18:26Z",
+      "side": 1,
+      "message": "I think a sliced cookie would map a different part of the object rather than bytes outside it. With `vma_pgoff_pages()`, the exact lookup only matches when every slice the VMA covers is in the object\u0027s pages. The fault handlers then index the object from `vm_start` (e.g. `drm_gem_shmem_fault()`), and `insert_pfn()` adds the slice within that page.\n\nCould the last sentence say that instead, as aosp/4367609 does for videobuf2 (\"can map a different part of the selected buffer\")?",
+      "isAi": true,
+      "revId": "468430cd43cdf61c6a0fc9fc01a7ae7e882e0e6d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
