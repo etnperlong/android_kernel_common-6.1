@@ -274,8 +274,15 @@ void unregister_kernel_break_hook(struct break_hook *hook)
 }
 EXPORT_SYMBOL_GPL(unregister_kernel_break_hook);
 
-static int call_el1_break_hook(struct pt_regs *regs, unsigned long esr)
+static int call_break_hook(struct pt_regs *regs, unsigned long esr)
 {
+	if (user_mode(regs)) {
+		if (IS_ENABLED(CONFIG_UPROBES) &&
+			esr_brk_comment(esr) == UPROBES_BRK_IMM)
+			return uprobe_brk_handler(regs, esr);
+		return DBG_HOOK_ERROR;
+	}
+
 	if (esr_brk_comment(esr) == BUG_BRK_IMM)
 		return bug_brk_handler(regs, esr);
 
@@ -312,30 +319,24 @@ static int call_el1_break_hook(struct pt_regs *regs, unsigned long esr)
 
 	return DBG_HOOK_ERROR;
 }
-NOKPROBE_SYMBOL(call_el1_break_hook);
+NOKPROBE_SYMBOL(call_break_hook);
 
-/*
- * We have already unmasked interrupts and enabled preemption
- * when calling do_el0_brk64() from entry-common.c.
- */
-void do_el0_brk64(unsigned long esr, struct pt_regs *regs)
+static int brk_handler(unsigned long unused, unsigned long esr,
+		       struct pt_regs *regs)
 {
-	if (IS_ENABLED(CONFIG_UPROBES) &&
-		esr_brk_comment(esr) == UPROBES_BRK_IMM &&
-		uprobe_brk_handler(regs, esr) == DBG_HOOK_HANDLED)
-		return;
+	if (call_break_hook(regs, esr) == DBG_HOOK_HANDLED)
+		return 0;
 
-	send_user_sigtrap(TRAP_BRKPT);
+	if (user_mode(regs)) {
+		send_user_sigtrap(TRAP_BRKPT);
+	} else {
+		pr_warn("Unexpected kernel BRK exception at EL1\n");
+		return -EFAULT;
+	}
+
+	return 0;
 }
-
-void do_el1_brk64(unsigned long esr, struct pt_regs *regs)
-{
-	if (call_el1_break_hook(regs, esr) == DBG_HOOK_HANDLED)
-		return;
-
-	die("Oops - BRK", regs, esr);
-}
-NOKPROBE_SYMBOL(do_el1_brk64);
+NOKPROBE_SYMBOL(brk_handler);
 
 bool try_handle_aarch32_break(struct pt_regs *regs)
 {
@@ -377,7 +378,10 @@ bool try_handle_aarch32_break(struct pt_regs *regs)
 NOKPROBE_SYMBOL(try_handle_aarch32_break);
 
 void __init debug_traps_init(void)
-{}
+{
+	hook_debug_fault_code(DBG_ESR_EVT_BRK, brk_handler, SIGTRAP,
+			      TRAP_BRKPT, "BRK handler");
+}
 
 /* Re-enable single step for syscall restarting. */
 void user_rewind_single_step(struct task_struct *task)
