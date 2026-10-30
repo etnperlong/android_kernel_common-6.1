@@ -24,6 +24,7 @@ struct iommu_testing_stats {
 	atomic64_t idmap_unmap_calls;	/* prot == 0 */
 	atomic64_t idmap_unmap_pages;
 	atomic64_t idmap_mmio_calls;	/* prot & IOMMU_MMIO */
+	atomic64_t idmap_mmio_pages;
 	atomic64_t complete_calls;
 };
 
@@ -67,8 +68,10 @@ static int iommu_testing_host_stage2_idmap(phys_addr_t start, phys_addr_t end, i
 		atomic64_inc(&stats.idmap_unmap_calls);
 	}
 
-	if (prot & IOMMU_MMIO)
+	if (prot & IOMMU_MMIO) {
 		atomic64_inc(&stats.idmap_mmio_calls);
+		atomic64_add(pages, &stats.idmap_mmio_pages);
+	}
 
 	if (atomic64_read(&stats.complete_calls) == 0) {		/* still in the snapshot */
 		if (start < snapshot_last_end)
@@ -198,6 +201,9 @@ void iommu_testing_hcall_get_stat(struct user_pt_regs *regs)
 		break;
 	case IOMMU_TESTING_STAT_MMIO_CALLS:
 		val = atomic64_read(&stats.idmap_mmio_calls);
+		break;
+	case IOMMU_TESTING_STAT_MMIO_PAGES:
+		val = atomic64_read(&stats.idmap_mmio_pages);
 		break;
 	case IOMMU_TESTING_STAT_COMPLETE_CALLS:
 		val = atomic64_read(&stats.complete_calls);

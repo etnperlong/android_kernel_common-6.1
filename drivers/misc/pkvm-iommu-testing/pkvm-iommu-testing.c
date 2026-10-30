@@ -26,6 +26,7 @@ static const char * const stat_names[IOMMU_TESTING_STAT_NR] = {
 	[IOMMU_TESTING_STAT_UNMAP_CALLS] = "unmap_calls",
 	[IOMMU_TESTING_STAT_UNMAP_PAGES] = "unmap_pages",
 	[IOMMU_TESTING_STAT_MMIO_CALLS] = "mmio_calls",
+	[IOMMU_TESTING_STAT_MMIO_PAGES] = "mmio_pages",
 	[IOMMU_TESTING_STAT_COMPLETE_CALLS] = "complete_calls",
 	[IOMMU_TESTING_STAT_SKIPPED_PAGES] = "skipped_pages"
 };
