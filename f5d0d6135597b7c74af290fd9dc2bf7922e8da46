@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7208dc7_8992ca7b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:36:17Z",
+      "side": 1,
+      "message": "Thanks for splitting this out. As far as I can see, it isn\u0027t specific to P3S: android-mainline, android17-6.18 and android16-6.12 also build this reader from `_IOC_SIZE(cmd)`, so `ASHMEM_GET_PIN_STATUS` fails with `-EFAULT` there too.\n\nIs it also uploaded to android-mainline? This patch could then be a cherry-pick of it (same Change-Id), which also keeps the next merge from android17-6.18 clean.",
+      "isAi": true,
+      "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfdf5550_e544effa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:36:17Z",
+      "side": 1,
+      "message": "Could the message say what fails first, and drop \"native\", since the bug isn\u0027t specific to P3S? Something like:\n\n```\nASHMEM_GET_PIN_STATUS is defined with _IO(), so _IOC_SIZE() is zero\nfor it, and the reader that ioctl() builds from it can\u0027t hold a struct\nashmem_pin. The ioctl then always fails with -EFAULT.\n\nRead sizeof(struct ashmem_pin) for all three pin ioctls, as the C\ndriver did.\n```\n\nCould you also add `Fixes: 88767401147c (\"ANDROID: ashmem_rust: add ASHMEM_PIN/UNPIN\")` after `Bug:`, as 0e168fbe93ac (\"ANDROID: ashmem: fix integer underflow on len\u003d\u003d0\") does?",
+      "isAi": true,
+      "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b645c479_93e33c45",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 12
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T18:36:17Z",
+      "side": 1,
+      "message": "Nit: rustfmt formats this arm as `\u003d\u003e me.pin_unpin(...)`, which is why aosp/4367960 reformats it. Would a local `size` keep the existing `pin_unpin()` line and stay rustfmt-clean? Something like:\n\n```\n            ASHMEM_PIN | ASHMEM_UNPIN | ASHMEM_GET_PIN_STATUS \u003d\u003e {\n                // ASHMEM_GET_PIN_STATUS is _IO(), so _IOC_SIZE(cmd) is 0.\n                let size \u003d core::mem::size_of::\u003cbindings::ashmem_pin\u003e();\n                me.pin_unpin(cmd, UserSlice::new(UserPtr::from_addr(arg), size).reader())\n            }\n```\n\nThen aosp/4367960 wouldn\u0027t need to touch this arm.",
+      "isAi": true,
+      "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
