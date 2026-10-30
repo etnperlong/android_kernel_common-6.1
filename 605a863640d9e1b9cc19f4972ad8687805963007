@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12d6e4ca_977b7b2f",
+        "filename": "mm/mremap.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:19:13Z",
+      "side": 1,
+      "message": "Nit: could this keep upstream\u0027s `/* Page Offset _into_ the VMA. */` comment above the declaration, and drop the second blank line after the declarations (checkpatch: \"Please don\u0027t use multiple blank lines\")? Then `vrm_set_new_addr()` only changes the one line.",
+      "isAi": true,
+      "revId": "605a863640d9e1b9cc19f4972ad8687805963007",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc2b6a5a_f2223908",
+        "filename": "mm/vma.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 1880,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-30T05:19:13Z",
+      "side": 1,
+      "message": "It looks like this re-wrap is left over from dropping `old_addr`. `copy_vma()` takes the same arguments as in the parent, so this hunk, the prototype in `mm/vma.h` and the call in `copy_vma_and_data()` only move `pgoff` to a line of its own.\n\nWould you mind restoring the original lines? Then `mm/vma.c` and `mm/vma.h` drop out of this patch. aosp/4367981 adds `old_addr` back to `copy_vma()` later in the chain, so it could re-wrap these lines if it needs to.",
+      "isAi": true,
+      "revId": "605a863640d9e1b9cc19f4972ad8687805963007",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
