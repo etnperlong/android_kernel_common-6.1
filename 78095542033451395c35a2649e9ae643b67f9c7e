@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc8e857d_815f1c5c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 20
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T20:37:06Z",
+      "side": 1,
+      "message": "Nit: would `ANDROID: P3S: binder: Support mappings ending inside a native page` work as the subject? aosp/4367993 later refuses mappings that don\u0027t start at slice 0 of a native page, so only the last page can be partial, and \"partial native pages\" reads a bit as if the two patches disagreed.\n\nAs far as I can see they\u0027re complementary: `vma_starts_at_kernel_page()` only checks the start, and libbinder\u0027s 1MB - 8KB mapping still ends 8KB into its last native page, which is what this patch handles.",
+      "isAi": true,
+      "revId": "78095542033451395c35a2649e9ae643b67f9c7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
