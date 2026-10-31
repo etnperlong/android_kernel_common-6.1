@@ -1259,7 +1259,6 @@ struct task_struct {
 
 	/* Protection of the PI data structures: */
 	raw_spinlock_t			pi_lock;
-	raw_spinlock_t			pi_futex_lock;
 
 	struct wake_q_node		wake_q;
 	int				wake_q_count;
@@ -1688,7 +1687,10 @@ struct task_struct {
 	 */
 	struct callback_head		l1d_flush_kill;
 #endif
-	ANDROID_KABI_RESERVE(1);
+	ANDROID_KABI_USE(1, struct {
+		raw_spinlock_t		pi_futex_lock;
+		});
+
 	ANDROID_KABI_RESERVE(2);
 	ANDROID_KABI_RESERVE(3);
 	ANDROID_KABI_RESERVE(4);
