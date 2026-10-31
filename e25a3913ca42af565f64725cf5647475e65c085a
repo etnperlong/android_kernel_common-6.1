@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77955533_464bae49",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 1849,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T20:35:32Z",
+      "side": 1,
+      "message": "Agreed on `-EBUSY`, and the new comment reads well, thanks. One question on where the check sits: would it be OK to move it below `validate_move_areas()`?\n\nWhen aosp/4312528 added it, both returned `-EINVAL`, so the order didn\u0027t matter. Now a request that `validate_move_areas()` refuses, for example one whose destination isn\u0027t registered with this userfaultfd or whose areas have different protections, gets `-EBUSY` when its slices differ, which tells userspace to copy instead. After `validate_move_areas()`, `-EBUSY` would only reach moves that are otherwise valid.\n\nAs far as I can see, ART ends up in the same place either way: its `EBUSY` fallback, `CopyIoctl()`, gets `ENOENT` for an unregistered range and tolerates it in the same cases as `EINVAL`. So this is only about keeping upstream\u0027s errors for invalid requests.",
+      "isAi": true,
+      "revId": "e25a3913ca42af565f64725cf5647475e65c085a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
