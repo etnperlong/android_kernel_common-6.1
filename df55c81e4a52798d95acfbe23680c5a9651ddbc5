@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b96e12ec_b7ed79b2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:59:42Z",
+      "side": 1,
+      "message": "Thanks for moving it ahead of aosp/4367963.",
+      "parentUuid": "aeee98f4_0e6d35e2",
+      "isAi": true,
+      "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "75648e7e_7272501c",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "19b13d07_3fcfb3ef",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 8166,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:59:42Z",
+      "side": 1,
+      "message": "Thanks, this looks good now: the PGD and PMD hunks are gone, and the PTE case is a one-line hook into `p3s_perf_pte_size()`.",
+      "parentUuid": "75648e7e_7272501c",
+      "isAi": true,
+      "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0c792d8c_8ba778ac",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-30T23:24:00Z",
       "side": 1,
       "message": "These offsets look right to me, including the anonymous case, where a 4KB VMA counts `vm_pgoff` in 4KB pages. Could the expression become an accessor in `include/linux/p3s/perf.h` too, with that note as its comment? Something like:\n\n```\n\t\t\t.pgoff  \u003d p3s_mmap_pgoff(vma),\n```",
+      "isAi": true,
+      "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aee2e57a_897479e2",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 9644,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:59:42Z",
+      "side": 1,
+      "message": "Thanks for the accessor, and for keeping the note about anonymous VMAs as its comment.",
+      "parentUuid": "0c792d8c_8ba778ac",
       "isAi": true,
       "revId": "df55c81e4a52798d95acfbe23680c5a9651ddbc5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"

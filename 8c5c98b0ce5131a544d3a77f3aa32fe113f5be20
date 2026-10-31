@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3b3cb2e_25be54d0",
+        "filename": "kernel/events/internal.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:59:42Z",
+      "side": 1,
+      "message": "Nit: can we move this to the top of the file with the other includes?",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 27
+      },
+      "revId": "8c5c98b0ce5131a544d3a77f3aa32fe113f5be20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
