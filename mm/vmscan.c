@@ -898,6 +898,19 @@ static inline bool is_exec_file_folio(struct folio *folio,
 	return (vm_flags & VM_EXEC) && folio_is_file_lru(folio);
 }
 
+/*
+ * Whether the memcg a folio is charged to is still online. Extra protection is
+ * not given to folios charged to offlined memcgs: protecting those folios also
+ * keeps their dead memcgs around, and it is better to let them be reclaimed and
+ * refaulted into the live memcgs of the processes that still use them.
+ */
+static inline bool folio_memcg_is_online(struct folio *folio)
+{
+	struct mem_cgroup *memcg = folio_memcg(folio);
+
+	return !memcg || mem_cgroup_online(memcg);
+}
+
 #ifdef CONFIG_LRU_GEN
 /*
  * Only used on a mapped folio in the eviction (rmap walk) path, where promotion
@@ -972,6 +985,18 @@ static enum folio_references folio_check_references(struct folio *folio,
 #endif
 		if (!referenced_ptes)
 			return FOLIOREF_RECLAIM;
+
+		/*
+		 * Like the classic LRU below, which activates folios referenced
+		 * through more than one mapping, count such references as a
+		 * second access. When processes using a shared folio are in
+		 * different memcgs, the aging walk skips the PTEs of processes
+		 * outside the folio's memcg, so their references are only seen
+		 * here, and a folio used only by them would otherwise never get
+		 * PG_workingset.
+		 */
+		if (referenced_ptes > 1 && folio_memcg_is_online(folio))
+			folio_set_referenced(folio);
 
 		return lru_gen_set_refs(folio, vm_flags) ? FOLIOREF_ACTIVATE : FOLIOREF_KEEP;
 	}
