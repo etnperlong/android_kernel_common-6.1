@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab87af83_9db5a87e",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-31T01:45:28Z",
+      "side": 1,
+      "message": "Yeah, we might have to clean that up at some point. is_writable() also checks dmabuf file permissions, so is_writable() might be less permissive but I don\u0027t think why these two would disagree.",
+      "parentUuid": "1ce4bc4f_8f037a81",
+      "revId": "34f3d36c2737f67ba0ecd3fe3f0dc619f9c23aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1b7bf037_ec224f12",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-31T01:13:09Z",
       "side": 1,
       "message": "I don\u0027t think this is the right signal for clearing. If we introduce a new type of buffer that we can wrap, or there is a need to allocate a new_content structure for dmabuf, we\u0027ll skip over this in the rewrap case, even though we should unconditionally clear in rewrap, no?",
+      "revId": "34f3d36c2737f67ba0ecd3fe3f0dc619f9c23aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd219be4_989d45ac",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 871,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-10-31T01:45:28Z",
+      "side": 1,
+      "message": "So, if old_content !\u003d content that means make_writable() could not use the original buffer (content) and had to recreate a new one. An example of that would be if a read-only file mmap\u0027ed directly was to be rewrapped as writable. We can\u0027t directly take those pages representing read-only file and wrap them as writable, so we would have to reallocate a new set of pages which do not contain the same data as the original one. And since this is a newly allocated buffer (new content) we do not need to clear it. Does that make sense?",
+      "parentUuid": "1b7bf037_ec224f12",
       "revId": "34f3d36c2737f67ba0ecd3fe3f0dc619f9c23aee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
