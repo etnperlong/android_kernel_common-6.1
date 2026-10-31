@@ -4672,13 +4672,17 @@ void lru_gen_online_memcg(struct mem_cgroup *memcg)
 
 void lru_gen_offline_memcg(struct mem_cgroup *memcg)
 {
-	int nid;
-
-	for_each_node(nid) {
-		struct lruvec *lruvec = get_lruvec(memcg, nid);
-
-		lru_gen_rotate_memcg(lruvec, MEMCG_LRU_OLD);
-	}
+	/*
+	 * Don't move an offlined memcg to the old generation (MEMCG_LRU_OLD),
+	 * which would make it the first memcg to be reclaimed from. Folios are
+	 * not reparented when a memcg is offlined, so an offlined memcg can
+	 * still hold folios that are hot for other processes, e.g. shared file
+	 * folios that the exited process happened to fault in first. Leave the
+	 * memcg in its current generation to be reclaimed from in turn like an
+	 * online memcg; shrink_one() still rotates it out of the way once it
+	 * fails to make progress, and get_nr_to_scan() scrapes out its
+	 * remaining pages.
+	 */
 }
 
 void lru_gen_release_memcg(struct mem_cgroup *memcg)

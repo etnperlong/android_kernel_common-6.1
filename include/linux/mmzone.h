@@ -581,7 +581,8 @@ struct lru_gen_mm_walk {
  *    threshold, which triggers MEMCG_LRU_YOUNG;
  * 5. Attempting to reclaim a memcg below min, which triggers MEMCG_LRU_YOUNG;
  * 6. Finishing the aging on the eviction path, which triggers MEMCG_LRU_YOUNG;
- * 7. Offlining a memcg, which triggers MEMCG_LRU_OLD.
+ * 7. Offlining a memcg, which triggers MEMCG_LRU_OLD (currently disabled; see
+ *    lru_gen_offline_memcg()).
  *
  * Notes:
  * 1. Memcg LRU only applies to global reclaim, and the round-robin incrementing
