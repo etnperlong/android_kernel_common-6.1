@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50701701_0807e301",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:55:18Z",
+      "side": 1,
+      "message": "I may be missing a case here: with `mm_is_p3s_4k()` in this condition, removing a probe from a 4KB process never zaps the restored page, so the probed page stays a private anonymous copy, while native processes go back to the page cache page. The commit message doesn\u0027t mention this.\n\nAs far as I can see, the zap would also work in a 4KB VMA: `orig_page_is_identical()` finds the file page through `vaddr_to_offset()` and compares the whole 16KB page, which `wp_page_copy()` copied in full; the zap only drops this slice PTE; and `collapse_pte_mapped_thp()` bails out, since `vma_thp_disabled()` is true for 4KB VMAs.\n\nIf 4KB processes do need to keep the copy, could the commit message (or a comment) say why, and could the check use `vma_is_p3s_4k(vma)`, like the one above?",
+      "isAi": true,
+      "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3dbbd86_615f70ab",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:55:18Z",
+      "side": 1,
+      "message": "Nit: could the blank line above `ret \u003d verify(...)` stay, and could `__update_ref_ctr()` keep upstream\u0027s line break in `get_user_pages_remote()`, with only `mm` changed to `vma-\u003evm_mm`? That keeps those upstream lines out of the diff.\n\nThe new comment in `__uprobe_write()` would also want a blank line before it, as elsewhere in the series.",
+      "isAi": true,
+      "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "658c29b3_e518fb61",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 2427,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:55:18Z",
+      "side": 1,
+      "message": "Nit: I think this check isn\u0027t needed anymore: `get_user_pages()` doesn\u0027t pass `locked`, so GUP can\u0027t drop the mmap lock and, for one page, returns 1 or an error, as upstream assumes here. It looks like it was there for `get_user_pages_range_locked()` in PS15. Would it be OK to drop it?",
+      "isAi": true,
+      "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
