@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "33b6af964b9d5d744f11bfe8cdc0f5e58658c74a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd5d0f31_efe9a1de",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:56:28Z",
+      "side": 1,
+      "message": "Thanks for adding the `Fixes:` tag. Have you had a chance to send the fix upstream as well? As far as I can see, mainline still passes `page` here. Once it\u0027s on the list, this patch could become a `FROMLIST:` pick with a `Link:` to the posting.\n\nAlso, since THP is off in 4KB VMAs, I think only native PMD mappings reach this check. Could the last sentence say that this only affects native PMD mappings?",
+      "parentUuid": "c22a9f55_ba7d81e3",
+      "isAi": true,
+      "revId": "33b6af964b9d5d744f11bfe8cdc0f5e58658c74a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
