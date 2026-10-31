@@ -256362,6 +256362,10 @@ enumeration {
       name: "BO_T_RWSEM"
       value: 2
     }
+    enumerator {
+      name: "BO_T_PING_FUTEX"
+      value: 3
+    }
   }
 }
 enumeration {
@@ -308206,7 +308210,7 @@ elf_symbol {
   name: "__traceiter_sched_set_state_tp"
   is_defined: true
   symbol_type: FUNCTION
-  crc: 0x4cc21abd
+  crc: 0xabd088a4
   type_id: 0x9bc214f0
   full_name: "__traceiter_sched_set_state_tp"
 }
@@ -308314,7 +308318,7 @@ elf_symbol {
   name: "__tracepoint_sched_set_state_tp"
   is_defined: true
   symbol_type: OBJECT
-  crc: 0x1e000d84
+  crc: 0x9a533c36
   type_id: 0x18ccbd2c
   full_name: "__tracepoint_sched_set_state_tp"
 }
@@ -341258,7 +341262,7 @@ elf_symbol {
   name: "wake_up_process"
   is_defined: true
   symbol_type: FUNCTION
-  crc: 0x06d17937
+  crc: 0x218f4710
   type_id: 0x9ac6895a
   full_name: "wake_up_process"
 }
