@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "5a3807cbd762eaf63f39638598465b53d9bf04ea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcee9363_29a7340d",
+        "filename": "BUILD.bazel",
+        "patchSetId": 26
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-10-31T00:05:24Z",
+      "side": 1,
+      "message": "Done. Dropped this patch from the stack.",
+      "parentUuid": "dd6dbaba_44cef33c",
+      "isAi": true,
+      "revId": "5a3807cbd762eaf63f39638598465b53d9bf04ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
