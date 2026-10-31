@@ -1278,7 +1278,7 @@ struct task_struct {
 	struct blocked_on_lock		blocked_on;	/* lock we're blocked on */
 	raw_spinlock_t			blocked_lock;
 #ifdef CONFIG_SCHED_PROXY_EXEC
-	struct list_head		migration_node;
+	ANDROID_KABI_REPLACE(struct list_head, migration_node, struct list_head ping_state_list);
 	struct list_head		blocked_head;  /* tasks blocked on this task */
 	struct list_head		blocked_node;  /* our entry on someone elses blocked_head */
 	/* Node for list of tasks to process blocked_head list for blocked entitiy activations */
@@ -1379,7 +1379,6 @@ struct task_struct {
 	struct compat_robust_list_head __user *compat_robust_list;
 #endif
 	struct list_head		pi_state_list;
-	struct list_head		ping_state_list;
 	struct futex_pi_state		*pi_state_cache;
 	struct mutex			futex_exit_mutex;
 	unsigned int			futex_state;
