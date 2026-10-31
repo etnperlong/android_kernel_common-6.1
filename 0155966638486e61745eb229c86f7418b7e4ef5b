@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df4e2796_523bf136",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T20:39:44Z",
+      "side": 1,
+      "message": "This still looks right to me on top of the new p3s_6.18_b10: only the faulting PTE changes, so neither the sibling PTE change in aosp/4368036 nor the widened notifier range applies here, and `wp_page_copy()` has already counted the PTE in `MM_ANONPAGES`.\n\nCould the helper get a kernel-doc header like the others in this file? I think the zero-page paragraph you added to `p3s_wp_install_folio_slices()` would fit better here, with a one-line pointer left there (its `@new_folio` line could mention the zeroed folio too). Something like:\n\n```\n/*\n * p3s_wp_reuse_zero_folio - Map a sibling\u0027s slice on zero-page COW\n * @new_folio: Zeroed folio that wp_page_copy() allocated\n * @vmf: Fault information; page table lock held, *vmf-\u003epte \u003d\u003d vmf-\u003eorig_pte\n *\n * Zero the faulting slice of a sibling folio that\n * p3s_anon_folio_lookaround_pte() returns, and map it at the faulting PTE\n * only, as wp_page_copy() would map @new_folio. The lookaround reference\n * goes to the PTE, and the rmap mlocks the folio once more in a VM_LOCKED\n * VMA. wp_page_copy() has already counted the PTE in MM_ANONPAGES.\n *\n * Returns true, having freed @new_folio, if it mapped a sibling\u0027s slice.\n */\n```\n\nWhile you\u0027re there, `checkpatch --strict` notes that the second line of the prototype is two columns short of the open parenthesis.",
+      "isAi": true,
+      "revId": "0155966638486e61745eb229c86f7418b7e4ef5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
