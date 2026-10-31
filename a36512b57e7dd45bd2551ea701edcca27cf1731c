@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a36512b57e7dd45bd2551ea701edcca27cf1731c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51667325_933a1bd4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:59:55Z",
+      "side": 1,
+      "message": "Thanks, the message matches the patch now.",
+      "parentUuid": "a8e13007_213a6944",
+      "isAi": true,
+      "revId": "a36512b57e7dd45bd2551ea701edcca27cf1731c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
