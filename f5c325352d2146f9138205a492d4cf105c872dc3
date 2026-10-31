@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62a8574d_e2b88279",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:01:21Z",
+      "side": 1,
+      "message": "Thanks for adding the comment. Would you mind moving the conversion into a helper in `include/linux/p3s/proc.h`, so that `task_mem()` keeps upstream\u0027s `SEQ_PUT_DEC()` line with only the value changed? Something like:\n\n```\n\tSEQ_PUT_DEC(\" kB\\nVmPin:\\t\", mm_pinned_vm_pages(mm));\n```\n\nwith:\n\n```\n/*\n * mm_pinned_vm_pages - pinned_vm of @mm in pages of mm_pte_size(@mm)\n * @mm: mm_struct to report\n *\n * pinned_vm counts kernel pages, e.g. from perf_mmap(), while task_mem()\n * prints the other counters of @mm in its own page size.\n */\nstatic inline unsigned long mm_pinned_vm_pages(const struct mm_struct *mm)\n{\n\treturn atomic64_read(\u0026mm-\u003epinned_vm) * mm_slices_per_page(mm);\n}\n```\n\n`mm_slices_per_page()` is 1 for native mms and without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, so no stub is needed, and the unit math and its comment stay out of `fs/proc/task_mmu.c`.",
+      "isAi": true,
+      "revId": "f5c325352d2146f9138205a492d4cf105c872dc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
