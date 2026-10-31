@@ -46130,6 +46130,10 @@ member {
   type_id: 0x1cac6f1f
 }
 member {
+  id: 0x24e971b5
+  type_id: 0x1c8bb6c6
+}
+member {
   id: 0x2503427d
   type_id: 0x1b2379e7
 }
@@ -46524,6 +46528,10 @@ member {
   type_id: 0x34a92e7f
 }
 member {
+  id: 0x2eecfdc4
+  type_id: 0x349d8700
+}
+member {
   id: 0x2f731943
   type_id: 0x32e2151e
 }
@@ -46720,6 +46728,11 @@ member {
   id: 0x315f6c1f
   type_id: 0x4a53dc11
   offset: 1024
+}
+member {
+  id: 0x31611eac
+  type_id: 0x4aaa2daa
+  offset: 128
 }
 member {
   id: 0x31669da2
@@ -47081,6 +47094,11 @@ member {
 member {
   id: 0x34366909
   type_id: 0x5ff7d434
+}
+member {
+  id: 0x3439547f
+  type_id: 0x5fcb370e
+  offset: 21056
 }
 member {
   id: 0x3439bc42
@@ -49488,6 +49506,11 @@ member {
   id: 0x31f552a4
   name: "__kabi_renamedcpumask"
   type_id: 0x99caa0ae
+}
+member {
+  id: 0xb3c70f6c
+  name: "__kabi_renamedmigration_node"
+  type_id: 0xd3c80119
 }
 member {
   id: 0x415b002c
@@ -145657,12 +145680,6 @@ member {
   offset: 11280
 }
 member {
-  id: 0x01a31fb2
-  name: "migration_node"
-  type_id: 0xd3c80119
-  offset: 21056
-}
-member {
   id: 0x9ca3673b
   name: "migration_pending"
   type_id: 0x18bd6530
@@ -164413,6 +164430,12 @@ member {
   offset: 192
 }
 member {
+  id: 0x4a8068c4
+  name: "owner"
+  type_id: 0x1d19a9d5
+  offset: 64
+}
+member {
   id: 0x4a806db7
   name: "owner"
   type_id: 0x1d19a9d5
@@ -170003,10 +170026,9 @@ member {
   offset: 20384
 }
 member {
-  id: 0x71601996
+  id: 0x71601054
   name: "pi_mutex"
   type_id: 0x6a0f9ac9
-  offset: 128
 }
 member {
   id: 0x0e93f6ca
@@ -170644,10 +170666,20 @@ member {
   offset: 6016
 }
 member {
+  id: 0x23d1f9b3
+  name: "ping_mutex"
+  type_id: 0xc2d14410
+}
+member {
   id: 0x47c2003a
   name: "ping_port_rover"
   type_id: 0x914dbfdc
   offset: 6144
+}
+member {
+  id: 0x139fc874
+  name: "ping_state_list"
+  type_id: 0xd3c80119
 }
 member {
   id: 0x517ebeed
@@ -241043,6 +241075,14 @@ struct_union {
   }
 }
 struct_union {
+  id: 0x1c8bb6c6
+  kind: STRUCT
+  definition {
+    bytesize: 16
+    member_id: 0x139fc874
+  }
+}
+struct_union {
   id: 0x1cac6f1f
   kind: STRUCT
   definition {
@@ -242515,6 +242555,14 @@ struct_union {
     bytesize: 16
     member_id: 0xb3380ef4
     member_id: 0xed909488
+  }
+}
+struct_union {
+  id: 0x349d8700
+  kind: STRUCT
+  definition {
+    bytesize: 16
+    member_id: 0xb3c70f6c
   }
 }
 struct_union {
@@ -244217,6 +244265,15 @@ struct_union {
   }
 }
 struct_union {
+  id: 0x4aaa2daa
+  kind: UNION
+  definition {
+    bytesize: 32
+    member_id: 0x71601054
+    member_id: 0x23d1f9b3
+  }
+}
+struct_union {
   id: 0x4aac7bac
   kind: UNION
   definition {
@@ -245843,6 +245900,16 @@ struct_union {
     bytesize: 8
     member_id: 0x24f7e1d2
     member_id: 0x3e92bcfa
+  }
+}
+struct_union {
+  id: 0x5fcb370e
+  kind: UNION
+  definition {
+    bytesize: 16
+    member_id: 0x24e971b5
+    member_id: 0x2eecfdc4
+    member_id: 0x36752b74
   }
 }
 struct_union {
@@ -265159,7 +265226,7 @@ struct_union {
   definition {
     bytesize: 88
     member_id: 0x7c00ef52
-    member_id: 0x71601996
+    member_id: 0x31611eac
     member_id: 0x4a806db7
     member_id: 0x05243c4b
     member_id: 0x205045b4
@@ -284480,6 +284547,16 @@ struct_union {
   }
 }
 struct_union {
+  id: 0xc2d14410
+  kind: STRUCT
+  name: "ping_mutex"
+  definition {
+    bytesize: 16
+    member_id: 0xebe277d2
+    member_id: 0x4a8068c4
+  }
+}
+struct_union {
   id: 0xda0c5a10
   kind: STRUCT
   name: "pingroup"
@@ -297128,7 +297205,7 @@ struct_union {
     member_id: 0x11a168f2
     member_id: 0x95eadc83
     member_id: 0xc2fa95a6
-    member_id: 0x01a31fb2
+    member_id: 0x3439547f
     member_id: 0xb333fc12
     member_id: 0xfc654bc7
     member_id: 0xa82c7375
