@@ -13832,6 +13832,10 @@ member {
   type_id: 0x2561bccd
 }
 member {
+  id: 0x2aa1bb19
+  type_id: 0x25a89c75
+}
+member {
   id: 0x2ad966ef
   type_id: 0x244bebad
 }
@@ -14415,6 +14419,11 @@ member {
   id: 0x34dc7c7e
   type_id: 0x5c5fa7e4
   offset: 96
+}
+member {
+  id: 0x34dd203f
+  type_id: 0x5c5acfd5
+  offset: 23936
 }
 member {
   id: 0x34e023f4
@@ -15690,12 +15699,6 @@ member {
   name: "__kabi_reserved1"
   type_id: 0x92233392
   offset: 2112
-}
-member {
-  id: 0x415b0372
-  name: "__kabi_reserved1"
-  type_id: 0x92233392
-  offset: 23936
 }
 member {
   id: 0x415b038c
@@ -56156,6 +56159,11 @@ member {
   offset: 18496
 }
 member {
+  id: 0xf71362ba
+  name: "pi_futex_lock"
+  type_id: 0xc8b17aa7
+}
+member {
   id: 0x3e105aa0
   name: "pi_lock"
   type_id: 0xc8b17aa7
@@ -79545,6 +79553,14 @@ struct_union {
   }
 }
 struct_union {
+  id: 0x25a89c75
+  kind: STRUCT
+  definition {
+    bytesize: 4
+    member_id: 0xf71362ba
+  }
+}
+struct_union {
   id: 0x2627fc8d
   kind: STRUCT
   definition {
@@ -81285,6 +81301,16 @@ struct_union {
     bytesize: 8
     member_id: 0x2bca1fa7
     member_id: 0xdaaa2fd5
+  }
+}
+struct_union {
+  id: 0x5c5acfd5
+  kind: UNION
+  definition {
+    bytesize: 8
+    member_id: 0x2aa1bb19
+    member_id: 0x21c53df9
+    member_id: 0x36752b74
   }
 }
 struct_union {
@@ -99996,7 +100022,7 @@ struct_union {
     member_id: 0x231b2690
     member_id: 0xed670d23
     member_id: 0xd666c568
-    member_id: 0x415b0372
+    member_id: 0x34dd203f
     member_id: 0xb116e1d6
     member_id: 0xf0d6592c
     member_id: 0x04993a7c
@@ -113301,7 +113327,7 @@ elf_symbol {
   name: "__put_task_struct"
   is_defined: true
   symbol_type: FUNCTION
-  crc: 0xcde72045
+  crc: 0x08fd4bd8
   type_id: 0x17de3be6
   full_name: "__put_task_struct"
 }
@@ -113310,7 +113336,7 @@ elf_symbol {
   name: "module_layout"
   is_defined: true
   symbol_type: FUNCTION
-  crc: 0xc6c7af6f
+  crc: 0x40d51cb0
   type_id: 0x12d88613
   full_name: "module_layout"
 }
