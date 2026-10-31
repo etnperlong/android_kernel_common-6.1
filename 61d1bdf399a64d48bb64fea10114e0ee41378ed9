@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1362c607_ffa9436b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 34
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:42:16Z",
+      "side": 1,
+      "message": "It looks like the reason from aosp/4393907\u0027s commit message got lost in the fold: the BTF part now says what changes, but not what fails without it. Could you carry it over? Something like:\n\n```\nAlso refuse the BTF sysfs mmap for 4KB processes: its native-page length\ncheck rounds a trailing 4KB slice down and can accept bytes beyond the\nBTF allocation.\n```\n\nThe subject could then name both, e.g. `ANDROID: P3S: bpf: Refuse map and BTF mmap in 4KB processes`.",
+      "isAi": true,
+      "revId": "61d1bdf399a64d48bb64fea10114e0ee41378ed9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

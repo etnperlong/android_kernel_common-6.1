@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27645fc5_9a44c6a4",
+        "filename": "kernel/bpf/syscall.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:42:16Z",
+      "side": 1,
+      "message": "Thanks for dropping it, here and in `kernel/bpf/sysfs_btf.c`.",
+      "parentUuid": "2a522146_83fb4c74",
+      "isAi": true,
+      "revId": "364623610db7fb9ce9bf5ce9da8e96588df6a50e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b8ca888f_d1671050",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T18:33:03Z",
       "side": 1,
       "message": "This looks complete to me for BPF maps: array, ring buffer, user ring buffer and arena maps only reach `map-\u003eops-\u003emap_mmap()` through `bpf_map_mmap()`, and refusing here, before `bpf_map_write_active_inc()` and the `vm_ops` setup, leaves nothing to undo.\n\nThe only other bpf `mmap()` I can find is `btf_sysfs_vmlinux_mmap()`, which aosp/4393907 refuses separately in p3s_6.18_b16. Would it make sense to fold that patch into this one, so that the bpf `mmap()` refusals land together?",
+      "isAi": true,
+      "revId": "364623610db7fb9ce9bf5ce9da8e96588df6a50e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4bd0e305_68d8b6f6",
+        "filename": "kernel/bpf/syscall.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 1097,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:42:16Z",
+      "side": 1,
+      "message": "Thanks for folding aosp/4393907 in. The refusal in `btf_sysfs_vmlinux_mmap()` comes before `vm_flags_mod()` and `remap_pfn_range()`, so it leaves nothing to undo either, and the bpf `mmap()` refusals now land together.\n\nI left a small note on the commit message.",
+      "parentUuid": "b8ca888f_d1671050",
       "isAi": true,
       "revId": "364623610db7fb9ce9bf5ce9da8e96588df6a50e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
