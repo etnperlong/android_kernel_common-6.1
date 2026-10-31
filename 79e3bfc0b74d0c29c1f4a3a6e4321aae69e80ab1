@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "72659c1a_6ccd8486",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks, the message now covers what fails without the patch, why the data PTEs can skip `vma_slice_offset()`, and what 4KB processes see now.",
+      "parentUuid": "9ffa6131_e4e43425",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "400c8104_3c9507ad",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T18:53:53Z",
       "side": 1,
       "message": "Would you mind folding the three `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` blocks of this header into one, with the stubs in its `#else` branch? `perf_mmap_page_size()` and `perf_set_mmap_page_size()` each have a block inside the function, and `perf_map_main_p3s()` has a third. Something like:\n\n```\n#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE\nstatic inline unsigned long perf_mmap_page_size(struct perf_buffer *rb)\n{\n\treturn rb-\u003emmap_page_size;\n}\n/* perf_set_mmap_page_size(), perf_map_main_p3s(), new helpers */\n#else\nstatic inline unsigned long perf_mmap_page_size(struct perf_buffer *rb)\n{\n\treturn __PAGE_SIZE;\n}\n/* their stubs */\n#endif\n```\n\nThe `#ifdef` around `mmap_page_size` in `struct perf_buffer` is fine as it is, since its accessors live here. Also, `PAGE_SIZE_KERNEL` in `perf_map_main_p3s()` would make the units explicit, as in the other P3S headers.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b20e1cda_b299286d",
+        "filename": "include/linux/p3s/perf.h",
+        "patchSetId": 28
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks for folding them into one block, with the stubs in its `#else` branch.",
+      "parentUuid": "400c8104_3c9507ad",
       "isAi": true,
       "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bd70a2b_51f13ec8",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 6860,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks, the hook looks good, and `p3s_perf_mmap_pfn_mkwrite()` allows exactly the first 4KB of the main ring.",
+      "parentUuid": "7590c2ba_07b43521",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "40e5621d_f014e348",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-30T18:53:53Z",
       "side": 1,
       "message": "Nit: this adds a second blank line here, and another one before `perf_mmap_open()` (checkpatch: multiple blank lines). Could both go?",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42e76772_ce11cd11",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 6883,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks, both extra blank lines are gone.",
+      "parentUuid": "40e5621d_f014e348",
       "isAi": true,
       "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4062b71b_c03c772f",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 7081,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks for dropping the leftover AUX rewrites and the page size check, and for moving the `__PAGE_SIZE` bound to aosp/4399088.",
+      "parentUuid": "49c1b42a_b066faf5",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4b9d865a_949c2e5e",
@@ -104,6 +199,25 @@
       "writtenOn": "2026-10-30T18:53:53Z",
       "side": 1,
       "message": "Thanks for moving the mapping into `include/linux/p3s/perf.h` and for requiring 16KB of data. I think the size checks could become a one-line accessor too. The only P3S difference is the 4KB user page, which is still backed by one kernel page. If `perf_mmap()` counts it as that kernel page, upstream\u0027s checks here and in `perf_mmap_rb()` work unchanged. Something like:\n\n```\n/* Count the 4KB user page of a 4KB process as the kernel page behind it. */\nstatic inline unsigned long p3s_perf_mmap_size(struct vm_area_struct *vma)\n{\n\tunsigned long size \u003d vma-\u003evm_end - vma-\u003evm_start;\n\n\tif (!vma_is_p3s_4k(vma) || vma-\u003evm_pgoff)\n\t\treturn size;\n\treturn size - mm_pte_size(vma-\u003evm_mm) + PAGE_SIZE_KERNEL;\n}\n```\n\nwith only this left here:\n\n```\n\tvma_size \u003d p3s_perf_mmap_size(vma);\n```\n\n`vma_size !\u003d PAGE_SIZE * nr_pages` then rejects data that isn\u0027t a multiple of 16KB, `perf_mmap_rb()` rejects page counts that aren\u0027t a power of two, and `user_extra` stays data + 1 kernel pages, which matches `perf_mmap_close()`. The `data_size` and `mmap_offset` locals, the re-indented checks and the `user_extra` and `nr_pages` change in `perf_mmap_rb()` could then go. Its page size check and `perf_set_mmap_page_size()` would stay. (`mmap_offset` is always `vm_pgoff \u003c\u003c PAGE_SHIFT` here anyway, since `vma_slice_off()` is rejected above.)",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "290cf5be_4ec16a9c",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 7184,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks, `p3s_perf_mmap_size()` looks right to me: 4KB and 8KB data rings fail the `vma_size` check, and `user_extra` stays data + 1 kernel pages, which matches `perf_mmap_close()`.",
+      "parentUuid": "4b9d865a_949c2e5e",
       "isAi": true,
       "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -127,6 +241,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0287d261_14ee584d",
+        "filename": "kernel/events/internal.h",
+        "patchSetId": 28
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks, `perf_data_size()` and `__perf_mmap_to_page()` now stay as they were, and `p3s_perf_map_main()` goes through `perf_mmap_to_page()`.",
+      "parentUuid": "f259b698_380e7a03",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "82e4caed_5ab0a4d7",
@@ -145,6 +278,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4194d997_5de7570c",
+        "filename": "mm/p3s.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks, checkpatch is clean here now. The one `--strict` check left, \"spinlock_t definition without comment\", is a false positive on the `spinlock_t *ptl` local, so I\u0027d leave it.",
+      "parentUuid": "82e4caed_5ab0a4d7",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d56ab70e_c0642af5",
@@ -158,6 +310,25 @@
       "writtenOn": "2026-10-30T18:53:53Z",
       "side": 1,
       "message": "Could this get a `p3s_` prefix, e.g. `p3s_remap_pfn_slice()`? It has to stay global for the perf header and aosp/4368009, but Will objected to unprefixed globals on aosp/4368056, and `remap_pfn_range_slice()` reads like an upstream variant of `remap_pfn_range()`. Keeping it unexported looks right.\n\nBoth callers, here and in aosp/4368009, map exactly one 4KB page, so the `size` argument could go too. And if you rename it, the helpers in `include/linux/p3s/perf.h` could take the prefix as well (e.g. `p3s_perf_map_main()`), so that they can\u0027t clash with upstream `perf_*()` names.",
+      "isAi": true,
+      "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b529ca25_c722b60c",
+        "filename": "mm/p3s.c",
+        "patchSetId": 28
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Thanks for the rename, and for dropping `size` and prefixing the perf helpers too.",
+      "parentUuid": "d56ab70e_c0642af5",
       "isAi": true,
       "revId": "79e3bfc0b74d0c29c1f4a3a6e4321aae69e80ab1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"

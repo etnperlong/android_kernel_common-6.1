@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "040fb8d8_75247858",
+        "filename": "include/linux/p3s/perf.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Could `p3s_perf_map_main()` get a short comment with the layout, and the reason from the commit message? It\u0027s the one place where a 4KB VMA maps a slice other than the one `vma_slice_offset()` gives, and why that\u0027s safe (a `VM_IO | VM_PFNMAP` VMA with no `-\u003eaccess`) is easy to miss later, so it would help to have it next to the code. Something like:\n\n```\n/*\n * p3s_perf_map_main - Map the main ring of @rb into a 4KB VMA\n * @rb: Ring buffer to map\n * @vma: 4KB VMA of the main ring, at vm_pgoff 0\n *\n *   vm_start\n *   ▼\n *   ┌──────┬──────┬──────┬──────┬──────┬──────┬─────\n *   │ U.0  │ D0.0 │ D0.1 │ D0.2 │ D0.3 │ D1.0 │ ...\n *   └──────┴──────┴──────┴──────┴──────┴──────┴─────\n *   U.0: slice 0 of the user page; DN.S: slice S of data page N\n *\n * The data starts at virtual slice 1 but at slice 0 of its kernel page,\n * so these PTEs don\u0027t follow vma_slice_offset(). That\u0027s fine because the\n * VMA is VM_IO | VM_PFNMAP and perf_mmap_vmops has no -\u003eaccess: GUP,\n * __access_remote_vm() and coredumps never read through them.\n */\n```\n\nWhile there, `PAGE_SIZE_KERNEL / PAGE_SIZE` is always 1 here, because `kernel/events/core.c` keeps the kernel `PAGE_SIZE`, and `offset_in_page()` and `data_offset / PAGE_SIZE` count kernel pages too. Would spelling the units out work for you? Then the index doesn\u0027t depend on the includer\u0027s `PAGE_SIZE`:\n\n```\n\t\tunsigned int slice \u003d (data_offset % PAGE_SIZE_KERNEL) / page_size;\n\n\t\t/* The data pages follow the one metadata page. */\n\t\tpage \u003d perf_mmap_to_page(rb, 1 + data_offset / PAGE_SIZE_KERNEL);\n```",
+      "isAi": true,
+      "revId": "35686099a0c27fa31ee84c661dd9be4e64093f09",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d9876ee_ee2a2601",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:18Z",
+      "side": 1,
+      "message": "Is this include needed? As far as I can see, `\u003clinux/mm_types.h\u003e` above already pulls in `\u003clinux/p3s.h\u003e`, which includes `\u003clinux/p3s/mm.h\u003e` and `\u003clinux/p3s/vma.h\u003e`. That\u0027s where `vma_is_p3s_4k()` comes from too (it lives in `\u003clinux/p3s/vma.h\u003e`), and how aosp/4399089 already uses `P3S_CONTEXT_REMOTE_MM()` here. Dropping it would save a line in `kernel/events/core.c`.",
+      "isAi": true,
+      "revId": "35686099a0c27fa31ee84c661dd9be4e64093f09",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
