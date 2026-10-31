@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ce4bc4f_8f037a81",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-31T01:13:09Z",
+      "side": 1,
+      "message": "Unrelated but: this makes sense, since `writable` but begs the question, what is the point of `is_writable()`?",
+      "revId": "34f3d36c2737f67ba0ecd3fe3f0dc619f9c23aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1b7bf037_ec224f12",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 871,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-10-31T01:13:09Z",
+      "side": 1,
+      "message": "I don\u0027t think this is the right signal for clearing. If we introduce a new type of buffer that we can wrap, or there is a need to allocate a new_content structure for dmabuf, we\u0027ll skip over this in the rewrap case, even though we should unconditionally clear in rewrap, no?",
+      "revId": "34f3d36c2737f67ba0ecd3fe3f0dc619f9c23aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
