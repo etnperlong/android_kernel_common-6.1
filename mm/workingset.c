@@ -685,7 +685,15 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
 	 * PAGE_SIZE / xa_nodes / node_entries * 8 / PAGE_SIZE
 	 */
 #ifdef CONFIG_MEMCG
-	if (sc->memcg) {
+	/*
+	 * Shadow nodes are only tracked per memcg if kmem accounting is
+	 * enabled. Otherwise, the shadow_nodes list_lru is not memcg aware: all
+	 * the nodes on this NUMA node are counted above, and the shrinker only
+	 * runs for the root memcg. Compare against the whole NUMA node then,
+	 * not against the pages local to the root memcg, which can be a tiny
+	 * fraction of all pages when most tasks run in child memcgs.
+	 */
+	if (sc->memcg && !mem_cgroup_kmem_disabled()) {
 		struct lruvec *lruvec;
 		int i;
 
