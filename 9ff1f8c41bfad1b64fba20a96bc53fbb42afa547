@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b031fca9_0954ccbc",
+        "filename": "include/linux/p3s/shmem.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:43:11Z",
+      "side": 1,
+      "message": "Nit: would you mind turning this into a kernel-doc comment like the other helpers in the P3S headers (e.g. `vma_file_offset_at()` in `include/linux/p3s/vma.h`), so that it explains the partial 16KB pages? Something like:\n\n```\n/*\n * vma_shmem_swap_usage - Swapped bytes of the file range a 4KB VMA maps\n * @vma: 4KB VMA of a shmem file\n * @start: Start of the address range in @vma\n * @end: End of the address range in @vma\n *\n * A 4KB VMA can start or end partway through a 16KB file page, so count\n * only the bytes of each swapped entry that [@start, @end) maps, rather\n * than whole entries.\n */\n```\n\nThe `#else` and `#endif` could also carry `/* !CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */` and `/* CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */`, as in `include/linux/p3s/mm.h`.",
+      "isAi": true,
+      "revId": "9ff1f8c41bfad1b64fba20a96bc53fbb42afa547",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "631c682a_00b792c2",
+        "filename": "mm/shmem.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:43:11Z",
+      "side": 1,
+      "message": "Nit: now that `shmem_partial_swap_usage()` stays as upstream has it (thanks for moving the 4KB counting into `include/linux/p3s/shmem.h`), this line only rewords upstream\u0027s comment. Would it be OK to drop it, so that `mm/shmem.c` only gets the include and the hook in `shmem_swap_usage()`?",
+      "isAi": true,
+      "revId": "9ff1f8c41bfad1b64fba20a96bc53fbb42afa547",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
