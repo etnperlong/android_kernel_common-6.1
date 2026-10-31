@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae7d9faa_cd867bba",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:57:34Z",
+      "side": 1,
+      "message": "Thanks for uploading it to android-mainline as aosp/4405696 with the same Change-Id, and for the `Fixes:` tag.",
+      "parentUuid": "b7208dc7_8992ca7b",
+      "isAi": true,
+      "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bfdf5550_e544effa",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "419462dd_9585223b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:57:34Z",
+      "side": 1,
+      "message": "Thanks, the message says what fails now, and the `Fixes:` tag is in.",
+      "parentUuid": "bfdf5550_e544effa",
+      "isAi": true,
+      "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b645c479_93e33c45",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-30T18:36:17Z",
       "side": 1,
       "message": "Nit: rustfmt formats this arm as `\u003d\u003e me.pin_unpin(...)`, which is why aosp/4367960 reformats it. Would a local `size` keep the existing `pin_unpin()` line and stay rustfmt-clean? Something like:\n\n```\n            ASHMEM_PIN | ASHMEM_UNPIN | ASHMEM_GET_PIN_STATUS \u003d\u003e {\n                // ASHMEM_GET_PIN_STATUS is _IO(), so _IOC_SIZE(cmd) is 0.\n                let size \u003d core::mem::size_of::\u003cbindings::ashmem_pin\u003e();\n                me.pin_unpin(cmd, UserSlice::new(UserPtr::from_addr(arg), size).reader())\n            }\n```\n\nThen aosp/4367960 wouldn\u0027t need to touch this arm.",
+      "isAi": true,
+      "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14999b62_493b7f43",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 12
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T22:57:34Z",
+      "side": 1,
+      "message": "Thanks, the `pin_unpin()` line stays as it was, and aosp/4367960 no longer touches this arm.",
+      "parentUuid": "b645c479_93e33c45",
       "isAi": true,
       "revId": "f5d0d6135597b7c74af290fd9dc2bf7922e8da46",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
