@@ -3689,6 +3689,49 @@ static struct folio *get_pfn_folio(unsigned long pfn, struct mem_cgroup *memcg,
 	return folio;
 }
 
+/*
+ * Handle a PTE that maps a folio charged to a memcg other than the one being
+ * aged. The folio's generation can't be updated here because generations are
+ * relative to the folio's own lruvec, but the access still counts: apply the
+ * same rule that folio_update_gen() applies to the folios of the memcg being
+ * aged (promote on the second access, or the first for executable file folios),
+ * and activate the folio in its own lruvec. Folios charged to offlined memcgs
+ * are skipped; see folio_memcg_is_online().
+ *
+ * Returns whether the PTE was young.
+ */
+static bool walk_foreign_folio(struct vm_area_struct *vma, unsigned long addr,
+			       pte_t *pte, unsigned long pfn,
+			       struct pglist_data *pgdat)
+{
+	struct folio *folio = pfn_folio(pfn);
+	struct mem_cgroup *memcg;
+
+	if (folio_lru_gen(folio) < 0)
+		return false;
+
+	if (folio_nid(folio) != pgdat->node_id)
+		return false;
+
+	memcg = folio_memcg_rcu(folio);
+	if (!memcg || !mem_cgroup_online(memcg))
+		return false;
+
+	if (!ptep_clear_young_notify(vma, addr, pte))
+		return false;
+
+	if (lru_gen_set_refs(folio, vma->vm_flags)) {
+		struct lruvec *lruvec = mem_cgroup_lruvec(memcg, pgdat);
+		int gen = folio_lru_gen(folio);
+
+		/* like walk_update_folio(), skip folios already in the youngest generation */
+		if (gen >= 0 && gen != lru_gen_from_seq(READ_ONCE(lruvec->lrugen.max_seq)))
+			folio_activate(folio);
+	}
+
+	return true;
+}
+
 static bool suitable_to_scan(int total, int young)
 {
 	int n = clamp_t(int, cache_line_size() / sizeof(pte_t), 2, 8);
@@ -3769,8 +3812,13 @@ restart:
 			continue;
 
 		folio = get_pfn_folio(pfn, memcg, pgdat);
-		if (!folio)
+		if (!folio) {
+			if (walk_foreign_folio(args->vma, addr, pte + i, pfn, pgdat)) {
+				young++;
+				walk->mm_stats[MM_LEAF_YOUNG]++;
+			}
 			continue;
+		}
 
 		if (!ptep_clear_young_notify(args->vma, addr, pte + i))
 			continue;
@@ -4503,8 +4551,11 @@ bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
 			continue;
 
 		folio = get_pfn_folio(pfn, memcg, pgdat);
-		if (!folio)
+		if (!folio) {
+			if (walk_foreign_folio(vma, addr, pte + i, pfn, pgdat))
+				young++;
 			continue;
+		}
 
 		if (!ptep_clear_young_notify(vma, addr, pte + i))
 			continue;
