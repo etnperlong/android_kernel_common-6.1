@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "68fbec9c_ecb4b832",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks, the message starts with what fails now and no longer describes the selftest.",
+      "parentUuid": "d0926b2a_62ca0872",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "881531bb_d76338c0",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-30T18:38:35Z",
       "side": 1,
       "message": "Nit: since `mmap()` still uses `__page_align()`, could the `page_size_compat::__page_align` import stay, so that this line doesn\u0027t change?",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "462619b6_4fd19081",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks, `mmap()` and its `__page_align` import are untouched now.",
+      "parentUuid": "881531bb_d76338c0",
       "isAi": true,
       "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4616fd97_1e12f809",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks, the block is as it was now, with only the `mm` lines after it.",
+      "parentUuid": "fb6b4924_8f453bea",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ca3841ea_620ae7cc",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-10-30T18:38:35Z",
       "side": 1,
       "message": "I\u0027m worried that with `mm.page_align()`, a `len \u003d\u003d 0` unpin from a 4KB process now stops at the 4KB-rounded size. For a 20KB region, the range ends 4KB into the last 16KB page, so `free_lru()` can only zero those 4KB instead of freeing the page as it did before this patch (`punch_hole()` only frees whole pages).\n\nWould `page_align(asma.size)` still work here? `mmap()` lets a 4KB process map up to the 16KB-rounded size, so 4KB processes could then pin and unpin any 4KB-aligned range they can map, as native processes can, and `Mm::page_align()` would have no user.",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "912fff54_b69f863b",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks, with `page_align(asma.size)` back, a whole-region unpin from a 4KB process reaches the last 16KB page again, and `Mm::page_align()` is gone. The new `len \u003d\u003d 0` case in aosp/4367986 covers it too.",
+      "parentUuid": "ca3841ea_620ae7cc",
       "isAi": true,
       "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "477582a5_6baedebc",
+        "filename": "drivers/staging/android/ashmem.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks for switching to `div_ceil()`.",
+      "parentUuid": "8a63a862_337c5320",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9f93a3f_e909f6fb",
@@ -109,6 +204,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e8fb283_9f41a38e",
+        "filename": "drivers/staging/android/ashmem_range.rs",
+        "patchSetId": 28
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks, only the `start` and `end` conversion is left in `free_lru()` now.",
+      "parentUuid": "e9f93a3f_e909f6fb",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "78f0d116_30dbfb15",
@@ -122,6 +236,25 @@
       "writtenOn": "2026-10-30T18:38:35Z",
       "side": 1,
       "message": "Is this include needed? As far as I can see, `\u003clinux/mm.h\u003e` above already pulls in `\u003clinux/p3s/const.h\u003e` (through `\u003clinux/mm_types.h\u003e` and `\u003clinux/p3s.h\u003e`), and bindgen emits the macros of every header it sees, as it does for `bindings::PAGE_SHIFT` in `rust/kernel/page.rs`. So `bindings::PAGE_SHIFT_4KB` should exist without it.",
+      "isAi": true,
+      "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5bc4974_2ff3a6f3",
+        "filename": "rust/bindings/bindings_helper.h",
+        "patchSetId": 28
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-10-31T23:00:47Z",
+      "side": 1,
+      "message": "Thanks for dropping the include.",
+      "parentUuid": "78f0d116_30dbfb15",
       "isAi": true,
       "revId": "bf0b454de922c159333f12bbabfc99b68bf29a84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
