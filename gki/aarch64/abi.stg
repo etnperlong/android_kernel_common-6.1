@@ -46347,6 +46347,10 @@ member {
   type_id: 0x2561bccd
 }
 member {
+  id: 0x2aa1bb19
+  type_id: 0x25a89c75
+}
+member {
   id: 0x2ad966ef
   type_id: 0x244bebad
 }
@@ -46510,6 +46514,10 @@ member {
 member {
   id: 0x2eb85808
   type_id: 0x35cf1033
+}
+member {
+  id: 0x2ec1e396
+  type_id: 0x3429fe49
 }
 member {
   id: 0x2ee1d79b
@@ -47312,6 +47320,11 @@ member {
   id: 0x34dc7c7e
   type_id: 0x5c5fa7e4
   offset: 96
+}
+member {
+  id: 0x34ddd26a
+  type_id: 0x5c590ee2
+  offset: 27520
 }
 member {
   id: 0x34e023f4
@@ -50548,12 +50561,6 @@ member {
   name: "__kabi_reserved2"
   type_id: 0x92233392
   offset: 1088
-}
-member {
-  id: 0xb116e79e
-  name: "__kabi_reserved2"
-  type_id: 0x92233392
-  offset: 27520
 }
 member {
   id: 0xb116e875
@@ -169979,6 +169986,11 @@ member {
   offset: 20736
 }
 member {
+  id: 0xf71362ba
+  name: "pi_futex_lock"
+  type_id: 0xc8b17aa7
+}
+member {
   id: 0x1d865649
   name: "pi_interval"
   type_id: 0x914dbfdc
@@ -241560,6 +241572,14 @@ struct_union {
   }
 }
 struct_union {
+  id: 0x25a89c75
+  kind: STRUCT
+  definition {
+    bytesize: 4
+    member_id: 0xf71362ba
+  }
+}
+struct_union {
   id: 0x25d39c6d
   kind: STRUCT
   definition {
@@ -242478,6 +242498,14 @@ struct_union {
     member_id: 0xc7dd1e99
     member_id: 0xa497f11a
     member_id: 0x9e1f254a
+  }
+}
+struct_union {
+  id: 0x3429fe49
+  kind: STRUCT
+  definition {
+    bytesize: 8
+    member_id: 0xb116ea48
   }
 }
 struct_union {
@@ -245117,6 +245145,16 @@ struct_union {
     bytesize: 8
     member_id: 0x2bca1fa7
     member_id: 0xdaaa2fd5
+  }
+}
+struct_union {
+  id: 0x5c590ee2
+  kind: UNION
+  definition {
+    bytesize: 8
+    member_id: 0x2aa1bb19
+    member_id: 0x2ec1e396
+    member_id: 0x36752b74
   }
 }
 struct_union {
@@ -297157,7 +297195,7 @@ struct_union {
     member_id: 0xd666c763
     member_id: 0x9a3adc9d
     member_id: 0x345b75dc
-    member_id: 0xb116e79e
+    member_id: 0x34ddd26a
     member_id: 0xf0d65d6d
     member_id: 0x049938a5
     member_id: 0x4454f20d
