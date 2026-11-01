@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c367e1a_a9f7faf1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 37
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:00:33Z",
+      "side": 1,
+      "message": "As on aosp/4368031, it looks like \"and add native and 4KB controls\" describes the tests, which are in aosp/4367986 now. Would you mind dropping it, and \"including the OSS data path\" if that hunk goes?\n\nIt might also help to name what fails without the patch, i.e. that `snd_pcm_mmap_data()` would map past the buffer for an offset that isn\u0027t 16KB-aligned.",
+      "isAi": true,
+      "revId": "7e1da6c74f452f162efd66a0d04d62bb2e55d606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54cac709_dc28872f",
+        "filename": "sound/core/oss/pcm_oss.c",
+        "patchSetId": 37
+      },
+      "lineNbr": 2895,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:00:33Z",
+      "side": 1,
+      "message": "Would it be OK to drop the changes to this file? `snd_pcm_oss_mmap()` maps the buffer through `snd_pcm_mmap_data()`, so the check added there already refuses it, and `CONFIG_SND_PCM_OSS` depends on `CONFIG_SND_OSSEMUL`, which `gki_defconfig` doesn\u0027t enable.",
+      "isAi": true,
+      "revId": "7e1da6c74f452f162efd66a0d04d62bb2e55d606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93527775_f5ba8ee4",
+        "filename": "sound/core/pcm_native.c",
+        "patchSetId": 37
+      },
+      "lineNbr": 4023,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:00:33Z",
+      "side": 1,
+      "message": "Agreed with the check in `snd_pcm_mmap_data()`: it bounds the mapping by `vm_pgoff` only, so since aosp/4368055 an offset that isn\u0027t 16KB-aligned would make `remap_pfn_range()` (e.g. in `snd_dma_continuous_mmap()`) map up to 12KB past the buffer.\n\nI think this one isn\u0027t needed, though: on arm64, `pcm_status_mmap_allowed()` and `pcm_control_mmap_allowed()` are `false` (status and control mmaps are only built for x86, PPC and Alpha), so those offsets already fail with `-ENXIO` for every process, and every other offset goes to `snd_pcm_mmap_data()`.\n\nWould it be OK to drop this hunk? The shifted status case in `alsa_pcm_mmap_p3s` (aosp/4367986) would then get `-ENXIO`, as native processes do.",
+      "isAi": true,
+      "revId": "7e1da6c74f452f162efd66a0d04d62bb2e55d606",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
