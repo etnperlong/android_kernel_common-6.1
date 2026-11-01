@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "017510ac_2c0b4d1d",
+        "filename": "mm/madvise.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:35:08Z",
+      "side": 1,
+      "message": "Thanks, the batch rule looks right to me now: a small folio is only freed when every slice PTE that maps it is in the batch, and native folios take the same path as before.\n\nCould this follow the MADV_COLD/MADV_PAGEOUT walk from aosp/4367604, so that the two walks stay alike? `folio_size(folio) / PAGE_SIZE` is the right count, since `mm/madvise.c` includes `\u003clinux/p3s_user_pages.h\u003e`. But `vma_folio_nr_ptes()` (aosp/4390444) already gives that count, so the `folio_nr_ptes` local wouldn\u0027t be needed.\n\nThe small-folio check could then move into a helper next to `p3s_madvise_folio_pte_batch()` in `mm/p3s/rmap.h`, with the 16KB/4KB explanation as its kernel-doc, so that `madvise_free_pte_range()` keeps a one-line hook. Something like:\n\n```\nstatic inline bool p3s_folio_slices_in_batch(const struct vm_area_struct *vma,\n\t\t\t\t\t     const struct folio *folio, int nr)\n{\n\treturn !vma_is_p3s_4k(vma) || folio_test_large(folio) ||\n\t       folio_mapcount(folio) \u003d\u003d nr;\n}\n```\n\nand in `madvise_free_pte_range()`:\n\n```\n\t\tif (folio_test_large(folio) || vma_is_p3s_4k(vma)) {\n\t\t\tnr \u003d madvise_folio_pte_batch(vma, addr, end, folio,\n\t\t\t\t\t\t     pte, \u0026ptent);\n\t\t\tif (!p3s_folio_slices_in_batch(vma, folio, nr))\n\t\t\t\tcontinue;\n\t\t\tif (nr \u003c vma_folio_nr_ptes(vma, folio)) {\n```\n\nUpstream\u0027s comment above `folio_mapcount(folio) !\u003d nr` could then stay, with \"the number of PTEs in the batch\" instead of \"its number of pages\", as aosp/4367604 has it for MADV_COLD. No stub is needed, since `vma_is_p3s_4k()` is false without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`.",
+      "isAi": true,
+      "revId": "0230b8cae2db9b27b7426b93f0ea6051efe9d160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34a28e85_beca9bae",
+        "filename": "mm/madvise.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:35:08Z",
+      "side": 1,
+      "message": "One case my earlier suggestion missed, I think: a window with a hole. If slices 0 and 2 map the folio and slice 1 is none (never touched, or zapped by MADV_DONTNEED), `p3s_madvise_folio_pte_batch()` stops at slice 1. So `nr` is 1 at both slices and never equals `folio_mapcount(folio)`, and the folio isn\u0027t freed even when the range covers the whole window. The parent still marked such a clean folio lazyfree.\n\nIt\u0027s safe, only less effective. Do you think it\u0027s worth handling here, for example by counting the folio\u0027s PTEs in the part of the window that the range covers with `p3s_count_folio_slices()`, or would you rather leave it for a follow-up?",
+      "isAi": true,
+      "revId": "0230b8cae2db9b27b7426b93f0ea6051efe9d160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
