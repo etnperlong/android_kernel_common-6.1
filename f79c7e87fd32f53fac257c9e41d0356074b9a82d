@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f275a1b4_8ef55a67",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "The subject says \"global byte unit\", but `VM_COMMIT_SHIFT` is `PAGE_SHIFT_4KB`, so the counter counts 4KB units. Could the subject say that, e.g. \"ANDROID: P3S: mm: Account commitments in 4KB units\"?\n\nCould the body also say what fails without the patch? As far as I can see, each charge and its uncharge already use the same unit today. The VMA paths count pages of the mm (their files include `\u003clinux/p3s_user_pages.h\u003e`, and `exit_mmap()` and `create_init_stack_vma()` run under `P3S_CONTEXT_REMOTE_MM()`), and shmem and swapoff count kernel pages. What goes wrong is the shared counter and its limits:\n\n- `Committed_AS` shows a 4KB process\u0027s commitments four times over.\n- Under the default `OVERCOMMIT_GUESS` policy, one accounted mmap of a 4KB process can\u0027t exceed a quarter of RAM plus swap, because `pages \u003e totalram_pages() + total_swap_pages` compares 4KB pages with kernel pages.\n- Strict overcommit counts a 4KB process\u0027s commitments four times against the limit.\n\nI think the imbalance on fragmented unmaps, mremap and mprotect would only appear with a kernel-page counter, so it reads best as the reason for picking 4KB units. Also, \"Add accounting and strict-overcommit checks.\" doesn\u0027t match the code, which converts the existing checks, and the tests are in aosp/4367986. Would it be OK to drop that sentence?",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28cf7290_530702ad",
+        "filename": "include/linux/mman.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "Would you mind moving the new wrappers out of `\u003clinux/mman.h\u003e`? `vm_acct_memory_units()`, `vm_acct_memory_mm()` and `vm_unacct_memory_mm()` could live in a new `include/linux/p3s/mman.h` that `\u003clinux/mman.h\u003e` includes once at the end, together with `vm_memory_committed_kbytes()` as a `static inline`. Upstream\u0027s part of the header would then only change inside `vm_acct_memory()`:\n\n```\nstatic inline void vm_acct_memory(long pages)\n{\n\tpercpu_counter_add_batch(\u0026vm_committed_as, vm_commit_native_pages(pages),\n\t\t\t\t vm_committed_as_batch);\n}\n```\n\nWith the conversion helpers in `include/linux/p3s/mm.h`, the wrappers fold to upstream\u0027s code without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, so the new header wouldn\u0027t need a config block.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9242c3fd_84420f3c",
+        "filename": "include/linux/security.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "I\u0027m worried this breaks `!CONFIG_SECURITY` builds. `vm_commit_mm_pages()` and `vm_commit_native_pages()` are only declared in `\u003clinux/mman.h\u003e`, which neither `\u003clinux/security.h\u003e` nor `\u003clinux/mm.h\u003e` includes on arm64. A local build with `CONFIG_SECURITY` disabled fails in these two stubs with \"call to undeclared function\", and `arch/arm64/configs/crashdump_defconfig` (the `kernel_aarch64_crashdump` target) doesn\u0027t enable `CONFIG_SECURITY`.\n\nWith the helpers as `static inline` in `include/linux/p3s/mm.h` (see my comment on `mm/util.c`), `\u003clinux/mm.h\u003e` already reaches them through `\u003clinux/mm_types.h\u003e`, so the stubs would build again.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54eeafc0_0fb28d0b",
+        "filename": "mm/mm_init.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "Would scaling `ram_pages` where it\u0027s read work here? Something like:\n\n```\n\tunsigned long ram_pages \u003d vm_commit_native_pages(totalram_pages());\n```\n\nThe existing `min_t(u64, ..., INT_MAX)` lines still clamp the batch, so `committed_batch` and the second clamp can go, and the rest of `mm_compute_batch()` stays as upstream wrote it. That also clears the checkpatch alignment CHECK on the `batch` line. Only the 32-unit floor stays unscaled, which only matters with very little memory per CPU.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88e26d0b_d4c60a19",
+        "filename": "mm/util.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "Would it be OK to keep `vm_commit_limit()` as upstream wrote it, and convert once in `__vm_enough_memory()`? Only the `overcommit_kbytes` conversion would change, to `PAGE_SHIFT_KERNEL`, because `mm/util.c` is opted in and `PAGE_SHIFT` there is the caller\u0027s page size. Then:\n\n```\n\tallowed \u003d vm_commit_native_pages(vm_commit_limit());\n```\n\nThat drops `vm_commit_limit_units()`, `native_scale` and the `DIV_ROUND_UP()` wrapper, and `CommitLimit` keeps upstream\u0027s value (today it rounds `overcommit_kbytes` up instead of down). The strict limit would lose less than one kernel page of `overcommit_kbytes`, as it does upstream on 16KB kernels.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ca3a932_49efd244",
+        "filename": "mm/util.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 946,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "Would you mind moving `VM_COMMIT_SHIFT`, `vm_commit_native_pages()` and `vm_commit_mm_pages()` into `include/linux/p3s/mm.h`, next to `mm_kernel_pages()` (aosp/4368094)? The constant can go into its existing `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block, and the helpers after the block, since `mm_pte_shift()` already has a stub:\n\n```\n/* in the CONFIG_ARM64_PER_PROCESS_PAGE_SIZE block */\n#define VM_COMMIT_SHIFT\t\tPAGE_SHIFT_4KB\n/* in its #else branch */\n#define VM_COMMIT_SHIFT\t\tPAGE_SHIFT_KERNEL\n\n/* after the block, next to mm_kernel_pages() */\nstatic inline long vm_commit_mm_pages(const struct mm_struct *mm, long pages)\n{\n\treturn pages * (1L \u003c\u003c (mm_pte_shift(mm) - VM_COMMIT_SHIFT));\n}\n\nstatic inline long vm_commit_native_pages(long pages)\n{\n\treturn pages * (1L \u003c\u003c (PAGE_SHIFT_KERNEL - VM_COMMIT_SHIFT));\n}\n```\n\nThat removes all three `#ifdef` blocks from `mm/util.c` and the prototypes from `\u003clinux/mman.h\u003e`.\n\nIt also matters for native builds. Because the helpers are out of line, the inline `vm_acct_memory()` and `vm_unacct_memory_mm()`, and `security_vm_enough_memory_mm()`, now make a function call on every accounted mmap, munmap, mprotect and brk. That includes x86_64 and builds without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`. As `static inline` helpers, they fold back to upstream\u0027s code there.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d862faf1_f4629eb4",
+        "filename": "security/security.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:49:20Z",
+      "side": 1,
+      "message": "Would you mind keeping `security_vm_enough_memory_mm()` as upstream wrote it? Moving the LSM loop into a new helper also drops upstream\u0027s comment on how the modules vote on `cap_sys_admin`, and `security/security.c` changes a lot upstream.\n\nI think the conversion could live in `__vm_enough_memory()` instead, with `pages` still counting pages of `mm`:\n\n```\n\tpages \u003d vm_commit_mm_pages(mm, pages);\n\tvm_acct_memory_units(pages);\n```\n\nThen `security/security.c` and `include/linux/security.h` don\u0027t change at all, and `security_vm_enough_memory_native()` can go. The shmem and swapoff callers count kernel pages, so they would pass pages of `current-\u003emm` through a helper next to `mm_kernel_pages()`, e.g.:\n\n```\nstatic inline unsigned long mm_pages_from_kernel(const struct mm_struct *mm,\n\t\t\t\t\t\t unsigned long nr)\n{\n\treturn nr * mm_slices_per_page(mm);\n}\n```\n\nThe hooks would then see 4KB pages for shmem in 4KB processes, but `cap_vm_enough_memory()` and `selinux_vm_enough_memory()` ignore `pages`. Would that work for you?",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
