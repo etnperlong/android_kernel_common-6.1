@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "095c75ac_66b37e65",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 36
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:40:46Z",
+      "side": 1,
+      "message": "Could the subject and message say what this patch changes? As far as I can see, the `-EINVAL` for cross-slice `MREMAP_FIXED` moves and the slice-preserving hint search were already there (aosp/4312522). What\u0027s new is that file, shmem and private /dev/zero mappings can now move to another slice, where they got `-EINVAL` before. The last paragraph describes the alignment lines, which this patch no longer touches, so I think it can go.\n\nSomething like:\n\n```\nANDROID: P3S: mm/mremap: Let file mappings move to another slice\n\nIn a 4KB process, an MREMAP_FIXED move to another slice of a 16KB\nwindow fails with -EINVAL for every VMA. Only anonymous VMAs need\nthat: their slice follows the virtual address, and moving their PTEs\nto another slice would mean copying the pages, which would break pins\non the old folios.\n\nFile, shmem and private /dev/zero mappings map folios by offset, so\nthey can keep their slice in vm_slice_off. Check the slice in\ncheck_prep_vma(), where the VMA is known, and skip the check for\nthem. copy_vma() then gives the new VMA the slice of the source\naddress.\n```",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6917f53_31864819",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 36
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:40:46Z",
+      "side": 1,
+      "message": "Nit: `checkpatch.pl --strict` asks to align this continuation line with the open parenthesis, as the other helpers in this file do. The new sentence in the `mm_mremap_fixed_keeps_slice()` comment in `include/linux/p3s/mremap.h` also runs to 97 columns; could it be rewrapped with the rest of that paragraph?",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e92dcfd1_1cbd3d36",
+        "filename": "mm/Makefile",
+        "patchSetId": 36
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:40:46Z",
+      "side": 1,
+      "message": "Would it be OK to drop this hunk? Now that `p3s_mremap.o` is gone, it only removes the trailing blank line that aosp/4312464 left at the end of `mm/Makefile`, and nothing else in this patch touches the Makefile.",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
