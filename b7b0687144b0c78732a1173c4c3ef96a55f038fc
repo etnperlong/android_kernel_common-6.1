@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "286ba50b_ac38e2ef",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:16:18Z",
+      "side": 1,
+      "message": "It looks like the walk this message describes is already in aosp/4390445: `p3s_anon_rmap_range()` widens the anon_vma lookup of a small folio by three page offsets on either side of its index, and `p3s_anon_rmap_skip()` starts the walk in each 4KB anonymous VMA at its part of the window (`vma_anon_slice_window()`). So after an `mprotect()`, `munmap()` or naming split, reclaim, migration and `collect_procs_anon()` already find every VMA of the window. I couldn\u0027t find a case they miss either: a 4KB `mremap()` keeps the slice (see `include/linux/p3s/mremap.h`), and `UFFDIO_MOVE` only moves whole folios.\n\nAs far as I can see, what this patch adds is the native-tree check in `p3s_anon_rmap_range()`. That looks right to me: `fork()` copies the page size (`mm_dup_mmap()`) and `execve()` starts a new mm, so all VMAs of one anon_vma tree share it.\n\nCould you rewrite the subject and message around that? Something like \"ANDROID: P3S: mm: rmap: Keep the exact anon_vma lookup in native trees\", saying what it saves: walks in native trees no longer visit the VMAs that the wider lookup finds and then skips.",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a49fa5d3_d957a814",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:16:18Z",
+      "side": 1,
+      "message": "Nit: could you add a blank line before this comment, and wrap the condition below to 80 columns? Something like:\n\n```\n\t\treturn;\n\n\t/* fork() copies the page size, so all VMAs of one tree share it. */\n\tnode \u003d rb_first_cached(\u0026anon_vma-\u003erb_root);\n\tif (!node ||\n\t    !vma_is_p3s_4k(rb_entry(node, struct anon_vma_chain, rb)-\u003evma))\n\t\treturn;\n```\n\nA sentence in the kernel-doc above saying that native trees keep the exact lookup would help too.",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b817564a_be6fda74",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:16:18Z",
+      "side": 1,
+      "message": "I think this branch leaves `*address` unchanged. For a 4KB VMA with `vm_ops` or `vm_file`, `vma_address()` goes through `vma_pgoff_to_address()`, which already subtracts `vm_slice_off` and clamps to `vm_start`, so it returns the first address of the folio\u0027s file page in the VMA. That address is at slice 0 or is `vm_start`, so `vma_folio_slice_bounds()` hands it back as is: with `vm_slice_off \u003d 1` and index `vm_pgoff + 1`, for example, both give `vm_start + 0x3000`.\n\nWould it be OK to drop this branch and the kernel-doc change, unless I\u0027m missing a case where `vma_address()` lands in the middle of the window?\n\nAlso, with the native-tree check in `p3s_anon_rmap_range()`, the lookup no longer finds native VMAs that hold no part of the folio, so this helper could return `false` for them and leave the `VM_BUG_ON_VMA()` in `rmap_walk_anon()` checking native addresses as upstream does:\n\n```\n\tif (!vma_is_p3s_4k(vma) || folio_test_large(folio))\n\t\treturn false;\n\tif (!vma-\u003evm_ops \u0026\u0026 !vma-\u003evm_file)\n\t\t*address \u003d vma_anon_slice_window(vma, folio_pgoff(folio));\n\treturn *address \u003d\u003d -EFAULT;\n```",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aeff4805_a755a753",
+        "filename": "mm/rmap.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 2873,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:16:18Z",
+      "side": 1,
+      "message": "Would it be OK to drop this re-wrap? It doesn\u0027t change anything, and keeping the initializer as aosp/4390445 left it means that the `p3s_anon_rmap_range()` call is the only line this patch touches in `rmap_walk_anon()`, which keeps the diff against upstream small.",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
