@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "632d22c4_d02ae462",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:20:53Z",
+      "side": 1,
+      "message": "I think both failures described here are already fixed by aosp/4368058 and aosp/4368055, which this patch sits on. aosp/4368058 bounds these mmaps with `vma_kernel_pages()`, which counts from slice `vm_slice_off`, so a whole-buffer 4KB mapping is accepted. And since aosp/4368055, `remap_pfn_range()` starts at the slice that `vma_slice_offset()` gives `vm_start`, which is slice `vm_slice_off` of page `pfn + vm_pgoff`.\n\nAs far as I can see, `p3s_mmap_phys_object()` always takes the fast path of `p3s_remap_phys_range()` here: `PFN_PHYS(pfn)` is 16KB aligned, so `phys + vma_file_offset(vma)` starts at slice `vm_slice_off`, and the call is the same `remap_pfn_range(vma, vma-\u003evm_start, pfn + vma-\u003evm_pgoff, vma_size(vma), ...)` as without this patch. The only change I can find is the limit, which drops from `PAGE_ALIGN(size)` to `size` rounded up to 4KB. The bytes in between are the rest of the buffer\u0027s last kernel page, which belongs to the allocation and which a native process can map too. The `dma_mmap_p3s`, `dma_mmap_full_p3s` and `iommu_dma_mmap_p3s` tests in aosp/4367986 use a 16KB buffer, where both limits are the same.\n\nWould it be OK to drop this patch? If you have a case that still fails without it, could you share it? Then we could fix it in `remap_pfn_range()` or `vma_kernel_pages()` for every caller.",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "46d0364e_377882e3",
+        "filename": "drivers/iommu/dma-iommu.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 1704,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:20:53Z",
+      "side": 1,
+      "message": "I think the comment isn\u0027t quite right for `vm_map_pages()`: `__vm_map_pages()` still bounds 4KB VMAs in kernel pages, with `vma_kernel_pages()` (aosp/4368056), and so does `iommu_dma_mmap_noncontiguous()` (aosp/4368058). So when `size` isn\u0027t a multiple of 16KB, a 4KB process would get a different limit depending on whether the IOMMU buffer is contiguous.\n\nThe existing kernel-page check also accepts every mapping that the byte check accepts, so skipping it for 4KB VMAs doesn\u0027t let anything new through. If the patch stays, would it be OK to keep this condition as it is, without the comment? The check in the entry points that I suggested on `dma_mmap_pfn()` would give both paths the same limit.",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "652064b8_7e63f003",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:20:53Z",
+      "side": 1,
+      "message": "If you\u0027d still like the tighter 4KB limit, would you mind keeping the upstream mmap functions as they are and checking it once in the exported entry points instead? Since the remap stays the same `remap_pfn_range()` call, I think the P3S part is only a bounds check, which fits a `static inline` predicate in `include/linux/p3s/vma.h`, next to `vma_file_offset()`. Something like:\n\n```\nstatic inline bool vma_exceeds_object(const struct vm_area_struct *vma,\n\t\t\t\t      u64 size)\n{\n\tu64 aligned;\n\n\tif (!vma_is_p3s_4k(vma))\n\t\treturn false;\n\treturn vma_aligned_size(vma, size, \u0026aligned) ||\n\t       vma_file_offset(vma) \u003e\u003d aligned ||\n\t       vma_size(vma) \u003e aligned - vma_file_offset(vma);\n}\n```\n\nwith this at the top of `dma_mmap_attrs()`, `dma_mmap_pages()` and `dma_mmap_noncontiguous()`:\n\n```\n\tif (vma_exceeds_object(vma, size))\n\t\treturn -ENXIO;\n```\n\nThose three are the only ways into `dma_direct_mmap()`, `iommu_dma_mmap()`, `iommu_dma_mmap_noncontiguous()` and the `dma_map_ops` that use `dma_common_mmap()`, so every path, `vm_map_pages()` included, would get the same limit. The predicate returns `false` for native VMAs and without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, so it needs no stub.\n\nThen `dma_mmap_pfn()` with its prototype in `\u003clinux/dma-map-ops.h\u003e`, and `p3s_mmap_phys_object()` with its prototype and stub in `\u003clinux/mm.h\u003e`, could go, and nothing would need to stay out of line in `mm/p3s.c`. `kernel/dma/direct.c`, `coherent.c`, `ops_helpers.c` and `drivers/iommu/dma-iommu.c` would keep upstream\u0027s code, so upstream changes there wouldn\u0027t conflict with P3S.",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
