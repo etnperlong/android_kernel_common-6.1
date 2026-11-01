@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c1deed7_e39862f9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:43:52Z",
+      "side": 1,
+      "message": "The new sequence looks right to me, and the message now explains why the reserved ASID is enough.\n\nThe subject is 73 columns, though, and three body lines are 73-74 (the ones ending in \"page table.\", \"entry points.\" and \"against TCR,\"). Would something like this work for the subject?\n\n```\nANDROID: P3S: arm64/mm: Isolate old translations before geometry change\n```\n\nCould the body also start with what goes wrong without the patch? As far as I can see, since aosp/4312469 the geometry changes while TTBR0 and the ASID still belong to the previous mm. For example:\n\n```\nSince \"ANDROID: P3S: arm64: mm: Switch TCR_EL1.TG0 and T0SZ on context\nswitch\", check_and_switch_context() changes TCR_EL1.TG0/T0SZ while\nTTBR0 and the ASID in TTBR1 still belong to the previous mm, unless CnP\nor emulated PAN has installed the reserved TTBR0. A speculative walk can\nthen decode the previous mm\u0027s tables with the new granule and cache the\nresult under that mm\u0027s ASID.\n```",
+      "isAi": true,
+      "revId": "2b34f7d6d9fe544687694bf50343ac8cb6e5067a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d890d29e_aa26084c",
+        "filename": "arch/arm64/include/asm/p3s/mmu.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:43:52Z",
+      "side": 1,
+      "message": "Nit: now that only `mm_switch_tcr()` calls `mm_tcr_needs_switch()`, from inside the `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block, nothing uses this stub any more. Would it be OK to drop it?",
+      "isAi": true,
+      "revId": "2b34f7d6d9fe544687694bf50343ac8cb6e5067a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
