@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "032df968_9b0d4684",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T18:58:20Z",
+      "side": 1,
+      "message": "The pointer walks look right to me. As far as I can see, though, this is a generic fix rather than a P3S one: GKI builds with `CONFIG_UBSAN` (so `CONFIG_UBSAN_BOUNDS`), `CONFIG_UBSAN_TRAP` and `-fstrict-flex-arrays\u003d3`, so `swapon()` of a block device whose header lists two or more bad pages traps in `setup_swap_map()` today, with or without P3S.\n\nAs I asked on aosp/4368002, would one generic patch that declares `badpages[]` as a flexible array in `union swap_header` work for you instead? It would cover these three loops and `p3s_convert_swap_header()` without new locals.\n\nEither way, could the fix move out of the P3S series, ideally sent upstream and picked as `FROMLIST:`, or as `ANDROID: mm: swap: ...` otherwise?",
+      "isAi": true,
+      "revId": "437088af9017048ff29b3f938396f364aff4db2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
