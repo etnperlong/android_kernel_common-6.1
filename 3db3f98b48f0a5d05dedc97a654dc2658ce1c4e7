@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10e40d1f_f58be71d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:10:32Z",
+      "side": 1,
+      "message": "I think the bug described here was already fixed by aosp/4368057: `vma_pfnmap_phys()` builds the address with `PAGE_SHIFT_KERNEL` and adds the slice. For the `generic_access_phys()` users in GKI (UIO and PCI sysfs resources; `/dev/mem` is off), the PTEs come from `remap_pfn_range()` at `vm_start`, whose slices follow `vma_slice_offset()` since aosp/4368055, so the old helper already gave the mapped address there.\n\nAs far as I can see, what this patch changes is where the slice comes from: the PTE rather than the VMA geometry. That matters when a driver whose VMAs use `generic_access_phys()` maps a slice that doesn\u0027t follow `vma_slice_offset()`, e.g. with `p3s_remap_pfn_slice()` or through the physical-slice path that aosp/4368009 adds to `vm_iomap_memory()`. `/proc/\u003cpid\u003e/mem` and ptrace would then access the wrong 4KB of the page.\n\nCould you describe that case in the message instead? The change itself looks right to me, and native VMAs are unchanged.",
+      "isAi": true,
+      "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "393e7a8d_7a3832a9",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:10:32Z",
+      "side": 1,
+      "message": "Could you keep a kernel-doc block here, as the other helpers in this header have, and as the `vma_pfnmap_phys()` block it replaces had? It\u0027s also the place to say that the helper reads `args-\u003eptep`, which `struct follow_pfnmap_args` lists as internal, so it must be called between `follow_pfnmap_start()` and `follow_pfnmap_end()`. Something like:\n\n```\n/*\n * p3s_pfnmap_phys - Physical address that a PFN mapping maps\n * @args: Lookup made by follow_pfnmap_start(), not yet ended\n *\n * A PTE of a 4KB VMA maps one 4KB slice of kernel page @args-\u003epfn, and\n * p3s_remap_pfn_slice() can map a slice that vma_slice_offset() would\n * not give its address, so take the slice from the PTE. Call this\n * before follow_pfnmap_end(), while the PTE is mapped and locked.\n */\n```",
+      "isAi": true,
+      "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c53be7fb_711c95c9",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:10:32Z",
+      "side": 1,
+      "message": "Would it be OK to drop this `#ifdef`? It would be the first config block in `mm/p3s/pgtable.h`, and it sits inside a function. As far as I can see it isn\u0027t needed: `vma_is_p3s_4k()` is always false without P3S, and `\u003clinux/p3s.h\u003e` defines `__pte_to_phys()` for other architectures, next to the `pte_advance_phys()` fallback that `vma_pte_add_slice()` above already uses without a guard. So the helper can be unconditional:\n\n```\n\tresource_size_t phys \u003d (resource_size_t)args-\u003epfn \u003c\u003c PAGE_SHIFT_KERNEL;\n\n\tif (vma_is_p3s_4k(args-\u003evma) \u0026\u0026 args-\u003eptep)\n\t\tphys |\u003d __pte_to_phys(ptep_get(args-\u003eptep)) \u0026 ~PAGE_MASK_KERNEL;\n\treturn phys;\n```",
+      "isAi": true,
+      "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
