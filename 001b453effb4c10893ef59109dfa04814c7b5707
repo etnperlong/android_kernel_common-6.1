@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "535fe084_82367755",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:09:05Z",
+      "side": 1,
+      "message": "Could the body say what goes wrong without this patch? As far as I can see, since aosp/4368055 `vm_iomap_memory()` already bounds a 4KB VMA in kernel pages and maps it from the `vm_slice_off` slice. What\u0027s left is a `start` that isn\u0027t 16KB-aligned, and bounds that are only checked in 16KB pages. \"A native PFN alone cannot describe every valid 4KB resource offset\" doesn\u0027t quite say that, and the last sentence compares against alternatives that aren\u0027t in the patch.\n\nMaybe something like:\n\n```\nvm_iomap_memory() maps a 4KB VMA from the 16KB page that contains start\nand checks its bounds in 16KB pages. When start is not 16KB-aligned, a\n4KB process finds the resource up to 12KB after the offset it expects,\nand a 4KB VMA can map up to 12KB past the end of the resource.\n```",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b358eb1_82335617",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 3730,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:09:05Z",
+      "side": 1,
+      "message": "Would you mind keeping this block out of `include/linux/mm.h`? As far as I can see this would be the first P3S code in that header, with an `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block of its own.\n\n`p3s_vm_iomap_memory()` has a single caller and isn\u0027t exported, so it could be a `static inline` in `mm/p3s/memory.h`, next to `vma_insert_page_slices()`; the helpers there build in both configurations without stubs. `p3s_remap_phys_range()` could stay in `mm/p3s.c` while aosp/4368011 shares it (if that patch goes, as I suggest there, it could be a `static inline` as well), with its prototype next to `p3s_remap_pfn_slice()` in the existing block of `include/linux/p3s.h` and a stub in a new `#else` branch:\n\n```\n#else\nstatic inline int p3s_remap_phys_range(struct vm_area_struct *vma,\n\t\t\t\t       unsigned long addr, phys_addr_t phys,\n\t\t\t\t       unsigned long size, pgprot_t prot)\n{\n\treturn -EOPNOTSUPP;\n}\n#endif\n```\n\nThe hook in `vm_iomap_memory()` stays as it is. If you\u0027d rather keep `p3s_vm_iomap_memory()` in `mm/p3s.c`, its prototype and stub could go into that same block of `include/linux/p3s.h`. aosp/4368011 adds `p3s_mmap_phys_object()` to this `include/linux/mm.h` block too, so it could follow the same route.",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e44fd99_f127ae82",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:09:05Z",
+      "side": 1,
+      "message": "It looks like this loop only runs when `start` isn\u0027t 16KB-aligned (after rounding down to 4KB). Otherwise the slice of `start + offset` is `vm_slice_off`, and since aosp/4368055 `remap_pfn_range()` already maps from that slice. aosp/4368011 always passes `PFN_PHYS(pfn)`, so it never gets here.\n\nI couldn\u0027t find an in-tree caller in GKI that reaches it either: open-dice requires page-aligned regions, `snd_pcm_lib_mmap_iomem()` sits behind the PCM mmap refusal of aosp/4393908, and fbdev, STM, MTD and hpet aren\u0027t in `gki_defconfig`. So I think only vendor modules could (`vm_iomap_memory` is in the exynos, imx, lenovo, pixel, qcom and unisoc symbol lists).\n\nDo you have a driver in mind that maps a resource that isn\u0027t 16KB-aligned into 4KB processes? If not, would refusing that case with `p3s_4k_unsupported()` work for you? Then `p3s_vm_iomap_memory()` only needs the byte bounds before `io_remap_pfn_range()`, and the PTEs keep the slices that `vma_slice_offset()` gives. If you do, the loop looks right to me, and `generic_access_phys()` follows it since aosp/4368007.",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "312451fe_1b90a5b7",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:09:05Z",
+      "side": 1,
+      "message": "I think the overflow handling here can be simpler. `len + (start \u0026 ~PAGE_MASK_4KB)` can\u0027t exceed `start + len`, which the line above already checks, so this `check_add_overflow()` never fires. And if rounding `len` up wrapped, `aligned_len` would be 0, which the bounds check below rejects anyway.\n\nSince this path only runs for 4KB VMAs, would `PAGE_ALIGN_4KB(len)` from `include/linux/p3s/const.h` work for you instead of `vma_aligned_size()`? Then the new helper and its `\u003clinux/errno.h\u003e` and `\u003clinux/overflow.h\u003e` includes in `include/linux/p3s/vma.h` could go. `p3s_mmap_phys_object()` in aosp/4368011 only runs for 4KB VMAs too.",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
