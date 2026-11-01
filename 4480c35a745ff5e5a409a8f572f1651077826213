@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd09b725_57259cad",
+        "filename": "net/xdp/xdp_umem.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T18:59:17Z",
+      "side": 1,
+      "message": "I\u0027m wondering whether UMEMs of up to 4KB are worth this code: with a `chunk_size` of at least `XDP_UMEM_MIN_CHUNK_SIZE` (2048), such a UMEM holds at most two frames, and as far as I can see `socket(AF_XDP)` needs `CAP_NET_RAW` (`xsk_create()`), which I don\u0027t think apps have.\n\nWould it be OK to refuse `XDP_UMEM_REG` in 4KB processes outright, at the top of `xdp_umem_pin_pages()`, with `p3s_4k_unsupported()` so that the refusal is logged? Something like:\n\n```\n\tif (p3s_4k_unsupported(current-\u003emm))\n\t\treturn -EOPNOTSUPP;\n```\n\nAn mm\u0027s page size is set when the mm is created and never changes, so this needs neither the mmap lock nor `vma_lookup()`, and the `MAP_FIXED` race goes away. The rest of `xdp_umem_pin_pages()` could then stay as upstream wrote it, without the `untagged_addr()` line (`__get_user_pages()` already untags). `-EOPNOTSUPP` from `XDP_UMEM_REG` looks fine to me, as for USERPTR on aosp/4367934.\n\nThe UMEM tests in aosp/4367986 would then just expect `-EOPNOTSUPP`, and I think `xdp_umem_race_p3s` and its probe module could go.\n\nIf you\u0027d rather keep 4KB UMEMs, could the check move into a helper in a new `include/linux/p3s/xsk.h`, such as `bool p3s_xsk_umem_unpinnable(struct mm_struct *mm, unsigned long addr, u64 size)` with a `false` stub, so that `xdp_umem_pin_pages()` keeps a one-line hook under the lock?",
+      "isAi": true,
+      "revId": "4480c35a745ff5e5a409a8f572f1651077826213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
