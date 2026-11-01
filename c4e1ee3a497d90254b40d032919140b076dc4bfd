@@ -1,0 +1,94 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c99fd62_f54cc237",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 34
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:38:42Z",
+      "side": 1,
+      "message": "Nit: I think \"it does not repair data loss\" reads as if there were data loss to repair. Would something like this work?\n\n```\nSeveral slice references leave no exclusive swap PTE, so the\nsingle-PTE path returns -EBUSY and userspace falls back to\nUFFDIO_COPY. No data is lost, but moving the whole window avoids the\ncopy. Partial windows keep that fallback, and swap-in restores tags\nfrom the entry.\n```",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c46e0a18_3244d386",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 866,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:38:42Z",
+      "side": 1,
+      "message": "Would you mind moving `p3s_uffd_swap_nr()` into the file\u0027s existing `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block, right after `p3s_uffd_move_nr_slices()` in its `#ifdef CONFIG_USERFAULTFD` section, and the stub after the `p3s_uffd_move_nr_slices()` stub in the `#else` branch? As it is, the patch opens a second config block, nested in a new `CONFIG_USERFAULTFD` block, after the end of the first one.\n\n```\n#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE\n...\n#ifdef CONFIG_USERFAULTFD\n...\nstatic inline unsigned int p3s_uffd_move_nr_slices(...) { ... }\nstatic inline int p3s_uffd_swap_nr(...) { ... }\n#endif /* CONFIG_USERFAULTFD */\n...\n#else /* !CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */\n...\n#ifdef CONFIG_USERFAULTFD\n...\nstatic inline int p3s_uffd_swap_nr(...)\n{\n\treturn 1;\n}\n#endif\n...\n#endif /* CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */\n```\n\n`move_swap_pte()` keeps calling it without `#ifdef`s, as it does now.",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9701f469_8faba89c",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:38:42Z",
+      "side": 1,
+      "message": "I\u0027m worried that `-EEXIST` here reports the page at `dst_addr` as already mapped when only one of its window siblings is. `move_pages()` stops at that address and returns the bytes moved so far, so userspace that skips a mapped destination on `-EEXIST` would skip a slice that was never moved.\n\nThe other refusals here return `-EBUSY`, as does `p3s_uffd_move_nr_slices()` when a destination sibling isn\u0027t none, and aosp/4368005 uses `-EBUSY` for cross-phase moves. Could this return `-EBUSY` too? Userspace then falls back to UFFDIO_COPY, which returns `-EEXIST` only for the slice that is actually mapped.",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c3a3695_e588b1cf",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1188,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:38:42Z",
+      "side": 1,
+      "message": "As far as I can see, nothing in `move_swap_pte()` uses the new `src_vma` parameter. Would it be OK to drop it? The call in `move_pages_ptes()` could then keep its original wrapping and only gain `len`:\n\n```\n\t\tret \u003d move_swap_pte(mm, dst_vma, dst_addr, src_addr, dst_pte, src_pte,\n\t\t\t\torig_dst_pte, orig_src_pte, dst_pmd, dst_pmdval,\n\t\t\t\tdst_ptl, src_ptl, src_folio, si, entry, len);\n```",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cbe2ba04_b70eb7ed",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:38:42Z",
+      "side": 1,
+      "message": "Would you mind moving this loop into a helper next to `p3s_uffd_swap_nr()` in `mm/p3s/anon.h`, so that upstream\u0027s single-PTE move stays as it is and `move_swap_pte()` only gains a hook? Something like:\n\n```\n\torig_src_pte \u003d ptep_get_and_clear(mm, src_addr, src_pte);\n#ifdef CONFIG_MEM_SOFT_DIRTY\n\torig_src_pte \u003d pte_swp_mksoft_dirty(orig_src_pte);\n#endif\n\tset_pte_at(mm, dst_addr, dst_pte, orig_src_pte);\n\tp3s_uffd_move_swap_siblings(mm, dst_addr, src_addr, dst_pte, src_pte, nr);\n\tdouble_pt_unlock(dst_ptl, src_ptl);\n\n\treturn nr * PAGE_SIZE;\n```\n\n`static inline void p3s_uffd_move_swap_siblings(struct mm_struct *mm, unsigned long dst_addr, unsigned long src_addr, pte_t *dst_pte, pte_t *src_pte, int nr)` would move PTEs 1 to `nr - 1` in `PAGE_SIZE_4KB` steps, since only 4KB VMAs get `nr \u003e 1`, and its stub in the `#else` branch would do nothing. That also keeps the redefined `PAGE_SIZE` out of the new loop, as `move_present_ptes()` does with `mm_pte_size(mm)`.",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

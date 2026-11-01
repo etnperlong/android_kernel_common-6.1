@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a1513d6b693b33b6b0c635475d312e2ad94aca4c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fed87597_0804cadb",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 30
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:38:42Z",
+      "side": 1,
+      "message": "Thanks for dropping this hunk! `p3s_uffd_install_anon_folio()` now keeps the `mte_clear_slice_tags()` call from aosp/4404637 as it is.",
+      "parentUuid": "20271af8_2cabe60e",
+      "isAi": true,
+      "revId": "a1513d6b693b33b6b0c635475d312e2ad94aca4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
