@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad1b8865_55ea6831",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 37
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:41:57Z",
+      "side": 1,
+      "message": "The new check looks right to me, thanks. This line is 73 columns, though: while rewrapping it, would you mind saying what goes wrong without the patch, and why native VMAs don\u0027t change? Something like:\n\n```\nWhen the window starts before the faulting slice, the walk reads the\nfaulting folio through an earlier sibling, marks it PG_readahead and\ncounts it as SWAP_RA, although do_swap_page() maps it right away.\nNative VMAs don\u0027t change: only the faulting PTE normally holds that\nentry there, and swap_cluster_readahead() already compares swap offsets.\n```\n\nThat makes it clear why this change to a core file is safe outside 4KB processes.",
+      "isAi": true,
+      "revId": "d158a8ba958e2ae77227ded253557c78d1e1fcf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
