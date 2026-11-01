@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a71d52af_1b658674",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:19:45Z",
+      "side": 1,
+      "message": "Could the message describe what this changes on top of its parent? As far as I can see, the proposed slice is already carried: `VMG_MMAP_STATE()` and `VMG_VMA_STATE()` set `vmg-\u003eslice_off`, and aosp/4367981 sets it in `copy_vma()`. B10 also already compares slices on both sides for files with `vm_ops`.\n\nWhat\u0027s missing is the case of `vm_file` without `vm_ops` (private /dev/zero and private ashmem). Their prev check skipped the slice, so an `mprotect()`, `madvise()` or `mremap()` merge could leave existing pages at the wrong slice. Their faults are anonymous, so I don\u0027t think \u0027faults the wrong file bytes\u0027 applies. Once the code settles, something like this, with a body that says what fails without it:\n\n```\nANDROID: P3S: mm: vma: Compare slices of private /dev/zero merges\n```",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "628b85bb_869c5944",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:19:45Z",
+      "side": 1,
+      "message": "Agreed that the prev check needs `!!vmg-\u003efile`: with B10\u0027s `!vma_is_anonymous(prev)`, a private /dev/zero `prev` skipped the slice comparison, so an `mprotect()` or `madvise()` merge could leave the pages of `middle` at the wrong slice.\n\nI\u0027m worried about the address-based slice, though. As far as I can see, the rest of the series maps private /dev/zero by offset, like any file. `mm_mmap_slice_off()` gives it `vm_slice_off \u003d pgoff \u0026 P3S_SLICE_MASK`, and `vma_slice_offset()` only uses the address when there\u0027s neither `vm_ops` nor `vm_file` (as your aosp/4367945 comment says). `do_anonymous_page()` maps that slice through `vma_pte_add_slice()`, and aosp/4367981 keeps it across `mremap()`. So I think the comment and the check are both off.\n\nFor example, `mmap(NULL, 8KB, ..., MAP_PRIVATE, zero_fd, 4KB)` gets a 16KB-aligned address with `vm_slice_off` 1. Growing it in place with `mremap()` goes through `vma_merge_extend()`, where the continuing slice (3) no longer matches the address slice (2). So `expand_vma_in_place()` now fails with `-ENOMEM`, where it succeeded before this patch. A VM test shows it: on the top of this series, growing such a mapping from 8KB to 12KB with `mremap()` fails with `ENOMEM`, also with `MREMAP_MAYMOVE`, while our b10 grows the same mapping in place. Conversely, a faulted range that `mremap()` moves to another phase still merges at the wrong slice into a /dev/zero `prev` whose slices follow its addresses. I think a later fault in that 16KB window can then reuse the slice that the moved page still maps.\n\nEvery caller already sets `vmg-\u003eslice_off` to the slice of the proposed range (`VMG_MMAP_STATE()`, `VMG_VMA_STATE()`, and `vma_mremap_slice_off()` in `copy_vma()`). It also equals `vma_slice_off(middle)` when an existing range merges. Anonymous memory has `is_file` false, so its slice isn\u0027t compared. Would it work for you to drop `vmg_new_range_slice()` and only change `is_file`?\n\n```\n\treturn vma_can_merge_offsets(vmg-\u003eprev, vmg-\u003epgoff, vmg-\u003eslice_off,\n\t\t\t\t     vmg-\u003estart, vmg_is_p3s_4k(vmg), !!vmg-\u003efile);\n```\n\nThe `!vmg-\u003eprev` check can go too, since `can_vma_merge_left()` checks it before we get here.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3882a5b4_455c80f8",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:19:45Z",
+      "side": 1,
+      "message": "This one predates your patch (it comes from our aosp/4366900), but this patch reworks the same check, and I think the next side has the mirror problem. `vma_is_anonymous()` is also true for private /dev/zero (and private ashmem), so such a `next` is compared in 4KB pages. Its `vm_pgoff` counts 16KB file pages, though, as `vma_linear_page_index()` and `p3s_anon_rmap_skip()` expect.\n\nFor example, take a 4KB process with one /dev/zero fd and `MAP_PRIVATE | MAP_FIXED`. Map offset 64KB, 16KB long, at A + 16KB (`vm_pgoff` 4) and touch it, then map offset 0, 16KB long, at A. The check sees 4 \u003d\u003d 0 + (16KB \u003e\u003e 12) and merges. The merged VMA (`vm_pgoff` 0) expects file page 1 at A + 16KB, while the folio there has index 4. rmap then looks for it at A + 64KB, outside the VMA, so reclaim and migration can\u0027t unmap it. A VM test shows this on both our b10 and the top of this series: the two mappings merge into one VMA at offset 0, `MADV_PAGEOUT` moves the folio into the swap cache but can\u0027t unmap it, and `MADV_SOFT_OFFLINE` fails with `EBUSY`, while the layouts that don\u0027t merge swap out and migrate normally. When the slices differ as well, I think a later fault in that window can also reuse a slice that is still mapped.\n\nWould you be OK to pick the counting the way `vma_linear_page_index()` does, here or in a separate patch?\n\n```\n\t\tif (!vmg-\u003enext-\u003evm_ops \u0026\u0026 !vmg-\u003enext-\u003evm_file)\n\t\t\treturn vmg-\u003enext-\u003evm_pgoff \u003d\u003d\n\t\t\t       vmg-\u003epgoff + ((vmg-\u003eend - vmg-\u003estart) \u003e\u003e PAGE_SHIFT_4KB);\n```\n\nA /dev/zero `next` then reaches the slice path below, so that path also needs `vmg-\u003eslice_off` rather than `vmg_new_range_slice()`. `vma_slice_off(vmg-\u003enext)` still works there as before, since `vmg-\u003eend \u003d\u003d next-\u003evm_start`.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "166fb3f9_8a37b723",
+        "filename": "mm/vma.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 1784,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:19:45Z",
+      "side": 1,
+      "message": "Would it be OK to drop this line and the `vmg_set_slice_off()` added to `__mmap_region()`? As far as I can see, both set what the initializers already set: `VMG_VMA_STATE()` sets `.slice_off \u003d vma_slice_offset(vma_, start_)`, which is `vma_slice_offset(vma, vma-\u003evm_end)` here, and `VMG_MMAP_STATE()` sets `.slice_off \u003d (map_)-\u003eslice_off`.\n\nThat keeps two more P3S lines out of `mm/vma.c`.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "323282a3_4bbce674",
+        "filename": "mm/vma.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 1918,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:19:45Z",
+      "side": 1,
+      "message": "As far as I can see, this stops a faulted private /dev/zero range that `mremap()` moves to another phase, right after its own source, from passing the check against itself and hitting the `VM_BUG_ON_VMA()` below. That can only happen while the prev check doesn\u0027t compare the range\u0027s real slice: B10 skipped it, and `vmg_new_range_slice()` uses the address.\n\nWith `vmg-\u003eslice_off` (see my comment on `vmg_new_range_slice()`), the check compares the object offset of `old_addr` with that of the source\u0027s `vm_end`, or the offset of `old_addr + len` with that of its `vm_start`. Those can\u0027t match, because the moved range lies inside the source. That\u0027s the linearity argument in the comment below.\n\nWould it be OK to drop this hunk and `vma_filter_merge_neighbor()`? `copy_vma()` also runs for native processes and in `!CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` builds, so it would be nice to keep it as upstream wrote it.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "781e373d_c7380613",
+        "filename": "mm/vma.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T19:19:45Z",
+      "side": 1,
+      "message": "Could you keep the original comment here, and the blank line before `#else` further down? `slice_off` isn\u0027t only for new ranges. `vma_modify()` fills it from an existing `middle` through `VMG_VMA_STATE()`, the merge code updates it, and `commit_merge()` applies it to the merged VMA, so \u0027which has no VMA yet\u0027 doesn\u0027t hold. The blank line change looks unrelated to this patch.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
