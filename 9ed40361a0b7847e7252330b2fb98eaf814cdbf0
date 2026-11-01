@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b41dac8d_44d7becc",
+        "filename": "mm/shmem.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 2854,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:32:54Z",
+      "side": 1,
+      "message": "Thanks for switching to the early return. It matches `__thp_get_unmapped_area()` since aosp/4312481.\n\nWith it, I think this `mm_pte_aligned()` change isn\u0027t needed anymore. For a 4KB process, every check between here and the early return returns `addr` unchanged, so the result is the same whether this one returns early or not. For native processes, `mm_pte_aligned()` is the same test as `addr \u0026 ~PAGE_MASK`.\n\nWould it be OK to drop this hunk, so that the patch is just the early return?",
+      "isAi": true,
+      "revId": "9ed40361a0b7847e7252330b2fb98eaf814cdbf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
