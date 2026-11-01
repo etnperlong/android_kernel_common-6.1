@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ca4e7cc_4a26d0cb",
+        "filename": "security/selinux/selinuxfs.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-01T04:31:47Z",
+      "side": 1,
+      "message": "Nit: could `vma_file_offset_at()` go straight into the EOF check? Then `sel_mmap_policy_fault()` needs no new local, and this hunk stays a one-line change:\n\n```\n\tif (vma_file_offset_at(vmf-\u003evma, vmf-\u003eaddress) \u003e\u003d plm-\u003elen)\n\t\treturn VM_FAULT_SIGBUS;\n```\n\nThe check itself looks right to me, thanks: native VMAs get the same result as before.",
+      "isAi": true,
+      "revId": "3f7ef15d130a013eb8343e97c4d44cc8dd30bdfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
