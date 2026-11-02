@@ -46,6 +46,30 @@
       },
       "revId": "03d469ff084968a11e8a602f4ac559907b8f4fa1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72e024b6_cb9d61e4",
+        "filename": "drivers/usb/gadget/udc/core.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 4531441
+      },
+      "writtenOn": "2026-11-02T16:14:41Z",
+      "side": 1,
+      "message": "Done, have backported https://android-review.git.corp.google.com/c/kernel/common/+/4200205 from stable and included in this topic stack and for 6.1, 5.15 and 5.10.",
+      "parentUuid": "b03c7a1e_73067262",
+      "range": {
+        "startLine": 1112,
+        "startChar": 12,
+        "endLine": 1112,
+        "endChar": 26
+      },
+      "revId": "03d469ff084968a11e8a602f4ac559907b8f4fa1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
