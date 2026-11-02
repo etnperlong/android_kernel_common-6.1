@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bb0fa27_999ed33c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1981286
+      },
+      "writtenOn": "2026-11-02T16:31:07Z",
+      "side": 1,
+      "message": "NIT: UNMANAGED and BLOCKED are non-DMA-API domains too, but their devices aren\u0027t necessarily dma-direct. And devices with their own dma_map_ops aren\u0027t dma-direct either.",
+      "range": {
+        "startLine": 13,
+        "startChar": 24,
+        "endLine": 14,
+        "endChar": 47
+      },
+      "revId": "7e1c157e87d3f4d0d745cb4b1f23673bad947d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3a10c3a_6c09d115",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1981286
+      },
+      "writtenOn": "2026-11-02T16:31:07Z",
+      "side": 1,
+      "message": "needs_swiotlb_bounce() assumes any device with an IOMMU domain is mapped by dma-iommu, and for those devices it relies on SG_DMA_SWIOTLB. That is wrong:\n\n- Devices that don\u0027t use dma-iommu are mapped by dma-direct even if they do have an IOMMU domain, e.g. IOMMU_DOMAIN_IDENTITY via iommu.passthrough\u003d1, or a DMA domain whose dma-iommu setup failed. dma-direct never sets SG_DMA_SWIOTLB but can still bounce (swiotlb\u003dforce, restricted DMA pools, DMA mask limits). Such buffers are accepted, and the CPU and device see different data because uncached system heap buffers skip dma_sync_sgtable_for_*(), so mapping them must be refused if SWIOTLB bounced any segment, as only those calls copy data between the bounce buffer and the buffer.\n\n- dma-iommu sets SG_DMA_SWIOTLB on the table whenever it takes its SWIOTLB path, but only bounces segments that aren\u0027t aligned to the IOVA granule. Buffers whose segments are aligned are rejected even though nothing was bounced.\n\nInstead, check each DMA segment with swiotlb_find_pool(), as the SWIOTLB sync code does. Translate the DMA address through the IOMMU domain if use_dma_iommu(), and with dma_to_phys() otherwise.\n\nAs before, bouncing inside a device\u0027s own dma_map_ops is still not detected.",
+      "revId": "7e1c157e87d3f4d0d745cb4b1f23673bad947d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aed626b6_0c362b95",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1981286
+      },
+      "writtenOn": "2026-11-02T16:31:07Z",
+      "side": 1,
+      "message": "Overall looks good! I added small suggestions regarding catching a corner case (failing `iommu_dma_init_domain()`) and slight update to the commit message to try to clarify the \u0027non-DMA-API domain\u0027 and that supporting a device\u0027s dma_map_ops is out of scope.\n\nAnd a suggestion for catching the corner case of `iommu_dma_init_domain()` failing as it was easy.\n\nFeel free to ignore.",
+      "revId": "7e1c157e87d3f4d0d745cb4b1f23673bad947d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7f45b70_285d3b77",
+        "filename": "drivers/dma-buf/heaps/system_heap.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1981286
+      },
+      "writtenOn": "2026-11-02T16:31:07Z",
+      "side": 1,
+      "message": "The kernel\u0027s own record of whether dma-iommu maps the device is the `DEV_FLAG_DMA_IOMMU`-flag which is exposed to drivers via `use_dma_iommu()`. It can differ from the domain type:\n\n1) `iommu_setup_dma_ops()` clears the flag if `iommu_dma_init_domain()` fails. The domain is then still DMA-type but dma-direct does the mapping, so later the code here will call `iommu_iova_to_phys()` on a physical address and miss a bounce.\n2) The vendor hook `trace_android_rvh_iommu_setup_dma_ops(dev)` runs after the flag is set. Pixel doesn\u0027t use it, but not sure about other vendors. The hook could change the dma ops. The hook could do anything, but let\u0027s ignore this case here.\n\n\nAlthough unlikely, #1 *could* happen; it can easily be addressed and I\u0027d suggest:\n\n```\n-\tstruct iommu_domain *domain \u003d iommu_get_domain_for_dev(dev);\n+\tstruct iommu_domain *domain \u003d NULL;\n \tstruct scatterlist *sg;\n \tint i;\n \n-\t/* Non-DMA-API domains (IDENTITY) are mapped by dma-direct, so treat them as no IOMMU. */\n-\tif (domain \u0026\u0026 !iommu_is_dma_domain(domain))\n-\t\tdomain \u003d NULL;\n+\t/*\n+\t * Only dma-iommu returns IOVAs, translate those through the IOMMU\n+\t * domain. Otherwise assume dma-direct, whose DMA addresses translate\n+\t * via dma_to_phys(). Bouncing done by a device\u0027s own dma_map_ops\n+\t * can\u0027t be detected here.\n+\t */\n+\tif (use_dma_iommu(dev))\n+\t\tdomain \u003d iommu_get_domain_for_dev(dev);\n```\n\n\nThe approach can still miss bounces:\n* dma-iommu device whose current domain is UNMANAGED (a driver attached its own domain) or NULL\n* dvice with its own dma_map_ops, no dma-iommu\n* CONFIG_IOMMU_DMA\u003dn\n\nbut I think those are out of scope judging by aosp/3042555.",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 175,
+        "endChar": 0
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "9e416c58_52f0d3cd",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/dma-buf/heaps/system_heap.c",
+              "range": {
+                "startLine": 168,
+                "startChar": 0,
+                "endLine": 169,
+                "endChar": 0
+              },
+              "replacement": "\tstruct iommu_domain *domain \u003d NULL;\n"
+            },
+            {
+              "path": "drivers/dma-buf/heaps/system_heap.c",
+              "range": {
+                "startLine": 172,
+                "startChar": 0,
+                "endLine": 175,
+                "endChar": 0
+              },
+              "replacement": "\t/*\n\t * Only dma-iommu returns IOVAs, translate those through the IOMMU\n\t * domain. Otherwise assume dma-direct, whose DMA addresses translate\n\t * via dma_to_phys(). Bouncing done by a device\u0027s own dma_map_ops\n\t * can\u0027t be detected here.\n\t */\n\tif (use_dma_iommu(dev))\n\t\tdomain \u003d iommu_get_domain_for_dev(dev);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "7e1c157e87d3f4d0d745cb4b1f23673bad947d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
