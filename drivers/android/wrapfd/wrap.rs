@@ -76,6 +76,7 @@ pub(crate) struct WrapInfo {
     vma_file: VmaFile,
     num_pending_mmaps: usize,
     state: WrapState,
+    num_mappable_refs: usize,
 }
 
 impl WrapInfo {
@@ -87,6 +88,7 @@ impl WrapInfo {
             vma_file: VmaFile::None,
             num_pending_mmaps: 0,
             state: WrapState::Available,
+            num_mappable_refs: 0,
         }
     }
 
@@ -173,7 +175,7 @@ impl WrapInfo {
             self.vma_file = VmaFile::None;
         }
 
-        map_count
+        map_count + self.num_mappable_refs
     }
 
     fn is_mapped(&mut self) -> bool {
@@ -183,7 +185,7 @@ impl WrapInfo {
             VmaFile::External(ref file) => file.as_ptr(),
         };
 
-        if self.num_pending_mmaps > 0 {
+        if self.num_pending_mmaps > 0 || self.num_mappable_refs > 0 {
             // One or more mmaps are currently pending completion, let's conservatively assume
             // they'll succeed.
             return true;
@@ -854,6 +856,8 @@ unsafe extern "C" fn wrapfd_get_mappable(
             (*mappable).dmabuf = content.dmabuf.as_ptr();
         }
 
+        guard.num_mappable_refs += 1;
+
         Ok(())
     });
 
@@ -886,7 +890,7 @@ unsafe extern "C" fn wrapfd_put_mappable(
             return Err(EINVAL);
         }
 
-        let guard = wrap.inner.lock();
+        let mut guard = wrap.inner.lock();
 
         let Some(ref content) = guard.content else {
             // This really should not happen as `wrapfd_get_mappable` would've failed.
@@ -898,11 +902,17 @@ unsafe extern "C" fn wrapfd_put_mappable(
             return Err(EINVAL);
         }
 
+        if guard.num_mappable_refs == 0 {
+            return Err(EINVAL);
+        }
+
         // SAFETY: We've acquired an extra reference in `wrapfd_get_mappable` that we now no
         // longer need. We retain our own reference to `content.dmabuf` through ARef<>.
         unsafe {
             <DmaBuf as AlwaysRefCounted>::dec_ref(NonNull::from(&*content.dmabuf));
         }
+
+        guard.num_mappable_refs -= 1;
 
         Ok(())
     });
