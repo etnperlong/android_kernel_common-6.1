@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f540bfe_bee6a971",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-11-02T18:54:39Z",
+      "side": 1,
+      "message": "See the respin bug for details, but this is too much churn for the release branch without a specific issue that it is solving.",
+      "revId": "f027f670e4df5c98538caec4ca5ecf3b5cf3ed60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
