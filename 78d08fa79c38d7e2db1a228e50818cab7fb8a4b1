@@ -3,6 +3,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cbd72c72_d894f649",
+        "filename": "mm/madvise.c",
+        "patchSetId": 24
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-11-02T21:41:50Z",
+      "side": 1,
+      "message": "Minor consistency nit: line 762 updates `madvise_folio_pte_batch(vma, ...)` to return 4KB slice counts for a 4KB VMA, while this threshold still compares against `folio_nr_pages(folio)` (16KB kernel pages) instead of `vma_folio_nr_ptes(vma, folio)` as on line 512. Using `vma_folio_nr_ptes(vma, folio)` here would keep `madvise_free_pte_range()` consistent at this commit before aosp/4367971 rewrites this block.",
+      "isAi": true,
+      "revId": "78d08fa79c38d7e2db1a228e50818cab7fb8a4b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "917f9dce_6bcb06ab",
         "filename": "mm/p3s/rmap.h",
         "patchSetId": 24
