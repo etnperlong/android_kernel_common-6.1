@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8b94af9_7f4141bf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1930620
+      },
+      "writtenOn": "2026-11-02T22:22:46Z",
+      "side": 1,
+      "message": "This commit looks wrong for 6.1/6.6. This branch never had the two sighting rule that the upstream patch relaxes for exec file folios. That rule came from 4d5d14a01e2c (\"mm/mglru: rework workingset protection\"), which isn\u0027t on 6.1/6.6.\n\nBefore this backport folio_update_gen() promoted any folio to the youngest generation on the first young PTE found by the aging walk or look-around. Also MGLRU used the traditional LRU path in folio_check_references() which already activates exec file folios on first use (c909e99364c8).\n\nSo exec folios were already promoted on first use here, and the upstream fix has nothing to fix on this branch.\n\nNow the !PG_referenced \u0026\u0026 !PG_workingset \u0026\u0026 !exec branch promotes on the 2nd sighting for **non-exec** folios instead of the first like it used to. In folio_check_references() the new lru_gen_enabled() branch skips the traditional LRU rules and activates and sets `PG_workingset` on the first referenced check for every mapped folio, since it runs after folio_test_clear_referenced() (so the folio_test_referenced() check in lru_gen_set_refs() is always false) and that check was backported wrong anyway (it\u0027s !folio_test_referenced() upstream).\n\nSo I think we should revert this (and the 6.1 version).",
+      "revId": "4fbde4d4c15f78cb9e7c461d40b040b3a61e8a19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
