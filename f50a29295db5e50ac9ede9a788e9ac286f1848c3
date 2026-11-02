@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5fc1ace_3a2bc858",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 8
+      },
+      "lineNbr": 2158,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T19:01:13Z",
+      "side": 1,
+      "message": "If we fail on the first entry, we\u0027ll write an error code into that entry, and the rest will be zeroed out since we copy an array that was zero-initialized. We would then return 0, which might make it seem from the caller\u0027s perspective that the call succeeded and only one of their fds is not being monitored, when in reality, it\u0027s all of them. What do you think?",
+      "range": {
+        "startLine": 2157,
+        "startChar": 0,
+        "endLine": 2158,
+        "endChar": 35
+      },
+      "revId": "f50a29295db5e50ac9ede9a788e9ac286f1848c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
