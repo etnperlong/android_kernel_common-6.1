@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f0852e22_147776b3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T23:11:18Z",
+      "side": 1,
+      "message": "Could you please make the tests additions a separate patch so it can apply cleanly on 6.18+?",
+      "revId": "f8e6614304809a47c3d09bc5c311414a783e602a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6c695ec1_a140f695",
         "filename": "drivers/android/wrapfd.c",
         "patchSetId": 2
