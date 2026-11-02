@@ -16,6 +16,24 @@
       "message": "See comments on 6.1",
       "revId": "5310719c775d399707f6cfd6e91c5023b68fc783",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20df5141_e32620f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4531441
+      },
+      "writtenOn": "2026-11-02T16:38:51Z",
+      "side": 1,
+      "message": "Changes done.",
+      "parentUuid": "c9feaf52_98e57401",
+      "revId": "5310719c775d399707f6cfd6e91c5023b68fc783",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
