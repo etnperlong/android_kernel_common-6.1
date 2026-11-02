@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c695ec1_a140f695",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1621,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T20:14:57Z",
+      "side": 1,
+      "message": "This requires ownership of the buffer, but wouldn\u0027t the flow that we\u0027re looking at be something like:\n\n1. Process takes ownership, empties buffer, releases ownership\n2. Process takes ownership (currently fails because you can\u0027t take ownership of an empty wrap), repopulates, and then releases ownership?",
+      "revId": "f8e6614304809a47c3d09bc5c311414a783e602a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e397e804_50a4e48b",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1636,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T20:14:57Z",
+      "side": 1,
+      "message": "So we don\u0027t actually do anything with this value in `repopulate()` right now. Shouldn\u0027t we call `set_close_on_exec()` too?\n\nWhich brings me to another point: this has a lot of shared machinery with `publish_wrap()`. My concern with that is that we might make an update to one function and forget about the other. Should we try to centralize as much of this logic as we can?",
+      "revId": "f8e6614304809a47c3d09bc5c311414a783e602a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a70287e_afbbac63",
+        "filename": "tools/testing/selftests/drivers/wrapfd/wrapfd.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1343,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T20:14:57Z",
+      "side": 1,
+      "message": "I don\u0027t think we can call `ASSERT()` in the context of another process, since it messes up the test harness. What I\u0027ve been doing is just invoking `exit()` with the test status (i.e. test failed \u003d\u003e EXIT_FAILURE, success \u003d\u003e EXIT_SUCCESS).",
+      "range": {
+        "startLine": 1342,
+        "startChar": 2,
+        "endLine": 1343,
+        "endChar": 23
+      },
+      "revId": "f8e6614304809a47c3d09bc5c311414a783e602a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
