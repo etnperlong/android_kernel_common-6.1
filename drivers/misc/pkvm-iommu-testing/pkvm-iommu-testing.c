@@ -11,6 +11,7 @@
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 #include <asm/kvm_pkvm_module.h>
+#include <linux/string_helpers.h>
 
 #include "pkvm/pkvm-iommu-testing.h"
 
@@ -31,17 +32,31 @@ static const char * const stat_names[IOMMU_TESTING_STAT_NR] = {
 	[IOMMU_TESTING_STAT_SKIPPED_PAGES] = "skipped_pages"
 };
 
+static const bool stat_is_pages[IOMMU_TESTING_STAT_NR] = {
+	[IOMMU_TESTING_STAT_MAP_PAGES]     = true,
+	[IOMMU_TESTING_STAT_UNMAP_PAGES]   = true,
+	[IOMMU_TESTING_STAT_MMIO_PAGES]    = true,
+	[IOMMU_TESTING_STAT_SKIPPED_PAGES] = true,
+};
+
 static int kvm_iommu_testing_show(struct seq_file *m, void *unused)
 {
 	int i;
+	char buf[16];
 
 	if (!stat_hcall_id)
 		return -ENODEV;
 
-	for (i = 0; i < IOMMU_TESTING_STAT_NR; i++)
-		seq_printf(m, "%s %lu\n",
-			   stat_names[i], pkvm_el2_mod_call(stat_hcall_id, i)
-			  );
+	for (i = 0; i < IOMMU_TESTING_STAT_NR; i++) {
+		unsigned long val = pkvm_el2_mod_call(stat_hcall_id, i);
+
+		seq_printf(m, "%s %lu", stat_names[i], val);
+		if (stat_is_pages[i]) {
+			string_get_size(val, PAGE_SIZE, STRING_UNITS_2, buf, sizeof(buf));
+			seq_printf(m, " %s", buf);
+		}
+		seq_putc(m, '\n');
+	}
 	return 0;
 }
 
