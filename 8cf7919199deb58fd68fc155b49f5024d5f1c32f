@@ -52,6 +52,24 @@
       "parentUuid": "e060fbd1_e038aeaa",
       "revId": "8cf7919199deb58fd68fc155b49f5024d5f1c32f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d329ac0_b3bbb7cf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1561651
+      },
+      "writtenOn": "2026-11-02T03:52:06Z",
+      "side": 1,
+      "message": "Ah yes, it makes sense. Yeah I like that approach. Ok, let me rework the Rust patch. Thanks.",
+      "parentUuid": "9f3e7dd2_eef497ff",
+      "revId": "8cf7919199deb58fd68fc155b49f5024d5f1c32f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
