@@ -103,11 +103,6 @@ int fuse_open_backing(struct fuse_bpf_args *fa,
 	struct fuse_dentry *fd = get_fuse_dentry(file->f_path.dentry);
 	struct file *backing_file;
 
-	ff = fuse_file_alloc(fm, true);
-	if (!ff)
-		return -ENOMEM;
-	file->private_data = ff;
-
 	switch (foi->flags & O_ACCMODE) {
 	case O_RDONLY:
 		mask = MAY_READ;
@@ -130,16 +125,20 @@ int fuse_open_backing(struct fuse_bpf_args *fa,
 	if (retval)
 		return retval;
 
+	ff = fuse_file_alloc(fm, true);
+	if (!ff)
+		return -ENOMEM;
+
 	backing_file = dentry_open(&fd->backing_path,
 				   foi->flags,
 				   current_cred());
 
 	if (IS_ERR(backing_file)) {
 		fuse_file_free(ff);
-		file->private_data = NULL;
 		return PTR_ERR(backing_file);
 	}
 	ff->backing_file = backing_file;
+	file->private_data = ff;
 
 	return 0;
 }
@@ -150,10 +149,18 @@ void *fuse_open_finalize(struct fuse_bpf_args *fa,
 	struct fuse_file *ff = file->private_data;
 	struct fuse_open_out *foo = fa->out_args[0].value;
 
-	if (ff) {
-		ff->fh = foo->fh;
-		ff->nodeid = get_fuse_inode(inode)->nodeid;
+	if (!ff)
+		return 0;
+
+	if (fa->error_in) {
+		fput(ff->backing_file);
+		fuse_file_free(ff);
+		file->private_data = NULL;
+		return 0;
 	}
+
+	ff->fh = foo->fh;
+	ff->nodeid = get_fuse_inode(inode)->nodeid;
 	return 0;
 }
 
