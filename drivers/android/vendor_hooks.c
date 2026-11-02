@@ -27,6 +27,7 @@
 #include <trace/hooks/gic_v3.h>
 #include <trace/hooks/iommu.h>
 #include <trace/hooks/logbuf.h>
+#include <trace/hooks/mm.h>
 #include <trace/hooks/mpam.h>
 #include <trace/hooks/net.h>
 #include <trace/hooks/pm_domain.h>
@@ -84,6 +85,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_allow_domain_state);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_cgroup_attach);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_check_file_open);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_check_mmap_file);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_cma_alloc_retry);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_cpu_idle_enter);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_cpu_idle_exit);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_cpufreq_fast_switch);
