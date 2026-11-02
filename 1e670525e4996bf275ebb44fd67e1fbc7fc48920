@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1882d022_72048d11",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-11-02T21:30:25Z",
+      "side": 1,
+      "message": "Lint override due to it being fussy about memory barrier comments.",
+      "revId": "1e670525e4996bf275ebb44fd67e1fbc7fc48920",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
