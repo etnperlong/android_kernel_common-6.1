@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ee665c6_c0738342",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-11-02T21:27:11Z",
+      "side": 1,
+      "message": "Lint override: BUG_ON is common in scheduler to catch cases that really should not happen, and the indent issue is due to the macro usage.",
+      "revId": "20d9813426968ee6aeca225df0e737ff4e44c7e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
