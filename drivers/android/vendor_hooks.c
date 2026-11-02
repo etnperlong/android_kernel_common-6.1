@@ -28,6 +28,7 @@
 #include <trace/hooks/mpam.h>
 #include <trace/hooks/net.h>
 #include <trace/hooks/pm_domain.h>
+#include <trace/hooks/psi.h>
 #include <trace/hooks/printk.h>
 #include <trace/hooks/reboot.h>
 #include <trace/hooks/remoteproc.h>
@@ -95,6 +96,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_caller);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_caller_id);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_ext_header);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_printk_hotplug);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_psi_event);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_psi_group);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_ptype_head);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_rproc_recovery);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_rproc_recovery_set);
