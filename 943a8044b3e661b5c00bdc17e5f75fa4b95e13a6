@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b281355_cdca0fc9",
+        "filename": "drivers/android/Kconfig",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T18:37:33Z",
+      "side": 1,
+      "message": "We don\u0027t have the functions or functionality defined for the Rust driver yet, so we should just use `ANDROID_WRAPFD_LEGACY` instead until we do.",
+      "fixSuggestions": [
+        {
+          "fixId": "aba093dd_87287354",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "drivers/android/Kconfig",
+              "range": {
+                "startLine": 31,
+                "startChar": 0,
+                "endLine": 32,
+                "endChar": 0
+              },
+              "replacement": "\tdepends on ANDROID_BINDER_IPC\n"
+            }
+          ]
+        }
+      ],
+      "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
