@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "692a8e76_45b1727b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4531441
+      },
+      "writtenOn": "2026-11-02T16:28:45Z",
+      "side": 1,
+      "message": "Backporting upstream commit 67e511d2989e as a prerequisite for https://android-review.git.corp.google.com/c/kernel/common/+/4348327/comment/1501f009_84fd7cc7/",
+      "revId": "794c173ba265ddac88796124211cf11cd4efd353",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
