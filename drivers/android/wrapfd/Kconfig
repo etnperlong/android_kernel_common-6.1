@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config ANDROID_WRAPFD
+	bool "WrapFD Driver (Rust)"
+	depends on ARM64 && MMU && 64BIT && !COMPILE_TEST
+	help
+	  Enables the self-contained Rust implementation of the Android
+	  WrapFD driver (/dev/wrapfd) used to wrap file descriptors and
+	  synchronize user-space memory mappings with exclusive kernel
+	  ownership of the underlying file content.
