@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86697a0c_7b924f36",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 8
+      },
+      "lineNbr": 1774,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T18:12:50Z",
+      "side": 1,
+      "message": "Just a note, that per b/568458393, we agreed to make releasing ownership depend only on if the caller is actually the owner. I understand not doing it now, since it would be asymmetric with the userspace equivalent, but just something to note. I can make sure to fix this if we decide we need to keep the driver around for longer.",
+      "range": {
+        "startLine": 1769,
+        "startChar": 0,
+        "endLine": 1774,
+        "endChar": 0
+      },
+      "revId": "2776a2661cec04bfc485ba7ba3c697e9aad4e42b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4f669f89_2e683383",
+        "filename": "include/linux/wrapfd.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-02T18:12:50Z",
+      "side": 1,
+      "message": "These are already defined on L149",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 0
+      },
+      "revId": "2776a2661cec04bfc485ba7ba3c697e9aad4e42b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
