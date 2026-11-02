@@ -394,6 +394,13 @@ extern unsigned int kobjsize(const void *objp);
 # define VM_GROWSUP	VM_NONE
 #endif
 
+#ifdef CONFIG_64BIT
+#define VM_NO_REMAP_FILE_PAGES_BIT	41
+#define VM_NO_REMAP_FILE_PAGES		BIT(VM_NO_REMAP_FILE_PAGES_BIT)
+#else
+#define VM_NO_REMAP_FILE_PAGES		VM_NONE
+#endif
+
 #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
 # define VM_UFFD_MINOR_BIT	38
 # define VM_UFFD_MINOR		BIT(VM_UFFD_MINOR_BIT)	/* UFFD minor faults */
