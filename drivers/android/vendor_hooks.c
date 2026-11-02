@@ -5,6 +5,7 @@
  *
  * Copyright 2020 Google LLC
  */
+#include <linux/pm_qos.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/hooks/vendor_hooks.h>
@@ -29,6 +30,7 @@
 #include <trace/hooks/mpam.h>
 #include <trace/hooks/net.h>
 #include <trace/hooks/pm_domain.h>
+#include <trace/hooks/power.h>
 #include <trace/hooks/psi.h>
 #include <trace/hooks/printk.h>
 #include <trace/hooks/reboot.h>
@@ -59,6 +61,9 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_bti);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_fpac);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_undef);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_sp_pc_abort);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_freq_qos_add_request);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_freq_qos_remove_request);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_freq_qos_update_request);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_hw_protection_shutdown);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_iommu_dma_info_to_prot);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_iommu_setup_dma_ops);
