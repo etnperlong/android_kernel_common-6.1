@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7d88799_d99c4a84",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-11-02T19:29:26Z",
+      "side": 1,
+      "message": "Please don\u0027t squash the patches. Submit them here as a series of 3 UPSTREAM patches.",
+      "revId": "d8bc0da5d274c4e395633c76b2bca6e893776803",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
