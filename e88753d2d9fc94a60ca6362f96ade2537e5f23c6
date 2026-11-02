@@ -51,6 +51,24 @@
       "message": "After you let go over `ctx-\u003elock` it is possible for another thread in the driver to release ownership via wrapfd_put_mappable(), a user space thread acquires ownership, and invokes empty, and causes `content` to be freed. So this would be a UAF. Should you release the spinlock after the list addition?",
       "revId": "e88753d2d9fc94a60ca6362f96ade2537e5f23c6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b90445ec_310d8b53",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-02T18:16:39Z",
+      "side": 1,
+      "message": "That sounds like a userspace race but I see not downside of closing that too. Will fix.",
+      "parentUuid": "5905d6d2_413771b8",
+      "revId": "e88753d2d9fc94a60ca6362f96ade2537e5f23c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
