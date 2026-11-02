@@ -21,6 +21,25 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "319f2521_dd6d69b4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-02T02:36:12Z",
+      "side": 1,
+      "message": "We decided to disallow 4KB processes from mapping the trailing slices beyond the logical allocation size (rounded up to 4KB) within the last 16KB native page for safety, even though we haven\u0027t encountered an app crash caused by this yet.",
+      "parentUuid": "632d22c4_d02ae462",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "46d0364e_377882e3",
         "filename": "drivers/iommu/dma-iommu.c",
         "patchSetId": 39
