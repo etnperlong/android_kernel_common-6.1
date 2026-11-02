@@ -252,10 +252,10 @@ fsync_mode=%s		 Control the policy of fsync. Currently supports "posix",
 			 default, fsync will follow POSIX semantics and does a
 			 light operation to improve the filesystem performance.
 			 In "strict" mode, fsync will be heavy and behaves in line
-			 with xfs, ext4 and btrfs, where xfstest generic/342 will
-			 pass, but the performance will regress. "nobarrier" is
-			 based on "posix", but doesn't issue flush command for
-			 non-atomic files likewise "nobarrier" mount option.
+			 with xfs, ext4 and btrfs, but the performance will
+			 regress. "nobarrier" is based on "posix", but doesn't
+			 issue flush command for non-atomic files likewise
+			 "nobarrier" mount option.
 test_dummy_encryption
 test_dummy_encryption=%s
 			 Enable dummy encryption, which provides a fake fscrypt

@@ -1083,12 +1083,9 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
 	if (old_is_dir)
 		f2fs_i_links_write(old_dir, false);
 
-	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT) {
-		f2fs_add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-		if (S_ISDIR(old_inode->i_mode))
-			f2fs_add_ino_entry(sbi, old_inode->i_ino,
-							TRANS_DIR_INO);
-	}
+	f2fs_add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
+	if (S_ISDIR(old_inode->i_mode))
+		f2fs_add_ino_entry(sbi, old_inode->i_ino, TRANS_DIR_INO);
 
 	f2fs_unlock_op(sbi, &lc);
 
@@ -1249,10 +1246,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
 	}
 	f2fs_mark_inode_dirty_sync(new_dir, false);
 
-	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT) {
-		f2fs_add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-		f2fs_add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-	}
+	f2fs_add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
+	f2fs_add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
 
 	f2fs_unlock_op(sbi, &lc);
 
