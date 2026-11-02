@@ -33,6 +33,24 @@
       "message": "Looks like you should cherry-pick the revert at aosp/4370706 as a dependency of this patch?",
       "revId": "942fac560744c21bebf60c0fa7eafc957d7aedf5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ded982e3_3528664b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1947858
+      },
+      "writtenOn": "2026-11-02T03:26:38Z",
+      "side": 1,
+      "message": "Hi Will,\n\nThanks for pointing this out.\n\nI checked aosp/4370706 and it looks like a revert. Since the original change being reverted does not appear to be present on android16-6.12-2026-06, I am not fully sure whether this revert is applicable to the target branch.\n\nCould you please confirm whether aosp/4370706 is still required as a dependency for this backport? If yes, I will cherry-pick it first and upload a new patchset with this CL rebased on top.\n\nThanks.",
+      "parentUuid": "420e078f_71c71398",
+      "revId": "942fac560744c21bebf60c0fa7eafc957d7aedf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
