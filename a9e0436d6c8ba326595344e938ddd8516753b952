@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "861c7565_a5fd84a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-02T11:31:06Z",
+      "side": 1,
+      "message": "Looks okay to me.",
+      "revId": "a9e0436d6c8ba326595344e938ddd8516753b952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5231f9eb_c282d1f3",
+        "filename": "arch/arm64/gunyah/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-02T11:31:06Z",
+      "side": 1,
+      "message": "gunyah_arch_mm.c for future proofing",
+      "revId": "a9e0436d6c8ba326595344e938ddd8516753b952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c00fa3f5_00eeaa1e",
+        "filename": "arch/arm64/gunyah/cache_maintenance.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-02T11:31:06Z",
+      "side": 1,
+      "message": "please use\n`Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.`",
+      "revId": "a9e0436d6c8ba326595344e938ddd8516753b952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fcce5b0d_76bb0ae2",
+        "filename": "arch/arm64/gunyah/cache_maintenance.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-02T11:31:06Z",
+      "side": 1,
+      "message": "do we need this loop since we are in ARM64? btw, gunyah depends on ARM64 at the moment. see drivers/virt/gunyah/Kconfig",
+      "revId": "a9e0436d6c8ba326595344e938ddd8516753b952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1131515d_fe79af71",
+        "filename": "arch/arm64/include/asm/asm-prototypes.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-02T11:31:06Z",
+      "side": 1,
+      "message": "belongs in a separate commit, correct? all exports in this patch.",
+      "revId": "a9e0436d6c8ba326595344e938ddd8516753b952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0078f2e8_693066f0",
+        "filename": "drivers/virt/gunyah/vm_mgr_mem.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-02T11:31:06Z",
+      "side": 1,
+      "message": "write a comment here that Gunyah does this for protected VM",
+      "revId": "a9e0436d6c8ba326595344e938ddd8516753b952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
