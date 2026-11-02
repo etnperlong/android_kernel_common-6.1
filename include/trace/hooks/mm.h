@@ -13,6 +13,10 @@ DECLARE_HOOK(android_vh_cma_alloc_retry,
 	TP_PROTO(char *name, int *retry),
 	TP_ARGS(name, retry));
 
+DECLARE_HOOK(android_vh_get_page_wmark,
+	TP_PROTO(unsigned int alloc_flags, unsigned long *page_wmark),
+	TP_ARGS(alloc_flags, page_wmark));
+
 #endif /* _TRACE_HOOK_MM_H */
 /* This part must be outside protection */
 #include <trace/define_trace.h>
