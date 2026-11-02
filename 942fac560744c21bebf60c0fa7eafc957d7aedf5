@@ -51,6 +51,24 @@
       "parentUuid": "420e078f_71c71398",
       "revId": "942fac560744c21bebf60c0fa7eafc957d7aedf5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08ee0b41_c3c6f1e7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1572468
+      },
+      "writtenOn": "2026-11-02T11:00:33Z",
+      "side": 1,
+      "message": "I suspect there are other dependencies missing, then. For example, the android16-6.12 commit has `.fop_flags\t\u003d FOP_DONTCACHE,` in the context, which is missing here.",
+      "parentUuid": "ded982e3_3528664b",
+      "revId": "942fac560744c21bebf60c0fa7eafc957d7aedf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
