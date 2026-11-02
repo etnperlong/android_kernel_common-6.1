@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6bac275b_4b28766b",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1557540
+      },
+      "writtenOn": "2026-11-02T21:46:02Z",
+      "side": 1,
+      "message": "`vma_file_offset_at()` returns a signed `loff_t` (`long long`) computed via `((loff_t)vma-\u003evm_pgoff \u003c\u003c PAGE_SHIFT_KERNEL) + ...`. If a driver or character device uses an unsigned 64-bit `mmap` offset cookie with bit 63 set (`ksys_mmap_pgoff()` shifts `(unsigned long)off \u003e\u003e PAGE_SHIFT_4KB`, so `vm_pgoff` has bit 49 set), `(loff_t)vma-\u003evm_pgoff \u003c\u003c 14` overflows signed `loff_t` into a negative value and `\u003e\u003e mm_pte_shift(vma-\u003evm_mm)` performs an arithmetic right shift that sign-extends the top 12 bits (`63:52`) to `0xfff`.\n\nComputing directly in unsigned `pgoff_t` avoids the signed byte-shift overflow and acts as the exact lossless inverse of `mm_mmap_pgoff()` / `mm_mmap_slice_off()`:\n```c\nif (vma_is_p3s_4k(vma) \u0026\u0026 vma-\u003evm_file)\n\treturn (vma-\u003evm_pgoff \u003c\u003c P3S_SLICE_SHIFT) + vma_slice_off(vma) +\n\t       ((addr - vma-\u003evm_start) \u003e\u003e PAGE_SHIFT_4KB);\n```",
+      "isAi": true,
+      "revId": "b39a7e983024c61f5fa64aadb9ed5f0faf42ea25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
