@@ -17,6 +17,7 @@
 #include <linux/sbitmap.h>
 
 #include <trace/events/block.h>
+#include <trace/hooks/blk.h>
 
 #include "elevator.h"
 #include "blk.h"
@@ -460,6 +461,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
 	const unsigned long now = jiffies;
 	struct request *rq;
 	enum dd_prio prio;
+	bool bypass = false;
 
 	spin_lock(&dd->lock);
 
@@ -480,6 +482,10 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
 	 */
 	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
 		rq = __dd_dispatch_request(dd, &dd->per_prio[prio], now);
+		trace_android_vh_dd_dispatch_request_bypass(hctx, rq,
+				dd_queued(dd, prio), &bypass);
+		if (bypass)
+			continue;
 		if (rq || dd_queued(dd, prio))
 			break;
 	}
