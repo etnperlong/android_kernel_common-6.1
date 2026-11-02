@@ -41,6 +41,7 @@
 #include <trace/hooks/syscall_check.h>
 #include <trace/hooks/sysrqcrash.h>
 #include <trace/hooks/timer.h>
+#include <trace/hooks/topology.h>
 #include <trace/hooks/traps.h>
 #include <trace/hooks/ufshcd.h>
 #include <trace/hooks/vmscan.h>
@@ -56,6 +57,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_arm64_serror_panic);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_attach);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_cgroup_online);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpufreq_transition);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_cpu_capacity_show);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_die_kernel_fault);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_bti);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_do_el1_fpac);
