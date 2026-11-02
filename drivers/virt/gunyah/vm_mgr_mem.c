@@ -202,6 +202,13 @@ int gunyah_vm_provide_folio(struct gunyah_vm *ghvm, struct folio *folio,
 	if (ret)
 		return ret;
 
+	/*
+	 * Make host-populated folio contents visible before the unprotected
+	 * guest receives an executable mapping of this memory.
+	 */
+	if (!ghvm->is_protected)
+		gunyah_arch_sync_folio_for_execution(folio);
+
 	ret = gunyah_rm_platform_pre_demand_page(ghvm->rm, ghvm->vmid, access,
 						 folio);
 	if (ret)

@@ -23,6 +23,9 @@ long long __ashlti3(long long a, int b);
 long long __ashrti3(long long a, int b);
 long long __lshrti3(long long a, int b);
 
+extern void icache_inval_pou(unsigned long start, unsigned long end);
+extern void dcache_clean_inval_poc(unsigned long start, unsigned long end);
+
 /*
  * This function uses a custom calling convention and cannot be called from C so
  * this prototype is not entirely accurate.

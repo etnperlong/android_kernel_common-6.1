@@ -18,6 +18,7 @@
 #include <uapi/linux/gunyah.h>
 
 struct gunyah_vm;
+struct folio;
 
 int __must_check gunyah_vm_get(struct gunyah_vm *ghvm);
 void gunyah_vm_put(struct gunyah_vm *ghvm);
@@ -634,6 +635,15 @@ static inline int gunyah_arch_timer_init(void)
 	return 0;
 }
 #endif /* IS_REACHABLE(CONFIG_GUNYAH_TIMER) */
+
+/* Arch-specific cache maintenance for memory handed to a guest. */
+#if IS_REACHABLE(CONFIG_GUNYAH_ARCH_CACHE_MAINTENANCE)
+void gunyah_arch_sync_folio_for_execution(struct folio *folio);
+#else
+static inline void gunyah_arch_sync_folio_for_execution(struct folio *folio)
+{
+}
+#endif /* IS_REACHABLE(CONFIG_GUNYAH_ARCH_CACHE_MAINTENANCE) */
 
 /**
  * gunyah_arch_deadline_to_ktime() - Convert hypervisor tick deadline to CLOCK_MONOTONIC ktime

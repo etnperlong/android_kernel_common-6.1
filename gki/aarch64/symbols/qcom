@@ -175,6 +175,8 @@
   bus_unregister
   bus_unregister_notifier
   caches_clean_inval_pou
+  dcache_clean_inval_poc
+  icache_inval_pou
   call_netdevice_notifiers
   call_rcu
   call_rcu_tasks
@@ -1269,6 +1271,7 @@
   gro_cells_receive
   __gro_flush
   gunyah_get_info
+  gunyah_arch_sync_folio_for_execution
   gunyah_hypercall_msgq_recv
   gunyah_hypercall_msgq_send
   gunyah_hypercall_vcpu_run
