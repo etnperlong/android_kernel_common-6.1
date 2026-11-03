@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3e96f1b_8b3292d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:28Z",
+      "side": 1,
+      "message": "Done: updated the commit message to explain the 4x/0.25x RSS and OOM badness effect during exec, wrapped at 72 columns, and removed the blank line before Change-Id.",
+      "parentUuid": "d532c081_cf1aee73",
+      "isAi": true,
+      "revId": "22b1069cd319e26d42890083936b0cd612d8e257",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e081a5ad_d635fbbd",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-03T03:01:00Z",
       "side": 1,
       "message": "Agreed that the charge has to be in the old mm\u0027s units: `MM_ANONPAGES` of a 4KB mm counts 4KB pages, which is also what `oom_badness()` assumes since aosp/4312502.\n\nIt looks like `mm_reader_pages()` (aosp/4366897, in `include/linux/p3s/mm.h`) already does this conversion: it scales a page count of an mm to the page size of `current`, rounding up, and its stub returns the count unchanged. Its kernel-doc talks about /proc readers, but the math is the same, and `current-\u003emm` is the old mm here. Would converting in `get_arg_page()` work for you? Something like:\n\n```\n\tif (write)\n\t\tacct_arg_size(bprm, mm_reader_pages(mm, vma_pages(vma)));\n```\n\n`mm` is `bprm-\u003emm` there. `bprm-\u003evma_pages` then holds the charge in the old mm\u0027s pages, which is what `acct_arg_size(bprm, 0)` takes back, and `acct_arg_size()` keeps upstream\u0027s code, including the `!mm || !diff` early return.",
+      "isAi": true,
+      "revId": "22b1069cd319e26d42890083936b0cd612d8e257",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9364fbd0_f41b1d03",
+        "filename": "fs/exec.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:28Z",
+      "side": 1,
+      "message": "Done: converted in get_arg_page() via mm_reader_pages(mm, vma_pages(vma)) (guarded by current-\u003emm) and kept acct_arg_size() unchanged.",
+      "parentUuid": "e081a5ad_d635fbbd",
       "isAi": true,
       "revId": "22b1069cd319e26d42890083936b0cd612d8e257",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
