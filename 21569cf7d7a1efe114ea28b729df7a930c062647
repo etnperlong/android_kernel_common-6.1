@@ -105,6 +105,30 @@
       },
       "revId": "21569cf7d7a1efe114ea28b729df7a930c062647",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2b41daa_6e02e49f",
+        "filename": "gki/aarch64/afdo/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 4540123
+      },
+      "writtenOn": "2026-11-03T23:04:20Z",
+      "side": 1,
+      "message": "opps",
+      "parentUuid": "b56405dc_5f8181ae",
+      "range": {
+        "startLine": 25,
+        "startChar": 26,
+        "endLine": 26,
+        "endChar": 31
+      },
+      "revId": "21569cf7d7a1efe114ea28b729df7a930c062647",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
