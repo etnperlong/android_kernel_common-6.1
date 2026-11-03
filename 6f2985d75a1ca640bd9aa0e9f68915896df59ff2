@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "6f2985d75a1ca640bd9aa0e9f68915896df59ff2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4fff428_54599769",
+        "filename": "include/linux/p3s/perf.h",
+        "patchSetId": 37
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T19:37:43Z",
+      "side": 1,
+      "message": "Done, moved the note to the top of the header and added a dedicated doc comment for p3s_perf_mm_page_size().",
+      "parentUuid": "4251d5fe_50b70428",
+      "isAi": true,
+      "revId": "6f2985d75a1ca640bd9aa0e9f68915896df59ff2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
