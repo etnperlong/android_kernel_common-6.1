@@ -123,13 +123,14 @@ int fuse_open_backing(struct fuse_bpf_args *fa,
 		break;
 
 	default:
-		return -EINVAL;
+		retval = -EINVAL;
+		goto err_free;
 	}
 
 	retval = inode_permission(&nop_mnt_idmap,
 				  get_fuse_inode(inode)->backing_inode, mask);
 	if (retval)
-		return retval;
+		goto err_free;
 
 	backing_file = dentry_open(&fd->backing_path,
 				   foi->flags,
@@ -143,6 +144,11 @@ int fuse_open_backing(struct fuse_bpf_args *fa,
 	ff->backing_file = backing_file;
 
 	return 0;
+
+err_free:
+	fuse_file_free(ff);
+	file->private_data = NULL;
+	return retval;
 }
 
 void *fuse_open_finalize(struct fuse_bpf_args *fa,
@@ -1232,7 +1238,8 @@ int fuse_handle_backing(struct fuse_entry_bpf *feb, struct inode **backing_inode
 	}
 
 	default:
-		return -EINVAL;
+		retval = -EINVAL;
+		goto err_free;
 	}
 
 	return 0;
@@ -1275,7 +1282,8 @@ int fuse_handle_bpf_prog(struct fuse_entry_bpf *feb, struct inode *parent,
 	}
 
 	default:
-		return -EINVAL;
+		retval = -EINVAL;
+		goto err_free;
 	}
 
 	/* Cannot change existing program */
