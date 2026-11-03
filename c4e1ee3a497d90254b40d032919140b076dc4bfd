@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d274671_230c341f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 34
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:37Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "8c99fd62_f54cc237",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c46e0a18_3244d386",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T04:38:42Z",
       "side": 1,
       "message": "Would you mind moving `p3s_uffd_swap_nr()` into the file\u0027s existing `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block, right after `p3s_uffd_move_nr_slices()` in its `#ifdef CONFIG_USERFAULTFD` section, and the stub after the `p3s_uffd_move_nr_slices()` stub in the `#else` branch? As it is, the patch opens a second config block, nested in a new `CONFIG_USERFAULTFD` block, after the end of the first one.\n\n```\n#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE\n...\n#ifdef CONFIG_USERFAULTFD\n...\nstatic inline unsigned int p3s_uffd_move_nr_slices(...) { ... }\nstatic inline int p3s_uffd_swap_nr(...) { ... }\n#endif /* CONFIG_USERFAULTFD */\n...\n#else /* !CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */\n...\n#ifdef CONFIG_USERFAULTFD\n...\nstatic inline int p3s_uffd_swap_nr(...)\n{\n\treturn 1;\n}\n#endif\n...\n#endif /* CONFIG_ARM64_PER_PROCESS_PAGE_SIZE */\n```\n\n`move_swap_pte()` keeps calling it without `#ifdef`s, as it does now.",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64616435_8da6a77b",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 866,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:37Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "c46e0a18_3244d386",
       "isAi": true,
       "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e09bfee_c7ba2cf9",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:37Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "9701f469_8faba89c",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1c3a3695_e588b1cf",
@@ -73,6 +130,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8e04aa0_a9c427d0",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1188,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:37Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "1c3a3695_e588b1cf",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cbe2ba04_b70eb7ed",
@@ -86,6 +162,25 @@
       "writtenOn": "2026-11-01T04:38:42Z",
       "side": 1,
       "message": "Would you mind moving this loop into a helper next to `p3s_uffd_swap_nr()` in `mm/p3s/anon.h`, so that upstream\u0027s single-PTE move stays as it is and `move_swap_pte()` only gains a hook? Something like:\n\n```\n\torig_src_pte \u003d ptep_get_and_clear(mm, src_addr, src_pte);\n#ifdef CONFIG_MEM_SOFT_DIRTY\n\torig_src_pte \u003d pte_swp_mksoft_dirty(orig_src_pte);\n#endif\n\tset_pte_at(mm, dst_addr, dst_pte, orig_src_pte);\n\tp3s_uffd_move_swap_siblings(mm, dst_addr, src_addr, dst_pte, src_pte, nr);\n\tdouble_pt_unlock(dst_ptl, src_ptl);\n\n\treturn nr * PAGE_SIZE;\n```\n\n`static inline void p3s_uffd_move_swap_siblings(struct mm_struct *mm, unsigned long dst_addr, unsigned long src_addr, pte_t *dst_pte, pte_t *src_pte, int nr)` would move PTEs 1 to `nr - 1` in `PAGE_SIZE_4KB` steps, since only 4KB VMAs get `nr \u003e 1`, and its stub in the `#else` branch would do nothing. That also keeps the redefined `PAGE_SIZE` out of the new loop, as `move_present_ptes()` does with `mm_pte_size(mm)`.",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec4da04e_6b002308",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:37Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "cbe2ba04_b70eb7ed",
       "isAi": true,
       "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
