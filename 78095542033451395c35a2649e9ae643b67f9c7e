@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9464a3b7_c30f6742",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 20
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:08Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "cc8e857d_815f1c5c",
+      "isAi": true,
+      "revId": "78095542033451395c35a2649e9ae643b67f9c7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "17c1f74f_38b5cb17",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-02T21:40:57Z",
       "side": 1,
       "message": "In `drivers/android/binder/page_range.rs`, this patch clamps the shrinker\u0027s `zap_page_range_single()` size to `usize::min(PAGE_SIZE, vma.end() - user_page_addr)`, whereas C Binder\u0027s `binder_alloc_free_page()` still passes an unclamped `16KB` `PAGE_SIZE` here.\n\n`zap_page_range_single()` requires the range to fit within a single VMA and passes `page_addr + size` to `mmu_notifier_invalidate_range_start()` while `binder_alloc_free_page()` only holds `lock_vma_under_rcu` on `vma`. Please clamp the zap size here to `min_t(unsigned long, PAGE_SIZE, vma-\u003evm_end - page_addr)` to match Rust Binder. (Also note that in `binder_free_buf_locked()`, `(buffer-\u003euser_data + buffer_size) \u0026 PAGE_MASK` rounds `vm_end` down on a partial final page, preventing a freed buffer at the end of a `1MB - 8KB` mapping from adding that final page to the shrinker freelist.)",
+      "isAi": true,
+      "revId": "78095542033451395c35a2649e9ae643b67f9c7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "644050b9_a4de493c",
+        "filename": "drivers/android/binder_alloc.c",
+        "patchSetId": 20
+      },
+      "lineNbr": 1206,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:08Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "17c1f74f_38b5cb17",
       "isAi": true,
       "revId": "78095542033451395c35a2649e9ae643b67f9c7e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
