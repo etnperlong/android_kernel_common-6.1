@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f666343_5a00e280",
+        "filename": "mm/mremap.c",
+        "patchSetId": 40
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T22:02:01Z",
+      "side": 1,
+      "message": "Would it be OK to drop this include? As far as I can see, `mm/mremap.c` already gets `\u003clinux/p3s/mremap.h\u003e` through `\u003clinux/mm.h\u003e` → `\u003clinux/mm_types.h\u003e` → `\u003clinux/p3s.h\u003e`. That\u0027s how `vrm_set_new_addr()` and `check_mremap_params()` used its helpers before this patch. Dropping it keeps one more line out of `mm/mremap.c`.",
+      "isAi": true,
+      "revId": "d1eeb01c456fccaba0303a4401e0c60cba25dbe1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
