@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "6b6e30bd8f444252ea0de4c3c02f753cedc178d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dbe290dd_2d086bf7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 27
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:58Z",
+      "side": 1,
+      "message": "Dropped this patch from the series as suggested. Thanks!",
+      "parentUuid": "87b92996_42121ee1",
+      "isAi": true,
+      "revId": "6b6e30bd8f444252ea0de4c3c02f753cedc178d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
