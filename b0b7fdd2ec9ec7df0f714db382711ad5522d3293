@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "b0b7fdd2ec9ec7df0f714db382711ad5522d3293",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d0e951f_d25c1ca4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:23Z",
+      "side": 1,
+      "message": "Done: updated the commit message to explain how mm_pgd_index() affects non-P3S 4-level arm64 kernels (such as crashdump_defconfig), wrapped the body at 72 columns, and removed the blank line before Change-Id across all bottom commits.",
+      "parentUuid": "0c5ba85d_b4023784",
+      "isAi": true,
+      "revId": "b0b7fdd2ec9ec7df0f714db382711ad5522d3293",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
