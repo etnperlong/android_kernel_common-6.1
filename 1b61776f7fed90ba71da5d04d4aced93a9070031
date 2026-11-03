@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "1b61776f7fed90ba71da5d04d4aced93a9070031",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22320c6e_a0f43779",
+        "filename": "fs/userfaultfd.c",
+        "patchSetId": 29
+      },
+      "lineNbr": 1608,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:58Z",
+      "side": 1,
+      "message": "Dropped this patch from the series as suggested. Thanks!",
+      "parentUuid": "99e96ae1_e75c4321",
+      "isAi": true,
+      "revId": "1b61776f7fed90ba71da5d04d4aced93a9070031",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
