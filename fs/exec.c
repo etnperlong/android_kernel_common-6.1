@@ -134,9 +134,15 @@ bool path_noexec(const struct path *path)
 static void acct_arg_size(struct linux_binprm *bprm, unsigned long pages)
 {
 	struct mm_struct *mm = current->mm;
-	long diff = (long)(pages - bprm->vma_pages);
+	long diff;
 
-	if (!mm || !diff)
+	if (!mm)
+		return;
+
+	/* The temporary charge belongs to the old mm, not the new stack. */
+	pages = DIV_ROUND_UP(pages * mm_pte_size(bprm->mm), mm_pte_size(mm));
+	diff = (long)(pages - bprm->vma_pages);
+	if (!diff)
 		return;
 
 	bprm->vma_pages = pages;
