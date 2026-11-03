@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "61d1bdf399a64d48bb64fea10114e0ee41378ed9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c866ab3d_76787bfe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 34
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:03Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "1362c607_ffa9436b",
+      "isAi": true,
+      "revId": "61d1bdf399a64d48bb64fea10114e0ee41378ed9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
