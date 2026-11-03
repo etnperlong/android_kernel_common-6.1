@@ -166,6 +166,44 @@
       "isAi": true,
       "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89182a2c_fa1a0efb",
+        "filename": "mm/rmap.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 2873,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:25Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "aeff4805_a755a753",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "594e1ca9_eea4d8f0",
+        "filename": "mm/rmap.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 2873,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:25Z",
+      "side": 1,
+      "message": "Done, restored the blank line after the address declaration so p3s_anon_rmap_range() is the only touched line in rmap_walk_anon().",
+      "parentUuid": "f26a6681_8c0c4918",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
