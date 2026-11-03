@@ -69,6 +69,24 @@
       "parentUuid": "4e6b9de6_bf235c53",
       "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "702be572_7a7e01e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1587335
+      },
+      "writtenOn": "2026-11-03T08:34:16Z",
+      "side": 1,
+      "message": "Apologies, @junghoonjang@google.com will have to abandon the change.",
+      "parentUuid": "756603b0_6ddea93e",
+      "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
