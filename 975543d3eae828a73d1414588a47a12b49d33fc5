@@ -1,0 +1,68 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "29d510a1_608e8e4e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T16:18:51Z",
+      "side": 1,
+      "message": "Please explain why you need to mark the creator.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 64
+      },
+      "revId": "975543d3eae828a73d1414588a47a12b49d33fc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "484558ff_bc9cc590",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1164,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T16:18:51Z",
+      "side": 1,
+      "message": "From the description sounds like it should be a refcount_t, no?",
+      "range": {
+        "startLine": 1164,
+        "startChar": 2,
+        "endLine": 1164,
+        "endChar": 10
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ea4d79ed_6e2af524",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "include/linux/mm_types.h",
+              "range": {
+                "startLine": 1164,
+                "startChar": 0,
+                "endLine": 1165,
+                "endChar": 0
+              },
+              "replacement": "\t\trefcount_t ptshare_vmas;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "975543d3eae828a73d1414588a47a12b49d33fc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
