@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "46ff0c86_6de733dc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-11-03T02:56:18Z",
+      "side": 1,
+      "message": "Overriding lint: The cherry-pick lint test is being overly fussy.",
+      "revId": "06f23025e891821ae93ce206b9eef4322b12a7cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
