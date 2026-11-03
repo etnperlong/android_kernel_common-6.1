@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4251d5fe_50b70428",
+        "filename": "include/linux/p3s/perf.h",
+        "patchSetId": 37
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T19:21:36Z",
+      "side": 1,
+      "message": "Nit: now that aosp/4399089 includes this header from `kernel/events/core.c`, right after `\"internal.h\"`, this note reads as the comment of `p3s_perf_mm_page_size()`, which uses neither `struct perf_buffer` nor `perf_data_size()`. Could it move to the top of the header, and `p3s_perf_mm_page_size()` get a line of its own? Something like:\n\n```\n#include \u003clinux/page_size_compat_defs.h\u003e\n\n/*\n * Include after kernel/events/internal.h: the helpers below use\n * struct perf_buffer, perf_data_size() and perf_mmap_to_page().\n */\n```\n\nand:\n\n```\n/* Page size of the ring buffer layout that @mm maps. */\nstatic inline unsigned long p3s_perf_mm_page_size(struct mm_struct *mm)\n```",
+      "isAi": true,
+      "revId": "6f2985d75a1ca640bd9aa0e9f68915896df59ff2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
