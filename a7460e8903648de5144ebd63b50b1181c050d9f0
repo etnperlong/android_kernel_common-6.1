@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e204035f_e2320a2e",
+        "filename": "drivers/virt/gunyah/vm_mgr_mem.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1963576
+      },
+      "writtenOn": "2026-11-03T10:46:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7faf4c9e_eaece019",
+      "revId": "a7460e8903648de5144ebd63b50b1181c050d9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c940aa4e_5dd1882a",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-11-03T08:28:46Z",
       "side": 1,
       "message": "see if we can use lock guards to avoid these error paths.",
+      "revId": "a7460e8903648de5144ebd63b50b1181c050d9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "664b3214_f8a92eb5",
+        "filename": "drivers/virt/gunyah/vm_mgr_mem.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1963576
+      },
+      "writtenOn": "2026-11-03T10:46:27Z",
+      "side": 1,
+      "message": "Retained the explicit lock/unlock flow to avoid introducing a dependency on lock-guard support, since this change is also planned for backport to the 6.12 kernel. The helper has been moved before its caller, and the forward declaration has been removed.",
+      "parentUuid": "c940aa4e_5dd1882a",
       "revId": "a7460e8903648de5144ebd63b50b1181c050d9f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
