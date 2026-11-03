@@ -57,6 +57,44 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "96a8bf40_0d03f9b4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 36
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:09Z",
+      "side": 1,
+      "message": "Done, rewrapped the first paragraph to explain that MREMAP_FIXED fails with -EINVAL for 4KB process moves to another slice of a 16KB window, and dropped the last sentence.",
+      "parentUuid": "74851b76_84b95936",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "406d0b1a_887cad7e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 36
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:09Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "095c75ac_66b37e65",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6917f53_31864819",
@@ -108,6 +146,44 @@
       "side": 1,
       "message": "Nit: it looks like the alignment change went to `vma_slice_offset()` rather than to this helper. The `vma_slice_offset()` continuation line was already under the open parenthesis and is now one column past it, while this one hasn\u0027t changed, so `checkpatch.pl --strict` still flags it.\n\nCould you drop the `vma_slice_offset()` hunk and align this line instead? For example, you could use the layout of the stub in `tools/testing/vma/vma_internal.h`, whose continuation line is also one column short:\n\n```\nstatic inline unsigned short\nvma_mremap_slice_off(const struct vm_area_struct *vma, unsigned long old_addr,\n\t\t     unsigned long new_addr)\n```\n\nThe `mm_mremap_fixed_keeps_slice()` comment in `include/linux/p3s/mremap.h` fits now, thanks, but its paragraph still breaks early after \"Copying the\". Could the rest of it be refilled?",
       "parentUuid": "7268d63b_62d1e2da",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98479115_3d486eea",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 36
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:09Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "c6917f53_31864819",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bbd3b030_f522edcc",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 36
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:09Z",
+      "side": 1,
+      "message": "Done, aligned vma_mremap_slice_off() continuation line under the opening parenthesis.",
+      "parentUuid": "3f2b00f4_3d2813c1",
       "isAi": true,
       "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
