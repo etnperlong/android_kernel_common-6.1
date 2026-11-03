@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "f5c325352d2146f9138205a492d4cf105c872dc3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "15d6ec60_4d2038d3",
+        "filename": "fs/proc/task_mmu.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:14Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "62a8574d_e2b88279",
+      "isAi": true,
+      "revId": "f5c325352d2146f9138205a492d4cf105c872dc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
