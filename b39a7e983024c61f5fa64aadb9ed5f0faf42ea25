@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "b39a7e983024c61f5fa64aadb9ed5f0faf42ea25",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5896916f_15ac86ad",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:03Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "6bac275b_4b28766b",
+      "isAi": true,
+      "revId": "b39a7e983024c61f5fa64aadb9ed5f0faf42ea25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
