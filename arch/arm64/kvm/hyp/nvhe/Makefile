@@ -46,11 +46,11 @@ $(obj)/hyp.lds: $(src)/hyp.lds.S FORCE
 
 include $(srctree)/arch/arm64/kvm/hyp/nvhe/Makefile.nvhe
 
-CFLAGS_REMOVE_trace.nvhe.o := -fpatchable-function-entry=3
-CFLAGS_REMOVE_events.nvhe.o := -fpatchable-function-entry=3
-CFLAGS_REMOVE_ftrace.nvhe.o := -fpatchable-function-entry=3
-CFLAGS_REMOVE_setup.nvhe.o := -fpatchable-function-entry=3
-CFLAGS_REMOVE_stacktrace.nvhe.o := -fpatchable-function-entry=3
+CFLAGS_REMOVE_trace.nvhe.o := -fpatchable-function-entry=2
+CFLAGS_REMOVE_events.nvhe.o := -fpatchable-function-entry=2
+CFLAGS_REMOVE_ftrace.nvhe.o := -fpatchable-function-entry=2
+CFLAGS_REMOVE_setup.nvhe.o := -fpatchable-function-entry=2
+CFLAGS_REMOVE_stacktrace.nvhe.o := -fpatchable-function-entry=2
 
 obj-y := kvm_nvhe.o
 

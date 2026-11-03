@@ -12,7 +12,6 @@
 
 #include <asm/kvm_hypevents.h>
 
-#define HYP_FTRACE_MAX_OFFSETS	17 /* MAX_MOD_EVENTS + 1 */
 #define HYP_FTRACE_MAX_DEPTH	32
 
 extern unsigned long hyp_nr_cpus;
@@ -20,11 +19,19 @@ extern unsigned long hyp_nr_cpus;
 extern void __hyp_ftrace_tramp(void);
 extern void __hyp_ftrace_ret_tramp(void);
 
-static unsigned long hyp_kern_offsets[HYP_FTRACE_MAX_OFFSETS];
+unsigned long hyp_text_start_kern_va;
 
-static unsigned long __kern_addr(unsigned long offset_idx, unsigned long addr)
+/* Offsets to convert a hyp VA into a kernel VA */
+static unsigned long core_hyp_kern_offset;
+static unsigned long mod_hyp_kern_offset;
+
+static unsigned long __kern_addr(unsigned long hyp_va)
 {
-	return addr + hyp_kern_offsets[offset_idx];
+	if (hyp_va >= (unsigned long)__hyp_text_start &&
+	    hyp_va < (unsigned long)__hyp_text_end)
+		return hyp_va + core_hyp_kern_offset;
+
+	return hyp_va + READ_ONCE(mod_hyp_kern_offset);
 }
 
 struct hyp_ftrace_stack_frame {
@@ -89,20 +96,14 @@ static __always_inline struct hyp_ftrace_stack_frame *hyp_ftrace_func_pop(void)
 }
 
 /* missing-prototypes called in .S file */
-unsigned long __hyp_ftrace_trace(unsigned long ip, unsigned long parent,
-				 unsigned long offset_idx);
+unsigned long __hyp_ftrace_trace(unsigned long ip, unsigned long parent);
 unsigned long __hyp_ftrace_ret_trace(void);
 
-unsigned long __hyp_ftrace_trace(unsigned long ip, unsigned long parent,
-				 unsigned long offset_idx)
+unsigned long __hyp_ftrace_trace(unsigned long ip, unsigned long parent)
 {
-	unsigned long func = __kern_addr(offset_idx, ip);
-	unsigned long parent_offset_idx;
+	unsigned long func = __kern_addr(ip);
 
-	/* When modules are called from core */
-	parent_offset_idx = parent > (unsigned long)__hyp_text_start ? 0 : offset_idx;
-
-	trace_func(func, __kern_addr(parent_offset_idx, parent));
+	trace_func(func, __kern_addr(parent));
 
 	/* Only install the trampoline if we can revert to the original parent */
 	if (hyp_ftrace_func_push(func, parent))
@@ -136,24 +137,6 @@ unsigned long hyp_ftrace_ret_pop(void)
 	struct hyp_ftrace_stack_frame *frame = hyp_ftrace_func_pop();
 
 	return frame ? frame->ret : ULONG_MAX;
-}
-
-static int __get_offset_idx_ins(unsigned long *func, unsigned long ip, u32 *insn,
-				void *args)
-{
-	unsigned long idx = (unsigned long)args;
-	u32 imm, mask = (BIT(16) - 1) << 5;
-
-	imm = (idx << 5) & mask;
-
-	*insn = aarch64_insn_get_movz_value();
-	*insn |= BIT(31);			/* 64-bits variant */
-	*insn |= 10;				/* x10 */
-	*insn &= ~mask;
-	*insn |= imm;
-	*insn = cpu_to_le32(*insn);
-
-	return 0;
 }
 
 static int __get_disable_ins(unsigned long *func, unsigned long ip, u32 *insn,
@@ -215,7 +198,6 @@ static int __get_enable_disable_ins_early(unsigned long *func, unsigned long ip,
 
 struct __ftrace_sync_patch_args {
 	void		*tramp;
-	unsigned long	offset_idx;
 	unsigned long	*funcs_pg;
 };
 
@@ -233,8 +215,8 @@ __get_enable_disable_ins_from_funcs_pg(unsigned long *func, unsigned long ip,
 	if (funcs_pg_is_end(args->funcs_pg))
 		return -EAGAIN;
 
-	kern_addr = __kern_addr(args->offset_idx, *func);
-	if (get_func(kern_addr) != funcs_pg_func(*args->funcs_pg)) {
+	kern_addr = __kern_addr(get_func(*func));
+	if (kern_addr != funcs_pg_func(*args->funcs_pg)) {
 		ret = -EINVAL;
 		goto end;
 	}
@@ -272,7 +254,6 @@ static phys_addr_t __get_phys(unsigned long addr)
 #define HYP_FTRACE_SKIP_FUNC (-1ULL)
 
 static void hyp_ftrace_patch(unsigned long *funcs, unsigned long *funcs_end,
-			     size_t func_offset,
 			     int (*get_ins)(unsigned long *func, unsigned long ip,
 					    u32 *insn, void *args),
 			     void *args)
@@ -291,7 +272,7 @@ static void hyp_ftrace_patch(unsigned long *funcs, unsigned long *funcs_end,
 		if (*funcs == HYP_FTRACE_SKIP_FUNC)
 			goto next;
 
-		ip = get_func(*funcs) + func_offset;
+		ip = get_func(*funcs) + AARCH64_INSN_SIZE;
 		delta = ip - prev_ip;
 
 		if (!map) {
@@ -322,60 +303,53 @@ next:
 		hyp_fixmap_unmap();
 }
 
-int hyp_ftrace_setup(unsigned long *funcs, unsigned long *funcs_end,
-		     unsigned long hyp_kern_offset, void *tramp)
+void hyp_ftrace_setup(unsigned long *funcs, unsigned long *funcs_end,
+		      unsigned long hyp_kern_offset, void *tramp)
 {
-	unsigned long idx;
+	if (funcs >= funcs_end || !*funcs)
+		return;
 
-	for (idx = 0; idx < HYP_FTRACE_MAX_OFFSETS; idx++) {
-		if (!hyp_kern_offsets[idx])
-			break;
-	}
+	if (!mod_hyp_kern_offset)
+		WRITE_ONCE(mod_hyp_kern_offset, hyp_kern_offset);
+	else if (WARN_ON(mod_hyp_kern_offset != hyp_kern_offset))
+		return;
 
-	if (idx >= HYP_FTRACE_MAX_OFFSETS)
-		return -ENOMEM;
-
-	hyp_kern_offsets[idx] = hyp_kern_offset;
-
-	hyp_ftrace_patch(funcs, funcs_end, AARCH64_INSN_SIZE,
-			 __get_offset_idx_ins, (void *)idx);
-
-	hyp_ftrace_patch(funcs, funcs_end, 2 * AARCH64_INSN_SIZE,
-			 __get_enable_disable_ins_early, tramp);
-
-	return idx;
+	hyp_ftrace_patch(funcs, funcs_end, __get_enable_disable_ins_early, tramp);
 }
 
 extern unsigned long __hyp_patchable_function_entries_start[];
 extern unsigned long __hyp_patchable_function_entries_end[];
 
-unsigned long __hyp_text_start_kern;
-
 void hyp_ftrace_setup_core(void)
 {
 	hyp_ftrace_func_reset();
+	core_hyp_kern_offset = hyp_text_start_kern_va -
+			       (unsigned long)__hyp_text_start;
 
-	hyp_ftrace_setup(__hyp_patchable_function_entries_start,
+	hyp_ftrace_patch(__hyp_patchable_function_entries_start,
 			 __hyp_patchable_function_entries_end,
-			 __hyp_text_start_kern - (unsigned long)__hyp_text_start,
-			 __hyp_ftrace_tramp);
+			 __get_enable_disable_ins_early, __hyp_ftrace_tramp);
 }
 
 unsigned long *hyp_ftrace_find_host_func(unsigned long host_func,
 					 unsigned long *funcs,
-					 unsigned long *funcs_end,
-					 unsigned long offset_idx)
+					 unsigned long *funcs_end)
 {
 	if (!funcs) {
 		funcs = __hyp_patchable_function_entries_start;
 		funcs_end = __hyp_patchable_function_entries_end;
-		offset_idx = 0;
 	}
 
 	while (funcs < funcs_end) {
-		unsigned long kern_addr = __kern_addr(offset_idx, *funcs);
+		if (!*funcs)
+			break;
 
-		if (get_func(kern_addr) == funcs_pg_func(host_func))
+		if (*funcs == HYP_FTRACE_SKIP_FUNC) {
+			funcs++;
+			continue;
+		}
+
+		if (__kern_addr(get_func(*funcs)) == funcs_pg_func(host_func))
 			return funcs;
 
 		funcs++;
@@ -397,19 +371,17 @@ unsigned long *hyp_ftrace_find_host_func(unsigned long host_func,
  * entry to process if funcs_end has been reached.
  */
 void *hyp_ftrace_sync(unsigned long *funcs_pg, unsigned long *funcs,
-		      unsigned long *funcs_end, unsigned long offset_idx,
-		      void *tramp)
+		      unsigned long *funcs_end, void *tramp)
 {
 	struct __ftrace_sync_patch_args args = {
 		.tramp = tramp ? tramp : (void *)__hyp_ftrace_tramp,
-		.offset_idx = funcs ? offset_idx : 0,
 		.funcs_pg = funcs_pg,
 	};
 
 	if (!funcs_end)
 		funcs_end = __hyp_patchable_function_entries_end;
 
-	hyp_ftrace_patch(funcs, funcs_end, 2 * AARCH64_INSN_SIZE,
+	hyp_ftrace_patch(funcs, funcs_end,
 			 __get_enable_disable_ins_from_funcs_pg, (void *)&args);
 
 	return funcs_pg_is_end(args.funcs_pg) ? NULL : args.funcs_pg;
@@ -422,6 +394,5 @@ void hyp_ftrace_disable(unsigned long *funcs, unsigned long *funcs_end)
 		funcs_end = __hyp_patchable_function_entries_end;
 	}
 
-	hyp_ftrace_patch(funcs, funcs_end, 2 * AARCH64_INSN_SIZE,
-			 __get_disable_ins, NULL);
+	hyp_ftrace_patch(funcs, funcs_end, __get_disable_ins, NULL);
 }

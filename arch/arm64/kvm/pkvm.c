@@ -1786,14 +1786,24 @@ static void pkvm_module_kmemleak(struct module *this,
 static unsigned long mod_direct_kern_base;
 static unsigned long mod_direct_hyp_base;
 
+static bool __pkvm_el2_mod_in_mod_direct(unsigned long addr)
+{
+	return mod_direct_hyp_base &&
+	       addr >= mod_direct_hyp_base &&
+	       addr < mod_direct_hyp_base + PKVM_EL2_MOD_DIRECT_RANGE;
+}
+
+bool pkvm_el2_mod_in_mod_direct(struct pkvm_el2_module *mod)
+{
+	return __pkvm_el2_mod_in_mod_direct((unsigned long)mod->hyp_va);
+}
+
 unsigned long pkvm_el2_mod_kern_va(unsigned long addr)
 {
 	struct pkvm_el2_module *mod;
 
 	/* Fast lookup into the direct range */
-	if (mod_direct_hyp_base &&
-		addr >= mod_direct_hyp_base &&
-		addr < mod_direct_hyp_base + PKVM_EL2_MOD_DIRECT_RANGE)
+	if (__pkvm_el2_mod_in_mod_direct(addr))
 		return mod_direct_kern_base + (addr - mod_direct_hyp_base);
 
 	list_for_each_entry(mod, &pkvm_modules, node) {
