@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "a6714242409dd198973d47fa28c944075c887420",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "923972e6_4a87906b",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:10:57Z",
+      "side": 1,
+      "message": "Done, dropped #ifdef CONFIG_MEM_SOFT_DIRTY and calling pte_swp_mksoft_dirty() unconditionally.",
+      "parentUuid": "930a6ef1_5e4a575a",
+      "isAi": true,
+      "revId": "a6714242409dd198973d47fa28c944075c887420",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

@@ -168,6 +168,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b00812d_8d8a94cc",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1188,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:10:57Z",
+      "side": 1,
+      "message": "Done, restored original 3-line wrapping.",
+      "parentUuid": "227bd585_8f2f7fef",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cbe2ba04_b70eb7ed",
