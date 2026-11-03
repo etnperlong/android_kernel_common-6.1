@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38be12a7_76a7498b",
+        "filename": "mm/shmem.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1352,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T04:25:04Z",
+      "side": 1,
+      "message": "Nit: now that both calls come after `unmap_mapping_range()`, this blank line isn\u0027t needed anymore. Would you mind dropping it, so that `shmem_setattr()` only gains the two calls?",
+      "isAi": true,
+      "revId": "40d3ee77d84bb2ca84f5919d41c1d3c85d7915d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
