@@ -16,6 +16,24 @@
       "message": "Please fix this ERROR reported by KernelCommit: Cherry pick does not have same author date as original commit.\n\nOriginal author ...\n\nCherry pick does not have same author date as original commit.\n\nOriginal author date: Fri Sep 19 17:30:08 2025 +0200\nCherry pick author date: Tue Oct 27 07:55:51 2026 +0000\n\nPlease cherry-pick using: `git cherry-pick -s -x c9ff3637386c6eb72eac55a8b4c9a4972215dbcb`.\n\n\nPlease refer to the contribution guidelines for details:\nhttps://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md",
       "revId": "61ffdc2c8cb78fd6044e289ceb97286ec8856206",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6646036_e30e3ee0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1888377
+      },
+      "writtenOn": "2026-11-03T09:11:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b9053653_7be8686c",
+      "revId": "61ffdc2c8cb78fd6044e289ceb97286ec8856206",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
