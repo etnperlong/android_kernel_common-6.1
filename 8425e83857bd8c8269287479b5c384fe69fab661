@@ -1,0 +1,127 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b837459_b17afd31",
+        "filename": "arch/Kconfig",
+        "patchSetId": 5
+      },
+      "lineNbr": 1777,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T16:08:08Z",
+      "side": 1,
+      "message": "I think the name should be more specific, like ARCH_HAS_PTSHARE_TLB_INVALIDATION or something like this.",
+      "range": {
+        "startLine": 1777,
+        "startChar": 7,
+        "endLine": 1777,
+        "endChar": 23
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "0dc61a66_707d4bd9",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "arch/Kconfig",
+              "range": {
+                "startLine": 1777,
+                "startChar": 0,
+                "endLine": 1778,
+                "endChar": 0
+              },
+              "replacement": "config ARCH_HAS_PTSHARE_TLB_INVALIDATION\n"
+            }
+          ]
+        }
+      ],
+      "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08732494_4adac097",
+        "filename": "arch/arm64/Kconfig",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T16:08:08Z",
+      "side": 1,
+      "message": "Same here, should be enabled in aosp/4378664. Is it possible to implement the broadcast earlier in the series?",
+      "range": {
+        "startLine": 45,
+        "startChar": 1,
+        "endLine": 45,
+        "endChar": 24
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "6908e516_35d7e0e8",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "arch/arm64/Kconfig",
+              "range": {
+                "startLine": 45,
+                "startChar": 0,
+                "endLine": 46,
+                "endChar": 0
+              },
+              "replacement": "\tselect ARCH_HAS_PTSHARE if ARM64_PER_PROCESS_PAGE_SIZE\n"
+            }
+          ]
+        }
+      ],
+      "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8b5650f_2a0eb86b",
+        "filename": "arch/x86/Kconfig",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T16:08:08Z",
+      "side": 1,
+      "message": "The implementation of the broadcast is in aosp/4378663, so I think it should be selected in the same patch, when arch actually supports it.",
+      "range": {
+        "startLine": 28,
+        "startChar": 1,
+        "endLine": 28,
+        "endChar": 24
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "7b1f11d8_fe802132",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "arch/x86/Kconfig",
+              "range": {
+                "startLine": 28,
+                "startChar": 0,
+                "endLine": 29,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
