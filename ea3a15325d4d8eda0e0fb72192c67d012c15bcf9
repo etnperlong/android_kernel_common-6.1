@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a080fa5_0570190f",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:23Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "50701701_0807e301",
+      "isAi": true,
+      "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f3dbbd86_615f70ab",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "910a9e05_f6172b48",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:23Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "f3dbbd86_615f70ab",
+      "isAi": true,
+      "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "658c29b3_e518fb61",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-10-31T22:55:18Z",
       "side": 1,
       "message": "Nit: I think this check isn\u0027t needed anymore: `get_user_pages()` doesn\u0027t pass `locked`, so GUP can\u0027t drop the mmap lock and, for one page, returns 1 or an error, as upstream assumes here. It looks like it was there for `get_user_pages_range_locked()` in PS15. Would it be OK to drop it?",
+      "isAi": true,
+      "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb70cc2c_d915ac85",
+        "filename": "kernel/events/uprobes.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 2427,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:23Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "658c29b3_e518fb61",
       "isAi": true,
       "revId": "ea3a15325d4d8eda0e0fb72192c67d012c15bcf9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
