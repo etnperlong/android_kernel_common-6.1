@@ -2452,6 +2452,7 @@
   sched_feat_keys
   sched_prio_to_weight
   sched_prio_to_wmult
+  __sched_proxy_exec
   sched_setattr_nocheck
   sched_set_fifo
   sched_set_normal
