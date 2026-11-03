@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d72a49e9_5f835ceb",
+        "filename": "include/linux/p3s/perf.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:15Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "040fb8d8_75247858",
+      "isAi": true,
+      "revId": "35686099a0c27fa31ee84c661dd9be4e64093f09",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d9876ee_ee2a2601",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-31T23:00:18Z",
       "side": 1,
       "message": "Is this include needed? As far as I can see, `\u003clinux/mm_types.h\u003e` above already pulls in `\u003clinux/p3s.h\u003e`, which includes `\u003clinux/p3s/mm.h\u003e` and `\u003clinux/p3s/vma.h\u003e`. That\u0027s where `vma_is_p3s_4k()` comes from too (it lives in `\u003clinux/p3s/vma.h\u003e`), and how aosp/4399089 already uses `P3S_CONTEXT_REMOTE_MM()` here. Dropping it would save a line in `kernel/events/core.c`.",
+      "isAi": true,
+      "revId": "35686099a0c27fa31ee84c661dd9be4e64093f09",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "352e1bad_cdcfeb9c",
+        "filename": "kernel/events/core.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:15Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "2d9876ee_ee2a2601",
       "isAi": true,
       "revId": "35686099a0c27fa31ee84c661dd9be4e64093f09",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
