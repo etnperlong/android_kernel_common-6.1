@@ -239,11 +239,12 @@ static int hyp_ftrace_filter_show(struct seq_file *m, void *v)
 	return 0;
 }
 
-static void hyp_ftrace_sync(bool force_enable, bool force_sync)
+static int hyp_ftrace_sync(bool force_enable, bool force_sync)
 {
 	static bool enabled;
-	bool enable;
 	void *func_pg;
+	bool enable;
+	int ret;
 
 	lockdep_assert_held(&hyp_ftrace_funcs_lock);
 
@@ -251,18 +252,26 @@ static void hyp_ftrace_sync(bool force_enable, bool force_sync)
 	force_sync = force_sync && enable;
 
 	if (!force_sync && enable == enabled)
-		return;
+		return 0;
 
 	if (!enable) {
 		kvm_call_hyp_nvhe(__pkvm_disable_ftrace);
 		enabled = false;
-		return;
+		return 0;
 	}
 
-	for_each_funcs_pg(func_pg)
-		kvm_call_refill_hyp_nvhe(__pkvm_sync_ftrace, func_pg);
+	for_each_funcs_pg(func_pg) {
+		ret = kvm_call_refill_hyp_nvhe(__pkvm_sync_ftrace, func_pg);
+		if (ret) {
+			if (!enabled)
+				kvm_call_hyp_nvhe(__pkvm_disable_ftrace);
+			return ret;
+		}
+	}
 
 	enabled = true;
+
+	return 0;
 }
 
 static ssize_t
@@ -289,7 +298,9 @@ hyp_ftrace_filter_write(struct file *filp, const char __user *ubuf, size_t cnt,
 	if (ret)
 		return ret;
 
-	hyp_ftrace_sync(false, true);
+	ret = hyp_ftrace_sync(false, true);
+	if (ret)
+		return ret;
 
 	return cnt;
 }
@@ -469,8 +480,11 @@ static int enable_func_hyp_event(struct hyp_event *event, bool enable)
 	if (enable == *event->enabled)
 		goto handled;
 
-	if (enable)
-		hyp_ftrace_sync(true, false);
+	if (enable) {
+		ret = hyp_ftrace_sync(true, false);
+		if (ret)
+			goto handled;
+	}
 
 	ret = kvm_call_hyp_nvhe(__pkvm_enable_event, id, enable);
 	if (ret) {
