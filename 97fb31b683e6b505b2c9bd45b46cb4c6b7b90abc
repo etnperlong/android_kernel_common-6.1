@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7ce02f2_434844d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:51Z",
+      "side": 1,
+      "message": "Done: split the generic Android VMA test-harness header shims and Makefile rule into a separate predecessor commit (\"ANDROID: tools/testing/vma: Stub Android-only VMA dependencies\") and kept the P3S VMA helper stubs here (\"ANDROID: P3S: tools/testing/vma: Stub P3S VMA helpers\").",
+      "parentUuid": "43502ff1_37bc0adc",
+      "isAi": true,
+      "revId": "97fb31b683e6b505b2c9bd45b46cb4c6b7b90abc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a95d2153_2faa3508",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-03T03:07:26Z",
       "side": 1,
       "message": "Could the body say what fails without this? Something like:\n\n```\ntools/testing/vma doesn\u0027t build: mm/vma.c and mm/vma_exec.c include\n\u003clinux/page_size_compat.h\u003e, \u003clinux/pgsize_migration.h\u003e,\n\u003clinux/dma-buf.h\u003e, \u003ctrace/hooks/mm.h\u003e and \u003clinux/p3s_user_pages.h\u003e,\nand call P3S helpers such as vma_slice_off(), vma_set_split_offset(),\nmm_mmap_pgoff() and mm_stack_guard_gap(), which the harness doesn\u0027t\ndefine.\n```\n\nIf the Android stubs move to their own patch, each body can name just its own part.\n\nNit: as on aosp/4409398, could you wrap the body at 72 columns and drop the blank line between `Bug:` and `Change-Id:`?",
+      "isAi": true,
+      "revId": "97fb31b683e6b505b2c9bd45b46cb4c6b7b90abc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99821ed8_2a740ecf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:51Z",
+      "side": 1,
+      "message": "Done: updated both commit messages to explain what fails to build without them, wrapped at 72 columns, and removed the blank line before Change-Id.",
+      "parentUuid": "a95d2153_2faa3508",
       "isAi": true,
       "revId": "97fb31b683e6b505b2c9bd45b46cb4c6b7b90abc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
