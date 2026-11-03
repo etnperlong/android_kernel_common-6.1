@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "00a7430d337e29199b395c8ab83ed096aea7df55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c2dc414_510b03c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:47Z",
+      "side": 1,
+      "message": "Done: updated the commit message to explain the memory.reclaim (1M -\u003e 4MB) and inactive_is_low() effects, wrapped at 72 columns, and removed the blank line before Change-Id.",
+      "parentUuid": "afd29541_0a23de1a",
+      "isAi": true,
+      "revId": "00a7430d337e29199b395c8ab83ed096aea7df55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
