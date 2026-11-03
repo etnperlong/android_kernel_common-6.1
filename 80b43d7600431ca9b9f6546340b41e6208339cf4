@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "917a5f00_aeeda702",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:37Z",
+      "side": 1,
+      "message": "Done: updated the commit message to explain why existing 4KB PTEs beyond EOF in the last native page can access the retained folio without SIGBUS, wrapped at 72 columns, and removed the blank line before Change-Id.",
+      "parentUuid": "30a5b6c5_0c5bd7e7",
+      "isAi": true,
+      "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e3527e88_43b91c37",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f5da761_856baedc",
+        "filename": "mm/p3s/truncate.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:37Z",
+      "side": 1,
+      "message": "Done: moved #ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE outside p3s_unmap_truncated_tail() with an #else empty stub and aligned loff_t newsize with the open parenthesis.",
+      "parentUuid": "e3527e88_43b91c37",
+      "isAi": true,
+      "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8e998e80_f0594615",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-11-03T03:05:13Z",
       "side": 1,
       "message": "Nit: would it be OK to call it after the `unmap_mapping_range()` calls instead, here and below? The tail slices and the range from `holebegin` don\u0027t overlap, so the order doesn\u0027t matter, and `shmem_setattr()` then needs no blank line after `holebegin`. The second call would also no longer sit between the upstream comment and the `unmap_mapping_range()` it describes.",
+      "isAi": true,
+      "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b19dd5c3_211e2902",
+        "filename": "mm/shmem.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:37Z",
+      "side": 1,
+      "message": "Done: moved p3s_unmap_truncated_tail() calls after unmap_mapping_range() in both mm/shmem.c and mm/truncate.c.",
+      "parentUuid": "8e998e80_f0594615",
       "isAi": true,
       "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
