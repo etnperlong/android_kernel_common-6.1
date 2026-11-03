@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "05d7c5b1_cfcb3695",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1251,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:50:56Z",
+      "side": 1,
+      "message": "I guess if we have to free a reserved field in the future we would have to move these into a separate structure and have a pointer to it from mm_struct.",
+      "range": {
+        "startLine": 1250,
+        "startChar": 2,
+        "endLine": 1251,
+        "endChar": 67
+      },
+      "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
