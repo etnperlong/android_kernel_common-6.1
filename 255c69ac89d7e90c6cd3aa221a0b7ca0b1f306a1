@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ce4a34c_11d786e2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-11-03T16:32:36Z",
+      "side": 1,
+      "message": "this sounds like it would be an issue for everyone. Can you send this fix upstream?",
+      "revId": "255c69ac89d7e90c6cd3aa221a0b7ca0b1f306a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd28b966_75cfdee9",
+        "filename": "block/mq-deadline.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1069543
+      },
+      "writtenOn": "2026-11-03T16:32:36Z",
+      "side": 1,
+      "message": "move this down to line 484 since its scope is limited to that block.",
+      "revId": "255c69ac89d7e90c6cd3aa221a0b7ca0b1f306a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
