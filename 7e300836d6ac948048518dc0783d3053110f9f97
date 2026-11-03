@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "599de409_6be31566",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T19:20:35Z",
+      "side": 1,
+      "message": "Thanks for posting it upstream. Since the diff here keeps the `nr_local` argument that aosp/4312510 added (`page + idx, 1`), it can\u0027t apply as posted, and I think the P3S sentences in the message, including the native-only one I asked for, aren\u0027t in the posting either.\n\nFor that case the ACK README asks for `BACKPORT: FROMLIST:`: the posted message stays as it is, and a short note about the change goes right before your Signed-off-by, where the native-only remark fits too. Would something like this work?\n\n```\nBACKPORT: FROMLIST: proc: Check pagemap THP exclusivity per subpage\n\n\u003cbody as posted, with its Fixes: and Signed-off-by: lines\u003e\n\nBug: 578613029\nLink: https://lore.kernel.org/linux-mm/4c1b393a4b04bd94e4f1c7879ae04e1793eb0931.1793552446.git.zhangxp1998@gmail.com/\nChange-Id: I674c5b801f345683ac54175a7ee92d24e120948a\n[kelvin: Kept the nr_local argument of __folio_page_mapped_exclusively().\n Only native THP mappings reach this path: 4KB processes can\u0027t map PMD\n THPs.]\nSigned-off-by: Kelvin Zhang \u003czhangkelvin@google.com\u003e\n```\n\nIf you sent it from your gmail address, the author and Signed-off-by from the posting would stay too.",
+      "isAi": true,
+      "revId": "7e300836d6ac948048518dc0783d3053110f9f97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
