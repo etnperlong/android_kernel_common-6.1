@@ -16,6 +16,24 @@
       "message": "holding",
       "revId": "83a893e1aa775b53038c8154bbf79a72a9c579be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c325c79_94627a4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1625880
+      },
+      "writtenOn": "2026-11-03T10:57:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84c4febd_d091ace4",
+      "revId": "83a893e1aa775b53038c8154bbf79a72a9c579be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
