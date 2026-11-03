@@ -95,6 +95,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "120e872a_13b11291",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 36
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T23:59:49Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "74851b76_84b95936",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6917f53_31864819",
@@ -183,6 +202,25 @@
       "writtenOn": "2026-11-03T22:29:09Z",
       "side": 1,
       "message": "Done, aligned vma_mremap_slice_off() continuation line under the opening parenthesis.",
+      "parentUuid": "3f2b00f4_3d2813c1",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96bb39b2_225ed0ce",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 36
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T23:59:49Z",
+      "side": 1,
+      "message": "Done.",
       "parentUuid": "3f2b00f4_3d2813c1",
       "isAi": true,
       "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
