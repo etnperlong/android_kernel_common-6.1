@@ -274,7 +274,6 @@ SYM_FUNC_START(__hyp_ftrace_tramp)
 
 	sub	x0, x30, #AARCH64_INSN_SIZE 	// unsigned long ip
 	mov	x1, x9				// unsigned long parent_ip
-	mov	x2, x10				// unsigned long offset_idx
 	bl	__hyp_ftrace_trace
 	mov	x30, x0				// LR = __hyp_ftrace_trace();
 

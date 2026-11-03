@@ -24,7 +24,6 @@ static struct {
 	struct {
 		unsigned long		*start;
 		unsigned long		*end;
-		unsigned long		offset_idx;
 		void			*tramp;
 	} funcs;
 } hyp_mod_events[MAX_MOD_EVENTS];
@@ -46,25 +45,22 @@ int __pkvm_sync_ftrace(unsigned long host_funcs_pg)
 	hyp_spin_lock(&hyp_mod_events_lock);
 
 	/* Look into core */
-	func = hyp_ftrace_find_host_func(*funcs_pg, NULL, NULL, 0);
+	func = hyp_ftrace_find_host_func(*funcs_pg, NULL, NULL);
 	if (func)
-		funcs_pg = hyp_ftrace_sync(funcs_pg, func, NULL, 0, NULL);
+		funcs_pg = hyp_ftrace_sync(funcs_pg, func, NULL, NULL);
 
 	/* Look into modules */
 	for (mod = 0; mod < nr_mods; mod++) {
 		unsigned long *start = hyp_mod_events[mod].funcs.start;
 		unsigned long *end = hyp_mod_events[mod].funcs.end;
-		unsigned long offset_idx = hyp_mod_events[mod].funcs.offset_idx;
 		void *tramp = hyp_mod_events[mod].funcs.tramp;
 
 		if (!funcs_pg)
 			break;
 
-		func = hyp_ftrace_find_host_func(*funcs_pg, start, end,
-						 offset_idx);
+		func = hyp_ftrace_find_host_func(*funcs_pg, start, end);
 		if (func)
-			funcs_pg = hyp_ftrace_sync(funcs_pg, func, end,
-						  offset_idx, tramp);
+			funcs_pg = hyp_ftrace_sync(funcs_pg, func, end, tramp);
 	}
 
 	hyp_spin_unlock(&hyp_mod_events_lock);
@@ -143,8 +139,7 @@ static bool try_set_mod_event(unsigned short id, bool enable)
 
 int register_hyp_mod_events(void *event_ids, size_t nr_events,
 			    void *funcs, void *funcs_end,
-			    void *tramp,
-			    size_t hyp_kern_offset)
+			    void *tramp, unsigned long hyp_kern_offset)
 {
 	size_t nr_funcs = funcs_end - funcs;
 	int mod, ret = -ENOMEM;
@@ -156,6 +151,8 @@ int register_hyp_mod_events(void *event_ids, size_t nr_events,
 
 	mod = atomic_read(&num_hyp_event_mods);
 	if (mod < MAX_MOD_EVENTS) {
+		hyp_ftrace_setup(funcs, funcs_end, hyp_kern_offset, tramp);
+
 		hyp_mod_events[mod].event_ids.start =
 			(struct hyp_event_id *)event_ids;
 		hyp_mod_events[mod].event_ids.end =
@@ -166,19 +163,13 @@ int register_hyp_mod_events(void *event_ids, size_t nr_events,
 
 		/*
 		 * Order access between num_hyp_event_mods and hyp_mod_events.
-		 * Paired with try_set_mod_event()
+		 * Paired with try_set_mod_event() and __pkvm_disable_ftrace().
 		 */
 		atomic_set_release(&num_hyp_event_mods, mod + 1);
 		ret = 0;
 	}
 
 	hyp_spin_unlock(&hyp_mod_events_lock);
-
-	if (!ret) {
-		ret = hyp_ftrace_setup(funcs, funcs_end, hyp_kern_offset, tramp);
-		if (ret >= 0)
-			hyp_mod_events[mod].funcs.offset_idx = ret;
-	}
 
 	return ret;
 }

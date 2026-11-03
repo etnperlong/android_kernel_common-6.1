@@ -356,6 +356,7 @@ int __pkvm_load_el2_module(struct module *this);
 int __pkvm_register_el2_call(unsigned long hfn_hyp_va);
 
 unsigned long pkvm_el2_mod_kern_va(unsigned long addr);
+bool pkvm_el2_mod_in_mod_direct(struct pkvm_el2_module *mod);
 
 static inline unsigned long __pkvm_el2_mod_va(struct pkvm_el2_module *mod, void *kern_va)
 {
@@ -381,6 +382,11 @@ static inline int __pkvm_register_el2_call(unsigned long hfn_hyp_va)
 static inline unsigned long pkvm_el2_mod_kern_va(unsigned long addr)
 {
 	return 0;
+}
+
+static inline bool pkvm_el2_mod_in_mod_direct(struct pkvm_el2_module *mod)
+{
+	return false;
 }
 
 static inline unsigned long __pkvm_el2_mod_va(void *mod, void *kern_va)

@@ -10,6 +10,7 @@
 #include <asm/kvm_host.h>
 #include <asm/kvm_mmu.h>
 #include <asm/kvm_pkvm.h>
+#include <asm/kvm_pkvm_module.h>
 #include <asm/text-patching.h>
 #include <asm/setup.h>
 
@@ -105,7 +106,7 @@ static const char *hyp_printk_fmt_from_id(u16 fmt_id)
 #ifdef CONFIG_PKVM_FTRACE
 extern unsigned long __hyp_patchable_function_entries_start[];
 extern unsigned long __hyp_patchable_function_entries_end[];
-extern unsigned long kvm_nvhe_sym(__hyp_text_start_kern);
+extern unsigned long kvm_nvhe_sym(hyp_text_start_kern_va);
 
 static int hyp_ftrace_init_lr_ins(unsigned long addr)
 {
@@ -334,10 +335,15 @@ static void hyp_ftrace_funcs_init(unsigned long *funcs, unsigned long *funcs_end
 				  unsigned long hyp_text_start, unsigned long hyp_text_end,
 				  unsigned long hyp_kern_offset, bool clear)
 {
-	unsigned long *func;
+	unsigned long *func = funcs;
 	int ret;
 
-	func = funcs;
+	if (clear) {
+		if (funcs < funcs_end)
+			*funcs = 0;
+		return;
+	}
+
 	while (func < funcs_end) {
 		unsigned long kern_addr = *func + hyp_kern_offset;
 		char sym[KSYM_SYMBOL_LEN];
@@ -345,9 +351,6 @@ static void hyp_ftrace_funcs_init(unsigned long *funcs, unsigned long *funcs_end
 
 		if (!*func)
 			break;
-
-		if (clear)
-			goto skip;
 
 		sprint_symbol_no_offset(sym, kern_addr);
 		if (!strncmp(sym, "__kvm_nvhe_$", 12))
@@ -402,7 +405,7 @@ static void hyp_ftrace_init(void)
 			      false);
 
 	/* For the hypervisor to compute its hyp_kern_offset */
-	kvm_nvhe_sym(__hyp_text_start_kern) = (unsigned long)__hyp_text_start;
+	kvm_nvhe_sym(hyp_text_start_kern_va) = (unsigned long)__hyp_text_start;
 }
 
 extern void kvm_nvhe_sym(__hyp_ftrace_tramp)(void);
@@ -450,11 +453,16 @@ write:
 static void hyp_ftrace_init_mod(struct pkvm_el2_module *mod)
 {
 	unsigned long hyp_kern_offset = mod->sections.start - mod->hyp_va;
-	/* Install a trampoline to reach __hyp_ftrace_tramp */
-	int ret = hyp_ftrace_init_mod_tramp(mod);
+	int ret = -ERANGE;
 
-	if (ret)
-		pr_warn("Failed to install trampoline for hyp ftrace\n");
+	if (!pkvm_el2_mod_in_mod_direct(mod)) {
+		pr_warn("Module outside direct range, disabling hyp ftrace\n");
+	} else {
+		/* Install a trampoline to reach __hyp_ftrace_tramp */
+		ret = hyp_ftrace_init_mod_tramp(mod);
+		if (ret)
+			pr_warn("Failed to install trampoline for hyp ftrace\n");
+	}
 
 	mutex_lock(&hyp_ftrace_funcs_lock);
 
@@ -467,8 +475,9 @@ static void hyp_ftrace_init_mod(struct pkvm_el2_module *mod)
 
 	mutex_unlock(&hyp_ftrace_funcs_lock);
 
-	sync_icache_aliases((unsigned long)mod->text.start,
-			    (unsigned long)mod->text.end);
+	if (!ret)
+		sync_icache_aliases((unsigned long)mod->text.start,
+				    (unsigned long)mod->text.end);
 }
 
 static int enable_func_hyp_event(struct hyp_event *event, bool enable)
