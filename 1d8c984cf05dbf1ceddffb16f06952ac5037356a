@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "76452e7b_30a1afe8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-11-03T18:17:11Z",
+      "side": 1,
+      "message": "Looping in @gregkh@google.com as I thought `ANDROID_KABI_USE()` was intended for LTS patches and this seems to be a downstream implementation correct?",
+      "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "05d7c5b1_cfcb3695",
@@ -19,6 +36,53 @@
         "startChar": 2,
         "endLine": 1251,
         "endChar": 67
+      },
+      "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2369e7b6_c8d3e5e4",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1251,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-11-03T18:17:11Z",
+      "side": 1,
+      "message": "But you can\u0027t do that after the fact though. Once you use a reserved field you can\u0027t free it again.",
+      "parentUuid": "05d7c5b1_cfcb3695",
+      "range": {
+        "startLine": 1250,
+        "startChar": 2,
+        "endLine": 1251,
+        "endChar": 67
+      },
+      "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "655c2cab_7700e36c",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-11-03T18:17:11Z",
+      "side": 1,
+      "message": "how does this #else work? when would we need it?",
+      "range": {
+        "startLine": 1252,
+        "startChar": 0,
+        "endLine": 1255,
+        "endChar": 6
       },
       "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
