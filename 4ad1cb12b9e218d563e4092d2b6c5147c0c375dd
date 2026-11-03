@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd12bd2d_c76cc37b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1625880
+      },
+      "writtenOn": "2026-11-03T11:01:46Z",
+      "side": 1,
+      "message": "You should never ever override ABI Compliance.",
+      "revId": "4ad1cb12b9e218d563e4092d2b6c5147c0c375dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
