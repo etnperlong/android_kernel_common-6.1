@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "94fa1cec_bc6c2b7d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 26
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T01:08:43Z",
+      "side": 1,
+      "message": "Done: split the monolithic selftest patch into 10 smaller logical patches by subsystem/test area (aosp/4410077..4410085 and aosp/4367986).",
+      "parentUuid": "6cd2f477_e8979bb3",
+      "isAi": true,
+      "revId": "faa2ae501cf79404f45a48ce408863c9592e22c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "adbb9017_e6a9504d",
