@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c90925f_aa735b68",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "dfcfacd6_4b376241",
+      "isAi": true,
+      "revId": "6e3ed4f5a66a2746c71a2b346e9bad92e97ef50d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8af2075a_9e01a9a3",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T19:21:43Z",
       "side": 1,
       "message": "Agreed that 4KB processes need a refusal: `tcp_mmap()` accepts any offset and start address, so a 16KB-aligned `zc-\u003eaddress` can sit on a non-zero slice, and since aosp/4368056 `vm_insert_pages()` maps the first page at that slice, which shifts the received data.\n\nWould it be OK to move the check into `tcp_mmap()`, with `p3s_4k_unsupported()` so that the refusal is logged? Something like:\n\n```\n\tif (p3s_4k_unsupported(vma-\u003evm_mm))\n\t\treturn -EOPNOTSUPP;\n```\n\nThat refuses once at setup, with our usual `mmap()` errno, and leaves `TCP_ZEROCOPY_RECEIVE` as upstream wrote it: without a TCP VMA, `find_tcp_vma()` already fails. Applications seem to expect it there too: upstream\u0027s `tools/testing/selftests/net/tcp_mmap.c` falls back to `read()` when `mmap()` fails, but stops receiving when `getsockopt(TCP_ZEROCOPY_RECEIVE)` fails.\n\nThe tests in aosp/4367986 would need to follow. As far as I can see, the 16KB-aligned control in `tcp_zerocopy_align_p3s` gets `-EOPNOTSUPP` from this patch today, so that test always skips.",
+      "isAi": true,
+      "revId": "6e3ed4f5a66a2746c71a2b346e9bad92e97ef50d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e87cedab_6bca4a23",
+        "filename": "net/ipv4/tcp.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 4704,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "8af2075a_9e01a9a3",
       "isAi": true,
       "revId": "6e3ed4f5a66a2746c71a2b346e9bad92e97ef50d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
