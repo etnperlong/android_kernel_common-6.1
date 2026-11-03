@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ba605e8_669c4066",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2026-11-03T23:54:29Z",
+      "side": 1,
+      "message": "Don\u0027t expose internal details in AOSP? Just saying \"the tests are currently broken, will run them later\" is enough?",
+      "range": {
+        "startLine": 25,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 40
+      },
+      "revId": "f5fa1011600cb57d6ff00a7cae4c16387956e3b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f2ac124_5dffdedd",
+        "filename": "gki/aarch64/afdo/README.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2026-11-03T23:54:29Z",
+      "side": 1,
+      "message": "using the numbers from previous update is better than none?",
+      "range": {
+        "startLine": 25,
+        "startChar": 26,
+        "endLine": 25,
+        "endChar": 31
+      },
+      "revId": "f5fa1011600cb57d6ff00a7cae4c16387956e3b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
