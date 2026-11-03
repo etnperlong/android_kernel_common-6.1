@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c96d36f3_8a96b2dd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:36Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "d23ca516_d7a18694",
+      "isAi": true,
+      "revId": "a435576155a61442f232c3c9942c7e68c5779cba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d6fdfb6f_775c9b66",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0993b980_2231b18d",
+        "filename": "drivers/android/binder.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 6306,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:36Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "d6fdfb6f_775c9b66",
+      "isAi": true,
+      "revId": "a435576155a61442f232c3c9942c7e68c5779cba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5d30c344_00350ee2",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-11-01T04:46:14Z",
       "side": 1,
       "message": "Nit: since other drivers that insert kernel pages could use this too, would you mind giving it a kernel-doc comment like `vma_slice_offset()` below, saying what it returns? Something like:\n\n```\n/*\n * vma_starts_at_kernel_page - Whether @vma maps kernel pages from slice 0\n * @vma: Pointer to struct vm_area_struct\n *\n * Returns true if vm_start is kernel-page-aligned and maps slice 0, so a\n * kernel page inserted at a kernel-page-aligned address of @vma is mapped\n * from its first slice. Always true for native VMAs.\n */\n```",
+      "isAi": true,
+      "revId": "a435576155a61442f232c3c9942c7e68c5779cba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "76510bca_36047924",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:36Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "5d30c344_00350ee2",
       "isAi": true,
       "revId": "a435576155a61442f232c3c9942c7e68c5779cba",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
