@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "16cd8368_549a0afb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-03T17:45:05Z",
+      "side": 1,
+      "message": "Do we want to follow suit with some of the other kunit tests and enable this test as a module in gki defconfig?",
+      "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0b281355_cdca0fc9",
         "filename": "drivers/android/Kconfig",
         "patchSetId": 9
