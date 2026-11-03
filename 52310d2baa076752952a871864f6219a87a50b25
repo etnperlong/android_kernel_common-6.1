@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31f22119_38db21ff",
+        "filename": "sound/pci/hda/hda_controller.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-11-03T04:47:53Z",
+      "side": 1,
+      "message": "Just checking: This doesn\u0027t have any subtle side effects from the caller\u0027s behavior when fill_silence is not null? The default snd_pcm_format_set_silence() above is equivalent to the null case?",
+      "revId": "52310d2baa076752952a871864f6219a87a50b25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
