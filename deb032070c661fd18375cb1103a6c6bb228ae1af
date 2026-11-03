@@ -33,6 +33,24 @@
       "message": "Who is the user of this IOCTL? We should make sure that non-system components can\u0027t use it, otherwise it becomes an official UAPI and we have to support it forever. Do you have sepolicies in place to prevent its use from non-system users?\n\nAlso adding Isaac to reviewers because he authored most of the wrapfd loading logic.",
       "revId": "deb032070c661fd18375cb1103a6c6bb228ae1af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab916008_b9186ee6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1651802
+      },
+      "writtenOn": "2026-11-03T02:08:41Z",
+      "side": 1,
+      "message": "Today no domain can call this ioctl. domain.te allowlists only a few F2FS ioctls with allowxperm, so every 0xf5xx ioctl on files goes through xperm filtering, and F2FS_IOC_LOAD_DMABUF (0xf580) is not allowed for any domain.\n\nThe plan is that only a privileged system component (system_server) calls it on behalf of clients through a framework API, as Jaegeuk mentioned. Apps and vendor components will not call it directly. When that lands, the policy will allow F2FS_IOC_LOAD_DMABUF only for that domain and add a neverallowxperm for everyone else. The supported contract is then the framework API, so if we drop the ioctl later, its implementation can fall back to mmap() + preadv2(RWF_DONTCACHE).",
+      "parentUuid": "6d83b90c_5f35fe78",
+      "revId": "deb032070c661fd18375cb1103a6c6bb228ae1af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
