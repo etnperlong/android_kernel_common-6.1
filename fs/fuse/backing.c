@@ -963,8 +963,17 @@ int fuse_file_write_iter_backing(struct fuse_bpf_args *fa,
 		refcount_set(&aio_req->ref, 2);
 		ret = vfs_iocb_iter_write(ff->backing_file, &aio_req->iocb, from);
 		fuse_bpf_aio_put(aio_req);
-		if (ret != -EIOCBQUEUED)
-			fuse_bpf_aio_cleanup_handler(aio_req);
+		if (ret != -EIOCBQUEUED) {
+			/*
+			 * vfs_iocb_iter_write() already called kiocb_end_write()
+			 * for synchronous completions.  Only copy the attributes
+			 * and position here without ending write protection again.
+			 */
+			if (aio_req->iocb.ki_flags & IOCB_WRITE)
+				fuse_copyattr(file, ff->backing_file);
+			aio_req->iocb_orig->ki_pos = aio_req->iocb.ki_pos;
+			fuse_bpf_aio_put(aio_req);
+		}
 	}
 
 out:
