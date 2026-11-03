@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1db275cc_6c6ae683",
+        "filename": "mm/p3s/mlock.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T04:24:44Z",
+      "side": 1,
+      "message": "Nit: checkpatch --strict still flags these two continuation lines: they\u0027re one tab deeper than the open parenthesis of `p3s_mlock_file_folio(`, which five tabs would line up with.",
+      "isAi": true,
+      "revId": "4a0d601aa88b1d4d7d3a2617ca04a2fb891a2fb8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
