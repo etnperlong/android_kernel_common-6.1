@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "67bcd9da_5c7292eb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:42Z",
+      "side": 1,
+      "message": "Done: renamed subject to \"ANDROID: P3S: mm: page_table_check: Restore native anon checks\", updated the body to explain the native writable anon mapping check on 16KB kernels, wrapped at 72 columns, and removed the blank line before Change-Id.",
+      "parentUuid": "b5a2afdf_99c11726",
+      "isAi": true,
+      "revId": "0631cd4d7bd36d5cab7032d1aaf19b4d65e67a30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "857d2329_2df85634",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-03T03:05:59Z",
       "side": 1,
       "message": "Would you mind moving `PTC_NATIVE_MAPS` and `page_table_check_nr_maps()` into a new `mm/p3s/page_table_check.h`, as `mm/p3s/process_vm_access.h` does for `mm/process_vm_access.c`? The header\u0027s single `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block would also replace the `IS_ENABLED()`. Something like:\n\n```\n#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE\n#define P3S_PTC_NATIVE_MAPS\tP3S_SLICES_PER_PAGE\n#else\n#define P3S_PTC_NATIVE_MAPS\t1\n#endif\n\n/*\n * Anon mappings are counted in 4KB slices: a native PTE, PMD or PUD maps\n * all slices of each page, a PTE of a 4KB process maps one.\n */\nstatic inline unsigned int p3s_ptc_nr_maps(const struct mm_struct *mm)\n{\n\treturn mm_is_p3s_4k(mm) ? 1 : P3S_PTC_NATIVE_MAPS;\n}\n```\n\n`mm/page_table_check.c` would then just include `\"p3s/page_table_check.h\"` and pass the charge, e.g.:\n\n```\n\t\tpage_table_check_clear(pte_pfn(pte), PAGE_SIZE \u003e\u003e PAGE_SHIFT,\n\t\t\t\t       p3s_ptc_nr_maps(mm));\n```\n\nIf both branches of `__page_table_check_ptes_set()` passed `p3s_ptc_nr_maps(mm)` too, it would be obvious that set and clear charge the same. I think the `nr_maps` argument itself is the smallest hook, since `page_table_check_set()` and `page_table_check_clear()` work on `struct page_table_check`, which is private to this file.",
+      "isAi": true,
+      "revId": "0631cd4d7bd36d5cab7032d1aaf19b4d65e67a30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "313d185b_7decf036",
+        "filename": "mm/page_table_check.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T03:34:42Z",
+      "side": 1,
+      "message": "Done: moved P3S_PTC_NATIVE_MAPS and p3s_ptc_nr_maps() into mm/p3s/page_table_check.h and passed p3s_ptc_nr_maps(mm) consistently across both set and clear paths.",
+      "parentUuid": "857d2329_2df85634",
       "isAi": true,
       "revId": "0631cd4d7bd36d5cab7032d1aaf19b4d65e67a30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
