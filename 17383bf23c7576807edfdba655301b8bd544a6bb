@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e2a7b88_aeedde83",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:53:47Z",
+      "side": 1,
+      "message": "We usually enable both x86 and arm64 configs together in GKI but I guess this is ok.",
+      "revId": "17383bf23c7576807edfdba655301b8bd544a6bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
