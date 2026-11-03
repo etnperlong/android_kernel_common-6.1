@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dadc99c3_0e1be0a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:46Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "10e40d1f_f58be71d",
+      "isAi": true,
+      "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "393e7a8d_7a3832a9",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bb1bd80_c9c24152",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:46Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "393e7a8d_7a3832a9",
+      "isAi": true,
+      "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c53be7fb_711c95c9",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-11-01T19:10:32Z",
       "side": 1,
       "message": "Would it be OK to drop this `#ifdef`? It would be the first config block in `mm/p3s/pgtable.h`, and it sits inside a function. As far as I can see it isn\u0027t needed: `vma_is_p3s_4k()` is always false without P3S, and `\u003clinux/p3s.h\u003e` defines `__pte_to_phys()` for other architectures, next to the `pte_advance_phys()` fallback that `vma_pte_add_slice()` above already uses without a guard. So the helper can be unconditional:\n\n```\n\tresource_size_t phys \u003d (resource_size_t)args-\u003epfn \u003c\u003c PAGE_SHIFT_KERNEL;\n\n\tif (vma_is_p3s_4k(args-\u003evma) \u0026\u0026 args-\u003eptep)\n\t\tphys |\u003d __pte_to_phys(ptep_get(args-\u003eptep)) \u0026 ~PAGE_MASK_KERNEL;\n\treturn phys;\n```",
+      "isAi": true,
+      "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a4b549a_85a01f8b",
+        "filename": "mm/p3s/pgtable.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:46Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "c53be7fb_711c95c9",
       "isAi": true,
       "revId": "3db3f98b48f0a5d05dedc97a654dc2658ce1c4e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
