@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c5ba85d_b4023784",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:00:20Z",
+      "side": 1,
+      "message": "Agreed that native mms should use `PMD_SHIFT`, `PGDIR_SHIFT`, `PTRS_PER_PMD` and `PTRS_PER_PGD` directly. `PMD_SHIFT_4KB` and `PGDIR_SHIFT_4KB` (21 and 30) are also what the old formulas gave 4KB processes, so those don\u0027t change.\n\nCould the body say what fails without it? As far as I can see, P3S builds don\u0027t change: with 16KB pages and `VA_BITS_47` (3 levels), the old formulas already gave native mms 25, 36 and 2048 entries. The fix is for other arm64 kernels: since aosp/4312473, `\u003casm/pgtable.h\u003e` includes `\u003casm/p3s/pgtable.h\u003e` in every arm64 build, so all `pgd_offset()` and `pgd_offset_k()` calls go through `mm_pgd_index()`, whose formula assumed 3 levels. For example, `kernel_aarch64_crashdump` (`crashdump_defconfig`: 4KB pages, `VA_BITS_48`, 4 levels) indexes the PGD with shift 30 instead of 39.\n\nSomething like:\n\n```\nOn arm64, pgd_offset() always goes through mm_pgd_index(), which\nderives the native PGD shift and size from the PTE shift as if there\nwere three levels. Kernels without P3S that use four levels, such as\nthe 4KB 48-bit crashdump kernel, index the wrong PGD entry.\n\nUse the native constants for native mms, so that mm_pgd_index()\nmatches pgd_index() again when P3S is disabled. The shifts of 4KB\nprocesses don\u0027t change.\n```\n\nAlso, a nit that applies to all seven new patches: the body is one long line, and a blank line separates `Bug:` from `Change-Id:`, so `Bug:` isn\u0027t part of the trailer block (`git interpret-trailers --parse` only finds `Change-Id:` and `Signed-off-by:`). Could you wrap the body at 72 columns and keep `Bug:`, `Change-Id:` and `Signed-off-by:` together?",
+      "isAi": true,
+      "revId": "b0b7fdd2ec9ec7df0f714db382711ad5522d3293",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
