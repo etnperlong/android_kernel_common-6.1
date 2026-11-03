@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a751504_f1134fbb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:45Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "286ba50b_ac38e2ef",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a49fa5d3_d957a814",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T19:16:18Z",
       "side": 1,
       "message": "Nit: could you add a blank line before this comment, and wrap the condition below to 80 columns? Something like:\n\n```\n\t\treturn;\n\n\t/* fork() copies the page size, so all VMAs of one tree share it. */\n\tnode \u003d rb_first_cached(\u0026anon_vma-\u003erb_root);\n\tif (!node ||\n\t    !vma_is_p3s_4k(rb_entry(node, struct anon_vma_chain, rb)-\u003evma))\n\t\treturn;\n```\n\nA sentence in the kernel-doc above saying that native trees keep the exact lookup would help too.",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62b3617b_73842225",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:45Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "a49fa5d3_d957a814",
       "isAi": true,
       "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "32e83486_f31a798d",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:45Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "b817564a_be6fda74",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aeff4805_a755a753",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-11-01T19:16:18Z",
       "side": 1,
       "message": "Would it be OK to drop this re-wrap? It doesn\u0027t change anything, and keeping the initializer as aosp/4390445 left it means that the `p3s_anon_rmap_range()` call is the only line this patch touches in `rmap_walk_anon()`, which keeps the diff against upstream small.",
+      "isAi": true,
+      "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5c41844_41e96f74",
+        "filename": "mm/rmap.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 2873,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:45Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "aeff4805_a755a753",
       "isAi": true,
       "revId": "b7b0687144b0c78732a1173c4c3ef96a55f038fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
