@@ -1,0 +1,58 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30a5b6c5_0c5bd7e7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:05:13Z",
+      "side": 1,
+      "message": "Could the body say what fails without this patch? As far as I can see, after a file shrinks, 4KB processes can still read and write the 4KB pages past the new EOF in the last 16KB page through the PTEs they already have: `truncate_pagecache()` and `shmem_setattr()` keep that page and only unmap from the next one, and `vma_slice_past_eof()` (aosp/4312526) only raises SIGBUS on new faults. So whether such an access gets SIGBUS depends on whether the page was mapped before the truncation, which `truncate_tail_p3s` (aosp/4410080) checks. Something like:\n\n```\nAfter a file shrinks, 4KB processes can still access the 4KB pages\npast the new EOF in the last 16KB page through the PTEs they already\nhave, without SIGBUS: truncate_pagecache() and shmem_setattr() keep\nthat page and unmap only from the next one, and vma_slice_past_eof()\nonly checks new faults.\n\nZap those 4KB pages from 4KB VMAs as well, before and after the page\ncache is truncated, like the native unmap, and include private COW\npages as unmap_mapping_range() does.\n```\n\nNit: as on aosp/4409398, could you wrap the body at 72 columns and drop the blank line between `Bug:` and `Change-Id:`?",
+      "isAi": true,
+      "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3527e88_43b91c37",
+        "filename": "mm/p3s/truncate.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:05:13Z",
+      "side": 1,
+      "message": "Would you mind moving the `#ifdef` out of the function body, so that `mm/p3s/truncate.h` has the usual single `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` ... `#else` ... `#endif` block with an empty stub? Something like:\n\n```\n#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE\nstatic inline void p3s_unmap_truncated_tail(struct address_space *mapping,\n\t\t\t\t\t    loff_t newsize)\n{\n\t...\n}\n#else\nstatic inline void p3s_unmap_truncated_tail(struct address_space *mapping,\n\t\t\t\t\t    loff_t newsize)\n{\n}\n#endif\n```\n\nThe stub still keeps 16KB kernels without P3S from taking `i_mmap_rwsem` for nothing on each truncation, which I think is why the `#ifdef` is there. While at it, checkpatch --strict notes that the `loff_t newsize` line is one column short of the open parenthesis.",
+      "isAi": true,
+      "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e998e80_f0594615",
+        "filename": "mm/shmem.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:05:13Z",
+      "side": 1,
+      "message": "Nit: would it be OK to call it after the `unmap_mapping_range()` calls instead, here and below? The tail slices and the range from `holebegin` don\u0027t overlap, so the order doesn\u0027t matter, and `shmem_setattr()` then needs no blank line after `holebegin`. The second call would also no longer sit between the upstream comment and the `unmap_mapping_range()` it describes.",
+      "isAi": true,
+      "revId": "80b43d7600431ca9b9f6546340b41e6208339cf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
