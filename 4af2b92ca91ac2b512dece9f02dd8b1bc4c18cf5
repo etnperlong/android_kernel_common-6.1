@@ -39,6 +39,30 @@
       },
       "revId": "4af2b92ca91ac2b512dece9f02dd8b1bc4c18cf5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d338d56b_72c15e66",
+        "filename": "drivers/android/vendor_hooks_sound.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1855125
+      },
+      "writtenOn": "2026-11-03T04:41:03Z",
+      "side": 1,
+      "message": "Resiolved this in Patchset#5. can you please review the change. thanks.",
+      "parentUuid": "6164f1f8_0171024a",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 36
+      },
+      "revId": "4af2b92ca91ac2b512dece9f02dd8b1bc4c18cf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
