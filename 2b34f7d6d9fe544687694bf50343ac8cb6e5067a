@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8dbbc9b1_36d3410a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:32Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "1c1deed7_e39862f9",
+      "isAi": true,
+      "revId": "2b34f7d6d9fe544687694bf50343ac8cb6e5067a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d890d29e_aa26084c",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T04:43:52Z",
       "side": 1,
       "message": "Nit: now that only `mm_switch_tcr()` calls `mm_tcr_needs_switch()`, from inside the `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block, nothing uses this stub any more. Would it be OK to drop it?",
+      "isAi": true,
+      "revId": "2b34f7d6d9fe544687694bf50343ac8cb6e5067a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6077c6fa_a6f501e4",
+        "filename": "arch/arm64/include/asm/p3s/mmu.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:32Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "d890d29e_aa26084c",
       "isAi": true,
       "revId": "2b34f7d6d9fe544687694bf50343ac8cb6e5067a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
