@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "190d1fb42d507b4c2f7baea196dd5aef2ecaabfd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "155e2ba5_d5f48e6a",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 32
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Dropped this patch in favor of aosp/4405275 on p3s_6.18_b10 and kept the fork_dontfork_slice_p3s selftest in aosp/4367986. Thanks!",
+      "parentUuid": "561ec0c9_d961106e",
+      "isAi": true,
+      "revId": "190d1fb42d507b4c2f7baea196dd5aef2ecaabfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
