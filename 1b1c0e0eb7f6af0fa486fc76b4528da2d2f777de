@@ -51,6 +51,24 @@
       "parentUuid": "a3289e3a_c1da176a",
       "revId": "1b1c0e0eb7f6af0fa486fc76b4528da2d2f777de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6eeb3a5b_fdd07a10",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1945845
+      },
+      "writtenOn": "2026-11-03T04:49:53Z",
+      "side": 1,
+      "message": "This ddidn\u0027t seem to be rebased. I\u0027ve done so, but it has merge conflicts. So I suspect you\u0027ll need to re-generate and resubmit. Also note the KMIthaw merge is landing immenently so it might be good to wait until that is finished.",
+      "parentUuid": "8edad5ef_c29ca04c",
+      "revId": "1b1c0e0eb7f6af0fa486fc76b4528da2d2f777de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
