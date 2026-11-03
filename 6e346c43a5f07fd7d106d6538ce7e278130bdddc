@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa0f0673_d73763a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:36Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "1b3747bd_630a3c56",
+      "isAi": true,
+      "revId": "6e346c43a5f07fd7d106d6538ce7e278130bdddc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "012cd91b_bc3fc5c6",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T04:50:57Z",
       "side": 1,
       "message": "Agreed that `badpages[i]` trips `CONFIG_UBSAN_BOUNDS` once `i` reaches 1, since `-fstrict-flex-arrays\u003d3` treats the one-element array as a fixed-size one, and the pointer walk avoids that here.\n\nAs far as I can see, though, this is only half of the fix: after the conversion, `setup_swap_map()` and `setup_clusters()` index `swap_header-\u003einfo.badpages[i]` the same way, for native and converted headers alike, which is what aosp/4368032 changes later in the chain. Until then, a 4KB header on a block device with two or more bad kernel pages still traps there.\n\nSince mainline still declares `badpages[1]` too, would declaring it as a flexible array in `union swap_header` (`include/linux/swap.h`) work for you instead?\n\n```\n\t\t__u32\t\tbadpages[];\n```\n\n`MAX_SWAP_BADPAGES`, `p3s_swap_header_max_badpages()` and the size of the union don\u0027t change, and every existing `badpages[i]` (here, and in `read_swap_header()`, `setup_swap_map()` and `setup_clusters()`) stops tripping the sanitizer. One generic patch (`ANDROID: mm: swap: ...`, or `FROMLIST:` if you send it upstream) could then replace this patch and aosp/4368032, without new locals in `mm/swapfile.c`.",
+      "isAi": true,
+      "revId": "6e346c43a5f07fd7d106d6538ce7e278130bdddc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fcedc1fd_b90654ce",
+        "filename": "include/linux/p3s/swap.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:36Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "012cd91b_bc3fc5c6",
       "isAi": true,
       "revId": "6e346c43a5f07fd7d106d6538ce7e278130bdddc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
