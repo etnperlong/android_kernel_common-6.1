@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afd29541_0a23de1a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:08:27Z",
+      "side": 1,
+      "message": "Both conversions look right to me, and the file still needs `\u003clinux/p3s_user_pages.h\u003e` for the MGLRU walk.\n\nCould the body say what fails without this? As far as I can see, it goes back to aosp/4312494, which opted `mm/vmscan.c` into `\u003clinux/p3s_user_pages.h\u003e`, so `PAGE_SIZE` and `PAGE_SHIFT` here follow the current task. A 4KB task that writes `1M` to `memory.reclaim` then asks for 256 kernel pages, i.e. 4MB, and with MGLRU disabled (GKI enables it by default), its direct reclaim computes `inactive_is_low()` from a quarter of the LRU size. Something like:\n\n```\nSince mm/vmscan.c opted into \u003clinux/p3s_user_pages.h\u003e for the MGLRU\npage table walk, PAGE_SIZE and PAGE_SHIFT there follow the current\ntask. A 4KB task that writes \"1M\" to memory.reclaim then asks for 4MB\nof reclaim, and with MGLRU disabled, its direct reclaim sizes the\ninactive list from a quarter of the LRU. Use the kernel page size in\nuser_proactive_reclaim() and inactive_is_low().\n```\n\nNit: as on aosp/4409398, could you wrap the body at 72 columns and drop the blank line between `Bug:` and `Change-Id:`?",
+      "isAi": true,
+      "revId": "00a7430d337e29199b395c8ab83ed096aea7df55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
