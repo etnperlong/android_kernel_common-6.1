@@ -16,6 +16,24 @@
       "message": "You should never ever override ABI Compliance.",
       "revId": "4ad1cb12b9e218d563e4092d2b6c5147c0c375dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d6cabc9_e5b56f71",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1869395
+      },
+      "writtenOn": "2026-11-03T18:02:22Z",
+      "side": 1,
+      "message": "Yes, sorry. I had no idea the microdroid abi.stg was a thing. I really try my best to avoid bypassing presubmit. However, this time a \"real\" issue got buried by all the other \"false-positives\" that are expected here. My bad.",
+      "parentUuid": "fd12bd2d_c76cc37b",
+      "revId": "4ad1cb12b9e218d563e4092d2b6c5147c0c375dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
