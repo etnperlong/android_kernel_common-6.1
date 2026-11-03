@@ -22,6 +22,31 @@
       },
       "revId": "8c5c98b0ce5131a544d3a77f3aa32fe113f5be20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "56f5d3a3_6e1c9313",
+        "filename": "kernel/events/internal.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:15Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "f3b3cb2e_25be54d0",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 27
+      },
+      "isAi": true,
+      "revId": "8c5c98b0ce5131a544d3a77f3aa32fe113f5be20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
