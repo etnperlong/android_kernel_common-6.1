@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a571ef50_35634805",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "a71d52af_1b658674",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "628b85bb_869c5944",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T19:19:45Z",
       "side": 1,
       "message": "Agreed that the prev check needs `!!vmg-\u003efile`: with B10\u0027s `!vma_is_anonymous(prev)`, a private /dev/zero `prev` skipped the slice comparison, so an `mprotect()` or `madvise()` merge could leave the pages of `middle` at the wrong slice.\n\nI\u0027m worried about the address-based slice, though. As far as I can see, the rest of the series maps private /dev/zero by offset, like any file. `mm_mmap_slice_off()` gives it `vm_slice_off \u003d pgoff \u0026 P3S_SLICE_MASK`, and `vma_slice_offset()` only uses the address when there\u0027s neither `vm_ops` nor `vm_file` (as your aosp/4367945 comment says). `do_anonymous_page()` maps that slice through `vma_pte_add_slice()`, and aosp/4367981 keeps it across `mremap()`. So I think the comment and the check are both off.\n\nFor example, `mmap(NULL, 8KB, ..., MAP_PRIVATE, zero_fd, 4KB)` gets a 16KB-aligned address with `vm_slice_off` 1. Growing it in place with `mremap()` goes through `vma_merge_extend()`, where the continuing slice (3) no longer matches the address slice (2). So `expand_vma_in_place()` now fails with `-ENOMEM`, where it succeeded before this patch. A VM test shows it: on the top of this series, growing such a mapping from 8KB to 12KB with `mremap()` fails with `ENOMEM`, also with `MREMAP_MAYMOVE`, while our b10 grows the same mapping in place. Conversely, a faulted range that `mremap()` moves to another phase still merges at the wrong slice into a /dev/zero `prev` whose slices follow its addresses. I think a later fault in that 16KB window can then reuse the slice that the moved page still maps.\n\nEvery caller already sets `vmg-\u003eslice_off` to the slice of the proposed range (`VMG_MMAP_STATE()`, `VMG_VMA_STATE()`, and `vma_mremap_slice_off()` in `copy_vma()`). It also equals `vma_slice_off(middle)` when an existing range merges. Anonymous memory has `is_file` false, so its slice isn\u0027t compared. Would it work for you to drop `vmg_new_range_slice()` and only change `is_file`?\n\n```\n\treturn vma_can_merge_offsets(vmg-\u003eprev, vmg-\u003epgoff, vmg-\u003eslice_off,\n\t\t\t\t     vmg-\u003estart, vmg_is_p3s_4k(vmg), !!vmg-\u003efile);\n```\n\nThe `!vmg-\u003eprev` check can go too, since `can_vma_merge_left()` checks it before we get here.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab0684f0_1f53770f",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "628b85bb_869c5944",
       "isAi": true,
       "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fca47557_e54e2ccd",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "3882a5b4_455c80f8",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "166fb3f9_8a37b723",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-11-01T19:19:45Z",
       "side": 1,
       "message": "Would it be OK to drop this line and the `vmg_set_slice_off()` added to `__mmap_region()`? As far as I can see, both set what the initializers already set: `VMG_VMA_STATE()` sets `.slice_off \u003d vma_slice_offset(vma_, start_)`, which is `vma_slice_offset(vma, vma-\u003evm_end)` here, and `VMG_MMAP_STATE()` sets `.slice_off \u003d (map_)-\u003eslice_off`.\n\nThat keeps two more P3S lines out of `mm/vma.c`.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86e2fbd7_55362e1f",
+        "filename": "mm/vma.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 1784,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "166fb3f9_8a37b723",
       "isAi": true,
       "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "08388a11_7555a135",
+        "filename": "mm/vma.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 1918,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "323282a3_4bbce674",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "781e373d_c7380613",
@@ -104,6 +199,25 @@
       "writtenOn": "2026-11-01T19:19:45Z",
       "side": 1,
       "message": "Could you keep the original comment here, and the blank line before `#else` further down? `slice_off` isn\u0027t only for new ranges. `vma_modify()` fills it from an existing `middle` through `VMG_VMA_STATE()`, the merge code updates it, and `commit_merge()` applies it to the merged VMA, so \u0027which has no VMA yet\u0027 doesn\u0027t hold. The blank line change looks unrelated to this patch.",
+      "isAi": true,
+      "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1865f3b_b0792ae1",
+        "filename": "mm/vma.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "781e373d_c7380613",
       "isAi": true,
       "revId": "19b5cfbb04ffa30a605ea45c44f75edb96df7b62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
