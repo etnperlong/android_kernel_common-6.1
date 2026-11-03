@@ -38,6 +38,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "57cc03ad_4b1507c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:54Z",
+      "side": 1,
+      "message": "Updated the commit message and moved the 4KB bounds check to vma_exceeds_object() at the public entry points in the latest patchset. Thanks!",
+      "parentUuid": "319f2521_dd6d69b4",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "46d0364e_377882e3",
@@ -56,6 +75,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a34d1cf_40e7ec6e",
+        "filename": "drivers/iommu/dma-iommu.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 1704,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:54Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "46d0364e_377882e3",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "652064b8_7e63f003",
@@ -69,6 +107,25 @@
       "writtenOn": "2026-11-01T19:20:53Z",
       "side": 1,
       "message": "If you\u0027d still like the tighter 4KB limit, would you mind keeping the upstream mmap functions as they are and checking it once in the exported entry points instead? Since the remap stays the same `remap_pfn_range()` call, I think the P3S part is only a bounds check, which fits a `static inline` predicate in `include/linux/p3s/vma.h`, next to `vma_file_offset()`. Something like:\n\n```\nstatic inline bool vma_exceeds_object(const struct vm_area_struct *vma,\n\t\t\t\t      u64 size)\n{\n\tu64 aligned;\n\n\tif (!vma_is_p3s_4k(vma))\n\t\treturn false;\n\treturn vma_aligned_size(vma, size, \u0026aligned) ||\n\t       vma_file_offset(vma) \u003e\u003d aligned ||\n\t       vma_size(vma) \u003e aligned - vma_file_offset(vma);\n}\n```\n\nwith this at the top of `dma_mmap_attrs()`, `dma_mmap_pages()` and `dma_mmap_noncontiguous()`:\n\n```\n\tif (vma_exceeds_object(vma, size))\n\t\treturn -ENXIO;\n```\n\nThose three are the only ways into `dma_direct_mmap()`, `iommu_dma_mmap()`, `iommu_dma_mmap_noncontiguous()` and the `dma_map_ops` that use `dma_common_mmap()`, so every path, `vm_map_pages()` included, would get the same limit. The predicate returns `false` for native VMAs and without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, so it needs no stub.\n\nThen `dma_mmap_pfn()` with its prototype in `\u003clinux/dma-map-ops.h\u003e`, and `p3s_mmap_phys_object()` with its prototype and stub in `\u003clinux/mm.h\u003e`, could go, and nothing would need to stay out of line in `mm/p3s.c`. `kernel/dma/direct.c`, `coherent.c`, `ops_helpers.c` and `drivers/iommu/dma-iommu.c` would keep upstream\u0027s code, so upstream changes there wouldn\u0027t conflict with P3S.",
+      "isAi": true,
+      "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e553d3b6_9edbdbc9",
+        "filename": "kernel/dma/mapping.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:54Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "652064b8_7e63f003",
       "isAi": true,
       "revId": "f5861e681a3b5675939b2a821a1ebebf7756db55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
