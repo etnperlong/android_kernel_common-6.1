@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "101ee4f1_e9e4a944",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 41
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T22:02:31Z",
+      "side": 1,
+      "message": "Nit: the check this replaces compares addresses (`addr !\u003d vmf-\u003eaddress`) rather than PTE pointers. Would \"Compare swap entries instead of addresses when excluding the faulting folio\" work here?",
+      "isAi": true,
+      "revId": "7a4bcce0010f48f42e5ab2b8a50fb30e227ae3af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
