@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9bbb1998_5a5fa523",
+        "filename": "mm/madvise.c",
+        "patchSetId": 24
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:07Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "cbd72c72_d894f649",
+      "isAi": true,
+      "revId": "78d08fa79c38d7e2db1a228e50818cab7fb8a4b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "917f9dce_6bcb06ab",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-31T20:38:49Z",
       "side": 1,
       "message": "Nit: checkpatch `--strict` flags this declaration (\"Alignment should match open parenthesis\"). Would you mind aligning the parameters with the open parenthesis, as the other helpers in this file do? Something like:\n\n```\nstatic inline int p3s_madvise_folio_pte_batch(struct vm_area_struct *vma,\n\t\t\t\t\t      unsigned long addr,\n\t\t\t\t\t      unsigned long end,\n\t\t\t\t\t      struct folio *folio, pte_t *ptep,\n\t\t\t\t\t      pte_t *ptentp)\n```",
+      "isAi": true,
+      "revId": "78d08fa79c38d7e2db1a228e50818cab7fb8a4b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7bfaaad_3cae93c4",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 24
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:07Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "917f9dce_6bcb06ab",
       "isAi": true,
       "revId": "78d08fa79c38d7e2db1a228e50818cab7fb8a4b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
