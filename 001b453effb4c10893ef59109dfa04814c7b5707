@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4602bab4_cbdc5ee2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 39
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:53Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "535fe084_82367755",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b358eb1_82335617",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T19:09:05Z",
       "side": 1,
       "message": "Would you mind keeping this block out of `include/linux/mm.h`? As far as I can see this would be the first P3S code in that header, with an `#ifdef CONFIG_ARM64_PER_PROCESS_PAGE_SIZE` block of its own.\n\n`p3s_vm_iomap_memory()` has a single caller and isn\u0027t exported, so it could be a `static inline` in `mm/p3s/memory.h`, next to `vma_insert_page_slices()`; the helpers there build in both configurations without stubs. `p3s_remap_phys_range()` could stay in `mm/p3s.c` while aosp/4368011 shares it (if that patch goes, as I suggest there, it could be a `static inline` as well), with its prototype next to `p3s_remap_pfn_slice()` in the existing block of `include/linux/p3s.h` and a stub in a new `#else` branch:\n\n```\n#else\nstatic inline int p3s_remap_phys_range(struct vm_area_struct *vma,\n\t\t\t\t       unsigned long addr, phys_addr_t phys,\n\t\t\t\t       unsigned long size, pgprot_t prot)\n{\n\treturn -EOPNOTSUPP;\n}\n#endif\n```\n\nThe hook in `vm_iomap_memory()` stays as it is. If you\u0027d rather keep `p3s_vm_iomap_memory()` in `mm/p3s.c`, its prototype and stub could go into that same block of `include/linux/p3s.h`. aosp/4368011 adds `p3s_mmap_phys_object()` to this `include/linux/mm.h` block too, so it could follow the same route.",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0484ad1f_2ba7d4b3",
+        "filename": "include/linux/mm.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 3730,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:53Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "7b358eb1_82335617",
       "isAi": true,
       "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "454718d4_72322f2f",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:53Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "0e44fd99_f127ae82",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "312451fe_1b90a5b7",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-11-01T19:09:05Z",
       "side": 1,
       "message": "I think the overflow handling here can be simpler. `len + (start \u0026 ~PAGE_MASK_4KB)` can\u0027t exceed `start + len`, which the line above already checks, so this `check_add_overflow()` never fires. And if rounding `len` up wrapped, `aligned_len` would be 0, which the bounds check below rejects anyway.\n\nSince this path only runs for 4KB VMAs, would `PAGE_ALIGN_4KB(len)` from `include/linux/p3s/const.h` work for you instead of `vma_aligned_size()`? Then the new helper and its `\u003clinux/errno.h\u003e` and `\u003clinux/overflow.h\u003e` includes in `include/linux/p3s/vma.h` could go. `p3s_mmap_phys_object()` in aosp/4368011 only runs for 4KB VMAs too.",
+      "isAi": true,
+      "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "861137a3_dfd0acfc",
+        "filename": "mm/p3s.c",
+        "patchSetId": 39
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:53Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "312451fe_1b90a5b7",
       "isAi": true,
       "revId": "001b453effb4c10893ef59109dfa04814c7b5707",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
