@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "decc8ef3bd960bad15bf6263d6cbe7cc19fe0d71",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1f9b7ee_ac22dc7a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 42
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:21Z",
+      "side": 1,
+      "message": "Done, updated the commit message to explain the background of -fstrict-flex-arrays\u003d3 and CONFIG_UBSAN_BOUNDS trapping on badpages[1] in swapon().",
+      "parentUuid": "cba8ffe4_b6ffe1c4",
+      "isAi": true,
+      "revId": "decc8ef3bd960bad15bf6263d6cbe7cc19fe0d71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
