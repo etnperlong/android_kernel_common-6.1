@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "9ed40361a0b7847e7252330b2fb98eaf814cdbf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28a42fc5_62ce4981",
+        "filename": "mm/shmem.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 2854,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:19Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "b41dac8d_44d7becc",
+      "isAi": true,
+      "revId": "9ed40361a0b7847e7252330b2fb98eaf814cdbf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
