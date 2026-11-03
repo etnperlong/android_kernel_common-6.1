@@ -118,7 +118,7 @@ config ANDROID_WRAPFD_LEGACY
 config ANDROID_WRAPFD_KUNIT_TEST
 	bool "KUnit test for wrapfd driver" if !KUNIT_ALL_TESTS
 	depends on KUNIT
-	depends on ANDROID_WRAPFD
+	depends on ANDROID_WRAPFD_LEGACY
 	default KUNIT_ALL_TESTS
 	help
 	  This builds the wrapfd driver unit test.
