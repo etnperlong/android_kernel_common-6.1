@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "930a6ef1_5e4a575a",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T21:58:14Z",
+      "side": 1,
+      "message": "I see this mirrors upstream\u0027s `move_swap_pte()`, but would you mind dropping the `#ifdef CONFIG_MEM_SOFT_DIRTY` in `p3s_uffd_move_swap_siblings()` and calling `pte_swp_mksoft_dirty()` unconditionally?\n\nThe helper is only built with `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, and arm64 doesn\u0027t select `HAVE_ARCH_SOFT_DIRTY`, so `CONFIG_MEM_SOFT_DIRTY` can\u0027t be set there. `\u003clinux/pgtable.h\u003e` already has a stub for that case that returns the PTE as it is:\n\n```\n\t\tpte_t pte \u003d ptep_get_and_clear(mm,\n\t\t\t\tsrc_addr + i * PAGE_SIZE_4KB, src_pte + i);\n\n\t\tpte \u003d pte_swp_mksoft_dirty(pte);\n\t\tset_pte_at(mm, dst_addr + i * PAGE_SIZE_4KB, dst_pte + i, pte);\n```\n\nThat keeps config `#ifdef`s out of the P3S helpers without changing what this one does.",
+      "isAi": true,
+      "revId": "a6714242409dd198973d47fa28c944075c887420",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

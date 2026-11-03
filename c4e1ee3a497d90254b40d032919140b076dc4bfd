@@ -151,6 +151,25 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "227bd585_8f2f7fef",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 1188,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T21:58:14Z",
+      "side": 1,
+      "message": "Thanks for dropping `src_vma`! Would you mind also keeping the call\u0027s original wrapping, so that only its last line changes? The last line still fits in 80 columns:\n\n```\n\t\tret \u003d move_swap_pte(mm, dst_vma, dst_addr, src_addr, dst_pte, src_pte,\n\t\t\t\torig_dst_pte, orig_src_pte, dst_pmd, dst_pmdval,\n\t\t\t\tdst_ptl, src_ptl, src_folio, si, entry, len);\n```\n\nAs it is, the call replaces all three upstream lines, and its second line runs to 81 columns.",
+      "parentUuid": "d8e04aa0_a9c427d0",
+      "isAi": true,
+      "revId": "c4e1ee3a497d90254b40d032919140b076dc4bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "cbe2ba04_b70eb7ed",
         "filename": "mm/userfaultfd.c",
         "patchSetId": 34
