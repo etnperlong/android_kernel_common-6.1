@@ -16,6 +16,24 @@
       "message": "@gpeter@google.com, Any context as to why this was restored? Looks like we\u0027re waiting on some clarification from the pixel team per b/488408857#comment11",
       "revId": "23cbe9fce513f0f143496849ef07bfa3e76a3437",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3bdf12a3_a46b56e7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1968111
+      },
+      "writtenOn": "2026-11-03T08:12:15Z",
+      "side": 1,
+      "message": "Hi Neil, It was restored so I could push a topic (https://android-review.git.corp.google.com/q/topic:%22muzel-mainline%22) with the minimum set of patches required to get muzel booting on ACK (and then see what additional hooks are required for Yogi/Pixel 11)",
+      "parentUuid": "99a0c66a_c889e725",
+      "revId": "23cbe9fce513f0f143496849ef07bfa3e76a3437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
