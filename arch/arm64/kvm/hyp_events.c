@@ -283,14 +283,18 @@ hyp_ftrace_filter_write(struct file *filp, const char __user *ubuf, size_t cnt,
 	char regex[128];
 	int ret;
 
-	if (cnt >= (sizeof(regex) - 1))
+	if (!cnt)
+		return 0;
+
+	if (cnt >= sizeof(regex))
 		return -E2BIG;
 
-	ret = strncpy_from_user(regex, ubuf, sizeof(regex));
-	if (ret < 0)
-		return ret;
+	if (copy_from_user(regex, ubuf, cnt))
+		return -EFAULT;
 
-	regex[cnt - 1] = '\0';
+	regex[cnt] = '\0';
+	if (regex[cnt - 1] == '\n')
+		regex[cnt - 1] = '\0';
 
 	guard(mutex)(&hyp_ftrace_funcs_lock);
 
