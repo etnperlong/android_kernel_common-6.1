@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "0155966638486e61745eb229c86f7418b7e4ef5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f22f0082_6fb54a00",
+        "filename": "mm/p3s/anon.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:03Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "df4e2796_523bf136",
+      "isAi": true,
+      "revId": "0155966638486e61745eb229c86f7418b7e4ef5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
