@@ -170,8 +170,8 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
 	if (ret <= 0)
 		return NULL;
 
-	if (write)
-		acct_arg_size(bprm, vma_pages(vma));
+	if (write && current->mm)
+		acct_arg_size(bprm, mm_reader_pages(mm, vma_pages(vma)));
 
 	return page;
 }
