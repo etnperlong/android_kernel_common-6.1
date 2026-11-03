@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "7e300836d6ac948048518dc0783d3053110f9f97",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b82431f4_cbb860a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T19:37:38Z",
+      "side": 1,
+      "message": "Done, updated commit message following BACKPORT: FROMLIST: format.",
+      "parentUuid": "599de409_6be31566",
+      "isAi": true,
+      "revId": "7e300836d6ac948048518dc0783d3053110f9f97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
