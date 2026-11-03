@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "49243a08a2729628861c689594a53940e0ed2dce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99dc1b3a_73d8ed67",
+        "filename": "tools/testing/selftests/mm/swap_slice_mremap_p3s.c",
+        "patchSetId": 25
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:50:02Z",
+      "side": 1,
+      "message": "Folded into aosp/4367986 and updated swap_slice_mremap_p3s.c to verify that a cross-slice MREMAP_FIXED move fails with -EINVAL while a same-slice move preserves the swapped data. Thanks!",
+      "parentUuid": "deb095f4_26136b05",
+      "isAi": true,
+      "revId": "49243a08a2729628861c689594a53940e0ed2dce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
