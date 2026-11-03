@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "e25a3913ca42af565f64725cf5647475e65c085a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "106a6d75_91a2a320",
+        "filename": "mm/userfaultfd.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 1849,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:00Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "77955533_464bae49",
+      "isAi": true,
+      "revId": "e25a3913ca42af565f64725cf5647475e65c085a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
