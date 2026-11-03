@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cba8ffe4_b6ffe1c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 42
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T22:05:30Z",
+      "side": 1,
+      "message": "Thanks, the flexible array looks right to me. It covers every `badpages[i]` user (`read_swap_header()`, `setup_swap_map()`, `setup_clusters()` and `p3s_convert_swap_header()`), and the size of the union, `MAX_SWAP_BADPAGES` and `p3s_swap_header_max_badpages()` don\u0027t change.\n\nNit: I think \"without pointer-walk workarounds\" refers to earlier patch sets, which readers of the tree won\u0027t find. Would it be OK to drop this sentence, and say in the first paragraph what fails today? For example:\n\n```\nThe bad-page list in a swap header has a variable length, validated\nagainst the header page before it is used. Because the kernel builds\nwith -fstrict-flex-arrays\u003d3, CONFIG_UBSAN_BOUNDS treats badpages[1] as\na one-element array, so swapon() traps on a header that lists two or\nmore bad pages.\n```\n\nAlso, since this replaces aosp/4368032, which has left the chain but is still open, could that change be abandoned?",
+      "isAi": true,
+      "revId": "decc8ef3bd960bad15bf6263d6cbe7cc19fe0d71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
