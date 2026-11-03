@@ -51,6 +51,24 @@
       "parentUuid": "6d83b90c_5f35fe78",
       "revId": "deb032070c661fd18375cb1103a6c6bb228ae1af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7771ef4_6494587f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T18:07:54Z",
+      "side": 1,
+      "message": "I guess you are referring to https://cs.android.com/android/platform/superproject/+/android-latest-release:system/sepolicy/private/domain.te;l\u003d336 SGTM.",
+      "parentUuid": "ab916008_b9186ee6",
+      "revId": "deb032070c661fd18375cb1103a6c6bb228ae1af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
