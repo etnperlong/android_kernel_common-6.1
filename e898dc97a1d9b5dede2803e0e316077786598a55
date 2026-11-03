@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2602805_3871cf08",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:10:51Z",
+      "side": 1,
+      "message": "Done, rewrapped paragraph to 72 columns.",
+      "parentUuid": "3482dfc5_d5979121",
+      "isAi": true,
+      "revId": "e898dc97a1d9b5dede2803e0e316077786598a55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a75abe0d_534e76dc",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-03T21:55:41Z",
       "side": 1,
       "message": "Nit: could the continuation lines line up with the open parenthesis, as in `p3s_folio_slices_in_window()` above? That also brings the last line within 80 columns:\n\n```\n\t*nr \u003d p3s_count_folio_slices(vma,\n\t\t\t\t     pte - ((addr - first) \u003e\u003e PAGE_SHIFT_4KB),\n\t\t\t\t     first, (last - first) \u003e\u003e PAGE_SHIFT_4KB,\n\t\t\t\t     folio);\n```",
+      "isAi": true,
+      "revId": "e898dc97a1d9b5dede2803e0e316077786598a55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23f1777c_ffa255d8",
+        "filename": "mm/p3s/rmap.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:10:51Z",
+      "side": 1,
+      "message": "Done, aligned continuation lines with open parenthesis and kept within 80 columns.",
+      "parentUuid": "a75abe0d_534e76dc",
       "isAi": true,
       "revId": "e898dc97a1d9b5dede2803e0e316077786598a55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
