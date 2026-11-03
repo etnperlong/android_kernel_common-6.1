@@ -315,11 +315,16 @@ static void lru_gen_refault(struct folio *folio, void *shadow)
 	if (lru_gen_in_fault())
 		mod_lruvec_state(lruvec, WORKINGSET_ACTIVATE_BASE + type, delta);
 
-	if (workingset) {
+	/*
+	 * Page-fault folios get PG_active from folio_add_lru(), which only
+	 * places them in max_seq - 1 unless PG_workingset is also set.
+	 */
+	if (workingset || lru_gen_in_fault()) {
 		folio_set_workingset(folio);
 		mod_lruvec_state(lruvec, WORKINGSET_RESTORE_BASE + type, delta);
-	} else
+	} else {
 		set_mask_bits(&folio->flags, LRU_REFS_MASK, (refs - 1UL) << LRU_REFS_PGOFF);
+	}
 unlock:
 	rcu_read_unlock();
 }
