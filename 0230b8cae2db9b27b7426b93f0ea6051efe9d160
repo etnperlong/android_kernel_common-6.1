@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "43dae64c_02e73f81",
+        "filename": "mm/madvise.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:21Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "017510ac_2c0b4d1d",
+      "isAi": true,
+      "revId": "0230b8cae2db9b27b7426b93f0ea6051efe9d160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "34a28e85_beca9bae",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T04:35:08Z",
       "side": 1,
       "message": "One case my earlier suggestion missed, I think: a window with a hole. If slices 0 and 2 map the folio and slice 1 is none (never touched, or zapped by MADV_DONTNEED), `p3s_madvise_folio_pte_batch()` stops at slice 1. So `nr` is 1 at both slices and never equals `folio_mapcount(folio)`, and the folio isn\u0027t freed even when the range covers the whole window. The parent still marked such a clean folio lazyfree.\n\nIt\u0027s safe, only less effective. Do you think it\u0027s worth handling here, for example by counting the folio\u0027s PTEs in the part of the window that the range covers with `p3s_count_folio_slices()`, or would you rather leave it for a follow-up?",
+      "isAi": true,
+      "revId": "0230b8cae2db9b27b7426b93f0ea6051efe9d160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fe95cc6_f5dd3e3c",
+        "filename": "mm/madvise.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:21Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "34a28e85_beca9bae",
       "isAi": true,
       "revId": "0230b8cae2db9b27b7426b93f0ea6051efe9d160",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
