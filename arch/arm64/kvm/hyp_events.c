@@ -219,6 +219,8 @@ static int hyp_ftrace_filter_show(struct seq_file *m, void *v)
 {
 	void *func_pg;
 
+	guard(mutex)(&hyp_ftrace_funcs_lock);
+
 	for_each_funcs_pg(func_pg) {
 		char sym[KSYM_SYMBOL_LEN];
 		unsigned long *func;
@@ -281,6 +283,8 @@ hyp_ftrace_filter_write(struct file *filp, const char __user *ubuf, size_t cnt,
 
 	regex[cnt - 1] = '\0';
 
+	guard(mutex)(&hyp_ftrace_funcs_lock);
+
 	ret = hyp_ftrace_funcs_apply_filter(regex, enable);
 	if (ret)
 		return ret;
@@ -292,19 +296,7 @@ hyp_ftrace_filter_write(struct file *filp, const char __user *ubuf, size_t cnt,
 
 static int hyp_ftrace_filter_open(struct inode *inode, struct file *file)
 {
-	int ret = single_open(file, hyp_ftrace_filter_show, inode->i_private);
-
-	if (!ret)
-		mutex_lock(&hyp_ftrace_funcs_lock);
-
-	return ret;
-}
-
-static int hyp_ftrace_filter_release(struct inode *inode, struct file *file)
-{
-	mutex_unlock(&hyp_ftrace_funcs_lock);
-
-	return single_release(inode, file);
+	return single_open(file, hyp_ftrace_filter_show, inode->i_private);
 }
 
 static const struct file_operations hyp_ftrace_filter_fops = {
@@ -312,13 +304,13 @@ static const struct file_operations hyp_ftrace_filter_fops = {
 	.read		= seq_read,
 	.write		= hyp_ftrace_filter_write,
 	.llseek		= seq_lseek,
-	.release	= hyp_ftrace_filter_release,
+	.release	= single_release,
 };
 
 static const struct file_operations hyp_ftrace_notrace_fops = {
 	.open		= hyp_ftrace_filter_open,
 	.write		= hyp_ftrace_filter_write,
-	.release	= hyp_ftrace_filter_release,
+	.release	= single_release,
 };
 
 #define HYP_FTRACE_SKIP_FUNC (-1ULL)
