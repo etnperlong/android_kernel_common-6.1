@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ebd00ac_8b05ba04",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 42
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T22:04:47Z",
+      "side": 1,
+      "message": "Nit: the first body line runs to 74 columns. Could the paragraph be rewrapped at 72? While at it, I think the `OVERCOMMIT_GUESS` sentence only applies to mappings of 4KB processes. Something like:\n\n```\nP3S accounts mappings in process-page units, but vm_committed_as is\nshared by 4KB and native 16KB processes. Treating 4KB charges as native\npages reports their Committed_AS four times too high and charges them\nfour times against strict overcommit limits. OVERCOMMIT_GUESS also\nrejects a single accounted mapping of a 4KB process larger than one\nquarter of RAM plus swap.\n```",
+      "isAi": true,
+      "revId": "9a25e75ec37c41d0c173cbb2185fb06f1a4d8680",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
