@@ -16,6 +16,23 @@
       "message": "@surenb@google.com Could you CR this CL?",
       "revId": "deb032070c661fd18375cb1103a6c6bb228ae1af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d83b90c_5f35fe78",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T00:24:44Z",
+      "side": 1,
+      "message": "Who is the user of this IOCTL? We should make sure that non-system components can\u0027t use it, otherwise it becomes an official UAPI and we have to support it forever. Do you have sepolicies in place to prevent its use from non-system users?\n\nAlso adding Isaac to reviewers because he authored most of the wrapfd loading logic.",
+      "revId": "deb032070c661fd18375cb1103a6c6bb228ae1af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
