@@ -281,6 +281,21 @@ static bool lru_gen_test_recent(void *shadow, struct lruvec **lruvec,
 	return abs_diff(max_seq, *token >> LRU_REFS_WIDTH) < MAX_NR_GENS;
 }
 
+static bool lru_gen_eviction_memcg_exists(void *shadow)
+{
+	int memcg_id;
+	bool workingset;
+	unsigned long token;
+	struct pglist_data *pgdat;
+
+	if (mem_cgroup_disabled())
+		return true;
+
+	unpack_shadow(shadow, &memcg_id, &pgdat, &token, &workingset);
+
+	return !!mem_cgroup_from_id(memcg_id);
+}
+
 static void lru_gen_refault(struct folio *folio, void *shadow)
 {
 	bool recent;
@@ -295,8 +310,35 @@ static void lru_gen_refault(struct folio *folio, void *shadow)
 	rcu_read_lock();
 
 	recent = lru_gen_test_recent(shadow, &lruvec, &token, &workingset);
-	if (lruvec != folio_lruvec(folio))
+	if (lruvec != folio_lruvec(folio)) {
+		/*
+		 * The folio was evicted from a different memcg (or node) than
+		 * the one it is being refaulted into, e.g. a shared file folio
+		 * that was charged to another process's memcg. The refault
+		 * feedback below belongs to the lruvec it was evicted from, so
+		 * leave that alone. Like the classic LRU, account the refault to
+		 * the lruvec the folio is being added to, and restore
+		 * PG_workingset as below if the eviction was recent. Also like
+		 * the classic LRU, ignore shadows from deleted memcgs, whose
+		 * recency can't be judged.
+		 */
+		if (lru_gen_eviction_memcg_exists(shadow)) {
+			struct lruvec *new_lruvec = folio_lruvec(folio);
+
+			mod_lruvec_state(new_lruvec, WORKINGSET_REFAULT_BASE + type, delta);
+			if (recent) {
+				if (lru_gen_in_fault())
+					mod_lruvec_state(new_lruvec,
+							 WORKINGSET_ACTIVATE_BASE + type, delta);
+				if (workingset || lru_gen_in_fault()) {
+					folio_set_workingset(folio);
+					mod_lruvec_state(new_lruvec,
+							 WORKINGSET_RESTORE_BASE + type, delta);
+				}
+			}
+		}
 		goto unlock;
+	}
 
 	mod_lruvec_state(lruvec, WORKINGSET_REFAULT_BASE + type, delta);
 
