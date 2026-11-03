@@ -1,0 +1,68 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c8171ff_1df70c77",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:35:31Z",
+      "side": 1,
+      "message": "When does this happen? What triggers it?",
+      "range": {
+        "startLine": 18,
+        "startChar": 44,
+        "endLine": 19,
+        "endChar": 12
+      },
+      "revId": "8156c8b7fddb46619752d832ae0e1aee49ba91f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed6b9d75_6c25f547",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:35:31Z",
+      "side": 1,
+      "message": "I think it would be cleaner not to enable and reuse these `ptdesc_pmd_pts_*` functions so that the usage would be more explicit and less error-prone. The fact that you are reusing the same field is a technical detail (coincidence) rather than a fundamental property of the design. You actually could have added a separate field in that union without any functional impact.",
+      "range": {
+        "startLine": 613,
+        "startChar": 54,
+        "endLine": 613,
+        "endChar": 77
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "05e8b88c_22e86730",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "include/linux/mm_types.h",
+              "range": {
+                "startLine": 613,
+                "startChar": 0,
+                "endLine": 614,
+                "endChar": 0
+              },
+              "replacement": "#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING\n"
+            }
+          ]
+        }
+      ],
+      "revId": "8156c8b7fddb46619752d832ae0e1aee49ba91f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
