@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39822fef_c4030b23",
+        "filename": "fs/exec.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T04:25:39Z",
+      "side": 1,
+      "message": "Nit: I think the `current-\u003emm` test isn\u0027t needed: `acct_arg_size()` already returns early when `current-\u003emm` is NULL, and `mm_reader_pages()` copes with it too, since `mm_pte_shift(NULL)` returns the kernel page shift. Would it be OK to keep upstream\u0027s `if (write)` here, so that only the argument changes? The \"Preserve the no-mm path for kernel threads\" sentence in the body could then go.",
+      "isAi": true,
+      "revId": "15dc853dbda1746440d84aa24af5d49218a71041",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
