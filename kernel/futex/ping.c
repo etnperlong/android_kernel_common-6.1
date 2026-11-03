@@ -91,7 +91,7 @@ put_ping_state(struct futex_pi_state *ping_state)
 		 * refcount is at 0 - put it back to 1.
 		 */
 		ping_state->owner = NULL;
-		ping_state->pickup = ping_state->handoff = 0;
+		ping_state->ping_mutex.pickup = ping_state->ping_mutex.handoff = 0;
 		refcount_set(&ping_state->refcount, 1);
 		current->pi_state_cache = ping_state;
 	}
@@ -162,7 +162,7 @@ static int futex_trylock_ping_state(u32 __user *uaddr,
 	if (owner == NULL) {
 		newtid = task_pid_vnr(current);
 
-		WARN_ON_ONCE(ping_state->handoff || ping_state->pickup);
+		WARN_ON_ONCE(ping_state->ping_mutex.handoff || ping_state->ping_mutex.pickup);
 
 		if (uval & FUTEX_TID_MASK) {
 			ret = -EAGAIN;
@@ -176,7 +176,7 @@ static int futex_trylock_ping_state(u32 __user *uaddr,
 			ping_state_update_owner(ping_state, current);
 		WRITE_ONCE(ping_state->ping_mutex.owner, current);
 		ret = 1;
-	} else if (ping_state->pickup) {
+	} else if (ping_state->ping_mutex.pickup) {
 		if (owner != current) {
 			ret = -EAGAIN;
 			goto err;
@@ -185,10 +185,10 @@ static int futex_trylock_ping_state(u32 __user *uaddr,
 			ret = -EINVAL;
 			goto err;
 		}
-		ping_state->pickup = 0;
+		ping_state->ping_mutex.pickup = 0;
 		ret = 1;
-	} else if (handoff && !ping_state->handoff)
-		ping_state->handoff = 1;
+	} else if (handoff && !ping_state->ping_mutex.handoff)
+		ping_state->ping_mutex.handoff = 1;
 	raw_spin_unlock_irq(&ping_state->ping_mutex.wait_lock);
 	return ret;
 
@@ -435,7 +435,7 @@ out_unqueue:
 			raw_spin_lock_irq(&q.ping_state->ping_mutex.wait_lock);
 			if (ping_mutex_owner(&q.ping_state->ping_mutex) ==
 			    current) {
-				q.ping_state->pickup = 0;
+				q.ping_state->ping_mutex.pickup = 0;
 				ret = 0;
 			}
 			raw_spin_unlock_irq(&q.ping_state->ping_mutex.wait_lock);
@@ -556,7 +556,7 @@ retry:
 	 */
 	new = FUTEX_WAITERS;
 	handoff = false;
-	if (ping_state->handoff) {
+	if (ping_state->ping_mutex.handoff) {
 		new |= task_pid_vnr(top_waiter->task);
 		handoff = true;
 	}
@@ -580,8 +580,8 @@ retry:
 	}
 
 	if (handoff) {
-		ping_state->handoff = 0;
-		ping_state->pickup = 1;
+		ping_state->ping_mutex.handoff = 0;
+		ping_state->ping_mutex.pickup = 1;
 		WRITE_ONCE(ping_state->ping_mutex.owner, top_waiter->task);
 	} else
 		WRITE_ONCE(ping_state->ping_mutex.owner, NULL);
