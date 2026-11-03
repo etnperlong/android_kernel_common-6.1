@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "997cecf5_ebac5d30",
+        "filename": "mm/ptshare.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 1230,
+      "author": {
+        "id": 1965265
+      },
+      "writtenOn": "2026-11-03T03:42:38Z",
+      "side": 1,
+      "message": "doesnt adding 100% of the shadow mm rss to every process here means lmkd reading statm will double count if an app unshares one region, or blame early forked kids for shared regions the parent mapped later?",
+      "range": {
+        "startLine": 1230,
+        "startChar": 2,
+        "endLine": 1230,
+        "endChar": 52
+      },
+      "revId": "64d242d887415c04377509efd5ad5c590699235f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2aa5b87b_6e129f13",
+        "filename": "mm/ptshare.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 1235,
+      "author": {
+        "id": 1965265
+      },
+      "writtenOn": "2026-11-03T03:42:38Z",
+      "side": 1,
+      "message": "gki trims unlisted exports, so this and ptshare_get_mm_counter_sum probably need to go in the gki symbol list / abi too or vendor modules calling rss helpers wont link.",
+      "range": {
+        "startLine": 1235,
+        "startChar": 0,
+        "endLine": 1235,
+        "endChar": 38
+      },
+      "revId": "64d242d887415c04377509efd5ad5c590699235f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
