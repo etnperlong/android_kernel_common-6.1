@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef4491bf_54247968",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T16:29:43Z",
+      "side": 1,
+      "message": "You could add that dependency in this patch to highlight that.",
+      "range": {
+        "startLine": 18,
+        "startChar": 51,
+        "endLine": 19,
+        "endChar": 24
+      },
+      "revId": "317669fbc9e7080e4e1eabd3222839d3a71da9d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
