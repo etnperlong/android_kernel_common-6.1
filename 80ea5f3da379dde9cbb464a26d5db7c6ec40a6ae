@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a966ae99_d0475115",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 36
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:32Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "095c75ac_66b37e65",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6917f53_31864819",
@@ -37,6 +56,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7268d63b_62d1e2da",
+        "filename": "include/linux/p3s/vma.h",
+        "patchSetId": 36
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:32Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "c6917f53_31864819",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e92dcfd1_1cbd3d36",
@@ -50,6 +88,25 @@
       "writtenOn": "2026-11-01T04:40:46Z",
       "side": 1,
       "message": "Would it be OK to drop this hunk? Now that `p3s_mremap.o` is gone, it only removes the trailing blank line that aosp/4312464 left at the end of `mm/Makefile`, and nothing else in this patch touches the Makefile.",
+      "isAi": true,
+      "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51bfa833_817742fa",
+        "filename": "mm/Makefile",
+        "patchSetId": 36
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:32Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "e92dcfd1_1cbd3d36",
       "isAi": true,
       "revId": "80ea5f3da379dde9cbb464a26d5db7c6ec40a6ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
