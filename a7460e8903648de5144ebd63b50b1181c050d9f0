@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7faf4c9e_eaece019",
+        "filename": "drivers/virt/gunyah/vm_mgr_mem.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-03T08:28:46Z",
+      "side": 1,
+      "message": "nit: please remove this forward declaration and move the function implementation (introduced in thsi commit)",
+      "revId": "a7460e8903648de5144ebd63b50b1181c050d9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c940aa4e_5dd1882a",
+        "filename": "drivers/virt/gunyah/vm_mgr_mem.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1967274
+      },
+      "writtenOn": "2026-11-03T08:28:46Z",
+      "side": 1,
+      "message": "see if we can use lock guards to avoid these error paths.",
+      "revId": "a7460e8903648de5144ebd63b50b1181c050d9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
