@@ -51,6 +51,24 @@
       "parentUuid": "334644c6_25ff245a",
       "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "756603b0_6ddea93e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1587335
+      },
+      "writtenOn": "2026-11-03T08:33:29Z",
+      "side": 1,
+      "message": "We\u0027re working with the pKVM team to implement an alternative API that uses an alternative callback signature which won\u0027t expose any new structs to the KMI (b/577252424). Abandoning this change.",
+      "parentUuid": "4e6b9de6_bf235c53",
+      "revId": "069530132747de48a9711a77ed4937bff9ca22ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
