@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "3f7ef15d130a013eb8343e97c4d44cc8dd30bdfb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f624ca8e_40b53ef4",
+        "filename": "security/selinux/selinuxfs.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:15Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "0ca4e7cc_4a26d0cb",
+      "isAi": true,
+      "revId": "3f7ef15d130a013eb8343e97c4d44cc8dd30bdfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
