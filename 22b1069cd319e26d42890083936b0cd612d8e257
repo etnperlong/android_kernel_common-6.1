@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d532c081_cf1aee73",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:01:00Z",
+      "side": 1,
+      "message": "Could the body also say what goes wrong without this? As far as I can see, the counter stays balanced, since `acct_arg_size(bprm, 0)` takes the same `bprm-\u003evma_pages` back from the same mm, so there\u0027s no \"Bad rss-counter state\". But until then, the old mm\u0027s RSS and `oom_badness()` count four times the new stack when the new mm uses 4KB pages and the old one native pages, and a quarter of it the other way round. Something like:\n\n```\nWithout this, the old mm\u0027s RSS and OOM badness count four times the\nargument stack during exec when the new mm uses 4KB pages and the old\none native pages, and a quarter of it the other way round.\n```\n\nNit: as on aosp/4409398, could you wrap the body at 72 columns and drop the blank line between `Bug:` and `Change-Id:`?",
+      "isAi": true,
+      "revId": "22b1069cd319e26d42890083936b0cd612d8e257",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e081a5ad_d635fbbd",
+        "filename": "fs/exec.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:01:00Z",
+      "side": 1,
+      "message": "Agreed that the charge has to be in the old mm\u0027s units: `MM_ANONPAGES` of a 4KB mm counts 4KB pages, which is also what `oom_badness()` assumes since aosp/4312502.\n\nIt looks like `mm_reader_pages()` (aosp/4366897, in `include/linux/p3s/mm.h`) already does this conversion: it scales a page count of an mm to the page size of `current`, rounding up, and its stub returns the count unchanged. Its kernel-doc talks about /proc readers, but the math is the same, and `current-\u003emm` is the old mm here. Would converting in `get_arg_page()` work for you? Something like:\n\n```\n\tif (write)\n\t\tacct_arg_size(bprm, mm_reader_pages(mm, vma_pages(vma)));\n```\n\n`mm` is `bprm-\u003emm` there. `bprm-\u003evma_pages` then holds the charge in the old mm\u0027s pages, which is what `acct_arg_size(bprm, 0)` takes back, and `acct_arg_size()` keeps upstream\u0027s code, including the `!mm || !diff` early return.",
+      "isAi": true,
+      "revId": "22b1069cd319e26d42890083936b0cd612d8e257",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
