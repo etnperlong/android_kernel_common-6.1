@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "4480c35a745ff5e5a409a8f572f1651077826213",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "46c833f8_059f9762",
+        "filename": "net/xdp/xdp_umem.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:45Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "fd09b725_57259cad",
+      "isAi": true,
+      "revId": "4480c35a745ff5e5a409a8f572f1651077826213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
