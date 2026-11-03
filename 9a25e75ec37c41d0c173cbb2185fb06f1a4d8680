@@ -17,6 +17,25 @@
       "isAi": true,
       "revId": "9a25e75ec37c41d0c173cbb2185fb06f1a4d8680",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dbcbc4fb_d70983dd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 42
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T22:29:17Z",
+      "side": 1,
+      "message": "Done, rewrapped the paragraph to 72 columns and clarified that OVERCOMMIT_GUESS rejects a single accounted mapping of a 4KB process larger than one quarter of RAM plus swap.",
+      "parentUuid": "9ebd00ac_8b05ba04",
+      "isAi": true,
+      "revId": "9a25e75ec37c41d0c173cbb2185fb06f1a4d8680",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
