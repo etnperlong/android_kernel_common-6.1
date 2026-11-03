@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd967421_fd77ddc6",
+        "filename": "include/linux/p3s/shmem.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:07Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "b031fca9_0954ccbc",
+      "isAi": true,
+      "revId": "9ff1f8c41bfad1b64fba20a96bc53fbb42afa547",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "631c682a_00b792c2",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-10-31T22:43:11Z",
       "side": 1,
       "message": "Nit: now that `shmem_partial_swap_usage()` stays as upstream has it (thanks for moving the 4KB counting into `include/linux/p3s/shmem.h`), this line only rewords upstream\u0027s comment. Would it be OK to drop it, so that `mm/shmem.c` only gets the include and the hook in `shmem_swap_usage()`?",
+      "isAi": true,
+      "revId": "9ff1f8c41bfad1b64fba20a96bc53fbb42afa547",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0af92beb_b73f1441",
+        "filename": "mm/shmem.c",
+        "patchSetId": 34
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:07Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "631c682a_00b792c2",
       "isAi": true,
       "revId": "9ff1f8c41bfad1b64fba20a96bc53fbb42afa547",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
