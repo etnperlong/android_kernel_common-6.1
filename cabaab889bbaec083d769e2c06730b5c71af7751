@@ -1,0 +1,206 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19085976_136d26fd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "I don\u0027t understand this part. Please clarify.",
+      "range": {
+        "startLine": 26,
+        "startChar": 13,
+        "endLine": 27,
+        "endChar": 10
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "04709818_1e4d54f9",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 923,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "Please place the comments consistently either next to the field or before it.",
+      "range": {
+        "startLine": 921,
+        "startChar": 2,
+        "endLine": 923,
+        "endChar": 77
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47a833a7_d9603fce",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "You are describing the implementation, which is apparent from the code and unnecessary. Describe only functionality and use.",
+      "range": {
+        "startLine": 31,
+        "startChar": 29,
+        "endLine": 31,
+        "endChar": 49
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "3f6fa47f_160baeef",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "include/linux/ptshare.h",
+              "range": {
+                "startLine": 31,
+                "startChar": 0,
+                "endLine": 32,
+                "endChar": 0
+              },
+              "replacement": " * vma_is_ptshare_client() - whether VM_PT_SHARED is set. Use it for checks that\n"
+            }
+          ]
+        }
+      ],
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bad2b552_dd483ad5",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "Would be better to have description of each function next to the function.",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 3
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "481e281c_0fc5e5bf",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "vma_is_ptshare_client(vma)",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 47,
+        "endChar": 38
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7566bcac_20069a41",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "I feel like `vma_shares_pagetables()` is not really needed. You can call `vma_ptshare_desc()` instead and check for result to be non-NULL. This saves one READ_ONCE():\n\n```\nstatic inline struct ptshare_desc *vma_ptshare_desc(const struct vm_area_struct *vma)\n{\n\tstruct ptshare_desc *desc;\n\n\tif (VM_WARN_ON_ONCE_VMA(!vma_is_ptshare_client(vma), vma))\n\t\treturn NULL;\n\n\tdesc \u003d READ_ONCE(vma-\u003e__vm_ptshare_desc);\n\tVM_WARN_ON_ONCE_VMA(!desc, vma)\n\n\treturn desc;\n}\n```",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 42
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9f3e160_d6aeaf0f",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "```\nif (VM_WARN_ON_ONCE_VMA(!vma_is_ptshare_client(vma), vma))\n\treturn;\n```",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 9
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72e36dff_cb9cd3fc",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-03T17:05:06Z",
+      "side": 1,
+      "message": "```\nif (VM_WARN_ON_ONCE_VMA(!vma_is_ptshare_shadow(vma), vma)\n\treturn NULL;\n```",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 43
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
