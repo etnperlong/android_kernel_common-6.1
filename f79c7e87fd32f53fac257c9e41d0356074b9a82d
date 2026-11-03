@@ -19,6 +19,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7db3c72_a7314af9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 38
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "f275a1b4_8ef55a67",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "28cf7290_530702ad",
@@ -32,6 +51,25 @@
       "writtenOn": "2026-11-01T04:49:20Z",
       "side": 1,
       "message": "Would you mind moving the new wrappers out of `\u003clinux/mman.h\u003e`? `vm_acct_memory_units()`, `vm_acct_memory_mm()` and `vm_unacct_memory_mm()` could live in a new `include/linux/p3s/mman.h` that `\u003clinux/mman.h\u003e` includes once at the end, together with `vm_memory_committed_kbytes()` as a `static inline`. Upstream\u0027s part of the header would then only change inside `vm_acct_memory()`:\n\n```\nstatic inline void vm_acct_memory(long pages)\n{\n\tpercpu_counter_add_batch(\u0026vm_committed_as, vm_commit_native_pages(pages),\n\t\t\t\t vm_committed_as_batch);\n}\n```\n\nWith the conversion helpers in `include/linux/p3s/mm.h`, the wrappers fold to upstream\u0027s code without `CONFIG_ARM64_PER_PROCESS_PAGE_SIZE`, so the new header wouldn\u0027t need a config block.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "57a863b7_d90521c0",
+        "filename": "include/linux/mman.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "28cf7290_530702ad",
       "isAi": true,
       "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -55,6 +93,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4b32d44_b541f81c",
+        "filename": "include/linux/security.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "9242c3fd_84420f3c",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "54eeafc0_0fb28d0b",
@@ -68,6 +125,25 @@
       "writtenOn": "2026-11-01T04:49:20Z",
       "side": 1,
       "message": "Would scaling `ram_pages` where it\u0027s read work here? Something like:\n\n```\n\tunsigned long ram_pages \u003d vm_commit_native_pages(totalram_pages());\n```\n\nThe existing `min_t(u64, ..., INT_MAX)` lines still clamp the batch, so `committed_batch` and the second clamp can go, and the rest of `mm_compute_batch()` stays as upstream wrote it. That also clears the checkpatch alignment CHECK on the `batch` line. Only the 32-unit floor stays unscaled, which only matters with very little memory per CPU.",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3720f5c_8c9c6cca",
+        "filename": "mm/mm_init.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "54eeafc0_0fb28d0b",
       "isAi": true,
       "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
@@ -91,6 +167,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "81cf001f_71eee313",
+        "filename": "mm/util.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "88e26d0b_d4c60a19",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6ca3a932_49efd244",
@@ -109,6 +204,25 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "77155b28_ac69055f",
+        "filename": "mm/util.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 946,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "6ca3a932_49efd244",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d862faf1_f4629eb4",
@@ -122,6 +236,25 @@
       "writtenOn": "2026-11-01T04:49:20Z",
       "side": 1,
       "message": "Would you mind keeping `security_vm_enough_memory_mm()` as upstream wrote it? Moving the LSM loop into a new helper also drops upstream\u0027s comment on how the modules vote on `cap_sys_admin`, and `security/security.c` changes a lot upstream.\n\nI think the conversion could live in `__vm_enough_memory()` instead, with `pages` still counting pages of `mm`:\n\n```\n\tpages \u003d vm_commit_mm_pages(mm, pages);\n\tvm_acct_memory_units(pages);\n```\n\nThen `security/security.c` and `include/linux/security.h` don\u0027t change at all, and `security_vm_enough_memory_native()` can go. The shmem and swapoff callers count kernel pages, so they would pass pages of `current-\u003emm` through a helper next to `mm_kernel_pages()`, e.g.:\n\n```\nstatic inline unsigned long mm_pages_from_kernel(const struct mm_struct *mm,\n\t\t\t\t\t\t unsigned long nr)\n{\n\treturn nr * mm_slices_per_page(mm);\n}\n```\n\nThe hooks would then see 4KB pages for shmem in 4KB processes, but `cap_vm_enough_memory()` and `selinux_vm_enough_memory()` ignore `pages`. Would that work for you?",
+      "isAi": true,
+      "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a7add1f_f5d87a1e",
+        "filename": "security/security.c",
+        "patchSetId": 38
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2026-11-03T00:49:50Z",
+      "side": 1,
+      "message": "Done in the latest patchset, thanks!",
+      "parentUuid": "d862faf1_f4629eb4",
       "isAi": true,
       "revId": "f79c7e87fd32f53fac257c9e41d0356074b9a82d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
