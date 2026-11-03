@@ -1,0 +1,76 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb3a60f6_6e4f4284",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:03:12Z",
+      "side": 1,
+      "message": "Could the body say what fails without this patch? As far as I can see, `mlock()` never mlocks a large file folio in a 4KB VMA: `allow_mlock_munlock()` compares the PTE count from `folio_mlock_step()` with `folio_nr_pages()`, and `folio_within_range()` mixes 16KB file pages with 4KB VMA pages. Faults don\u0027t either: since upstream ab521b4142aa (\"mm/rmap: improve mlock tracking for large folios\"), `__folio_add_file_rmap()` mlocks a large folio when one call maps all of it, but `finish_fault()` maps one slice per fault in a 4KB VMA and `should_fault_around()` is off. So the folio stays evictable until reclaim restores the mlock, which `mlock_file_slices_p3s` (aosp/4410080) checks through /proc/kpageflags.\n\nThat would also explain `p3s_mlock_file_folio()`: it gives 4KB VMAs the fault-time mlock that native VMAs already get. Something like:\n\n```\nmlock() and MLOCK_ONFAULT leave large file folios in 4KB VMAs\nevictable until reclaim restores the mlock. mlock_pte_range() never\nmlocks them: allow_mlock_munlock() compares a count of 4KB PTEs with\nfolio_nr_pages(), and folio_within_range() mixes 16KB file pages with\n4KB VMA pages. Faults don\u0027t either: __folio_add_file_rmap() only\nmlocks a large folio that one call maps completely, and finish_fault()\nmaps one slice per fault in a 4KB VMA.\n\nCount the consecutive slice PTEs that map the folio under the page\ntable lock instead, and mlock the folio once all of its slices are\nmapped, both in mlock_pte_range() and when a fault maps the last\nmissing slice. Native VMAs are unaffected.\n```\n\nNit: as on aosp/4409398, could you wrap the body at 72 columns and drop the blank line between `Bug:` and `Change-Id:`?",
+      "isAi": true,
+      "revId": "16559b61c1ee08876abe39e3df5b3fe761c53439",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c654896_bae75d08",
+        "filename": "mm/p3s/mlock.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:03:12Z",
+      "side": 1,
+      "message": "Nit: checkpatch --strict asks to align the continuation lines of the `p3s_mlock_folio()` and `p3s_mlock_file_folio()` prototypes with the open parenthesis, as the other `mm/p3s/` headers do.",
+      "isAi": true,
+      "revId": "16559b61c1ee08876abe39e3df5b3fe761c53439",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "786d6a0d_1402d25c",
+        "filename": "mm/p3s/mlock.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:03:12Z",
+      "side": 1,
+      "message": "`folio_size(folio) \u003e\u003e PAGE_SHIFT_4KB` is what `vma_folio_nr_ptes()` (`mm/p3s/rmap.h`, aosp/4390444) returns for a large folio in a 4KB VMA, and `folio_referenced_one()` and `try_to_unmap_one()` use it for the same \"fully mapped\" test before they restore the mlock. Would you mind using it here, so that `mlock_pte_range()` and the rmap walks agree on when a folio is fully mapped?\n\n```\n\telse if (!offset \u0026\u0026 nr \u003d\u003d vma_folio_nr_ptes(vma, folio))\n```\n\nIn the same way, the `pte_present()` and `vm_normal_folio()` tests in the loop are `p3s_pte_maps_folio()`.",
+      "isAi": true,
+      "revId": "16559b61c1ee08876abe39e3df5b3fe761c53439",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd324c55_4abb63f0",
+        "filename": "mm/p3s/mlock.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-03T03:03:12Z",
+      "side": 1,
+      "message": "I think `p3s_mlock_folio()` relies on its caller having checked the first PTE: `mlock_pte_range()` only calls it for a present PTE for which `vm_normal_folio()` returned `folio`, so its loop starts at `nr \u003d 1`. Here, though, nothing has looked at the PTE at `start`: it can be none, map another page, or, in a `MAP_PRIVATE` mapping, hold the swap or migration entry of a COWed slice.\n\nMost of these fall out at `!offset`, but arm64 keeps the swap offset in bits 12 and up, so `__pte_to_phys()` of such an entry returns the offset shifted by 12 rather than an address, and it could happen to match the folio. The folio would then be mlocked although its first slice isn\u0027t mapped here.\n\nWould you mind checking that PTE before the call, e.g. with `p3s_pte_maps_folio()` from `mm/p3s/rmap.h`? Something like:\n\n```\n\tpte -\u003d offset \u003e\u003e PAGE_SHIFT_4KB;\n\tif (p3s_pte_maps_folio(vma, start, ptep_get(pte), folio))\n\t\tp3s_mlock_folio(folio, vma, pte, start, start + size);\n```",
+      "isAi": true,
+      "revId": "16559b61c1ee08876abe39e3df5b3fe761c53439",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
