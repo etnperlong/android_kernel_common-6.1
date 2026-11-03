@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ffc00c6_fe7c02a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1083383
+      },
+      "writtenOn": "2026-11-03T09:42:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bee1176c_11eed481",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 8
+      },
+      "revId": "aaabc0b6af206c7155230b1e3d2f5970d270e37d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b06f8d03_5f698ad2",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-09-23T03:13:03Z",
       "side": 1,
       "message": "Please keep the correct chronological order of tags. If you see our examples this should have been after the upstream tags:\n\n```\n...\n[dmitry.osipenko@collabora.com: cosmetic change to virtio_gpu_wait_queue()]\n[dmitry.osipenko@collabora.com: improve error messages]\n\nBug: 558906028\n(cherry picked from ...)\n```",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 14
+      },
+      "revId": "aaabc0b6af206c7155230b1e3d2f5970d270e37d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3882d8f_ba80e395",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1083383
+      },
+      "writtenOn": "2026-11-03T09:42:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b06f8d03_5f698ad2",
       "range": {
         "startLine": 14,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d5279cd_93c0be36",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1083383
+      },
+      "writtenOn": "2026-11-03T09:42:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fcfa79c3_8606ea84",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 142
+      },
+      "revId": "aaabc0b6af206c7155230b1e3d2f5970d270e37d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4e690db9_1c34eece",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-09-23T03:13:03Z",
       "side": 1,
       "message": "Is this coming from this patch? It looks like you are adding more than",
+      "range": {
+        "startLine": 117,
+        "startChar": 1,
+        "endLine": 120,
+        "endChar": 3
+      },
+      "revId": "aaabc0b6af206c7155230b1e3d2f5970d270e37d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bc84518_38aea903",
+        "filename": "drivers/gpu/drm/virtio/virtgpu_kms.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1083383
+      },
+      "writtenOn": "2026-11-03T09:42:39Z",
+      "side": 1,
+      "message": "If we want to do a clean cherry-pick, 2 patches are required.\nhttps://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/virtio_config.h?id\u003dc502eb85c34e29bb185e3d15dd9b8fce8a74f303\nhttps://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/gpu/drm/virtio/virtgpu_kms.c?id\u003dc95e67bac42d7e671e6a2c14548b6a7f76e71235\nBut they will break ABI so I just did a minimal modification.\n\nPlease let me know if you have a better solution. Thank you very much.",
+      "parentUuid": "4e690db9_1c34eece",
       "range": {
         "startLine": 117,
         "startChar": 1,
