@@ -3724,8 +3724,10 @@ void wlcore_regdomain_config(struct wl1271 *wl)
 		goto out;
 
 	ret = wlcore_cmd_regdomain_config_locked(wl);
-	if (ret < 0)
+	if (ret < 0) {
 		wl12xx_queue_recovery_work(wl);
+		goto out;
+	}
 
 	pm_runtime_put_autosuspend(wl->dev);
 out:

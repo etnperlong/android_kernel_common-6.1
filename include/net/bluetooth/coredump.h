@@ -70,7 +70,6 @@ struct hci_devcoredump {
 const char *hci_devcd_state_name(enum devcoredump_state state);
 
 void hci_devcd_reset(struct hci_dev *hdev);
-void hci_devcd_shutdown(struct hci_dev *hdev);
 void hci_devcd_rx(struct work_struct *work);
 void hci_devcd_timeout(struct work_struct *work);
 
@@ -90,7 +89,6 @@ static inline const char *hci_devcd_state_name(enum devcoredump_state state)
 }
 
 static inline void hci_devcd_reset(struct hci_dev *hdev) {}
-static inline void hci_devcd_shutdown(struct hci_dev *hdev) {}
 static inline void hci_devcd_rx(struct work_struct *work) {}
 static inline void hci_devcd_timeout(struct work_struct *work) {}
 

@@ -317,16 +317,10 @@ mwifiex_parse_mgmt_packet(struct mwifiex_private *priv, u8 *payload, u16 len,
 
 	switch (stype) {
 	case IEEE80211_STYPE_ACTION:
-		if (len < sizeof(*ieee_hdr) + 1)
-			return -1;
-
-		category = *(payload + sizeof(*ieee_hdr));
+		category = *(payload + sizeof(struct ieee80211_hdr));
 		switch (category) {
 		case WLAN_CATEGORY_PUBLIC:
-			if (len < sizeof(*ieee_hdr) + 2)
-				return -1;
-
-			action_code = *(payload + sizeof(*ieee_hdr)
+			action_code = *(payload + sizeof(struct ieee80211_hdr)
 					+ 1);
 			if (action_code == WLAN_PUB_ACTION_TDLS_DISCOVER_RES) {
 				addr2 = ieee_hdr->addr2;
