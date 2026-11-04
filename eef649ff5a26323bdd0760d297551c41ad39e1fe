@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc5a7490_792b7bce",
+        "filename": "drivers/gpu/drm/drm_ioc32.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:01:49Z",
+      "side": 1,
+      "message": "Hi Giuliano,\n\nNit: Upstream tends to prefer no #ifdef sprinkled in the function body. Prefer a stub:\n\n```c\n...\n\n#else /* !CONFIG_COMPAT */\nlong drm_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)\n{\n\treturn -ENOIOCTLCMD;\n}\n#endif /* CONFIG_COMPAT */\n```",
+      "range": {
+        "startLine": 395,
+        "startChar": 0,
+        "endLine": 397,
+        "endChar": 6
+      },
+      "revId": "eef649ff5a26323bdd0760d297551c41ad39e1fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
