@@ -22,6 +22,30 @@
       },
       "revId": "317669fbc9e7080e4e1eabd3222839d3a71da9d8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9f4dc0a_1a41c644",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:57:36Z",
+      "side": 1,
+      "message": "Done. Moved the dependency from the 64-bit dep from earlier patch to here.",
+      "parentUuid": "ef4491bf_54247968",
+      "range": {
+        "startLine": 18,
+        "startChar": 51,
+        "endLine": 19,
+        "endChar": 24
+      },
+      "revId": "317669fbc9e7080e4e1eabd3222839d3a71da9d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
