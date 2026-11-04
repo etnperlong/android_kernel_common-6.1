@@ -139,40 +139,12 @@ xrep_findparent_dirent(
 	return 0;
 }
 
-static inline bool
-xrep_findparent_want_scan_file(
-	const struct xrep_findparent_info	*fpi)
-{
-	const struct xfs_scrub			*sc = fpi->sc;
-	const struct xfs_inode			*dp = fpi->dp;
-
-	/* Only directories can be parents */
-	if (!S_ISDIR(VFS_IC(dp)->i_mode))
-		return false;
-
-	/*
-	 * The inode being scanned cannot be its own parent, nor can any
-	 * temporary directory we created to stage this repair.
-	 */
-	if (dp == sc->ip || dp == sc->tempip)
-		return false;
-
-	/*
-	 * Similarly, temporary files created to stage a repair cannot be the
-	 * parent of this inode.
-	 */
-	if (xrep_is_tempfile(dp))
-		return false;
-
-	return true;
-}
-
 /*
  * If this is a directory, walk the dirents looking for any that point to the
  * scrub target inode.
  */
 STATIC int
-xrep_findparent_walk_file(
+xrep_findparent_walk_directory(
 	struct xrep_findparent_info	*fpi)
 {
 	struct xfs_scrub		*sc = fpi->sc;
@@ -180,11 +152,19 @@ xrep_findparent_walk_file(
 	unsigned int			lock_mode;
 	int				error = 0;
 
-	if (!xrep_findparent_want_scan_file(fpi)) {
-		if (fpi->parent_scan)
-			xchk_iscan_mark_visited(&fpi->parent_scan->iscan, dp);
+	/*
+	 * The inode being scanned cannot be its own parent, nor can any
+	 * temporary directory we created to stage this repair.
+	 */
+	if (dp == sc->ip || dp == sc->tempip)
 		return 0;
-	}
+
+	/*
+	 * Similarly, temporary files created to stage a repair cannot be the
+	 * parent of this inode.
+	 */
+	if (xrep_is_tempfile(dp))
+		return 0;
 
 	/*
 	 * Scan the directory to see if there it contains an entry pointing to
@@ -221,8 +201,6 @@ xrep_findparent_walk_file(
 		goto out_unlock;
 
 out_unlock:
-	if (fpi->parent_scan)
-		xchk_iscan_mark_visited(&fpi->parent_scan->iscan, dp);
 	xfs_iunlock(dp, lock_mode);
 	return error;
 }
@@ -330,7 +308,11 @@ xrep_findparent_scan(
 	ASSERT(S_ISDIR(VFS_IC(sc->ip)->i_mode));
 
 	while ((ret = xchk_iscan_iter(&pscan->iscan, &fpi.dp)) == 1) {
-		ret = xrep_findparent_walk_file(&fpi);
+		if (S_ISDIR(VFS_I(fpi.dp)->i_mode))
+			ret = xrep_findparent_walk_directory(&fpi);
+		else
+			ret = 0;
+		xchk_iscan_mark_visited(&pscan->iscan, fpi.dp);
 		xchk_irele(sc, fpi.dp);
 		if (ret)
 			break;
@@ -419,7 +401,7 @@ xrep_findparent_confirm(
 		goto out_rele;
 	}
 
-	error = xrep_findparent_walk_file(&fpi);
+	error = xrep_findparent_walk_directory(&fpi);
 	if (error)
 		goto out_rele;
 

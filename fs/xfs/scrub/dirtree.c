@@ -259,7 +259,6 @@ xchk_dirtree_create_path(
 	dl->nr_paths++;
 	return 0;
 out_path:
-	xino_bitmap_destroy(&path->seen_inodes);
 	kfree(path);
 	return error;
 }
@@ -369,38 +368,12 @@ xchk_dirpath_step_up(
 	struct xfs_inode	*dp;
 	xfs_ino_t		parent_ino = be64_to_cpu(dl->pptr_rec.p_ino);
 	unsigned int		lock_mode;
-	int			error = 0;
-
-	if (xchk_should_terminate(sc, &error))
-		return error;
+	int			error;
 
 	/* Grab and lock the parent directory. */
 	error = xchk_iget(sc, parent_ino, &dp);
-	switch (error) {
-	case -EINVAL:
-	case -ENOENT:
-		mutex_lock(&dl->lock);
-
-		if (dl->stale) {
-			/* live update detected a change in this path */
-			error = -ESTALE;
-		} else {
-			/* inode doesn't exist, path invalid */
-			error = -EFSCORRUPTED;
-
-			trace_xchk_dirpath_badino(dl->sc, path->path_nr,
-					path->nr_steps, &dl->xname,
-					&dl->pptr_rec);
-		}
-
-		mutex_unlock(&dl->lock);
+	if (error)
 		return error;
-	case 0:
-		/* keep going */
-		break;
-	default:
-		return error;
-	}
 
 	lock_mode = xfs_ilock_attr_map_shared(dp);
 	mutex_lock(&dl->lock);

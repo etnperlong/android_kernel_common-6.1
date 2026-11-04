@@ -31,7 +31,8 @@ struct xfs_healthmon {
 	struct mutex			lock;
 
 	/* list of event objects */
-	struct list_head		event_list;
+	struct xfs_healthmon_event	*first_event;
+	struct xfs_healthmon_event	*last_event;
 
 	/* preallocated event for unmount */
 	struct xfs_healthmon_event	*unmount_event;
@@ -109,7 +110,7 @@ enum xfs_healthmon_domain {
 };
 
 struct xfs_healthmon_event {
-	struct list_head		entry;
+	struct xfs_healthmon_event	*next;
 
 	enum xfs_healthmon_type		type;
 	enum xfs_healthmon_domain	domain;
