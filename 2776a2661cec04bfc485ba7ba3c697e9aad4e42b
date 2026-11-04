@@ -69,6 +69,30 @@
       },
       "revId": "2776a2661cec04bfc485ba7ba3c697e9aad4e42b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "003b2983_8d276b33",
+        "filename": "include/linux/wrapfd.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-04T07:35:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5da7bb8_9fdc1e3e",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 0
+      },
+      "revId": "2776a2661cec04bfc485ba7ba3c697e9aad4e42b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
