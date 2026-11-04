@@ -824,6 +824,7 @@ void __init early_init_devtree(void *params)
 	fadump_append_bootargs();
 
 	/* Scan memory nodes and rebuild MEMBLOCKs */
+	early_init_dt_scan_root();
 	early_init_dt_scan_memory_ppc();
 
 	/*
