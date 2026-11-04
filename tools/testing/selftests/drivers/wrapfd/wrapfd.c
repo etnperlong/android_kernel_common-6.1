@@ -502,7 +502,7 @@ static void worker_join(struct __test_metadata *_metadata, struct worker *wk)
 		TH_LOG("worker %d ended with status 0x%x", wk->pid, status);
 }
 
-static void test_wrap(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, wrap)
 {
 	int wrapfd;
 	struct stat sb;
@@ -525,8 +525,7 @@ static void test_wrap(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tes
 	close(wrapfd);
 }
 
-static void test_wrap_rdonly_file(struct __test_metadata *_metadata,
-				  FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, wrap_rdonly_file)
 {
 	int wrapfd;
 	unsigned int state;
@@ -724,14 +723,13 @@ static int __test_loads(struct __test_metadata *_metadata,
 	EXPECT_EQ(ret, 0)
 		return ret;
 
-	/* Save this one for last since subsequent tests run comparisons on the entire buffer. */
 	ret = load_and_cmp(_metadata, self, wrapfd, 0, 0, self->size);
 	EXPECT_EQ(ret, 0);
 
 	return ret;
 }
 
-static void test_load_mapped(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, load_mapped)
 {
 	int wrapfd;
 	char *ptr;
@@ -752,7 +750,7 @@ static void test_load_mapped(struct __test_metadata *_metadata, FIXTURE_DATA(wra
 	close(wrapfd);
 }
 
-static void test_load_unmapped(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, load_unmapped)
 {
 	int wrapfd;
 
@@ -850,8 +848,7 @@ static int __test_not_owned_usage(int wrapfd, int fd, size_t size, bool has_othe
 	return EXIT_SUCCESS;
 }
 
-static void test_not_owned_usage(struct __test_metadata *_metadata,
-				 FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, not_owned_usage)
 {
 	int wrapfd, status;
 	pid_t pid;
@@ -892,8 +889,7 @@ static void test_not_owned_usage(struct __test_metadata *_metadata,
 	close(wrapfd);
 }
 
-static void test_load_rdonly_file(struct __test_metadata *_metadata,
-				  FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, load_rdonly_file)
 {
 	int wrapfd;
 
@@ -907,9 +903,14 @@ static void test_load_rdonly_file(struct __test_metadata *_metadata,
 	close(wrapfd);
 }
 
-static void test_wrap_rdonly(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, wrap_rdonly)
 {
 	int wrapfd;
+
+	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
+	ASSERT_TRUE(wrapfd >= 0);
+	ASSERT_EQ(wrapfd_load(wrapfd, self->fd, 0, 0, self->size), 0);
+	close(wrapfd);
 
 	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ);
 	ASSERT_TRUE(wrapfd >= 0);
@@ -925,13 +926,14 @@ static void test_wrap_rdonly(struct __test_metadata *_metadata, FIXTURE_DATA(wra
 	close(wrapfd);
 }
 
-static void test_wrap_rdwr(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, wrap_rdwr)
 {
 	int wrapfd;
 	char *ptr;
 
 	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
 	ASSERT_TRUE(wrapfd >= 0);
+	ASSERT_EQ(wrapfd_load(wrapfd, self->fd, 0, 0, self->size), 0);
 
 	/* Check content of the buffer before modification */
 	ASSERT_EQ(cmp_content(_metadata, self, wrapfd, 0, 0, self->size), 0);
@@ -967,8 +969,7 @@ static int remap_file_pages(void *addr, size_t size, int prot, size_t pgoff, int
 }
 #endif
 
-static void test_remap_file_pages(struct __test_metadata *_metadata,
-				  FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, remap_file_pages)
 {
 	int wrapfd;
 	char *ptr;
@@ -994,14 +995,14 @@ static void test_remap_file_pages(struct __test_metadata *_metadata,
 	close(wrapfd);
 }
 
-static void test_wrap_remap(struct __test_metadata *_metadata,
-			    FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, wrap_remap)
 {
 	char *ptr, *new_ptr;
 	int wrapfd;
 
 	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
 	ASSERT_TRUE(wrapfd >= 0);
+	ASSERT_EQ(wrapfd_load(wrapfd, self->fd, 0, 0, self->size), 0);
 
 	/* Check content of the buffer before modification */
 	ASSERT_EQ(cmp_content(_metadata, self, wrapfd, 0, 0, self->size), 0);
@@ -1055,7 +1056,7 @@ static int proc_find_mapping(unsigned long start, size_t size, bool *mapping_fou
 	return -1;
 }
 
-static void test_wrap_fork(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, wrap_fork)
 {
 	int wrapfd, status;
 	char *ptr;
@@ -1063,6 +1064,7 @@ static void test_wrap_fork(struct __test_metadata *_metadata, FIXTURE_DATA(wrapf
 
 	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
 	ASSERT_TRUE(wrapfd >= 0);
+	ASSERT_EQ(wrapfd_load(wrapfd, self->fd, 0, 0, self->size), 0);
 
 	/* Check content of the buffer before modification */
 	ASSERT_EQ(cmp_content(_metadata, self, wrapfd, 0, 0, self->size), 0);
@@ -1114,10 +1116,15 @@ static void test_wrap_fork(struct __test_metadata *_metadata, FIXTURE_DATA(wrapf
 	close(wrapfd);
 }
 
-static void test_dup(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, dup)
 {
 	int wrapfd, wrapfd2;
 	char *ptr;
+
+	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
+	ASSERT_TRUE(wrapfd >= 0);
+	ASSERT_EQ(wrapfd_load(wrapfd, self->fd, 0, 0, self->size), 0);
+	close(wrapfd);
 
 	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ);
 	ASSERT_TRUE(wrapfd >= 0);
@@ -1133,7 +1140,7 @@ static void test_dup(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_test
 	close(wrapfd);
 }
 
-static void test_owner(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, owner)
 {
 	struct worker wk;
 	int wrapfd;
@@ -1189,11 +1196,16 @@ static void test_owner(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_te
 	close(wrapfd);
 }
 
-static void test_rewrap(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, rewrap)
 {
 	int wrapfd, wrapfd2, wrapfd3;
 	unsigned int state;
 	char *ptr;
+
+	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
+	ASSERT_TRUE(wrapfd >= 0);
+	ASSERT_EQ(wrapfd_load(wrapfd, self->fd, 0, 0, self->size), 0);
+	close(wrapfd);
 
 	wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ);
 	ASSERT_TRUE(wrapfd >= 0);
@@ -1238,6 +1250,7 @@ static void test_rewrap(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_t
 
 	/* Take ownership of the rewrapped buffer */
 	ASSERT_EQ(wrapfd_acquire_ownership(wrapfd2), 0);
+	ASSERT_EQ(wrapfd_load(wrapfd2, self->fd, 0, 0, self->size), 0);
 
 	/* Convert back to read-only */
 	wrapfd3 = wrapfd_rewrap(wrapfd2, PROT_READ);
@@ -1273,8 +1286,7 @@ static void test_rewrap(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_t
 	close(wrapfd);
 }
 
-static void test_rewrap_rdonly_file(struct __test_metadata *_metadata,
-				    FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, rewrap_rdonly_file)
 {
 	int wrapfd;
 	unsigned int state;
@@ -1301,7 +1313,7 @@ static void test_rewrap_rdonly_file(struct __test_metadata *_metadata,
 	close(wrapfd);
 }
 
-static void test_repopulate(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, repopulate)
 {
 	size_t large_size = ALIGN(self->size, self->page_size) + self->page_size;
 	int heap_fd = self->heap_fd;
@@ -1472,7 +1484,7 @@ static void test_repopulate(struct __test_metadata *_metadata, FIXTURE_DATA(wrap
 	close(small_fd);
 }
 
-static void test_empty(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, empty)
 {
 	unsigned int state;
 	int wrapfd;
@@ -1573,7 +1585,7 @@ static void __test_close_on_exec(struct __test_metadata *_metadata,
 	close(wrapfd);
 }
 
-static void test_close_on_exec(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, close_on_exec)
 {
 	int dmabuf_fd = self->dmabuf_fd;
 	int close_on_exec;
@@ -1592,7 +1604,7 @@ static void test_close_on_exec(struct __test_metadata *_metadata, FIXTURE_DATA(w
 	set_close_on_exec(dmabuf_fd, close_on_exec);
 }
 
-static void test_guests(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, guests)
 {
 	struct worker wk;
 	int wrapfd;
@@ -1643,7 +1655,7 @@ static void test_guests(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_t
 
 #define FDINFO_BUF_SIZE	4096
 
-static void test_ioctl(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, ioctl)
 {
 	const char *buf_name = "test_dmabuf";
 	char str[FDINFO_BUF_SIZE];
@@ -1674,7 +1686,7 @@ static void test_ioctl(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_te
 	close(wrapfd);
 }
 
-static void test_lseek(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, lseek)
 {
 	int wrapfd;
 
@@ -1719,7 +1731,7 @@ static long get_map_count(int wrapfd)
 	return map_count;
 }
 
-static void test_map_count(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, map_count)
 {
 	const int nr_mappings = 4;
 	int i, status;
@@ -1781,8 +1793,7 @@ static void test_map_count(struct __test_metadata *_metadata, FIXTURE_DATA(wrapf
 	close(wrapfd);
 }
 
-static void test_prohibit_guests_on_owner_death(struct __test_metadata *_metadata,
-					       FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, prohibit_guests_on_owner_death)
 {
 	int wrapfd = wrapfd_wrap(self->dev_fd, self->dmabuf_fd, PROT_READ | PROT_WRITE);
 	int status;
@@ -1944,7 +1955,7 @@ static void verify_single_event(struct __test_metadata *_metadata,
 	ASSERT_EQ(count, 0);
 }
 
-static void test_poll_ioctls(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, poll_ioctls)
 {
 	struct wrapfd_add_monitors add_monitors = {};
 	struct wrapfd_del_monitors del_monitors = {};
@@ -2138,7 +2149,7 @@ static void test_poll_ioctls(struct __test_metadata *_metadata, FIXTURE_DATA(wra
 	close(wrapfd1);
 }
 
-static void test_poll(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
+TEST_F(wrapfd_tests, poll)
 {
 	struct poll_thread_ctl poll_ctl = {};
 	struct wrapfd_monitor monitors[2];
@@ -2290,40 +2301,6 @@ static void test_poll(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tes
 
 	close(wrapfd2);
 	close(wrapfd1);
-}
-
-static void run_tests(struct __test_metadata *_metadata, FIXTURE_DATA(wrapfd_tests) *self)
-{
-	test_wrap(_metadata, self);
-	test_wrap_rdonly_file(_metadata, self);
-	test_load_mapped(_metadata, self);
-	test_load_unmapped(_metadata, self);
-	test_load_rdonly_file(_metadata, self);
-	test_wrap_rdonly(_metadata, self);
-	test_wrap_rdwr(_metadata, self);
-	test_remap_file_pages(_metadata, self);
-	test_wrap_remap(_metadata, self);
-	test_wrap_fork(_metadata, self);
-	test_dup(_metadata, self);
-	test_owner(_metadata, self);
-	test_rewrap(_metadata, self);
-	test_rewrap_rdonly_file(_metadata, self);
-	test_empty(_metadata, self);
-	test_repopulate(_metadata, self);
-	test_close_on_exec(_metadata, self);
-	test_guests(_metadata, self);
-	test_ioctl(_metadata, self);
-	test_lseek(_metadata, self);
-	test_map_count(_metadata, self);
-	test_prohibit_guests_on_owner_death(_metadata, self);
-	test_not_owned_usage(_metadata, self);
-	test_poll_ioctls(_metadata, self);
-	test_poll(_metadata, self);
-}
-
-TEST_F(wrapfd_tests, wrapfd_functional_test)
-{
-	run_tests(_metadata, self);
 }
 
 /*
