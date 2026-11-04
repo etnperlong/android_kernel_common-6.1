@@ -212,7 +212,7 @@ static struct config_group *make_crtc_group(struct config_group *group,
 		if (dev->enabled)
 			return ERR_PTR(-EBUSY);
 
-		crtc = kzalloc_obj(*crtc);
+		crtc = kzalloc(sizeof(*crtc), GFP_KERNEL);
 		if (!crtc)
 			return ERR_PTR(-ENOMEM);
 
@@ -368,7 +368,7 @@ static struct config_group *make_plane_group(struct config_group *group,
 		if (dev->enabled)
 			return ERR_PTR(-EBUSY);
 
-		plane = kzalloc_obj(*plane);
+		plane = kzalloc(sizeof(*plane), GFP_KERNEL);
 		if (!plane)
 			return ERR_PTR(-ENOMEM);
 
@@ -484,7 +484,7 @@ static struct config_group *make_encoder_group(struct config_group *group,
 		if (dev->enabled)
 			return ERR_PTR(-EBUSY);
 
-		encoder = kzalloc_obj(*encoder);
+		encoder = kzalloc(sizeof(*encoder), GFP_KERNEL);
 		if (!encoder)
 			return ERR_PTR(-ENOMEM);
 
@@ -651,7 +651,7 @@ static struct config_group *make_connector_group(struct config_group *group,
 		if (dev->enabled)
 			return ERR_PTR(-EBUSY);
 
-		connector = kzalloc_obj(*connector);
+		connector = kzalloc(sizeof(*connector), GFP_KERNEL);
 		if (!connector)
 			return ERR_PTR(-ENOMEM);
 

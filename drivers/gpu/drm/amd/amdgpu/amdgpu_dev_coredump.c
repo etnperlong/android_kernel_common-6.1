@@ -603,8 +603,9 @@ void amdgpu_coredump(struct amdgpu_device *adev, bool skip_vram_check,
 		ring_count++;
 	}
 	if (ring_count)
-		coredump->rings = kvzalloc_objs(struct amdgpu_coredump_ring,
-						ring_count, GFP_NOWAIT);
+		coredump->rings = kvcalloc(ring_count,
+					   sizeof(struct amdgpu_coredump_ring),
+					   GFP_NOWAIT);
 	if (coredump->rings) {
 		for (i = 0, idx = 0; i < adev->num_rings && idx < ring_count; i++) {
 			struct amdgpu_coredump_ring *cdump_ring;

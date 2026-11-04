@@ -1341,14 +1341,15 @@ int nxpwifi_scan_networks(struct nxpwifi_private *priv,
 	adapter->scan_processing = true;
 	spin_unlock_bh(&adapter->nxpwifi_cmd_lock);
 
-	scan_cfg_out = kzalloc_obj(union nxpwifi_scan_cmd_config_tlv);
+	scan_cfg_out = kzalloc_obj(union nxpwifi_scan_cmd_config_tlv,
+				   GFP_KERNEL);
 	if (!scan_cfg_out) {
 		ret = -ENOMEM;
 		goto done;
 	}
 
 	scan_chan_list = kzalloc_objs(struct nxpwifi_chan_scan_param_set,
-				      NXPWIFI_USER_SCAN_CHAN_MAX);
+				      NXPWIFI_USER_SCAN_CHAN_MAX, GFP_KERNEL);
 	if (!scan_chan_list) {
 		kfree(scan_cfg_out);
 		ret = -ENOMEM;
@@ -1470,7 +1471,7 @@ static int nxpwifi_save_hidden_ssid_channels(struct nxpwifi_private *priv,
 	int chid;
 
 	/* Allocate and fill new bss descriptor */
-	bss_desc = kzalloc_obj(*bss_desc);
+	bss_desc = kzalloc_obj(*bss_desc, GFP_KERNEL);
 	if (!bss_desc)
 		return -ENOMEM;
 
@@ -1511,7 +1512,7 @@ static int nxpwifi_update_curr_bss_params(struct nxpwifi_private *priv,
 	int ret;
 
 	/* Allocate and fill new bss descriptor */
-	bss_desc = kzalloc_obj(*bss_desc);
+	bss_desc = kzalloc_obj(*bss_desc, GFP_KERNEL);
 	if (!bss_desc)
 		return -ENOMEM;
 
@@ -1750,7 +1751,7 @@ nxpwifi_active_scan_req_for_passive_chan(struct nxpwifi_private *priv)
 		nxpwifi_dbg(adapter, INFO, "No BSS with hidden SSID found on DFS channels\n");
 		return 0;
 	}
-	user_scan_cfg = kzalloc_obj(*user_scan_cfg);
+	user_scan_cfg = kzalloc_obj(*user_scan_cfg, GFP_KERNEL);
 
 	if (!user_scan_cfg)
 		return -ENOMEM;
@@ -2257,7 +2258,7 @@ int nxpwifi_stop_bg_scan(struct nxpwifi_private *priv)
 		return 0;
 	}
 
-	bgscan_cfg = kzalloc_obj(*bgscan_cfg);
+	bgscan_cfg = kzalloc_obj(*bgscan_cfg, GFP_KERNEL);
 	if (!bgscan_cfg)
 		return -ENOMEM;
 

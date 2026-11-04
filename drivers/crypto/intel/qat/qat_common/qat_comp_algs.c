@@ -59,7 +59,8 @@ static void *qat_zstd_alloc_scratch(void)
 	if (!scratch->literals)
 		goto error;
 
-	scratch->out_seqs = kvzalloc_objs(ZSTD_Sequence, QAT_MAX_SEQUENCES);
+	scratch->out_seqs = kvcalloc(QAT_MAX_SEQUENCES, sizeof(ZSTD_Sequence),
+				     GFP_KERNEL);
 	if (!scratch->out_seqs)
 		goto error;
 

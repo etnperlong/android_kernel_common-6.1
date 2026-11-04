@@ -408,7 +408,8 @@ static int tbstream_dev_alloc_rx_buffers(struct tbstream_dev *sdev)
 	size_t ring_size = tb_ring_size(sdev->rx_ring.ring);
 	int i;
 
-	sdev->rx_ring.frames = kzalloc_objs(struct tbstream_frame, ring_size);
+	sdev->rx_ring.frames = kcalloc(ring_size, sizeof(struct tbstream_frame),
+				       GFP_KERNEL);
 	if (!sdev->rx_ring.frames)
 		return -ENOMEM;
 
@@ -462,7 +463,8 @@ static int tbstream_dev_alloc_tx_buffers(struct tbstream_dev *sdev)
 	size_t ring_size = tb_ring_size(sdev->tx_ring.ring);
 	int i;
 
-	sdev->tx_ring.frames = kzalloc_objs(struct tbstream_frame, ring_size);
+	sdev->tx_ring.frames = kcalloc(ring_size, sizeof(struct tbstream_frame),
+				       GFP_KERNEL);
 	if (!sdev->tx_ring.frames)
 		return -ENOMEM;
 
@@ -1496,7 +1498,7 @@ tbstream_dev_make_group(struct config_group *group, const char *name)
 	if (strlen(name) > TB_PROPERTY_KEY_SIZE)
 		return ERR_PTR(-ENAMETOOLONG);
 
-	sdev = kzalloc_obj(*sdev);
+	sdev = kzalloc_obj(*sdev, GFP_KERNEL);
 	if (!sdev)
 		return ERR_PTR(-ENOMEM);
 
@@ -1590,7 +1592,7 @@ tbstream_make_group(struct config_group *group, const char *name)
 	if (sscanf(name, "%u-%llx.%u", &domain, &route, &index) != 3)
 		return ERR_PTR(-EINVAL);
 
-	sg = kzalloc_obj(*sg);
+	sg = kzalloc_obj(*sg, GFP_KERNEL);
 	if (!sg)
 		return ERR_PTR(-ENOMEM);
 
@@ -1696,7 +1698,7 @@ static int tbstream_probe(struct tb_service *svc)
 {
 	struct tbstream *stream;
 
-	stream = kzalloc_obj(*stream);
+	stream = kzalloc_obj(*stream, GFP_KERNEL);
 	if (!stream)
 		return -ENOMEM;
 

@@ -377,7 +377,7 @@ struct clk_mgr *dc_clk_mgr_create(struct dc_context *ctx, struct pp_smu_funcs *p
 	}
 	break;
 	case AMDGPU_FAMILY_GC_11_5_4: {
-		struct clk_mgr_dcn42 *clk_mgr = kzalloc_obj(*clk_mgr);
+		struct clk_mgr_dcn42 *clk_mgr = kzalloc(sizeof(*clk_mgr), GFP_KERNEL);
 
 		if (clk_mgr == NULL) {
 			BREAK_TO_DEBUGGER();

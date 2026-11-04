@@ -540,7 +540,7 @@ static int get_daio_rsc(struct daio_mgr *mgr,
 	err = -ENOMEM;
 	/* Allocate mem for daio resource */
 	if (desc->output) {
-		struct dao *dao = kzalloc_obj(*dao);
+		struct dao *dao = kzalloc(sizeof(*dao), GFP_KERNEL);
 		if (!dao)
 			goto error;
 
@@ -552,7 +552,7 @@ static int get_daio_rsc(struct daio_mgr *mgr,
 
 		*rdaio = &dao->daio;
 	} else {
-		struct dai *dai = kzalloc_obj(*dai);
+		struct dai *dai = kzalloc(sizeof(*dai), GFP_KERNEL);
 		if (!dai)
 			goto error;
 

@@ -111,7 +111,7 @@ struct mod_power *mod_power_create(struct dc *dc,
 	if (dc == NULL)
 		goto fail_dc_null;
 
-	core_power = kzalloc_obj(struct core_power);
+	core_power = kzalloc(sizeof(struct core_power), GFP_KERNEL);
 
 	if (core_power == NULL)
 		goto fail_alloc_context;
@@ -129,7 +129,8 @@ struct mod_power *mod_power_create(struct dc *dc,
 
 	for (i = 0; i < MOD_POWER_MAX_CONCURRENT_STREAMS; i++) {
 		core_power->map[i].psr_context =
-				kzalloc_obj(struct mod_power_psr_context);
+				kzalloc(sizeof(struct mod_power_psr_context),
+					GFP_KERNEL);
 		if (core_power->map[i].psr_context == NULL)
 			goto fail_construct;
 	}

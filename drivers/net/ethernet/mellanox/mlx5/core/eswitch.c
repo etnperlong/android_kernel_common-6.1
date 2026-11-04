@@ -2288,7 +2288,8 @@ static int mlx5_esw_spfs_init(struct mlx5_eswitch *esw)
 	if (!num_entries)
 		goto out_free;
 
-	esw_funcs->spfs = kzalloc_objs(*esw_funcs->spfs, num_entries);
+	esw_funcs->spfs = kcalloc(num_entries, sizeof(*esw_funcs->spfs),
+				  GFP_KERNEL);
 	if (!esw_funcs->spfs) {
 		err = -ENOMEM;
 		goto out_free;

@@ -406,7 +406,8 @@ static void dcn60_irq_construct(
 struct irq_service *dal_irq_service_dcn60_create(
 	struct irq_service_init_data *init_data)
 {
-	struct irq_service *irq_service = kzalloc_obj(*irq_service);
+	struct irq_service *irq_service = kzalloc(sizeof(*irq_service),
+						  GFP_KERNEL);
 
 	if (!irq_service)
 		return NULL;

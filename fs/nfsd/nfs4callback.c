@@ -1981,12 +1981,12 @@ int nfsd_net_cb_init(struct nfsd_net *nn)
 {
 	struct nfsd_net_cb *cb;
 
-	cb = kzalloc_obj(*cb);
+	cb = kzalloc(sizeof(*cb), GFP_KERNEL);
 	if (!cb)
 		return -ENOMEM;
 
 	cb->version4.counts = kzalloc_objs(unsigned int,
-			ARRAY_SIZE(nfs4_cb_procedures));
+			ARRAY_SIZE(nfs4_cb_procedures), GFP_KERNEL);
 	if (!cb->version4.counts) {
 		kfree(cb);
 		return -ENOMEM;

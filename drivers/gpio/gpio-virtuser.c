@@ -1429,7 +1429,8 @@ gpio_virtuser_make_device_swnode(struct gpio_virtuser_device *dev)
 	memset(properties, 0, sizeof(properties));
 
 	num_ids = list_count_nodes(&dev->lookup_list);
-	char **ids __free(kfree) = kzalloc_objs(*ids, num_ids + 1);
+	char **ids __free(kfree) = kcalloc(num_ids + 1, sizeof(*ids),
+					   GFP_KERNEL);
 	if (!ids)
 		return ERR_PTR(-ENOMEM);
 

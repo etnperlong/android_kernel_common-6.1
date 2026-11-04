@@ -3105,7 +3105,7 @@ static int allegro_open(struct file *file)
 	unsigned int cpb_size_max;
 	unsigned int cpb_size_def;
 
-	channel = kzalloc_obj(*channel);
+	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
 	if (!channel)
 		return -ENOMEM;
 

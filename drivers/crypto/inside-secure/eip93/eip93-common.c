@@ -533,7 +533,7 @@ int eip93_send_req(struct crypto_async_request *async,
 
 	memcpy(iv, reqiv, rctx->ivsize);
 
-	rctx->sa_state = kzalloc_obj(*rctx->sa_state);
+	rctx->sa_state = kzalloc(sizeof(*rctx->sa_state), GFP_KERNEL);
 	if (!rctx->sa_state)
 		return -ENOMEM;
 
@@ -561,7 +561,8 @@ int eip93_send_req(struct crypto_async_request *async,
 			iv[3] = 0xffffffff;
 			crypto_inc((u8 *)iv, AES_BLOCK_SIZE);
 
-			rctx->sa_state_ctr = kzalloc_obj(*rctx->sa_state_ctr);
+			rctx->sa_state_ctr = kzalloc(sizeof(*rctx->sa_state_ctr),
+						     GFP_KERNEL);
 			if (!rctx->sa_state_ctr) {
 				err = -ENOMEM;
 				goto free_sa_state;

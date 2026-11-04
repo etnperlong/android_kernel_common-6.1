@@ -474,7 +474,7 @@ static int hisi_uncore_mark_related_cpus(struct hisi_uncore_freq *uncore,
 		return -EINVAL;
 
 	len = rc;
-	u32 *num __free(kfree) = kzalloc_objs(*num, len);
+	u32 *num __free(kfree) = kcalloc(len, sizeof(*num), GFP_KERNEL);
 	if (!num)
 		return -ENOMEM;
 

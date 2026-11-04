@@ -1679,7 +1679,7 @@ coresight_allocate_device_list(const char *prefix)
 			return list;
 	}
 
-	list = kzalloc_obj(*list);
+	list = kzalloc(sizeof(*list), GFP_KERNEL);
 	if (!list)
 		return NULL;
 
