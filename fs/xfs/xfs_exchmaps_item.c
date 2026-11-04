@@ -344,17 +344,7 @@ xfs_xmi_validate(
 	if (!xfs_verify_fileext(mp, xlf->xmi_startoff1, xlf->xmi_blockcount))
 		return false;
 
-	if (!xfs_verify_fileext(mp, xlf->xmi_startoff2, xlf->xmi_blockcount))
-		return false;
-
-	if (xlf->xmi_flags & XFS_EXCHMAPS_SET_SIZES) {
-		if ((int64_t)xlf->xmi_isize1 < 0)
-			return false;
-		if ((int64_t)xlf->xmi_isize2 < 0)
-			return false;
-	}
-
-	return true;
+	return xfs_verify_fileext(mp, xlf->xmi_startoff2, xlf->xmi_blockcount);
 }
 
 /*
@@ -413,13 +403,6 @@ xfs_xmi_item_recover_intent(
 	*ipp1 = ip1;
 	*ipp2 = ip2;
 	xmi = xfs_exchmaps_init_intent(req);
-
-	/* Restore intended file sizes from recovered logged item */
-	if (req->flags & XFS_EXCHMAPS_SET_SIZES) {
-		xmi->xmi_isize1 = xlf->xmi_isize1;
-		xmi->xmi_isize2 = xlf->xmi_isize2;
-	}
-
 	xfs_defer_add_item(dfp, &xmi->xmi_list);
 	return xmi;
 
