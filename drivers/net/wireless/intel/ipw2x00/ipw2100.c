@@ -2712,9 +2712,7 @@ static void __ipw2100_rx_process(struct ipw2100_priv *priv)
 				break;
 			}
 #endif
-			if (sq->drv[i].frame_size <
-				    sizeof(struct libipw_hdr_3addr) ||
-			    sq->drv[i].frame_size > IPW_RX_NIC_BUFFER_LENGTH)
+			if (stats.len < sizeof(struct libipw_hdr_3addr))
 				break;
 			switch (WLAN_FC_GET_TYPE(le16_to_cpu(u->rx_data.header.frame_ctl))) {
 			case IEEE80211_FTYPE_MGMT:

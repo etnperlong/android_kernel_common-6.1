@@ -352,7 +352,8 @@ static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
 	    min_not_zero(dev->coherent_dma_mask, dev->bus_dma_limit))
 		dev_warn(dev, "reserved memory is beyond device's set DMA address range\n");
 
-	return dma_assign_coherent_memory(dev, mem);
+	dma_assign_coherent_memory(dev, mem);
+	return 0;
 }
 
 static void rmem_dma_device_release(struct reserved_mem *rmem,

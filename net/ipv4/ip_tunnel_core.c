@@ -680,14 +680,8 @@ static int ip_tun_get_optlen(struct nlattr *attr,
 }
 
 static int ip_tun_set_opts(struct nlattr *attr, struct ip_tunnel_info *info,
-			   int opts_len, struct netlink_ext_ack *extack)
+			   struct netlink_ext_ack *extack)
 {
-	/* `options_len` is the __counted_by() annotation of the `options`
-	 * flexible array, it must be initialized before parsing writes
-	 * into it.
-	 */
-	info->options_len = opts_len;
-
 	return ip_tun_parse_opts(attr, info, extack);
 }
 
@@ -718,8 +712,7 @@ static int ip_tun_build_state(struct net *net, struct nlattr *attr,
 
 	tun_info = lwt_tun_info(new_state);
 
-	err = ip_tun_set_opts(tb[LWTUNNEL_IP_OPTS], tun_info, opt_len,
-			      extack);
+	err = ip_tun_set_opts(tb[LWTUNNEL_IP_OPTS], tun_info, extack);
 	if (err < 0) {
 		lwtstate_free(new_state);
 		return err;
@@ -760,6 +753,7 @@ static int ip_tun_build_state(struct net *net, struct nlattr *attr,
 	}
 
 	tun_info->mode = IP_TUNNEL_INFO_TX;
+	tun_info->options_len = opt_len;
 
 	*ts = new_state;
 
@@ -1012,8 +1006,7 @@ static int ip6_tun_build_state(struct net *net, struct nlattr *attr,
 
 	tun_info = lwt_tun_info(new_state);
 
-	err = ip_tun_set_opts(tb[LWTUNNEL_IP6_OPTS], tun_info, opt_len,
-			      extack);
+	err = ip_tun_set_opts(tb[LWTUNNEL_IP6_OPTS], tun_info, extack);
 	if (err < 0) {
 		lwtstate_free(new_state);
 		return err;
@@ -1047,6 +1040,7 @@ static int ip6_tun_build_state(struct net *net, struct nlattr *attr,
 	}
 
 	tun_info->mode = IP_TUNNEL_INFO_TX | IP_TUNNEL_INFO_IPV6;
+	tun_info->options_len = opt_len;
 
 	*ts = new_state;
 
