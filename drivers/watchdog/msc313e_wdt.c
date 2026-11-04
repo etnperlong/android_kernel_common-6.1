@@ -31,36 +31,20 @@ struct msc313e_wdt_priv {
 	struct clk *clk;
 };
 
-static u32 msc313e_wdt_get_hw_timeout(struct msc313e_wdt_priv *priv)
-{
-	u16 low, high;
-
-	low = readw(priv->base + REG_WDT_MAX_PRD_L);
-	high = readw(priv->base + REG_WDT_MAX_PRD_H);
-
-	return ((u32)high << 16) | low;
-}
-
-static void msc313e_wdt_set_hw_timeout(struct msc313e_wdt_priv *priv,
-				       unsigned int timeout)
-{
-	u32 t = timeout * clk_get_rate(priv->clk);
-
-	writew(t & 0xffff, priv->base + REG_WDT_MAX_PRD_L);
-	writew((t >> 16) & 0xffff, priv->base + REG_WDT_MAX_PRD_H);
-	writew(1, priv->base + REG_WDT_CLR);
-}
-
 static int msc313e_wdt_start(struct watchdog_device *wdev)
 {
 	struct msc313e_wdt_priv *priv = watchdog_get_drvdata(wdev);
+	u32 timeout;
 	int err;
 
 	err = clk_prepare_enable(priv->clk);
 	if (err)
 		return err;
 
-	msc313e_wdt_set_hw_timeout(priv, wdev->timeout);
+	timeout = wdev->timeout * clk_get_rate(priv->clk);
+	writew(timeout & 0xffff, priv->base + REG_WDT_MAX_PRD_L);
+	writew((timeout >> 16) & 0xffff, priv->base + REG_WDT_MAX_PRD_H);
+	writew(1, priv->base + REG_WDT_CLR);
 	return 0;
 }
 
@@ -85,13 +69,9 @@ static int msc313e_wdt_stop(struct watchdog_device *wdev)
 
 static int msc313e_wdt_settimeout(struct watchdog_device *wdev, unsigned int new_time)
 {
-	struct msc313e_wdt_priv *priv = watchdog_get_drvdata(wdev);
-
 	wdev->timeout = new_time;
 
-	if (watchdog_hw_running(wdev) || watchdog_active(wdev))
-		msc313e_wdt_set_hw_timeout(priv, wdev->timeout);
-	return 0;
+	return msc313e_wdt_start(wdev);
 }
 
 static const struct watchdog_info msc313e_wdt_ident = {
@@ -117,8 +97,6 @@ static int msc313e_wdt_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
 	struct msc313e_wdt_priv *priv;
-	unsigned long rate;
-	int ret;
 
 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
 	if (!priv)
@@ -138,51 +116,27 @@ static int msc313e_wdt_probe(struct platform_device *pdev)
 	priv->wdev.ops = &msc313e_wdt_ops,
 	priv->wdev.parent = dev;
 	priv->wdev.min_timeout = MSC313E_WDT_MIN_TIMEOUT;
-	rate = clk_get_rate(priv->clk);
-	if (!rate)
-		return -EINVAL;
-	priv->wdev.max_timeout = U32_MAX / rate;
+	priv->wdev.max_timeout = U32_MAX / clk_get_rate(priv->clk);
 	priv->wdev.timeout = MSC313E_WDT_DEFAULT_TIMEOUT;
 
+	/* If the period is non-zero the WDT is running */
+	if (readw(priv->base + REG_WDT_MAX_PRD_L) | (readw(priv->base + REG_WDT_MAX_PRD_H) << 16))
+		set_bit(WDOG_HW_RUNNING, &priv->wdev.status);
+
 	watchdog_set_drvdata(&priv->wdev, priv);
-	platform_set_drvdata(pdev, priv);
 
 	watchdog_init_timeout(&priv->wdev, timeout, dev);
 	watchdog_stop_on_reboot(&priv->wdev);
 	watchdog_stop_on_unregister(&priv->wdev);
-	watchdog_stop_ping_on_suspend(&priv->wdev);
 
-	ret = clk_prepare_enable(priv->clk);
-	if (ret)
-		return ret;
-
-	/* If the period is non-zero the WDT is running */
-	if (msc313e_wdt_get_hw_timeout(priv)) {
-		msc313e_wdt_set_hw_timeout(priv, priv->wdev.timeout);
-		set_bit(WDOG_HW_RUNNING, &priv->wdev.status);
-		/*
-		 * Keep the clock enabled. The watchdog core will skip the next
-		 * start() and a future stop() will balance the CCF reference
-		 * count.
-		 */
-	} else {
-		clk_disable_unprepare(priv->clk);
-	}
-
-	ret = devm_watchdog_register_device(dev, &priv->wdev);
-
-	/* If the WDT is running and anything goes wrong, disable the clock. */
-	if (ret && test_bit(WDOG_HW_RUNNING, &priv->wdev.status))
-		clk_disable_unprepare(priv->clk);
-
-	return ret;
+	return devm_watchdog_register_device(dev, &priv->wdev);
 }
 
 static int __maybe_unused msc313e_wdt_suspend(struct device *dev)
 {
 	struct msc313e_wdt_priv *priv = dev_get_drvdata(dev);
 
-	if (watchdog_active(&priv->wdev) || watchdog_hw_running(&priv->wdev))
+	if (watchdog_active(&priv->wdev))
 		msc313e_wdt_stop(&priv->wdev);
 
 	return 0;
@@ -192,7 +146,7 @@ static int __maybe_unused msc313e_wdt_resume(struct device *dev)
 {
 	struct msc313e_wdt_priv *priv = dev_get_drvdata(dev);
 
-	if (watchdog_active(&priv->wdev) || watchdog_hw_running(&priv->wdev))
+	if (watchdog_active(&priv->wdev))
 		msc313e_wdt_start(&priv->wdev);
 
 	return 0;

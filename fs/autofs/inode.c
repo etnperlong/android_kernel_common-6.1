@@ -323,10 +323,8 @@ static int autofs_fill_super(struct super_block *s, struct fs_context *fc)
 		return -ENOMEM;
 
 	root_inode = autofs_get_inode(s, S_IFDIR | 0755);
-	if (!root_inode) {
-		autofs_free_ino(ino);
+	if (!root_inode)
 		return -ENOMEM;
-	}
 
 	root_inode->i_uid = ctx->uid;
 	root_inode->i_gid = ctx->gid;

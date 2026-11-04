@@ -6456,10 +6456,9 @@ int ext4_chunk_trans_blocks(struct inode *inode, int nrblocks)
 int ext4_mark_iloc_dirty(handle_t *handle,
 			 struct inode *inode, struct ext4_iloc *iloc)
 {
-	struct super_block *sb = inode->i_sb;
 	int err = 0;
 
-	err = ext4_emergency_state(sb);
+	err = ext4_emergency_state(inode->i_sb);
 	if (unlikely(err)) {
 		put_bh(iloc->bh);
 		return err;
@@ -6474,13 +6473,9 @@ int ext4_mark_iloc_dirty(handle_t *handle,
 	put_bh(iloc->bh);
 	/*
 	 * Mark that there's metadata writeout pending for the inode so that it
-	 * gets properly flushed on fsync(2) and similar. We don't bother for
-	 * fastcommit replay as that flushes the whole bdev afterwards anyway.
-	 * It is faster this way and we avoid entering fs writeback paths which
-	 * aren't fully initialized yet.
+	 * gets properly flushed on fsync(2) and similar.
 	 */
-	if (!ext4_handle_valid(handle) &&
-	    !(EXT4_SB(sb)->s_mount_state & EXT4_FC_REPLAY)) {
+	if (!EXT4_SB(inode->i_sb)->s_journal) {
 		/*
 		 * Inode didn't need to go through dirtying, make sure it is
 		 * attached to wb so that writeback can handle it.

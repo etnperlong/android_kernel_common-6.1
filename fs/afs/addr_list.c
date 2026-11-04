@@ -394,11 +394,8 @@ void afs_set_peer_appdata(struct afs_server *server,
 		struct rxrpc_peer *pn = new_alist->addrs[n].peer;
 		struct rxrpc_peer *po = old_alist->addrs[o].peer;
 
-		if (pn == po) {
-			n++;
-			o++;
+		if (pn == po)
 			continue;
-		}
 		if (pn < po) {
 			rxrpc_kernel_set_peer_data(pn, data);
 			n++;

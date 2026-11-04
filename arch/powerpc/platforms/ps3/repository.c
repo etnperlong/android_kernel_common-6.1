@@ -6,8 +6,6 @@
  *  Copyright 2006 Sony Corp.
  */
 
-#include <linux/minmax.h>
-
 #include <asm/lv1call.h>
 
 #include "platform.h"
@@ -76,9 +74,8 @@ static void _dump_node(unsigned int lpar_id, u64 n1, u64 n2, u64 n3, u64 n4,
 static u64 make_first_field(const char *text, u64 index)
 {
 	u64 n = 0;
-	size_t len = min(strlen(text), sizeof(n));
 
-	memcpy(&n, text, len);
+	memcpy((char *)&n, text, strnlen(text, sizeof(n)));
 	return PS3_VENDOR_ID_NONE + (n >> 32) + index;
 }
 

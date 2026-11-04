@@ -115,65 +115,42 @@ int rolling_buffer_make_space(struct rolling_buffer *roll, gfp_t gfp)
 }
 
 /*
- * Decant the entire list of folios to read into a rolling buffer.
+ * Decant the list of folios to read into a rolling buffer.
  */
-ssize_t rolling_buffer_bulk_load_from_ra(struct rolling_buffer *roll,
-					 struct readahead_control *ractl,
-					 unsigned int rreq_id, gfp_t gfp)
+ssize_t rolling_buffer_load_from_ra(struct rolling_buffer *roll,
+				    struct readahead_control *ractl,
+				    struct folio_batch *put_batch)
 {
 	struct folio_queue *fq;
-	ssize_t loaded = 0;
+	struct page **vec;
+	int nr, ix, to;
+	ssize_t size = 0;
 
-	while (ractl->_nr_pages - ractl->_batch_count > 0) {
-		unsigned int nr;
+	if (rolling_buffer_make_space(roll, GFP_KERNEL) < 0)
+		return -ENOMEM;
 
-		/* Allocate a folioq to put some folios into and attach it to
-		 * the rolling buffer.
-		 */
-		fq = netfs_folioq_alloc(rreq_id, gfp,
-					netfs_trace_folioq_make_space);
-		if (!fq)
-			goto nomem_unlock;
-		fq->prev = roll->head;
-		if (!roll->tail)
-			roll->tail = fq;
-		else
-			roll->head->next = fq;
-		roll->head = fq;
+	fq = roll->head;
+	vec = (struct page **)fq->vec.folios;
+	nr = __readahead_batch(ractl, vec + folio_batch_count(&fq->vec),
+			       folio_batch_space(&fq->vec));
+	ix = fq->vec.nr;
+	to = ix + nr;
+	fq->vec.nr = to;
+	for (; ix < to; ix++) {
+		struct folio *folio = folioq_folio(fq, ix);
+		unsigned int order = folio_order(folio);
 
-		/* Get a batch of folios and note their orders. */
-		nr = __readahead_batch(ractl, (struct page **)fq->vec.folios,
-				       folioq_nr_slots(fq));
-		if (WARN_ON_ONCE(!nr))
-			break;
-		fq->vec.nr = nr;
-
-		for (int slot = 0; slot < nr; slot++) {
-			struct folio *folio = folioq_folio(fq, slot);
-			unsigned int order;
-
-			order = folio_order(folio);
-			fq->orders[slot] = order;
-			loaded += PAGE_SIZE << order;
-			trace_netfs_folio(folio, netfs_folio_trace_read);
-		}
+		fq->orders[ix] = order;
+		size += PAGE_SIZE << order;
+		trace_netfs_folio(folio, netfs_folio_trace_read);
+		if (!folio_batch_add(put_batch, folio))
+			folio_batch_release(put_batch);
 	}
+	WRITE_ONCE(roll->iter.count, roll->iter.count + size);
 
-	WRITE_ONCE(roll->iter.count, loaded);
-	iov_iter_folio_queue(&roll->iter, ITER_DEST, roll->tail, 0, 0, loaded);
-	return loaded;
-
-nomem_unlock:
-	for (fq = roll->tail; fq; fq = fq->next) {
-		for (int slot = 0; slot < folioq_count(fq); slot++) {
-			folio_unlock(fq->vec.folios[slot]);
-			folioq_mark(fq, slot);
-		}
-	}
-	rolling_buffer_clear(roll);
-	roll->head = NULL;
-	roll->tail = NULL;
-	return -ENOMEM;
+	/* Store the counter after setting the slot. */
+	smp_store_release(&roll->next_head_slot, to);
+	return size;
 }
 
 /*

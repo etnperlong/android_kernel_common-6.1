@@ -116,8 +116,10 @@ struct ns_common {
 	struct dentry *stashed;
 	const struct proc_ns_operations *ops;
 	unsigned int inum;
-	struct ns_tree;
-	struct rcu_head ns_rcu;
+	union {
+		struct ns_tree;
+		struct rcu_head ns_rcu;
+	};
 };
 
 #define to_ns_common(__ns)                                    \
