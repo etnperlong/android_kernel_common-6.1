@@ -2369,14 +2369,11 @@ static int thaw_super_locked(struct super_block *sb, enum freeze_holder who,
 		goto out_unlock;
 
 	/*
-	 * All freezers share a single active reference. If other freezers
-	 * remain, drop our hold and report success; the superblock stays
-	 * frozen until the last holder thaws it.
+	 * All freezers share a single active reference.
+	 * So just unlock in case there are any left.
 	 */
-	if (freeze_dec(sb, who)) {
-		error = 0;
+	if (freeze_dec(sb, who))
 		goto out_unlock;
-	}
 
 	if (sb_rdonly(sb)) {
 		sb->s_writers.frozen = SB_UNFROZEN;
