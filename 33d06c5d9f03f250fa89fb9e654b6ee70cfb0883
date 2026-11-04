@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8800efe_ba2d2475",
+        "filename": "drivers/media/v4l2-core/v4l2-compat-ioctl32.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:04:53Z",
+      "side": 1,
+      "message": "Prefer a stub for the ! case:\n\n```\n#else /* !CONFIG_COMPAT */\nlong v4l2_compat_ioctl32(struct file *file, unsigned int cmd, unsigned long arg)\n{\n\treturn -ENOIOCTLCMD;\n}\n#endif /* !CONFIG_COMPAT */\n```",
+      "range": {
+        "startLine": 1209,
+        "startChar": 0,
+        "endLine": 1211,
+        "endChar": 6
+      },
+      "revId": "33d06c5d9f03f250fa89fb9e654b6ee70cfb0883",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
