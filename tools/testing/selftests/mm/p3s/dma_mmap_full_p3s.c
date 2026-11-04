@@ -3,9 +3,9 @@
  * A 4K compat process must be able to mmap() a whole buffer exported with
  * dma_mmap_attrs() / dma_mmap_pages(), not only a quarter of it: the fixture
  * buffer is one native 16K page whose 4K slices hold marker, marker + 1, ...
- * Mapping all four slices, mapping the upper half at offset 8K and the
- * native control mapping must all succeed and show those markers; a mapping
- * longer than the buffer must fail without populating anything.
+ * Mapping all four slices and the native control must succeed and show their
+ * markers.  A 4K process must reject an upper-half VMA at offset 8K, and a
+ * mapping longer than the buffer must fail without populating anything.
  *
  * The fixture is selected on the command line: "attrs" or "pages".
  */
@@ -90,6 +90,19 @@ static bool map_and_check(int fd, size_t len, off_t offset,
 	return ok;
 }
 
+static bool offset_rejected(int fd, size_t len, off_t offset)
+{
+	void *map;
+	int error;
+
+	errno = 0;
+	map = mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
+	error = errno;
+	if (map != MAP_FAILED)
+		munmap(map, len);
+	return map == MAP_FAILED && error == EINVAL;
+}
+
 /* A mapping past the end of the buffer fails and leaves no PTEs behind. */
 static bool oversized_rejected(int fd, const char *what)
 {
@@ -136,8 +149,8 @@ static int run_case(const struct fixture *fixture)
 	}
 	if (!map_and_check(fd, BUFFER_SIZE, 0, fixture->marker, "whole buffer"))
 		ret = KSFT_FAIL;
-	if (compat && !map_and_check(fd, BUFFER_SIZE / 2, BUFFER_SIZE / 2,
-				     fixture->marker, "upper half"))
+	if (compat && !offset_rejected(fd, BUFFER_SIZE / 2,
+					   BUFFER_SIZE / 2))
 		ret = KSFT_FAIL;
 	if (!oversized_rejected(fd, "oversized"))
 		ret = KSFT_FAIL;
@@ -204,7 +217,7 @@ int main(int argc, char **argv)
 	report(run_child(false, fixture->name),
 	       "native process maps the whole DMA buffer", fixture->name);
 	report(run_child(true, fixture->name),
-	       "4K compat process maps the whole DMA buffer and its upper half",
+	       "4K compat process maps the whole buffer and rejects an 8K offset",
 	       fixture->name);
 	ksft_finished();
 }

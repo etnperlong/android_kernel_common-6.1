@@ -39,6 +39,7 @@ static int run_test(void)
 		size_t length;
 	} ranges[] = {
 		{ 0, page_size },
+		{ NATIVE_PAGE_SIZE, page_size },
 		{ page_size, page_size },
 		{ 2 * page_size, page_size },
 		{ 3 * page_size, page_size },
@@ -52,7 +53,7 @@ static int run_test(void)
 	int heap_fd, error;
 
 	ksft_print_header();
-	ksft_set_plan(13);
+	ksft_set_plan(14);
 	heap_fd = p3s_open_fixture_or_skip("/dev/dma_heap/system", O_RDWR);
 	ksft_test_result(heap_fd >= 0, "open the system DMA heap\n");
 	if (ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &allocation))
@@ -69,15 +70,21 @@ static int run_test(void)
 			 "distinct slice patterns survive the full-buffer control\n");
 
 	for (i = 0; i < ARRAY_SIZE(ranges); i++) {
+		bool reject_offset = p3s_is_compat_process() &&
+				     ranges[i].offset % NATIVE_PAGE_SIZE;
 		bool matches = false;
 
+		errno = 0;
 		mapping = mmap(NULL, ranges[i].length, PROT_READ, MAP_SHARED,
 			       allocation.fd, ranges[i].offset);
-		if (mapping != MAP_FAILED) {
+		if (reject_offset)
+			matches = mapping == MAP_FAILED && errno == EINVAL;
+		else if (mapping != MAP_FAILED)
 			matches = check_mapping(mapping, ranges[i].offset, ranges[i].length);
+		if (mapping != MAP_FAILED)
 			munmap(mapping, ranges[i].length);
-		}
-		ksft_test_result(matches, "read offset=%zu length=%zu exactly\n",
+		ksft_test_result(matches, "%s offset=%zu length=%zu\n",
+			 reject_offset ? "reject" : "read",
 				 ranges[i].offset, ranges[i].length);
 	}
 	errno = 0;

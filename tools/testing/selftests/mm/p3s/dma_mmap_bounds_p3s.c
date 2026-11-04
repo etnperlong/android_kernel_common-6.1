@@ -29,7 +29,8 @@ static bool read_byte(const volatile unsigned char *address, unsigned char *valu
 	return true;
 }
 
-static bool check_mapping(int fd, size_t length, off_t offset, bool allowed)
+static bool check_mapping(int fd, size_t length, off_t offset,
+			  int expected_error)
 {
 	size_t reserve_size = length + 2 * NATIVE_PAGE_SIZE, i;
 	unsigned char *reservation, *target, *mapping, value;
@@ -48,7 +49,7 @@ static bool check_mapping(int fd, size_t length, off_t offset, bool allowed)
 	errno = 0;
 	mapping = mmap(target, length, PROT_READ, MAP_SHARED | MAP_FIXED, fd, offset);
 	error = errno;
-	if (allowed) {
+	if (!expected_error) {
 		ok = mapping == target;
 		if (ok) {
 			for (i = 0; i < length; i += PROCESS_PAGE_SIZE) {
@@ -61,15 +62,16 @@ static bool check_mapping(int fd, size_t length, off_t offset, bool allowed)
 			}
 		}
 	} else {
-		ok = mapping == MAP_FAILED && error == ENXIO;
+		ok = mapping == MAP_FAILED && error == expected_error;
 		/* No readable slice may survive a rejected fixed mapping. */
 		for (i = 0; i < length; i += PROCESS_PAGE_SIZE)
 			if (read_byte(target + i, &value))
 				ok = false;
 	}
 	if (!ok)
-		ksft_print_msg("offset=%lld length=%zu allowed=%d map=%p errno=%d\n",
-			       (long long)offset, length, allowed, mapping, error);
+		ksft_print_msg("offset=%lld length=%zu expected_errno=%d map=%p errno=%d\n",
+			       (long long)offset, length, expected_error,
+			       mapping, error);
 	munmap(reservation, reserve_size);
 	return ok;
 }
@@ -96,13 +98,19 @@ static int run_test(void)
 			int error = ioctl(fd, DMA_BOUNDS_SETUP, &request) ? errno : 0;
 
 			for (test = 0; test < ARRAY_SIZE(lengths); test++) {
+				int expected_error = !end || test >= 2 ? ENXIO : 0;
+
+				if (!expected_error && p3s_is_compat_process() &&
+				    (api == DMA_BOUNDS_ATTRS || api == DMA_BOUNDS_PAGES) &&
+				    offsets[test] % NATIVE_PAGE_SIZE)
+					expected_error = EINVAL;
 				if (error == EOPNOTSUPP) {
 					ksft_test_result_skip("%s size=%u case=%u: required DMA exports unavailable\n",
 							      apis[api], request.size, test);
 					continue;
 				}
 				ksft_test_result(!error && check_mapping(fd, lengths[test],
-						 offsets[test], end && test < 2),
+						 offsets[test], expected_error),
 						 "%s page=%zu size=%u offset=%lld length=%zu\n",
 						 apis[api], step, request.size,
 						 (long long)offsets[test], lengths[test]);

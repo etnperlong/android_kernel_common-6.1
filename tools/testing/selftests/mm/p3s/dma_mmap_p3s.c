@@ -2,9 +2,9 @@
 /*
  * dma_mmap_attrs() / dma_mmap_pages() map exactly the 4K slices a compat
  * process asks for: a one-slice mapping of the fixture's DMA buffer must not
- * populate the other three slices of the native page, and a mapping at DMA
- * offset 4K must start at the second slice.  The fixture is selected on the
- * command line: "attrs" or "pages".
+ * populate the other three slices of the native page.  A mapping at DMA
+ * offset 4K must be rejected by remap_pfn_range().  The fixture is selected
+ * on the command line: "attrs" or "pages".
  */
 #define _GNU_SOURCE
 
@@ -60,7 +60,7 @@ static int run_test(const struct dma_mmap_case *test)
 	int fd;
 
 	ksft_print_header();
-	ksft_set_plan(7);
+	ksft_set_plan(6);
 
 	fd = p3s_open_fixture_or_skip(test->device, O_RDWR);
 	ksft_test_result(fd >= 0, "open the dma_mmap_%s test device\n",
@@ -111,14 +111,10 @@ static int run_test(const struct dma_mmap_case *test)
 				   strerror(errno));
 	mapping = mmap(reservation, PROCESS_PAGE_SIZE, PROT_READ,
 		       MAP_SHARED | MAP_FIXED, fd, PROCESS_PAGE_SIZE);
-	ksft_test_result(mapping == reservation,
-			 "map one 4K slice at DMA buffer offset 4K\n");
-	if (mapping == MAP_FAILED)
-		ksft_exit_fail_msg("offset mmap failed: %s\n", strerror(errno));
-	value = 0;
-	ksft_test_result(read_byte(mapping, &value) &&
-			 value == test->first_marker + 1,
-			 "the offset mapping starts at the second 4K slice\n");
+	ksft_test_result(mapping == MAP_FAILED && errno == EINVAL,
+			 "reject a non-native-aligned DMA buffer offset\n");
+	if (mapping != MAP_FAILED)
+		munmap(mapping, PROCESS_PAGE_SIZE);
 
 	munmap(reservation, NATIVE_PAGE_SIZE);
 	close(fd);

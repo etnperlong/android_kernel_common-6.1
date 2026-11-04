@@ -2,8 +2,9 @@
 /*
  * vm_iomap_memory() through the vm_iomap_memory_p3s fixture maps single 4K
  * slices for a 4K compat process: adjacent guard slices stay unmapped, a
- * private PFN mapping COWs a complete 4K page, a 4K file offset selects the
- * matching slice, and a mapping starting at the buffer end is rejected.
+ * private PFN mapping COWs a complete 4K page, an unaligned file offset is
+ * rejected by remap_pfn_range(), and a mapping starting at the buffer end is
+ * rejected.
  */
 #define _GNU_SOURCE
 
@@ -99,7 +100,7 @@ static int run_test(void)
 		return run_native();
 
 	ksft_print_header();
-	ksft_set_plan(14);
+	ksft_set_plan(13);
 
 	fd = p3s_open_fixture_or_skip("/dev/vm_iomap_memory_p3s", O_RDWR);
 	ksft_test_result(fd >= 0, "open the vm_iomap_memory test device\n");
@@ -169,13 +170,10 @@ static int run_test(void)
 				   strerror(errno));
 	mapping = mmap(reservation, PROCESS_PAGE_SIZE, PROT_READ,
 		       MAP_SHARED | MAP_FIXED, fd, PROCESS_PAGE_SIZE);
-	ksft_test_result(mapping == reservation,
-			 "map one 4K slice at physical buffer offset 4K\n");
-	if (mapping == MAP_FAILED)
-		ksft_exit_fail_msg("offset mmap failed: %s\n", strerror(errno));
-	value = 0;
-	ksft_test_result(read_byte(mapping, &value) && value == FIRST_MARKER + 1,
-			 "the offset mapping starts at the second 4K slice\n");
+	ksft_test_result(mapping == MAP_FAILED && errno == EINVAL,
+			 "reject a non-native-aligned VMA offset\n");
+	if (mapping != MAP_FAILED)
+		munmap(mapping, PROCESS_PAGE_SIZE);
 
 	munmap(reservation, NATIVE_PAGE_SIZE);
 	past_end = mmap(NULL, PROCESS_PAGE_SIZE, PROT_READ, MAP_SHARED, fd,

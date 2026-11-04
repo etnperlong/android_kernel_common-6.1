@@ -19,7 +19,14 @@ remap_pfn_cow_p3s_mmap(struct file *file, struct vm_area_struct *vma)
 	unsigned long size = vma->vm_end - vma->vm_start;
 	u64 offset = vma_file_offset(vma);
 
-	if (offset >= PAGE_SIZE || size > PAGE_SIZE - offset)
+	if (offset > 2 * PAGE_SIZE)
+		return -EINVAL;
+	/* The two aligned offsets select bounded-tail and overrun probes. */
+	if (offset == PAGE_SIZE)
+		size = PAGE_SIZE;
+	else if (offset == 2 * PAGE_SIZE)
+		size = 2 * PAGE_SIZE;
+	else if (size > PAGE_SIZE - offset)
 		return -EINVAL;
 	return remap_pfn_range(vma, vma->vm_start,
 			       page_to_pfn(virt_to_page(test_buffer)), size,
@@ -44,9 +51,7 @@ static long remap_pfn_cow_p3s_ioctl(struct file *file, unsigned int cmd,
 		mmap_read_unlock(current->mm);
 		return -ENOENT;
 	}
-	expected = virt_to_phys(test_buffer) +
-		((phys_addr_t)(mm_is_p3s_4k(current->mm) ? TEST_SLICE : 0) <<
-		 PAGE_SHIFT_4KB);
+	expected = virt_to_phys(test_buffer);
 	probe.slice = vma_slice_off(vma);
 	probe.offset_matches = vma_file_offset(vma) == expected;
 	mmap_read_unlock(current->mm);
@@ -67,18 +72,19 @@ static int remap_pfn_cow_p3s_setup(void)
 {
 	unsigned int slice;
 
-	test_buffer = alloc_pages_exact(PAGE_SIZE, GFP_KERNEL | __GFP_ZERO);
+	test_buffer = alloc_pages_exact(2 * PAGE_SIZE, GFP_KERNEL | __GFP_ZERO);
 	if (!test_buffer)
 		return -ENOMEM;
-	for (slice = 0; slice < PAGE_SIZE / PROCESS_PAGE_SIZE; slice++)
+	for (slice = 0; slice < 2 * PAGE_SIZE / PROCESS_PAGE_SIZE; slice++)
 		memset(test_buffer + slice * PROCESS_PAGE_SIZE,
-		       TEST_MARKER - TEST_SLICE + slice, PROCESS_PAGE_SIZE);
+		       TEST_MARKER - TEST_SLICE + slice %
+		       (PAGE_SIZE / PROCESS_PAGE_SIZE), PROCESS_PAGE_SIZE);
 	return 0;
 }
 
 static void remap_pfn_cow_p3s_teardown(void)
 {
-	free_pages_exact(test_buffer, PAGE_SIZE);
+	free_pages_exact(test_buffer, 2 * PAGE_SIZE);
 }
 
 P3S_MISC_MODULE("remap_pfn_cow_p3s", &remap_pfn_cow_p3s_fops, 0,
