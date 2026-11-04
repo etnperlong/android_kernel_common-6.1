@@ -445,19 +445,22 @@ static void __clean_func_state(struct bpf_verifier_env *env,
 				struct bpf_reg_state *spill = &st->stack[i].spilled_ptr;
 
 				if (lo_live && stype == STACK_SPILL) {
+					u8 val = STACK_MISC;
+
 					if (spill->type != SCALAR_VALUE)
 						continue;
+
 					/*
-					 * Can't replace with STACK_ZERO, because
-					 * that requires bpf_mark_chain_precision().
+					 * 8 byte spill of scalar 0 where half slot is dead
+					 * should become STACK_ZERO in lo 4 bytes.
 					 */
 					if (bpf_register_is_null(spill))
-						continue;
+						val = STACK_ZERO;
 					for (j = 0; j < 4; j++) {
 						u8 *t = &st->stack[i].slot_type[j];
 
 						if (*t == STACK_SPILL)
-							*t = STACK_MISC;
+							*t = val;
 					}
 				}
 				bpf_mark_reg_not_init(env, spill);
