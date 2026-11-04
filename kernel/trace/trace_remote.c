@@ -251,8 +251,8 @@ static int trace_remote_get(struct trace_remote *remote, int cpu)
 	if (cpu != RING_BUFFER_ALL_CPUS && !remote->pcpu_reader_locks) {
 		int lock_cpu;
 
-		remote->pcpu_reader_locks = kzalloc_objs(*remote->pcpu_reader_locks,
-							 nr_cpu_ids);
+		remote->pcpu_reader_locks = kcalloc(nr_cpu_ids, sizeof(*remote->pcpu_reader_locks),
+						    GFP_KERNEL);
 		if (!remote->pcpu_reader_locks) {
 			trace_remote_try_unload(remote);
 			return -ENOMEM;
@@ -324,7 +324,7 @@ static int __alloc_ring_buffer_iter(struct trace_remote_iterator *iter, int cpu)
 		return iter->rb_iter ? 0 : -ENOMEM;
 	}
 
-	iter->rb_iters = kzalloc_objs(*iter->rb_iters, nr_cpu_ids);
+	iter->rb_iters = kcalloc(nr_cpu_ids, sizeof(*iter->rb_iters), GFP_KERNEL);
 	if (!iter->rb_iters)
 		return -ENOMEM;
 
@@ -1204,7 +1204,7 @@ remote_events_dir_header_page_read(struct file *filp, char __user *ubuf, size_t 
 	struct trace_seq *s;
 	int ret;
 
-	s = kmalloc_obj(*s);
+	s = kmalloc(sizeof(*s), GFP_KERNEL);
 	if (!s)
 		return -ENOMEM;
 
@@ -1227,7 +1227,7 @@ remote_events_dir_header_event_read(struct file *filp, char __user *ubuf, size_t
 	struct trace_seq *s;
 	int ret;
 
-	s = kmalloc_obj(*s);
+	s = kmalloc(sizeof(*s), GFP_KERNEL);
 	if (!s)
 		return -ENOMEM;
 

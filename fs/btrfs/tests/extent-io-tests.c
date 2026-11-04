@@ -133,14 +133,14 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
 	if (IS_ERR(root)) {
 		test_std_err(TEST_ALLOC_ROOT);
 		ret = PTR_ERR(root);
-		goto out_root_info;
+		goto out;
 	}
 
 	inode = btrfs_new_test_inode();
 	if (!inode) {
 		test_std_err(TEST_ALLOC_INODE);
 		ret = -ENOMEM;
-		goto out_root_info;
+		goto out;
 	}
 	tmp = &BTRFS_I(inode)->io_tree;
 	BTRFS_I(inode)->root = root;
@@ -333,7 +333,6 @@ out:
 	process_page_range(inode, 0, total_dirty - 1,
 			   PROCESS_UNLOCK | PROCESS_RELEASE);
 	iput(inode);
-out_root_info:
 	btrfs_free_dummy_root(root);
 	btrfs_free_dummy_fs_info(fs_info);
 	return ret;

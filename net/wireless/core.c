@@ -311,8 +311,9 @@ int cfg80211_nan_set_local_schedule(struct cfg80211_registered_device *rdev,
 	if (!sched->n_channels)
 		return 0;
 
-	wdev->u.nan.chandefs = kzalloc_objs(*wdev->u.nan.chandefs,
-					    sched->n_channels);
+	wdev->u.nan.chandefs = kcalloc(sched->n_channels,
+				       sizeof(*wdev->u.nan.chandefs),
+				       GFP_KERNEL);
 	if (!wdev->u.nan.chandefs)
 		return -ENOMEM;
 

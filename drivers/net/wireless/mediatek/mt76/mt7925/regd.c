@@ -336,7 +336,7 @@ int mt7925_regd_update(struct mt792x_phy *phy, char *alpha2)
 		goto err;
 	}
 
-	regd = kzalloc_flex(*regd, reg_rules, num_of_rules);
+	regd = kzalloc(struct_size(regd, reg_rules, num_of_rules), GFP_KERNEL);
 	if (!regd) {
 		ret = -ENOMEM;
 		goto err;

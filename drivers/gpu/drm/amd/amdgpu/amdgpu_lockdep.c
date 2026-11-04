@@ -98,7 +98,7 @@ int amdgpu_lockdep_init(void)
 	struct amdgpu_lockdep_dummy_locks *locks;
 	unsigned long flags;
 
-	locks = kzalloc_obj(*locks);
+	locks = kzalloc(sizeof(*locks), GFP_KERNEL);
 	if (!locks)
 		return -ENOMEM;
 

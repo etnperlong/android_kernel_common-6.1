@@ -359,7 +359,7 @@ static long udmabuf_create(struct miscdevice *device,
 	long ret = -EINVAL;
 	u32 i, flags;
 
-	ubuf = kzalloc_obj(*ubuf);
+	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
 	if (!ubuf)
 		return -ENOMEM;
 
@@ -387,7 +387,7 @@ static long udmabuf_create(struct miscdevice *device,
 	if (ret)
 		goto err;
 
-	folios = kvmalloc_objs(*folios, max_nr_folios);
+	folios = kvmalloc_array(max_nr_folios, sizeof(*folios), GFP_KERNEL);
 	if (!folios) {
 		ret = -ENOMEM;
 		goto err;

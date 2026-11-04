@@ -267,7 +267,8 @@ static int hns_roce_alloc_scc_param(struct hns_roce_dev *hr_dev)
 	struct hns_roce_scc_param *scc_param;
 	int i;
 
-	scc_param = kvzalloc_objs(*scc_param, HNS_ROCE_SCC_ALGO_TOTAL);
+	scc_param = kvcalloc(HNS_ROCE_SCC_ALGO_TOTAL, sizeof(*scc_param),
+			     GFP_KERNEL);
 	if (!scc_param)
 		return -ENOMEM;
 

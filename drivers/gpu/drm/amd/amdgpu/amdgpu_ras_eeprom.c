@@ -1293,7 +1293,7 @@ amdgpu_ras_debugfs_table_read_uniras(struct amdgpu_device *adev,
 		return -ENOMEM;
 
 	if (num_recs) {
-		records = kvzalloc_objs(*records, num_recs);
+		records = kvcalloc(num_recs, sizeof(*records), GFP_KERNEL);
 		if (!records) {
 			res = -ENOMEM;
 			goto out;

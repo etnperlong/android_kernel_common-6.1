@@ -696,7 +696,7 @@ static int __init test_rhashtable_next_key(void)
 	if (err)
 		return err;
 
-	objs = kzalloc_objs(*objs, n);
+	objs = kcalloc(n, sizeof(*objs), GFP_KERNEL);
 	if (!objs) {
 		rhashtable_destroy(&ht);
 		return -ENOMEM;

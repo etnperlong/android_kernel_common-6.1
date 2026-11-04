@@ -149,11 +149,11 @@ static int __init run_bench(int n_threads, const char *scope, const char *label)
 	if (ret)
 		return ret;
 
-	ctxs = kzalloc_objs(*ctxs, n_threads);
+	ctxs = kcalloc(n_threads, sizeof(*ctxs), GFP_KERNEL);
 	if (!ctxs)
 		return -ENOMEM;
 
-	tasks = kzalloc_objs(*tasks, n_threads);
+	tasks = kcalloc(n_threads, sizeof(*tasks), GFP_KERNEL);
 	if (!tasks) {
 		kfree(ctxs);
 		return -ENOMEM;

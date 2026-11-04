@@ -232,7 +232,7 @@ int risp_core_job_prepare(struct rcar_isp_core *core)
 	}
 
 	/* Memory is released when the job is consumed. */
-	job = kzalloc_obj(*job);
+	job = kzalloc(sizeof(*job), GFP_KERNEL);
 	if (!job)
 		return -ENOMEM;
 
