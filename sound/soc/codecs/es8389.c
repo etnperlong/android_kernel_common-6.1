@@ -812,23 +812,6 @@ static int es8389_pcm_hw_free(struct snd_pcm_substream *substream,
 	return 0;
 }
 
-static void es8389_standby(struct snd_soc_component *component)
-{
-	struct es8389_private *es8389 = snd_soc_component_get_drvdata(component);
-
-	regmap_update_bits(es8389->regmap, ES8389_ADC_HPF1, 0x0f, 0x04);
-	regmap_update_bits(es8389->regmap, ES8389_ADC_HPF2, 0x0f, 0x04);
-	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0xD4);
-	usleep_range(70000, 72000);
-	regmap_write(es8389->regmap, ES8389_ANA_CTL1, 0x59);
-	regmap_write(es8389->regmap, ES8389_ADC_EN, 0x00);
-	regmap_write(es8389->regmap, ES8389_CLK_OFF1, 0x00);
-	regmap_write(es8389->regmap, ES8389_RESET, 0x3E);
-	regmap_update_bits(es8389->regmap, ES8389_DAC_INV, 0x80, 0x80);
-	usleep_range(8000, 8500);
-	regmap_update_bits(es8389->regmap, ES8389_DAC_INV, 0x80, 0x00);
-}
-
 static int es8389_set_bias_level(struct snd_soc_component *component,
 			enum snd_soc_bias_level level)
 {
@@ -851,7 +834,18 @@ static int es8389_set_bias_level(struct snd_soc_component *component,
 	case SND_SOC_BIAS_PREPARE:
 		break;
 	case SND_SOC_BIAS_STANDBY:
-		es8389_standby(component);
+		regmap_update_bits(es8389->regmap, ES8389_ADC_HPF1, 0x0f, 0x04);
+		regmap_update_bits(es8389->regmap, ES8389_ADC_HPF2, 0x0f, 0x04);
+		regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0xD4);
+		usleep_range(70000, 72000);
+		regmap_write(es8389->regmap, ES8389_ANA_CTL1, 0x59);
+		regmap_write(es8389->regmap, ES8389_ADC_EN, 0x00);
+		regmap_write(es8389->regmap, ES8389_CLK_OFF1, 0x00);
+		regmap_write(es8389->regmap, ES8389_RESET, 0x3E);
+		regmap_update_bits(es8389->regmap, ES8389_DAC_INV, 0x80, 0x80);
+		usleep_range(8000, 8500);
+		regmap_update_bits(es8389->regmap, ES8389_DAC_INV, 0x80, 0x00);
+
 		clk_disable_unprepare(es8389->mclk);
 		break;
 	case SND_SOC_BIAS_OFF:
@@ -1021,7 +1015,7 @@ static int es8389_suspend(struct snd_soc_component *component)
 {
 	struct es8389_private *es8389 = snd_soc_component_get_drvdata(component);
 
-	es8389_standby(component);
+	es8389_set_bias_level(component, SND_SOC_BIAS_STANDBY);
 	regcache_cache_only(es8389->regmap, true);
 	regcache_mark_dirty(es8389->regmap);
 
@@ -1090,7 +1084,7 @@ static int es8389_probe(struct snd_soc_component *component)
 
 	es8389->hpf_freq = ES8389_HPF_DEFAULT;
 	es8389_init(component);
-	es8389_standby(component);
+	es8389_set_bias_level(component, SND_SOC_BIAS_STANDBY);
 
 	return 0;
 }

@@ -591,7 +591,7 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
 			 * headers.
 			 */
 			if (!key_id)
-				continue;
+				break;
 			rc = btrtl_parse_section(hdev, btrtl_dev, opcode,
 						 ptr, section_len);
 			break;
@@ -600,7 +600,8 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
 						 ptr, section_len);
 			break;
 		default:
-			continue;
+			rc = 0;
+			break;
 		}
 		if (rc < 0) {
 			rtl_dev_err(hdev, "RTL: Parse section (%u) err %d",

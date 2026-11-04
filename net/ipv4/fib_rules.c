@@ -214,8 +214,6 @@ INDIRECT_CALLABLE_SCOPE int fib4_rule_match(struct fib_rule *rule,
 	return 1;
 }
 
-#define FIB_MAX_AUTO_TABLE_ID  4096
-
 static struct fib_table *fib_empty_table(struct net *net)
 {
 	u32 id = 1;
@@ -224,7 +222,7 @@ static struct fib_table *fib_empty_table(struct net *net)
 		if (!fib_get_table(net, id))
 			return fib_new_table(net, id);
 
-		if (id++ == FIB_MAX_AUTO_TABLE_ID)
+		if (id++ == RT_TABLE_MAX)
 			break;
 	}
 	return NULL;
