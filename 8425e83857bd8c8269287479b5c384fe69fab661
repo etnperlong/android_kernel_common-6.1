@@ -42,6 +42,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "90d49ed4_94fb3706",
+        "filename": "arch/Kconfig",
+        "patchSetId": 5
+      },
+      "lineNbr": 1777,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:52:09Z",
+      "side": 1,
+      "message": "Done. renamed to `ARCH_HAS_PTSHARE_TLB_INVALIDATION`",
+      "parentUuid": "6b837459_b17afd31",
+      "range": {
+        "startLine": 1777,
+        "startChar": 7,
+        "endLine": 1777,
+        "endChar": 23
+      },
+      "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "08732494_4adac097",
@@ -83,6 +107,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "21ce8e7e_fb02e846",
+        "filename": "arch/arm64/Kconfig",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:52:09Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "08732494_4adac097",
+      "range": {
+        "startLine": 45,
+        "startChar": 1,
+        "endLine": 45,
+        "endChar": 24
+      },
+      "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f8b5650f_2a0eb86b",
@@ -120,6 +168,30 @@
           ]
         }
       ],
+      "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17241724_4c15bdb5",
+        "filename": "arch/x86/Kconfig",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:52:09Z",
+      "side": 1,
+      "message": "Hi Suren, I\u0027d like to keep the select upfront so that every patch can be incrementally built/tested (`CONFIG_PTSHARE`).\n\n`MAP_PT_SHARED` is now the last patch (after both broadcast patches) so nothing can create shared page tables before the broadcast exists",
+      "parentUuid": "f8b5650f_2a0eb86b",
+      "range": {
+        "startLine": 28,
+        "startChar": 1,
+        "endLine": 28,
+        "endChar": 24
+      },
       "revId": "8425e83857bd8c8269287479b5c384fe69fab661",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
