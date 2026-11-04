@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e049734b_f46631c3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3821538
+      },
+      "writtenOn": "2026-11-04T02:33:30Z",
+      "side": 1,
+      "message": "This patch is tailored for specific scenarios and is closely related to our internal scheduling strategy.\n\nIn scenarios like app startup or animations, certain regular-priority processes can be critical. File page faults in these cases cause IO blocking, which degrades performance and user experience. \n\nHowever, since relaxing priority constraints means we can no longer guarantee the same level of rapid RT processing as the previous strict model, we intend to resolve this issue by implementing a hook.",
+      "parentUuid": "5ce4a34c_11d786e2",
+      "revId": "255c69ac89d7e90c6cd3aa221a0b7ca0b1f306a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dd28b966_75cfdee9",
         "filename": "block/mq-deadline.c",
         "patchSetId": 2
@@ -31,6 +49,24 @@
       "writtenOn": "2026-11-03T16:32:36Z",
       "side": 1,
       "message": "move this down to line 484 since its scope is limited to that block.",
+      "revId": "255c69ac89d7e90c6cd3aa221a0b7ca0b1f306a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3fd1bd8_e2e45d9e",
+        "filename": "block/mq-deadline.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 3821538
+      },
+      "writtenOn": "2026-11-04T02:33:30Z",
+      "side": 1,
+      "message": "I have fixed this issue.",
+      "parentUuid": "dd28b966_75cfdee9",
       "revId": "255c69ac89d7e90c6cd3aa221a0b7ca0b1f306a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
