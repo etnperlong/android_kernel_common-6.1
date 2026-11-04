@@ -51,7 +51,7 @@ P3S_TESTS := \
 	print_vma_addr_p3s proc_pagewalk_p3s process_madvise_p3s \
 	process_mrelease_p3s process_vm_access_p3s remap_file_pages_p3s \
 	procfs_native_rmap_p3s \
-	remap_pfn_cow_p3s remap_pfn_range_p3s rmap_file_referenced_p3s rss_stat_trace_p3s \
+	remap_pfn_cow_p3s remap_pfn_range_p3s pfn_insert_p3s rmap_file_referenced_p3s rss_stat_trace_p3s \
 	remote_write_dontneed_p3s \
 	rusage_p3s selinux_status_mmap_p3s \
 	shmem_mmap_offset_p3s \
@@ -136,6 +136,7 @@ $(OUTPUT)/$(1): $(2)
 endef
 $(eval $(call p3s_test_hdrs,fault_in_p3s,fault_in_p3s.h))
 $(eval $(call p3s_test_hdrs,folio_within_range_p3s,folio_within_range_p3s.h))
+$(eval $(call p3s_test_hdrs,pfn_insert_p3s,pfn_insert_p3s.h))
 $(eval $(call p3s_test_hdrs,gup_retry_p3s,gup_retry_p3s.h))
 $(eval $(call p3s_test_hdrs,iov_iter_p3s,iov_iter_p3s.h))
 $(eval $(call p3s_test_hdrs,iov_range_retry_p3s,iov_range_retry_p3s.h))

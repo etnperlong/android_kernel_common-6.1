@@ -12,8 +12,10 @@ static int run_test(void)
 	struct drm_mode_map_dumb map = {};
 	struct drm_mode_destroy_dumb destroy = {};
 	unsigned long size = getpagesize();
+	unsigned long map_size = NATIVE_PAGE_SIZE;
 	char path[64];
 	void *mapping;
+	unsigned int *first, *last;
 	int fd = -1, err = 0;
 	unsigned int i;
 
@@ -40,11 +42,17 @@ static int run_test(void)
 	ksft_set_plan(6);
 	ksft_test_result(size == PROCESS_PAGE_SIZE || size == NATIVE_PAGE_SIZE,
 			 "process page size is supported (%lu)\n", size);
-	mapping = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, map.offset);
+	mapping = mmap(NULL, map_size, PROT_READ | PROT_WRITE,
+		       MAP_SHARED, fd, map.offset);
 	if (mapping != MAP_FAILED) {
-		*(volatile unsigned int *)mapping = 0x6a39421b;
-		err = *(volatile unsigned int *)mapping != 0x6a39421b;
-		munmap(mapping, size);
+		first = mapping;
+		last = (unsigned int *)((char *)mapping + map_size -
+					 sizeof(*last));
+		__atomic_store_n(first, 0x6a39421b, __ATOMIC_RELAXED);
+		__atomic_store_n(last, 0x5b2861ac, __ATOMIC_RELAXED);
+		err = __atomic_load_n(first, __ATOMIC_RELAXED) != 0x6a39421b ||
+		      __atomic_load_n(last, __ATOMIC_RELAXED) != 0x5b2861ac;
+		munmap(mapping, map_size);
 	}
 	ksft_test_result(mapping != MAP_FAILED && !err,
 			 "aligned nonzero GEM cookie maps a test-owned buffer\n");

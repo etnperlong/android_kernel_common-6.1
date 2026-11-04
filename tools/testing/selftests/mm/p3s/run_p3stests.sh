@@ -117,6 +117,8 @@ run_test ./dma_heap_p3s --native
 run_test ./dma_heap_p3s
 run_p3s_module_test remap_pfn_cow ./remap_pfn_cow_p3s --native
 run_p3s_module_test remap_pfn_cow ./remap_pfn_cow_p3s
+run_p3s_module_test pfn_insert ./pfn_insert_p3s --native
+run_p3s_module_test pfn_insert ./pfn_insert_p3s
 run_p3s_module_test dma_mmap_attrs ./dma_mmap_p3s attrs
 run_p3s_module_test dma_mmap_pages ./dma_mmap_p3s pages
 run_p3s_module_test dma_mmap_attrs ./dma_mmap_full_p3s attrs

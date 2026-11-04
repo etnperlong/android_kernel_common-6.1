@@ -19,6 +19,7 @@ obj-m += mremap_pgoff_p3s_module.o
 obj-m += vm_iomap_memory_p3s_module.o
 obj-m += vm_iomap_unaligned_p3s_module.o
 obj-m += remap_pfn_cow_p3s_module.o
+obj-m += pfn_insert_p3s_module.o
 obj-m += dma_mmap_attrs_p3s_module.o
 obj-m += dma_mmap_pages_p3s_module.o
 obj-m += dma_mmap_bounds_p3s_module.o
