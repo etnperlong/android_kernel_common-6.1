@@ -52,7 +52,7 @@ mr_table_alloc(struct net *net, u32 id,
 	struct mr_table *mrt;
 	int err;
 
-	mrt = kzalloc_obj(*mrt, GFP_KERNEL_ACCOUNT);
+	mrt = kzalloc_obj(*mrt);
 	if (!mrt)
 		return ERR_PTR(-ENOMEM);
 	mrt->id = id;

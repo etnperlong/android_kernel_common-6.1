@@ -92,6 +92,11 @@ struct cc2_data {
 	bool process_irqs;
 };
 
+enum cc2_chan_addr {
+	CC2_CHAN_TEMP = 0,
+	CC2_CHAN_HUMIDITY,
+};
+
 /* %RH as a per cent mille from a register value */
 static long cc2_rh_convert(u16 data)
 {
@@ -494,7 +499,7 @@ static irqreturn_t cc2_low_interrupt(int irq, void *data)
 
 	if (cc2->process_irqs) {
 		hwmon_notify_event(cc2->hwmon, hwmon_humidity,
-				   hwmon_humidity_min_alarm, 0);
+				   hwmon_humidity_min_alarm, CC2_CHAN_HUMIDITY);
 		cc2->rh_alarm.low_alarm = true;
 	}
 
@@ -507,7 +512,7 @@ static irqreturn_t cc2_high_interrupt(int irq, void *data)
 
 	if (cc2->process_irqs) {
 		hwmon_notify_event(cc2->hwmon, hwmon_humidity,
-				   hwmon_humidity_max_alarm, 0);
+				   hwmon_humidity_max_alarm, CC2_CHAN_HUMIDITY);
 		cc2->rh_alarm.high_alarm = true;
 	}
 

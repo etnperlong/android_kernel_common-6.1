@@ -953,17 +953,12 @@ static int fsl_micfil_reparent_rootclk(struct fsl_micfil *micfil, unsigned int s
 	/* Get root clock */
 	clk = micfil->mclk;
 
-	/* Reparent root clock to the PLL matching this sample rate */
+	/* Disable clock first, for it was enabled by pm_runtime */
 	fsl_asoc_reparent_pll_clocks(dev, clk, micfil->pll8k_clk,
 				     micfil->pll11k_clk, ratio);
-
-	/* Enable only once; hw_params can be called multiple times */
-	if (!micfil->mclk_flag) {
-		ret = clk_prepare_enable(clk);
-		if (ret)
-			return ret;
-		micfil->mclk_flag = true;
-	}
+	ret = clk_prepare_enable(clk);
+	if (ret)
+		return ret;
 
 	return 0;
 }
@@ -995,6 +990,8 @@ static int fsl_micfil_hw_params(struct snd_pcm_substream *substream,
 	ret = fsl_micfil_reparent_rootclk(micfil, rate);
 	if (ret)
 		return ret;
+
+	micfil->mclk_flag = true;
 
 	/* floor(K * CLKDIV) */
 	switch (micfil->quality) {
@@ -1071,10 +1068,8 @@ static int fsl_micfil_hw_free(struct snd_pcm_substream *substream,
 {
 	struct fsl_micfil *micfil = snd_soc_dai_get_drvdata(dai);
 
-	if (micfil->mclk_flag) {
-		clk_disable_unprepare(micfil->mclk);
-		micfil->mclk_flag = false;
-	}
+	clk_disable_unprepare(micfil->mclk);
+	micfil->mclk_flag = false;
 
 	return 0;
 }

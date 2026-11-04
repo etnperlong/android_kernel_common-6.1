@@ -277,8 +277,6 @@ static ssize_t heater_enable_store(struct device *dev,
 		heating_time_bound = 1100;
 	}
 
-	guard(hwmon_lock)(dev);
-
 	if (time_before(jiffies, data->heating_complete))
 		return -EBUSY;
 
@@ -288,7 +286,7 @@ static ssize_t heater_enable_store(struct device *dev,
 
 	data->heating_complete = jiffies + msecs_to_jiffies(heating_time_bound);
 	data->data_pending = true;
-	return count;
+	return 0;
 }
 
 static ssize_t heater_power_show(struct device *dev,
@@ -315,8 +313,6 @@ static ssize_t heater_power_store(struct device *dev,
 
 	if (power != 20 && power != 110 && power != 200)
 		return -EINVAL;
-
-	guard(hwmon_lock)(dev);
 
 	data->heater_power = power;
 
@@ -347,8 +343,6 @@ static ssize_t heater_time_store(struct device *dev,
 
 	if (time != 100 && time != 1000)
 		return -EINVAL;
-
-	guard(hwmon_lock)(dev);
 
 	data->heater_time = time;
 

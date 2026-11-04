@@ -124,7 +124,6 @@ struct gemini_ethernet_port {
 	unsigned int		rx_coalesce_nsecs;
 	struct sk_buff		*rx_skb;
 	unsigned int		rx_frag_nr;
-	bool			rx_dropping;
 
 	unsigned int		freeq_refill;
 	struct gmac_txq		txq[TX_QUEUE_NUM];
@@ -1440,8 +1439,7 @@ update_exit:
 	return skb;
 }
 
-static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
-			    unsigned int *freeq_consumed)
+static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget)
 {
 	struct gemini_ethernet_port *port = netdev_priv(netdev);
 	unsigned short m = (1 << port->rxq_order) - 1;
@@ -1449,12 +1447,9 @@ static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
 	void __iomem *ptr_reg = port->rxq_rwptr;
 	unsigned int frag_nr = port->rx_frag_nr;
 	struct sk_buff *skb = port->rx_skb;
-	unsigned int consumed = 0;
 	unsigned int frame_len, frag_len;
 	struct gmac_rxdesc *rx = NULL;
 	struct gmac_queue_page *gpage;
-	unsigned int received = 0;
-	bool dropping = port->rx_dropping;
 	union gmac_rxdesc_0 word0;
 	union gmac_rxdesc_1 word1;
 	union gmac_rxdesc_3 word3;
@@ -1476,7 +1471,6 @@ static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
 	w = rw.bits.wptr;
 
 	while (budget && w != r) {
-		page = NULL;
 		rx = port->rxq_ring + r;
 		word0 = rx->word0;
 		word1 = rx->word1;
@@ -1485,21 +1479,10 @@ static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
 
 		r++;
 		r &= m;
-		consumed++;
 
 		frag_len = word0.bits.buffer_size;
 		frame_len = word1.bits.byte_count;
 		page_offs = mapping & ~PAGE_MASK;
-
-		if (word3.bits32 & SOF_BIT) {
-			if (skb) {
-				napi_free_frags(&port->napi);
-				port->stats.rx_dropped++;
-				skb = NULL;
-				frag_nr = 0;
-			}
-			dropping = false;
-		}
 
 		if (!mapping) {
 			netdev_err(netdev,
@@ -1511,11 +1494,24 @@ static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
 		gpage = gmac_get_queue_page(geth, port, mapping + PAGE_SIZE);
 		if (!gpage) {
 			dev_err(geth->dev, "could not find mapping\n");
-			goto err_drop;
+			port->stats.rx_dropped++;
+			if (skb) {
+				napi_free_frags(&port->napi);
+				skb = NULL;
+				frag_nr = 0;
+			}
+			continue;
 		}
 		page = gpage->page;
 
 		if (word3.bits32 & SOF_BIT) {
+			if (skb) {
+				napi_free_frags(&port->napi);
+				port->stats.rx_dropped++;
+				skb = NULL;
+				frag_nr = 0;
+			}
+
 			skb = gmac_skb_if_good_frame(port, word0, frame_len);
 			if (!skb)
 				goto err_drop;
@@ -1525,7 +1521,8 @@ static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
 			frag_nr = 0;
 
 		} else if (!skb) {
-			goto err_drop;
+			put_page(page);
+			continue;
 		}
 
 		if (word3.bits32 & EOF_BIT)
@@ -1548,8 +1545,9 @@ static unsigned int gmac_rx(struct net_device *netdev, unsigned int budget,
 			napi_gro_frags(&port->napi);
 			skb = NULL;
 			frag_nr = 0;
+			--budget;
 		}
-		goto next_desc;
+		continue;
 
 err_drop:
 		if (skb) {
@@ -1558,29 +1556,16 @@ err_drop:
 			frag_nr = 0;
 		}
 
-		if (page)
+		if (mapping)
 			put_page(page);
 
-		if (!dropping) {
-			port->stats.rx_dropped++;
-			dropping = true;
-		}
-
-next_desc:
-		/* Final or single-descriptor fragment, advance things */
-		if (word3.bits32 & EOF_BIT) {
-			budget--;
-			received++;
-			dropping = false;
-		}
+		port->stats.rx_dropped++;
 	}
 
 	port->rx_skb = skb;
 	port->rx_frag_nr = frag_nr;
-	port->rx_dropping = dropping;
-	*freeq_consumed = consumed;
 	writew(r, ptr_reg);
-	return received;
+	return budget;
 }
 
 static int gmac_napi_poll(struct napi_struct *napi, int budget)
@@ -1588,27 +1573,26 @@ static int gmac_napi_poll(struct napi_struct *napi, int budget)
 	struct gemini_ethernet_port *port = netdev_priv(napi->dev);
 	struct gemini_ethernet *geth = port->geth;
 	unsigned int freeq_threshold;
-	unsigned int freeq_consumed;
 	unsigned int received;
 
 	freeq_threshold = 1 << (geth->freeq_order - 1);
 	u64_stats_update_begin(&port->rx_stats_syncp);
 
-	received = gmac_rx(napi->dev, budget, &freeq_consumed);
-	if (received < budget)
+	received = gmac_rx(napi->dev, budget);
+	if (received < budget) {
+		napi_gro_flush(napi, false);
+		napi_complete_done(napi, received);
+		gmac_enable_rx_irq(napi->dev, 1);
 		++port->rx_napi_exits;
+	}
 
-	u64_stats_update_end(&port->rx_stats_syncp);
-
-	port->freeq_refill += freeq_consumed;
+	port->freeq_refill += (budget - received);
 	if (port->freeq_refill > freeq_threshold) {
 		port->freeq_refill -= freeq_threshold;
 		geth_fill_freeq(geth, true);
 	}
 
-	if (received < budget && napi_complete_done(napi, received))
-		gmac_enable_rx_irq(napi->dev, 1);
-
+	u64_stats_update_end(&port->rx_stats_syncp);
 	return received;
 }
 
@@ -1909,7 +1893,6 @@ static int gmac_stop(struct net_device *netdev)
 	napi_disable(&port->napi);
 	port->rx_skb = NULL;
 	port->rx_frag_nr = 0;
-	port->rx_dropping = false;
 
 	gmac_enable_irq(netdev, 0);
 	gmac_cleanup_rxq(netdev);
