@@ -152,6 +152,30 @@
       },
       "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dab8f038_97754680",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T07:11:24Z",
+      "side": 1,
+      "message": "I restored the #ifdefs to unblock this temporarily. There seems to be an unrelated issue in microdroid abi which John is also hitting (system team chat). Since microdroid doesn\u0027t enable ptshare I\u0027d like to keep the ifdefs to temporarily unblock this.",
+      "parentUuid": "3bc375ec_bc94372c",
+      "range": {
+        "startLine": 1252,
+        "startChar": 0,
+        "endLine": 1255,
+        "endChar": 6
+      },
+      "revId": "1d8c984cf05dbf1ceddffb16f06952ac5037356a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
