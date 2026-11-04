@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "caf65f41_edda5024",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:24:21Z",
+      "side": 1,
+      "message": "Updated to clarify this happens from the shadow mm when the last client of the shadow vma owning that mapping drops it\u0027s reference. (Later in the series)",
+      "parentUuid": "7c8171ff_1df70c77",
+      "range": {
+        "startLine": 18,
+        "startChar": 44,
+        "endLine": 19,
+        "endChar": 12
+      },
+      "revId": "8156c8b7fddb46619752d832ae0e1aee49ba91f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed6b9d75_6c25f547",
@@ -61,6 +85,30 @@
           ]
         }
       ],
+      "revId": "8156c8b7fddb46619752d832ae0e1aee49ba91f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "643aacc4_b8c9a890",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:24:21Z",
+      "side": 1,
+      "message": "THanks, updated the union with a new  pt_ptshare_count field and helpers.",
+      "parentUuid": "ed6b9d75_6c25f547",
+      "range": {
+        "startLine": 613,
+        "startChar": 54,
+        "endLine": 613,
+        "endChar": 77
+      },
       "revId": "8156c8b7fddb46619752d832ae0e1aee49ba91f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
