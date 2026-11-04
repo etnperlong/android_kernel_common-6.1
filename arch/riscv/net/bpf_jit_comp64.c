@@ -2128,15 +2128,7 @@ bool bpf_jit_supports_ptr_xchg(void)
 
 bool bpf_jit_supports_arena(void)
 {
-	/*
-	 * The arena range tree uses kmalloc_nolock(), which needs
-	 * cmpxchg128, provided by ZACAS on riscv.
-	 */
-#ifdef system_has_cmpxchg128
-	return system_has_cmpxchg128();
-#else
-	return false;
-#endif
+	return true;
 }
 
 bool bpf_jit_supports_insn(struct bpf_insn *insn, bool in_arena)
