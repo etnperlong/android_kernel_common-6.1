@@ -1728,8 +1728,7 @@ static void enable_trigger_private_data_free(struct event_trigger_data *data)
 {
 	struct enable_trigger_data *enable_data = data->private_data;
 
-	/* The file may already be freed here, only the call is kept alive */
-	trace_event_put_ref(enable_data->call);
+	trace_event_put_ref(enable_data->file->event_call);
 	kfree(enable_data);
 }
 
@@ -1802,7 +1801,6 @@ int event_enable_trigger_parse(struct event_command *cmd_ops,
 	enable_data->hist = hist;
 	enable_data->enable = enable;
 	enable_data->file = event_enable_file;
-	enable_data->call = event_enable_file->event_call;
 
 	trigger_data = trigger_data_alloc(cmd_ops, cmd, param, enable_data);
 	if (!trigger_data)
