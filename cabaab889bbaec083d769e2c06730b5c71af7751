@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "76693c54_d3ff4c79",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Updated to clarify that a client VMA keeps VM_PT_SHARED for a moment after it is detached from its domain and which helpers indicate which.",
+      "parentUuid": "19085976_136d26fd",
+      "range": {
+        "startLine": 26,
+        "startChar": 13,
+        "endLine": 27,
+        "endChar": 10
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "04709818_1e4d54f9",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-11-03T17:05:06Z",
       "side": 1,
       "message": "Please place the comments consistently either next to the field or before it.",
+      "range": {
+        "startLine": 921,
+        "startChar": 2,
+        "endLine": 923,
+        "endChar": 77
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a854f178_9c1f7e48",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 923,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Thanks, updated both to be above the fields.",
+      "parentUuid": "04709818_1e4d54f9",
       "range": {
         "startLine": 921,
         "startChar": 2,
@@ -88,6 +136,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7590c4da_9ab7b215",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47a833a7_d9603fce",
+      "range": {
+        "startLine": 31,
+        "startChar": 29,
+        "endLine": 31,
+        "endChar": 49
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bad2b552_dd483ad5",
@@ -101,6 +173,30 @@
       "writtenOn": "2026-11-03T17:05:06Z",
       "side": 1,
       "message": "Would be better to have description of each function next to the function.",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 3
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d9ed1a8_1839c328",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Updated each helper now has its own kernel-doc.",
+      "parentUuid": "bad2b552_dd483ad5",
       "range": {
         "startLine": 28,
         "startChar": 0,
@@ -134,6 +230,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6173afaa_5f7724c6",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Thanks, updated here and in vma_set_ptshare_desc()",
+      "parentUuid": "481e281c_0fc5e5bf",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 47,
+        "endChar": 38
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7566bcac_20069a41",
@@ -147,6 +267,30 @@
       "writtenOn": "2026-11-03T17:05:06Z",
       "side": 1,
       "message": "I feel like `vma_shares_pagetables()` is not really needed. You can call `vma_ptshare_desc()` instead and check for result to be non-NULL. This saves one READ_ONCE():\n\n```\nstatic inline struct ptshare_desc *vma_ptshare_desc(const struct vm_area_struct *vma)\n{\n\tstruct ptshare_desc *desc;\n\n\tif (VM_WARN_ON_ONCE_VMA(!vma_is_ptshare_client(vma), vma))\n\t\treturn NULL;\n\n\tdesc \u003d READ_ONCE(vma-\u003e__vm_ptshare_desc);\n\tVM_WARN_ON_ONCE_VMA(!desc, vma)\n\n\treturn desc;\n}\n```",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 42
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83dbb31e_83ec0430",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Thanks Suren, good catch on the double load.\n\nUpdated vma_ptshare_desc() to reads the descriptor once and returns NULL if none is attached. \n\nI\u0027d like to keep the convenience helper vma_shares_pagetables() since it\u0027s called on arbitrary vmas (for splits, merge, mprotect ...) so we don\u0027t want to emit a warning for those non-client vmas",
+      "parentUuid": "7566bcac_20069a41",
       "range": {
         "startLine": 68,
         "startChar": 0,
@@ -180,6 +324,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26baf2a3_10ae11aa",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "b9f3e160_d6aeaf0f",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 9
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "72e36dff_cb9cd3fc",
@@ -193,6 +361,30 @@
       "writtenOn": "2026-11-03T17:05:06Z",
       "side": 1,
       "message": "```\nif (VM_WARN_ON_ONCE_VMA(!vma_is_ptshare_shadow(vma), vma)\n\treturn NULL;\n```",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 43
+      },
+      "revId": "cabaab889bbaec083d769e2c06730b5c71af7751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a947882e_19bfc6f0",
+        "filename": "include/linux/ptshare.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T05:15:27Z",
+      "side": 1,
+      "message": "Done, with a change to WARN_ON_ONCE() since VM_WARN_ON_ONCE_VMA() is void without CONFIG_DEBUG_VM.",
+      "parentUuid": "72e36dff_cb9cd3fc",
       "range": {
         "startLine": 94,
         "startChar": 0,
