@@ -15,7 +15,6 @@
 
 #include <drm/drm_atomic.h>
 #include <drm/drm_atomic_helper.h>
-#include <drm/drm_blend.h>
 #include <drm/drm_edid.h>
 #include <drm/drm_fb_helper.h>
 #include <drm/drm_fourcc.h>
@@ -540,9 +539,6 @@ static struct drm_plane *vbox_create_plane(struct vbox_private *vbox,
 		goto free_plane;
 
 	drm_plane_helper_add(plane, helper_funcs);
-
-	drm_plane_create_blend_mode_property(plane,
-					     BIT(DRM_MODE_BLEND_COVERAGE));
 
 	return plane;
 

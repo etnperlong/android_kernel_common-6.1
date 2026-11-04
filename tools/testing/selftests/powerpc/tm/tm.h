@@ -105,12 +105,8 @@ static inline bool failure_is_nesting(void)
 static inline int tcheck(void)
 {
 	long cr;
-	asm volatile("tcheck 0;"
-		     "mfcr %0;"
-		     : "=r"(cr)
-		     :
-		     : "cr0");
-	return (cr >> 28) & 0xf;
+	asm volatile ("tcheck 0" : "=r"(cr) : : "cr0");
+	return (cr >> 28) & 4;
 }
 
 static inline bool tcheck_doomed(void)
