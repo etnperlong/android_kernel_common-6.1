@@ -22,6 +22,30 @@
       },
       "revId": "f50a29295db5e50ac9ede9a788e9ac286f1848c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00bf9355_959e2fa8",
+        "filename": "drivers/android/wrapfd.c",
+        "patchSetId": 8
+      },
+      "lineNbr": 2158,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-04T07:47:03Z",
+      "side": 1,
+      "message": "I\u0027m not sure I understand your concern. Even if we fail on the first entry, we just record the error in results[0] and move to the next monitor. We do not terminate the loop on a failure, just record the result.",
+      "parentUuid": "e5fc1ace_3a2bc858",
+      "range": {
+        "startLine": 2157,
+        "startChar": 0,
+        "endLine": 2158,
+        "endChar": 35
+      },
+      "revId": "f50a29295db5e50ac9ede9a788e9ac286f1848c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
