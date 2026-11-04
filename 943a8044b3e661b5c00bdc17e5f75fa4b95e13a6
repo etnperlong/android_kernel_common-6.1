@@ -104,6 +104,24 @@
       "parentUuid": "0b281355_cdca0fc9",
       "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf9535d7_b7fe269e",
+        "filename": "drivers/android/Kconfig",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1934715
+      },
+      "writtenOn": "2026-11-04T07:47:40Z",
+      "side": 1,
+      "message": "Yes, but also my stack of patches does add the required functionality for this, and the Rust version of this test does the same as this test, so no need to update it in the future; we can just use the Rust test.",
+      "parentUuid": "28625b0f_aef4c89f",
+      "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
