@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a5cb6e5b_1fe1abd0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:56:01Z",
+      "side": 1,
+      "message": "Updated to make clearer the reason: the creator is the only process that may add shared mappings to its domain. the other members only inherit them through fork()",
+      "parentUuid": "29d510a1_608e8e4e",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 64
+      },
+      "revId": "975543d3eae828a73d1414588a47a12b49d33fc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "484558ff_bc9cc590",
@@ -61,6 +85,30 @@
           ]
         }
       ],
+      "revId": "975543d3eae828a73d1414588a47a12b49d33fc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9f49f6a_897abcfa",
+        "filename": "include/linux/mm_types.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1164,
+      "author": {
+        "id": 1499410
+      },
+      "writtenOn": "2026-11-04T04:56:01Z",
+      "side": 1,
+      "message": "Thanks, done.",
+      "parentUuid": "484558ff_bc9cc590",
+      "range": {
+        "startLine": 1164,
+        "startChar": 2,
+        "endLine": 1164,
+        "endChar": 10
+      },
       "revId": "975543d3eae828a73d1414588a47a12b49d33fc5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
