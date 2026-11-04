@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a59daabc_5ee4ad3a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-04T07:41:49Z",
+      "side": 1,
+      "message": "Probably but as part of a separate patch.",
+      "parentUuid": "16cd8368_549a0afb",
+      "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0b281355_cdca0fc9",
@@ -66,6 +84,24 @@
           ]
         }
       ],
+      "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28625b0f_aef4c89f",
+        "filename": "drivers/android/Kconfig",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2026-11-04T07:41:49Z",
+      "side": 1,
+      "message": "That\u0027s a pity and we will have to remember to change that once Rust driver catches up. Will change.",
+      "parentUuid": "0b281355_cdca0fc9",
       "revId": "943a8044b3e661b5c00bdc17e5f75fa4b95e13a6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
